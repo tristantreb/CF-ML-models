@@ -18,16 +18,16 @@
 % CREATE DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%
 % Add m2html to path
-% addpath /Users/tristan.trebaol/Documents/PDM/Project/m2html/
+%addpath /Users/tristan.trebaol/Documents/PDM/Project/m2html/
 % run the following line, 'mfiles' should note be set to "./", else it
 
 % raises a display issue
-%m2html('mfiles','Project/Code/smartcare','htmldir','Project/Documentation');
+m2html('mfiles','Code/','htmldir','Documentation','recursive','on', 'global','on');
 
 % MASTER FILE TO RUN AN ALIGNMENT MODEL
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/smartcare/
+% addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/
 % check source code root directory -> setBaseDir
 
 % CLINICAL, ID and StudyNumber (gmail)
@@ -47,15 +47,15 @@ addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/smartcare/
 %checkIVTreatmentsVsMeasuresPriorNew; used before 7.05.2021
 %gap in treatments
 
-%createAlignmentModelInputs;
+createAlignmentModelInputs;
 % study number
 % gap in treatments
 
-%findDataAnomalies;
+findDataAnomalies;
 % study number
 % gap in treatments
 
 % missing files
 % BR_LabelledInterventions_gap10consensus.mat - given
 % BRelectivetreatments_gap10.xlsx - given
-% runAlignmentModelEMMCScript;
+runAlignmentModelEMMCScript;
