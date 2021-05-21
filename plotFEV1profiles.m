@@ -10,12 +10,7 @@
 
 %% load the data
 
-clear;
-addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/smartcare/;
-basedir = setBaseDir();
-subfolder = 'MatlabSavedVariables';
-study = 'BR';
-plotfolder = getPlotFolder();
+init;
 
 % load measures
 [datamatfile, ~, ~] = getRawDataFilenamesForStudy(study);
@@ -26,7 +21,7 @@ load(fullfile(basedir, subfolder, 'BRivandmeasures_gap10.mat'));
 load(fullfile(basedir, subfolder, 'breatheclinicaldata.mat'),'brDrugTherapy');
 
 % clean modulators tables
-brDrugTherapy.DrugTherapyType = cleanDrugNamings(brDrugTherapy.DrugTherapyType);
+brDrugTherapy.DrugTherapyType = cleanDrugTherapyNamings(brDrugTherapy.DrugTherapyType);
 % adds columns with serial date num
 brDrugTherapy.DateNum = datenum(brDrugTherapy.DrugTherapyStartDate) - broffset;
 
@@ -48,7 +43,7 @@ p_filter=1; % treatments and modulators
 p_all_patients = unique(FEVdata(:,1));
 patients_missing_trikafta = [835, 812, 803, 598, 525, 523, 517, 516, 501];
 
-for patient = patients_missing_trikafta%501%p_all_patients'
+for patient = p_all_patients'
 
     % mask revealing patient data
     mask_patient = FEVdata(:,1) == patient;
@@ -84,7 +79,7 @@ for patient = patients_missing_trikafta%501%p_all_patients'
         plot(datetime(datestr(x+broffset)),y-avg,'.','MarkerEdgeColor','b')
         xlabel('Day')
         ylabel('FEV1 (L)')
-        title(['Patient ' num2str(patient)])
+        title(sprintf('Patient %i, mean FEV1: %1.1f L', patient, avg))
         grid('on')
 
         % first patient's measurement date
