@@ -1,11 +1,6 @@
 % Insights about the amount of FEV1 recordings per patient across the study
 
-clear;
-addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/smartcare/;
-basedir = setBaseDir();
-subfolder = 'MatlabSavedVariables';
-plotfolder = getPlotFolder();
-study = 'BR';
+init;
 
 % load measures
 [datamatfile, ~, ~] = getRawDataFilenamesForStudy(study);
@@ -21,6 +16,7 @@ maxStudyDate = datenum(getLatestBreatheMeasDate,'yyyymmdd') - broffset;
 
 %% extract FEV signal
 
+% bluetooth recordings
 % FEV1 data
 % mask for rows with FEV1 as recording type
 i = ismember(brphysdata(:,5).(1), {'FEV1Recording'        });
@@ -31,21 +27,35 @@ dataFEV1 = table2array(brphysdata(i,[1 3 8]));
 i = ismember(brphysdata(:,5).(1), {'FEV6Recording'        });
 dataFEV6 = table2array(brphysdata(i,[1 3 8]));
 
-% Wellness
+% O2_saturation
+i = ismember(brphysdata(:,5).(1), {'O2SaturationRecording'        });
+dataO2_saturation = table2array(brphysdata(i,[1 3 10]));
+
+% weight
+i = ismember(brphysdata(:,5).(1), {'WeightRecording'        });
+dataweight = table2array(brphysdata(i,[1 3 9]));
+
+% manual recording
+% wellness
 i = ismember(brphysdata(:,5).(1), {'WellnessRecording'        });
-dataWellness = table2array(brphysdata(i,[1 3 14]));
+datawellness = table2array(brphysdata(i,[1 3 14]));
 
-% Wellness
+% cough
 i = ismember(brphysdata(:,5).(1), {'CoughRecording'        });
-dataCough = table2array(brphysdata(i,[1 3 14]));
+datacough = table2array(brphysdata(i,[1 3 14]));
 
-% Calorie
+% temperature
+i = ismember(brphysdata(:,5).(1), {'TemperatureRecording'        });
+datatemperature = table2array(brphysdata(i,[1 3 12]));
+
+% automatic recordings
+% Calories
 i = ismember(brphysdata(:,5).(1), {'CalorieRecording'        });
-dataCalories = table2array(brphysdata(i,[1 3 13]));
+datacalories = table2array(brphysdata(i,[1 3 13]));
 
-% Resting HR
+% resting_heart_rate
 i = ismember(brphysdata(:,5).(1), {'RestingHRRecording'        });
-dataHR = table2array(brphysdata(i,[1 3 11]));
+dataresting_heart_rate = table2array(brphysdata(i,[1 3 11]));
 
 clear i
 
@@ -59,7 +69,7 @@ if p_filter == 1
     load(fullfile(basedir, subfolder, 'breatheclinicaldata.mat'));%,'brDrugTherapy');
 
     % clean modulators tables
-    brDrugTherapy.DrugTherapyType = cleanDrugNamings(brDrugTherapy.DrugTherapyType);
+    brDrugTherapy.DrugTherapyType = cleanDrugTherapyNamings(brDrugTherapy.DrugTherapyType);
     % adds columns with serial date num
     brDrugTherapy.DateNum = datenum(brDrugTherapy.DrugTherapyStartDate) - broffset;
 
@@ -68,15 +78,17 @@ if p_filter == 1
     n_post_m = 15; % days after modulator therapy start
     
     % remove patient 601, 621 578 (erroneous behavior) 
-    data = data(~ismember(data(:,1), [621 601 578]),:);
+    dataFEV1 = dataFEV1(~ismember(dataFEV1(:,1), [621 601 578]),:);
 end
 
 %% build array with id, seniority and commitment
 
-data = dataCough;
+% enter the data type you want to use
+type = "resting_heart_rate"
+data = eval("data"+type);
 
 patients = unique(data(:,1));
-commitment = zeros(length(patients),6);
+commitment = nan(length(patients),6);
 mask_stable_data = zeros(length(data(:,1)),1);
 
 for i = 1:length(patients)
@@ -91,12 +103,11 @@ for i = 1:length(patients)
             ivandmeasurestable, n_prior_t, n_post_t, ...
             brDrugTherapy, n_post_m, ...
             p_filter);
+        mask_stable_data = mask_stable_data | mask;
     else
         % mask revealing patient's values
         mask = data(:,1) == patients(i);
     end
-    
-    mask_stable_data = mask_stable_data | mask;
     
     if sum(mask) == 0 % if no points after filter
         minDate = nan; maxDate = nan;
@@ -149,25 +160,24 @@ for i = 1:length(patients)
 end
 clear i
 
-%% plot patient commitment
+% plot patient commitment
 threshold=50;
 
 figure('DefaultAxesFontSize',12,'Position', [1 1 500 300])
 histogram(commitment(:,6),10)
 hold on
 histogram(commitment(commitment(:,4)>threshold,6),10,'BinLimit',[0,100])
-title(['Commitment to cough recording (', num2str(sum(commitment(:,4)~=0)) ' patients), '],  ...
+title(sprintf('Commitment to %s recording',strrep(type,"_"," ")),  ...
     [' mean: ' num2str(mean(commitment(:,6),'omitnan'),2), '%, median: ' num2str(median(commitment(:,6),'omitnan'),2) '%, ' ...
-    num2str(sum(commitment(:,4))) ' measurements, ' ...
-    num2str(sum(commitment(:,6)==0)) ' null density patients'])
+    num2str(sum(commitment(:,4))) ' measurements, ' num2str(sum(commitment(:,4)~=0)) ' patients out of ' num2str(length(unique(brphysdata.SmartCareID)))])
 xlabel("Density of measurements over enrollment period %")
 ylabel('#patients')
 legend('all measurements', ['measurements count > ' num2str(threshold)])
 grid('on')
 hold off
 
-saveas(gcf,fullfile(plotfolder,'patientCommitmentCough_CDF20210305_PAP20210315.png'))
-
+saveas(gcf,fullfile(plotfolder,sprintf('patientCommitment%s_CDF20210305_PAP20210315.png',type)))
+close all
 %% Create table with evolution of data count each 6 months
 
 days_span = 364/2; % 6 months window
@@ -195,10 +205,10 @@ for i = 1:length(day_span)-1
 end
 %% find percentage of patients and measurements corresponding to a density threshold
 
-idx = commitment(:,6)>27; % idx patients over 30% density of measurements
+idx = commitment(:,6)>28; % idx patients over 30% density of measurements
 %idx = data(:,4)>50; % idx patients over 50 measurements count
 
-prct_patients = 100*sum(idx)/192;%length(data(:,1))*100; 
+prct_patients = 100*sum(idx)/198;%length(data(:,1))*100; 
 
 prct_measurements = 100*sum(commitment(idx,4))/sum(commitment(:,4)); % all measurements: %length(FEVdata);%
 
