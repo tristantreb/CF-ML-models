@@ -68,10 +68,26 @@ for w = p.window
         
         n_used=0;
         f_t_m = [];
+        mask_stable_all = zeros(length(FEVdata(:,1)),1); % mask with all stable measures
         r_all_residuals = [];
-        r_all_prior = [];
-        r_all_post = [];
-        mask_stable_all = zeros(length(FEVdata(:,1)),1);
+        
+        % only patients that had triple therapy
+        n_1_trpl = 0;
+        r_all_1_prior_trpl = []; 
+        r_all_1_post_trpl = [];
+        
+        % only patients that had triple therapy and sykmevi
+        % main assumption: no patient have had triple therapy before
+        % symkevi
+        n_2_smkv_and_trpl = 0;
+        r_all_2_prior_smkv = []; % no symkevi, no triple therapy
+        r_all_2_smkv = []; % symkevi, no triple therapy
+        r_all_2_trpl = []; % triple therapy
+        
+        % only patients that had symkevi
+        n_3_smkv = 0;
+        r_all_3_prior_smkv = []; 
+        r_all_3_post_smkv = [];
         
         for patient = rPatientStats.p_processed_patients'
 
@@ -99,6 +115,8 @@ for w = p.window
                 rPatientStats.all_std(patient_idx) = nan;
                 rPatientStats.patientMaxVal(patient_idx) = nan;
                 rPatientStats.all_n_residuals(patient_idx) = 0;
+                % used for the patient level analysis of the effect of
+                % triple therapy
                 rPatientStats.n_residuals_prior_tripleT(patient_idx) = nan; 
                 rPatientStats.n_residuals_post_tripleT(patient_idx) = nan;
                 rPatientStats.std_residuals_prior_tripleT(patient_idx) = nan; 
@@ -123,47 +141,112 @@ for w = p.window
                 rPatientStats.patientMaxVal(patient_idx) = max(abs(FEVdata(mask, 3))) - ...
                     mean(FEVdata(mask, 3)); % most extreme value across patients used
                 
-                % split residuals prior/post triple therapy start
-                if rPatientStats.all_n_residuals(rPatientStats.p_processed_patients == patient) == 0 % if no residuals
+                
+                if isempty(rPatientStats.all_n_residuals(rPatientStats.p_processed_patients == patient))% if no residuals
                     rPatientStats.n_residuals_prior_tripleT(patient_idx) = nan; 
                     rPatientStats.n_residuals_post_tripleT(patient_idx) = nan; 
                     rPatientStats.std_residuals_prior_tripleT(patient_idx) = nan;
                     rPatientStats.std_residuals_post_tripleT(patient_idx) = nan;
                 else
+                    
+                    %%% 1 %%%
+                     
+                    % split residuals prior/post triple therapy start
                     % get triple therapy start date where applicable
-                    temp_date = brDrugTherapy.DrugTherapyStartDate(brDrugTherapy.ID == patient & ismember(brDrugTherapy.DrugTherapyType, 'Triple Therapy'));
-                    triple_therapy_start = datenum(temp_date)-broffset; clear temp_date;
-                    if length(triple_therapy_start) == 0
-                        fprintf(', no triple therapy');
-                        %r_all_prior = cat(1,r_all_prior, residuals);
+                    temp_date_smkv = brDrugTherapy.DrugTherapyStartDate(brDrugTherapy.ID == patient & ismember(brDrugTherapy.DrugTherapyType, 'Triple Therapy'));
+                    triple_therapy_start = datenum(temp_date_smkv)-broffset; 
+                    clear temp_date_trpl;
+                    
+                    if isempty(triple_therapy_start)
                         rPatientStats.n_residuals_prior_tripleT(patient_idx) = sum(~isnan(residuals)); 
                         rPatientStats.std_residuals_prior_tripleT(patient_idx) = std(residuals,'omitnan');
                         
                         rPatientStats.n_residuals_post_tripleT(patient_idx) = 0; 
                         rPatientStats.std_residuals_post_tripleT(patient_idx) = nan;
                     else
+                        fprintf(', with triple therapy');
+                        n_1_trpl = n_1_trpl+1;
                         if length(triple_therapy_start) > 1
                             fprintf(', more than one triple therapy registered');
                             triple_therapy_start = triple_therapy_start(triple_therapy_start>0); % take positive value, e.g. patient 669
                         end
+                        
                         % find residuals prior/post triple therapy start
                         % prior
-                        temp_a = residuals(x < triple_therapy_start);
-                        r_all_prior = cat(1,r_all_prior, temp_a);
-                        rPatientStats.n_residuals_prior_tripleT(patient_idx) = sum(~isnan(temp_a));
-                        rPatientStats.std_residuals_prior_tripleT(patient_idx) = std(temp_a,'omitnan'); clear temp_a;
-                        %post
-                        temp_b = residuals(x >= triple_therapy_start);
-                        r_all_post = cat(1,r_all_post, temp_b);
-                        rPatientStats.n_residuals_post_tripleT(patient_idx) = sum(~isnan(temp_b));
-                        rPatientStats.std_residuals_post_tripleT(patient_idx) = std(temp_b,'omitnan'); clear temp_b;
+                        temp = residuals(x < triple_therapy_start);
+                        temp = temp(~isnan(temp));
+                        rPatientStats.n_residuals_prior_tripleT(patient_idx) = sum(temp);
+                        rPatientStats.std_residuals_prior_tripleT(patient_idx) = std(temp);
+                        r_all_1_prior_trpl = cat(1,r_all_1_prior_trpl, temp);
                         
-                        % hypothesis test that the two std are the same
-                        [h_rejected, p_value] = vartest2(r_all_prior(~isnan(r_all_prior)),r_all_post(~isnan(r_all_post)),'Tail','right');
+                        % post
+                        temp = residuals(x >= triple_therapy_start);
+                        temp = temp(~isnan(temp));
+                        rPatientStats.n_residuals_post_tripleT(patient_idx) = sum(temp);
+                        rPatientStats.std_residuals_post_tripleT(patient_idx) = std(temp); 
+                        r_all_1_post_trpl = cat(1,r_all_1_post_trpl, temp); 
+                        clear temp;
                         
-                        rPatientStats.h_rejected(patient_idx) = h_rejected;
-                        rPatientStats.h_p(patient_idx) = p_value; 
+%                         % hypothesis test that the two std are the same
+%                         [h_rejected, p_value] = vartest2(r_all_prior_trpl(~isnan(r_all_prior_trpl)),r_all_post_trpl(~isnan(r_all_post_trpl)),'Tail','right');
+%                         
+%                         rPatientStats.h_rejected(patient_idx) = h_rejected;
+%                         rPatientStats.h_p(patient_idx) = p_value; 
                         
+
+                        %%% 2 %%%
+
+                        % find residuals prior symkevi, and between symkevi
+                        % start and triple therapy start
+                        temp_date_smkv = brDrugTherapy.DrugTherapyStartDate(brDrugTherapy.ID == patient & ismember(brDrugTherapy.DrugTherapyType, 'Symkevi'));
+                        symkevi_start = datenum(temp_date_smkv)-broffset; 
+                        clear temp_date_smkv;
+                        if ~isempty(symkevi_start)
+                            n_2_smkv_and_trpl = n_2_smkv_and_trpl+1;
+                            
+                            % prior symkevi
+                            temp = residuals(x < triple_therapy_start & x < symkevi_start);
+                            r_all_2_prior_smkv = cat(1,r_all_2_prior_smkv, temp(~isnan(temp)));
+                            
+                            % during symkevi
+                            % note: if patients have triple therapy before
+                            % symkevi, we consider the symkevi data as
+                            % triple therapy
+                            temp = residuals(x < triple_therapy_start & x >= symkevi_start);
+                            r_all_2_smkv = cat(1,r_all_2_smkv, temp(~isnan(temp)));
+                            
+                            % during triple therapy
+                            temp = residuals(x >= triple_therapy_start);
+                            r_all_2_trpl = cat(1,r_all_2_trpl, temp(~isnan(temp)));
+                            clear temp;
+                        end
+                    end
+                    
+                    
+                    %%% 3 %%%
+                    
+                    % split residuals prior/post symkevi
+                    % get symkevi start date where applicable
+                    temp_date_smkv = brDrugTherapy.DrugTherapyStartDate(brDrugTherapy.ID == patient & ismember(brDrugTherapy.DrugTherapyType, 'Symkevi'));
+                    symkevi_start = datenum(temp_date_smkv)-broffset; 
+                    clear temp_date_smkv;
+                    
+                    if ~isempty(symkevi_start)
+                        fprintf(', with symkevi');
+                        n_3_smkv = n_3_smkv+1;
+                        if length(triple_therapy_start) > 1
+                            fprintf(', more than one triple therapy registered');
+                        end
+                        
+                        % find residuals prior/post triple therapy start
+                        % prior
+                        temp = residuals(x < symkevi_start);
+                        r_all_3_prior_smkv = cat(1,r_all_3_prior_smkv, temp(~isnan(temp)));
+                        
+                        % post
+                        temp = residuals(x >= symkevi_start);
+                        r_all_3_post_smkv = cat(1,r_all_3_post_smkv, temp(~isnan(temp))); 
+                        clear temp;
                     end
                 end
                 fprintf('.\n');
@@ -223,7 +306,7 @@ for w = p.window
     r_statistics(i,14) = w;
     r_statistics(i,15) = t;
     r_statistics(i,16) = sum(rPatientStats.all_n_residuals); % alsolength(r_all_residuals(~isnan(r_all_residuals))); % n residuals computed (nan values are residuals for points that did not pass the threshold)
-    r_statistics(i,17) = sum(f_t_m); %length(r_all_residuals); 
+    r_statistics(i,17) = sum(f_t_m);  
     r_statistics(i,18) = length(FEVdata); % n points initially
     r_statistics(i,19) = sum(not(rPatientStats.all_n_residuals)); % n patients with over 1 residuals, i.e. over 1 window with n_measures > threshold
     r_statistics(i,20) = n_records_min;
@@ -319,7 +402,7 @@ grid('on')
 saveas(gcf,fullfile(plotfolder,sprintf('fevModelBasedAnalysis_movmean_w%i_t%i_filter_%i_tripleT_%s.png', ...
     w, t, p_filter, p_triple_therapy_split)))
 
-%% Defining variability = 3*std(residuals) = 0.2346 L enables to capture over 98% of the above computed residuals’ data under parametrisation (21,7)
+%% FURTHER ANALYSES
 
 %% Distribution of the residuals
 % check if the assumption of normal distribution is acceptable
@@ -386,7 +469,7 @@ clear a; clear b;
 saveas(gcf,fullfile(plotfolder,'fevModelBasedAnalysis_variabilityvsFEV1.png'))
 %close all
 
-%% ffect of triple therapy at a patient level
+%% Effect of triple therapy at a patient level
 
 % There is 95% probability that the CI contains the true standard deviation, 
 % and if it does contain it, with 200 points, the true std value lies
@@ -430,11 +513,22 @@ fprintf('Variability change after triple therapy start - %i patients started tri
 %close all
 
 %% Effect of triple therapy at a study level
+
+% most conservative scenario
+% 1. equilibrium of data prior/after (residuals of patient that did not get
+% triple therapy is not taken into account, otherwise balance largely in
+% favor of prior triple therapy)
+% 2. some patients got triple therapy but it was not referenced in our data,
+% we simply don't use those patient by strictly looking at the ones that
+% got triple therapy
+% 3. symkevi data is included into the "prior" data. Since symkevi has
+% potentially also had an effect, 
+
 % 1. null hypothesis: the two std dev are the same. std_prior^2 - std_post^2 = 0
-s1 = std(r_all_prior,'omitnan');
-s2 = std(r_all_post,'omitnan');
+s1_1 = std(r_all_1_prior_trpl);
+s2_1 = std(r_all_1_post_trpl);
 % relative change in s
-s1s2 = (s1-s2)/s1;
+% s1s2 = (s1-s2)/s1;
 
 % 2. alternative hypothesis std_prior^2 - std_post^2 > 0
 % assumptions: 
@@ -445,15 +539,16 @@ s1s2 = (s1-s2)/s1;
 % data normality
 figure('DefaultAxesFontSize',12,'Position', [1 1 1000 500])
 subplot(1,2,1)
-probplot('normal',r_all_prior)
-xlabel('Residuals prior to triple therapy start (L)')
+probplot('normal',r_all_1_prior_trpl)
+xlabel('Residuals prior to Triple Therapy start (L)')
 xticks(-1:0.2:0.5)
 grid('on')
 subplot(1,2,2)
-probplot('normal',r_all_post)
-xlabel('Residuals post triple therapy start (L)')
+probplot('normal',r_all_1_post_trpl)
+xlabel('Residuals post Triple Therapy start (L)')
 xticks(-1:0.2:0.5)
 grid('on')
+
 % symmetric, heavy-tailed distribution -> Student, Cauchy
 
 % 3. test statistic
@@ -464,13 +559,82 @@ grid('on')
 % data follow Cauchy distribution, median is best for Chi-Square distribution
 
 % F-Test
-F = s1^2/s2^2;
-F_criticial = finv(1-0.05,4958,3071);
-[F_h_rejected, F_p, F_ci, F_stats] = vartest2(r_all_prior(~isnan(r_all_prior)),r_all_post(~isnan(r_all_post)),'Tail','right');
+% F = s1^2/s2^2;
+[F_h_rejected_1, F_p_1, F_ci_1, F_stats_1] = vartest2(r_all_1_prior_trpl,r_all_1_post_trpl,'Tail','right');
 
 % Levene test
-alpha = 0.01;
-[L_h_rejected, L_p, L_stat, L_critical] = levenetest(r_all_prior(~isnan(r_all_prior)),r_all_post(~isnan(r_all_post)),alpha);
+alpha = 0.05;
+[L_h_rejected_1, L_p_1, L_stat_1, L_critical_1] = levenetest(r_all_1_prior_trpl,r_all_1_post_trpl,alpha);
+
+%% Effect of symkevi and triple therapy at a study level
+
+s1_2_smkv = std(r_all_2_smkv);
+s2_2_trpl = std(r_all_2_trpl);
+
+% data normality
+figure('DefaultAxesFontSize',12,'Position', [1 1 1500 500])
+subplot(1,3,1)
+probplot('normal',r_all_2_prior_smkv)
+xlabel('Residuals prior to Symkevi start (L)')
+xticks(-1:0.2:0.5)
+grid('on')
+subplot(1,3,2)
+probplot('normal',r_all_2_smkv)
+xlabel('Residuals during Symkevi (L)')
+xticks(-1:0.2:0.5)
+grid('on')
+subplot(1,3,3)
+probplot('normal',r_all_2_trpl)
+xlabel('Residuals during Triple Therapy (L)')
+xticks(-1:0.2:0.5)
+grid('on')
+
+% symmetric, heavy-tailed distribution -> Student, Cauchy
+% note: prior to Symkevi and post Symkevi (during Triple Therapy), higher
+% deviation from normality around the 5th and 95th percentiles
+
+% F-tests
+[F_h_rejected_smkv_other, F_p_smkv_other, F_ci_smkv_other, F_stats_smkv_other] = vartest2(r_all_2_prior_smkv,r_all_2_smkv,'Tail','right');
+[F_h_rejected_trpl_smkv, F_p_trpl_smkv, F_ci_trpl_smkv, F_stats_trpl_smkv] = vartest2(r_all_2_smkv,r_all_2_trpl,'Tail','right');
+[F_h_rejected_trpl_other, F_p_trpl_other, F_ci_trpl_other, F_stats_trpl_other] = vartest2(r_all_2_prior_smkv,r_all_2_trpl,'Tail','right');
+
+% Levene's tests
+alpha = 0.2;
+[L_h_rejected_smkv_other, L_p_smkv_other, L_stat_smkv_other, L_critical_smkv_other] = levenetest(r_all_2_prior_smkv,r_all_2_smkv,alpha);
+[L_h_rejected_trpl_smkv, L_p_trpl_smkv, L_stat_trpl_smkv, L_critical_trpl_smkv] = levenetest(r_all_2_smkv,r_all_2_trpl,alpha);
+[L_h_rejected_trpl_other, L_p_trpl_other, L_stat_trpl_other, L_critical_trpl_other] = levenetest(r_all_2_prior_smkv,r_all_2_trpl,alpha);
+
+%% Effect of symkevi at a study level
+
+% as we cannot reject the homoscedasticity hypotheses on the effects of the
+% 1. transition from nothing (or Ivacaftor, or Okrambi) to Symkevi
+% 2. transition from Symkevi to Triple Therapy 
+% it may be because of a lack of data (only 61 patients got Symkevi and
+% Triple Therapy)
+% hence we have a look at Symkevi only and Symkevi & Triple Therapy
+% patients
+
+s1_3 = std(r_all_3_prior_smkv);
+s2_3 = std(r_all_3_post_smkv);
+
+% data normality
+figure('DefaultAxesFontSize',12,'Position', [1 1 1000 500])
+subplot(1,2,1)
+probplot('normal',r_all_3_prior_smkv)
+xlabel('Residuals prior to Symkevi start (L)')
+xticks(-1:0.2:0.5)
+grid('on')
+subplot(1,2,2)
+probplot('normal',r_all_3_post_smkv)
+xlabel('Residuals post Symkevi start (L)')
+xticks(-1:0.2:0.5)
+grid('on')
+
+[F_h_rejected_3, F_p_3, F_ci_3, F_stats_3] = vartest2(r_all_3_prior_smkv,r_all_3_post_smkv,'Tail','right');
+
+% Levene test
+alpha = 0.2;
+[L_h_rejected_3, L_p_3, L_stat_3, L_critical_3] = levenetest(r_all_3_prior_smkv,r_all_3_post_smkv,alpha);
 
 %% function
 
@@ -526,8 +690,12 @@ function [h, p, W, F] = levenetest(x1,x2,alpha)
     % rejection
     h = W > F;
     
-    while W > finv(1-alpha,k-1,N-k);
-        alpha = alpha/2;
+    if h == 1 % find and approximation of the p-value
+        while W > finv(1-alpha,k-1,N-k);
+            alpha = alpha/1.001;
+        end
+        p = alpha*1.001;
+    else
+        p = alpha;
     end
-    p = alpha*2;
 end

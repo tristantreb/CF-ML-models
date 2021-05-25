@@ -1,6 +1,6 @@
 function out = cleanDrugTherapyNamings(str_array)
 % inputs: array, output: array with cleaned drugtherapy names
-    fprintf('Initial drug therapy list:\n')
+    fprintf('Clean drug therapy namings.\nInitial drug therapy list:\n')
     disp(categorical(unique(str_array)));
     out = replace(str_array,["symkevi","Symkevi Modulator"],"Symkevi");
     out = replace(out,["Modulator VX-445,tezacaftor,ivacaftor"...
