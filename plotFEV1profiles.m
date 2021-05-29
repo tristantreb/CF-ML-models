@@ -25,31 +25,67 @@ brDrugTherapy.DrugTherapyType = cleanDrugTherapyNamings(brDrugTherapy.DrugTherap
 % adds columns with serial date num
 brDrugTherapy.DateNum = datenum(brDrugTherapy.DrugTherapyStartDate) - broffset;
 
-%% extract FEV signal
+%% extract signals
 
 % mask for rows with FEV1 as recording type
 i = ismember(brphysdata(:,5).(1), {'FEV1Recording'        });
-% extract SmartCareID, DateNum, FEV
-FEVdata = table2array(brphysdata(i,[1 3 8]));
+% extract SmartCareID, DateNum, FEV1
+dataFEV1 = table2array(brphysdata(i,[1 3 8]));
+
+% O2_saturation
+i = ismember(brphysdata(:,5).(1), {'O2SaturationRecording'        });
+dataO2_saturation = table2array(brphysdata(i,[1 3 10]));
+
+% weight
+i = ismember(brphysdata(:,5).(1), {'WeightRecording'        });
+dataweight = table2array(brphysdata(i,[1 3 9]));
+
+% manual recording
+% wellness
+i = ismember(brphysdata(:,5).(1), {'WellnessRecording'        });
+datawellness = table2array(brphysdata(i,[1 3 14]));
+
+% cough
+i = ismember(brphysdata(:,5).(1), {'CoughRecording'        });
+datacough = table2array(brphysdata(i,[1 3 14]));
+
+% temperature
+i = ismember(brphysdata(:,5).(1), {'TemperatureRecording'        });
+datatemperature = table2array(brphysdata(i,[1 3 12]));
+
+% automatic recordings
+% Calories
+i = ismember(brphysdata(:,5).(1), {'CalorieRecording'        });
+datacalories = table2array(brphysdata(i,[1 3 13]));
+
+% resting_heart_rate
+i = ismember(brphysdata(:,5).(1), {'RestingHRRecording'        });
+dataresting_heart_rate = table2array(brphysdata(i,[1 3 11]));
 clear i
 
+% cold or flue
+i = ismember(brphysdata(:,5).(1), {'HasColdOrFluRecording'});
+dataresting_cold_flue = table2array(brphysdata(i,[1 3 16]));
+clear i
+
+%% 
 % parameters
 n_prior_t=0;
 n_post_t=0;
-n_post_m=1; % min days to let a blue rectanlge appear
+n_post_m=1; % take one day for the modulators
 p_filter=1; % treatments and modulators
 
 
-p_all_patients = unique(FEVdata(:,1));
+p_all_patients = 501%unique(FEVdata(:,1));
 patients_missing_trikafta = [835, 812, 803, 598, 525, 523, 517, 516, 501];
 
 for patient = p_all_patients'
 
     % mask revealing patient data
-    mask_patient = FEVdata(:,1) == patient;
+    mask_patient = dataFEV1(:,1) == patient;
 
     % mask revealing patient data during stable period
-    [mask, days_t, days_m] = getStableIdx(patient, FEVdata, ...
+    [mask, days_t, days_m] = getStableIdx(patient, dataFEV1, ...
         ivandmeasurestable, n_prior_t, n_post_t, ...
         brDrugTherapy, n_post_m, ...
         p_filter);
@@ -58,22 +94,24 @@ for patient = p_all_patients'
     if sum(mask_patient) >= 1 % at least one datapoint
        
         % define colors
-        cvcol   = [0     1     0   ];
+        cvcol   = [0.94  0.52  0.15];
         admcol  = [0.694 0.627 0.78]; 
         ivcol   = [1     0     0   ];
         oralcol = [1     0.85  0   ];
-        modcol  = [0     1     1   ];
+        trplcol = [0     1     0   ];
+        drugcol = [0     0.8   0.6 ];
         
         % plot patient
         figure('DefaultAxesFontSize',12,'Position', [1 1 2000 300])
-        hold on
-
+        
+        subplot(8,1,1)
+        
         % referenced on patient mean
-        avg = mean(FEVdata(mask_patient, 3)); 
+        avg = mean(dataFEV1(mask_patient, 3)); 
         ylim([-0.8 0.8]); yl=[-0.8 0.8];
         
-        x = FEVdata(mask_patient, 2); % date
-        y = FEVdata(mask_patient, 3); % measurements
+        x = dataFEV1(mask_patient, 2); % date
+        y = dataFEV1(mask_patient, 3); % measurements
 
         % plot raw measures
         plot(datetime(datestr(x+broffset)),y-avg,'.','MarkerEdgeColor','b')
@@ -98,13 +136,13 @@ for patient = p_all_patients'
          for a = 1:size(seq,2)
             temp = datetime(datestr(seq{a}+broffset));
             fill([temp(1) temp(end) temp(end) temp(1)], ...
-                [yl(1) yl(1) yl(2) yl(2)], modcol, 'FaceAlpha', '1', 'EdgeColor', 'none');
+                [yl(1) yl(1) yl(2) yl(2)], trplcol, 'FaceAlpha', '1', 'EdgeColor', 'none');
          end
          
-         hold off
-         
-         saveas(gcf,fullfile(plotfolder,['FEV1Profile_ID' num2str(patient) '.png']))
-         close all
+         %saveas(gcf,fullfile(plotfolder,['FEV1Profile_ID' num2str(patient) '.png']))
+         %close all
         
     end
 end
+
+%function plot
