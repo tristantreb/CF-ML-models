@@ -47,11 +47,11 @@ n_post_t = 15; % days post treatment end
 n_post_m = 15; % days after modulator therapy start
 
 % %% perfect patients (from std segmentation)
-perfect_patients = [501;533;538;603;639;641;603];
-patients_high_dsignal_dnoise = [582, 572, 559, 558, 549, 517];
-patients_high_dnoise = [802, 585, 584,523,520,503];
-patients_missing_trikafta = [835, 812, 803, 598, 525, 523, 517, 516, 501];
-patients_removed = [621 601 578];
+% perfect_patients = [501;533;538;603;639;641;603];
+% patients_high_dsignal_dnoise = [582, 572, 559, 558, 549, 517];
+% patients_high_dnoise = [802, 585, 584,523,520,503];
+% patients_missing_trikafta = [835, 812, 803, 598, 525, 523, 517, 516, 501];
+% patients_removed = [621 601 578];
 % %zeros = [526,553,557,566,574,605,614,628,839,860]; % patients with 0 records after filtering
 
 p_processed_patients = unique(FEVdata(:,1));
@@ -80,7 +80,7 @@ for w = p.window
         % main assumption: no patient have had triple therapy before
         % symkevi
         n_2_smkv_and_trpl = 0;
-        r_all_2_prior_smkv = []; % no symkevi, no triple therapy
+        r_all_2_none = []; % no symkevi, no triple therapy
         r_all_2_smkv = []; % symkevi, no triple therapy
         r_all_2_trpl = []; % triple therapy
         
@@ -149,9 +149,8 @@ for w = p.window
                     rPatientStats.std_residuals_post_tripleT(patient_idx) = nan;
                 else
                     
-                    %%% 1 %%%
-                     
-                    % split residuals prior/post triple therapy start
+                    %%% 1 %%% split residuals prior/post triple therapy start
+
                     % get triple therapy start date where applicable
                     temp_date_smkv = brDrugTherapy.DrugTherapyStartDate(brDrugTherapy.ID == patient & ismember(brDrugTherapy.DrugTherapyType, 'Triple Therapy'));
                     triple_therapy_start = datenum(temp_date_smkv)-broffset; 
@@ -171,7 +170,7 @@ for w = p.window
                             triple_therapy_start = triple_therapy_start(triple_therapy_start>0); % take positive value, e.g. patient 669
                         end
                         
-                        % find residuals prior/post triple therapy start
+                        % segment residuals prior/post triple therapy start
                         % prior
                         temp = residuals(x < triple_therapy_start);
                         temp = temp(~isnan(temp));
@@ -194,10 +193,9 @@ for w = p.window
 %                         rPatientStats.h_p(patient_idx) = p_value; 
                         
 
-                        %%% 2 %%%
+                        %%% 2 %%% segment residuals 1) before symkevi 2)
+                        %%% during symkevi, 3) during triple therapy
 
-                        % find residuals prior symkevi, and between symkevi
-                        % start and triple therapy start
                         temp_date_smkv = brDrugTherapy.DrugTherapyStartDate(brDrugTherapy.ID == patient & ismember(brDrugTherapy.DrugTherapyType, 'Symkevi'));
                         symkevi_start = datenum(temp_date_smkv)-broffset; 
                         clear temp_date_smkv;
@@ -206,10 +204,10 @@ for w = p.window
                             
                             % prior symkevi
                             temp = residuals(x < triple_therapy_start & x < symkevi_start);
-                            r_all_2_prior_smkv = cat(1,r_all_2_prior_smkv, temp(~isnan(temp)));
+                            r_all_2_none = cat(1,r_all_2_none, temp(~isnan(temp)));
                             
                             % during symkevi
-                            % note: if patients have triple therapy before
+                            % note: if patients started triple therapy before
                             % symkevi, we consider the symkevi data as
                             % triple therapy
                             temp = residuals(x < triple_therapy_start & x >= symkevi_start);
@@ -223,20 +221,13 @@ for w = p.window
                     end
                     
                     
-                    %%% 3 %%%
-                    
-                    % split residuals prior/post symkevi
+                    %%% 3 %%% semgent residuals prior/post symkevi start
                     % get symkevi start date where applicable
-                    temp_date_smkv = brDrugTherapy.DrugTherapyStartDate(brDrugTherapy.ID == patient & ismember(brDrugTherapy.DrugTherapyType, 'Symkevi'));
-                    symkevi_start = datenum(temp_date_smkv)-broffset; 
-                    clear temp_date_smkv;
                     
+                    % use same symkevi start as before
                     if ~isempty(symkevi_start)
                         fprintf(', with symkevi');
                         n_3_smkv = n_3_smkv+1;
-                        if length(triple_therapy_start) > 1
-                            fprintf(', more than one triple therapy registered');
-                        end
                         
                         % find residuals prior/post triple therapy start
                         % prior
@@ -512,7 +503,7 @@ fprintf('Variability change after triple therapy start - %i patients started tri
 %saveas(gcf,fullfile(plotfolder,'fevModelBasedAnalysis_variabilityChangeAfterTripleTherapyStart.png'))
 %close all
 
-%% Effect of triple therapy at a study level
+%% 1) Effect of triple therapy at a study level
 
 % most conservative scenario
 % 1. equilibrium of data prior/after (residuals of patient that did not get
@@ -525,8 +516,8 @@ fprintf('Variability change after triple therapy start - %i patients started tri
 % potentially also had an effect, 
 
 % 1. null hypothesis: the two std dev are the same. std_prior^2 - std_post^2 = 0
-s1_1 = std(r_all_1_prior_trpl);
-s2_1 = std(r_all_1_post_trpl);
+s1_prior_trpl = std(r_all_1_prior_trpl);
+s1_post_trpl = std(r_all_1_post_trpl);
 % relative change in s
 % s1s2 = (s1-s2)/s1;
 
@@ -566,15 +557,16 @@ grid('on')
 alpha = 0.05;
 [L_h_rejected_1, L_p_1, L_stat_1, L_critical_1] = levenetest(r_all_1_prior_trpl,r_all_1_post_trpl,alpha);
 
-%% Effect of symkevi and triple therapy at a study level
+%% 2) Effect of symkevi and triple therapy at a study level
 
-s1_2_smkv = std(r_all_2_smkv);
-s2_2_trpl = std(r_all_2_trpl);
+s2_smkv = std(r_all_2_smkv);
+s2_trpl = std(r_all_2_trpl);
+s2_none = std(r_all_2_none);
 
 % data normality
 figure('DefaultAxesFontSize',12,'Position', [1 1 1500 500])
 subplot(1,3,1)
-probplot('normal',r_all_2_prior_smkv)
+probplot('normal',r_all_2_none)
 xlabel('Residuals prior to Symkevi start (L)')
 xticks(-1:0.2:0.5)
 grid('on')
@@ -594,17 +586,17 @@ grid('on')
 % deviation from normality around the 5th and 95th percentiles
 
 % F-tests
-[F_h_rejected_smkv_other, F_p_smkv_other, F_ci_smkv_other, F_stats_smkv_other] = vartest2(r_all_2_prior_smkv,r_all_2_smkv,'Tail','right');
+[F_h_rejected_smkv_none, F_p_smkv_none, F_ci_smkv_none, F_stats_smkv_none] = vartest2(r_all_2_none,r_all_2_smkv,'Tail','right');
 [F_h_rejected_trpl_smkv, F_p_trpl_smkv, F_ci_trpl_smkv, F_stats_trpl_smkv] = vartest2(r_all_2_smkv,r_all_2_trpl,'Tail','right');
-[F_h_rejected_trpl_other, F_p_trpl_other, F_ci_trpl_other, F_stats_trpl_other] = vartest2(r_all_2_prior_smkv,r_all_2_trpl,'Tail','right');
+[F_h_rejected_trpl_none, F_p_trpl_none, F_ci_trpl_none, F_stats_trpl_none] = vartest2(r_all_2_none,r_all_2_trpl,'Tail','right');
 
 % Levene's tests
-alpha = 0.2;
-[L_h_rejected_smkv_other, L_p_smkv_other, L_stat_smkv_other, L_critical_smkv_other] = levenetest(r_all_2_prior_smkv,r_all_2_smkv,alpha);
+alpha = 0.05;
+[L_h_rejected_smkv_none, L_p_smkv_none, L_stat_smkv_none, L_critical_smkv_none] = levenetest(r_all_2_none,r_all_2_smkv,alpha);
 [L_h_rejected_trpl_smkv, L_p_trpl_smkv, L_stat_trpl_smkv, L_critical_trpl_smkv] = levenetest(r_all_2_smkv,r_all_2_trpl,alpha);
-[L_h_rejected_trpl_other, L_p_trpl_other, L_stat_trpl_other, L_critical_trpl_other] = levenetest(r_all_2_prior_smkv,r_all_2_trpl,alpha);
+[L_h_rejected_trpl_none, L_p_trpl_none, L_stat_trpl_none, L_critical_trpl_none] = levenetest(r_all_2_none,r_all_2_trpl,alpha);
 
-%% Effect of symkevi at a study level
+%% 3) Effect of symkevi at a study level
 
 % as we cannot reject the homoscedasticity hypotheses on the effects of the
 % 1. transition from nothing (or Ivacaftor, or Okrambi) to Symkevi
@@ -614,8 +606,8 @@ alpha = 0.2;
 % hence we have a look at Symkevi only and Symkevi & Triple Therapy
 % patients
 
-s1_3 = std(r_all_3_prior_smkv);
-s2_3 = std(r_all_3_post_smkv);
+s3_prior_smkv = std(r_all_3_prior_smkv);
+s3_post_smkv = std(r_all_3_post_smkv);
 
 % data normality
 figure('DefaultAxesFontSize',12,'Position', [1 1 1000 500])
@@ -633,7 +625,7 @@ grid('on')
 [F_h_rejected_3, F_p_3, F_ci_3, F_stats_3] = vartest2(r_all_3_prior_smkv,r_all_3_post_smkv,'Tail','right');
 
 % Levene test
-alpha = 0.2;
+alpha = 0.05;
 [L_h_rejected_3, L_p_3, L_stat_3, L_critical_3] = levenetest(r_all_3_prior_smkv,r_all_3_post_smkv,alpha);
 
 %% function
@@ -688,14 +680,17 @@ function [h, p, W, F] = levenetest(x1,x2,alpha)
     F = finv(1-alpha,k-1,N-k);
     
     % rejection
-    h = W > F;
+    h = W >= F;
     
     if h == 1 % find and approximation of the p-value
-        while W > finv(1-alpha,k-1,N-k);
+        while W >= finv(1-alpha,k-1,N-k);
             alpha = alpha/1.001;
         end
         p = alpha*1.001;
     else
-        p = alpha;
+         while W < finv(1-alpha,k-1,N-k);
+            alpha = alpha*1.001;
+         end
+        p = alpha/1.001;
     end
 end
