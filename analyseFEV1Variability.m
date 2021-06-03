@@ -503,6 +503,14 @@ fprintf('Variability change after triple therapy start - %i patients started tri
 %saveas(gcf,fullfile(plotfolder,'fevModelBasedAnalysis_variabilityChangeAfterTripleTherapyStart.png'))
 %close all
 
+%% 1) Effect of triple therapy at a study level - QQ plot
+
+x = r_all_residuals;
+distname = 'tLocationScale';% best fit - 'tLocationScale';% 'Rayleigh'; % 'GeneralizedPareto';%'GeneralizedExtremeValue'; % 'ExtremeValue'
+% 'Kernel' takes ages
+pd = fitdist(x,distname)
+qqplot(x, pd)
+
 %% 1) Effect of triple therapy at a study level
 
 % most conservative scenario
