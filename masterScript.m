@@ -22,7 +22,7 @@
 % run the following line, 'mfiles' should note be set to "./", else it
 
 % raises a display issue
-m2html('mfiles','Code/','htmldir','Documentation','recursive','on', 'global','on');
+m2html('mfiles','Code/','htmldir','Documentation','recursive','on', 'global','on','todo','on');
 
 % MASTER FILE TO RUN AN ALIGNMENT MODEL
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
