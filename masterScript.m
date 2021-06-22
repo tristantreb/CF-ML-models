@@ -18,11 +18,11 @@
 % CREATE DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%
 % Add m2html to path
-%addpath /Users/tristan.trebaol/Documents/PDM/Project/m2html/
-% run the following line, 'mfiles' should note be set to "./", else it
 
+% run the following line, 'mfiles' should note be set to "./", else it
 % raises a display issue
-m2html('mfiles','Code/','htmldir','Documentation','recursive','on', 'global','on','todo','on');
+% addpath /Users/tristan.trebaol/Documents/PDM/Project/m2html/
+% m2html('mfiles','Code/','htmldir','Documentation','recursive','on', 'global','on','todo','on');
 
 % MASTER FILE TO RUN AN ALIGNMENT MODEL
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -3,12 +3,12 @@ function createIntrNormDataCube(amRunParameters)
 % 
 % Input:
 % ------
-% amRunParameters                 parameter file
-% *alignmentmodelinputs_gap*.mat  modelinputsmatfile
-% *datademographicsbypatient.mat  datademographicsfile
-% *dataoutliers.mat               dataoutliersfile
-% *electivetreatments_gap10.xlsx  electivefile (manually generated)
-% 
+% amRunParameters                           parameter file
+% *salignmentmodelinputs_recovery_gap*.mat  modelinputsmatfile
+% *datademographicsbypatient.mat            datademographicsfile
+% *dataoutliers_recovery.mat                dataoutliersfile
+% *electivetreatments_gap10.xlsx            electivefile (manually generated)
+%  
 % Output:
 % -------
 % intrnormdatacube_recovery.mat
