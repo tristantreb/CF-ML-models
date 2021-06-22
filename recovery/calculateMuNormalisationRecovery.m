@@ -7,6 +7,8 @@ function [normmean] = calculateMuNormalisationRecovery(amDatacube, amInterventio
 invmeasarray = getInvertedMeasures(study);
 exnormmeas   = getExNormMeasures(study);
 
+apewindow = 25; 
+
 normmean = zeros(ninterventions, nmeasures);
 for i = 1:ninterventions
     if mumethod == 1
@@ -19,25 +21,27 @@ for i = 1:ninterventions
     scid   = amInterventions.SmartCareID(i);
     start = amInterventions.IVScaledDateNum(i);
 
-%     if (start - align_wind - meanwindow) <= 0
-%         meanwindow = start - align_wind - 1;
-%     end
-%     if meanwindow < 1
-%         meanwindow = 1;
-%     end
+    % case 1: no data 25 days before treatment
+    % decision: take patient interquartile mean
+    if (start - apewindow - meanwindow) <= 0
+        meanwindow = start - apewindow - 1; apewindow = 0;
+    end
+    if meanwindow < 1
+        meanwindow = 1; apewindow = 0;
+        fprintf('meanwindow = 1\n')
+    end
     for m = 1:nmeasures
         if ~ismember(measures.DisplayName(m), exnormmeas)
             % this code block is for measures that should be normalised
-            % TODO % what is meanwindowdata?
-            meanwindowdata = amDatacube(scid, (start + align_wind): (start + align_wind + meanwindow - 1), m);
+            meanwindowdata = amDatacube(scid, (start - apewindow - meanwindow): (start - apewindow - 1), m);
             % remove data outliers for mumethod 4 or 5
             if mumethod == 4 || mumethod == 5
                 tmpdataoutliers = dataoutliers(dataoutliers.NStdDevOutlier==5 & dataoutliers.SmartCareID == scid & dataoutliers.MeasureID == m,:);
                 ndel = 0;
                 for d = 1:size(tmpdataoutliers,1)
-                    if (start - align_wind - meanwindow) <= tmpdataoutliers.Day(d) && (start - 1 - align_wind) >= tmpdataoutliers.Day(d)
+                    if (start - meanwindow) <= tmpdataoutliers.Day(d) && (start - 1) >= tmpdataoutliers.Day(d)
                         fprintf('For Invervention %d, excluding Data outlier (ID %d, Measure %d, Day %d) from meanwindow\n', i, scid, m, tmpdataoutliers.Day(d));
-                        meanwindowdata(tmpdataoutliers.Day(d) - (start - align_wind - meanwindow) + 1 - ndel) = [];
+                        meanwindowdata(tmpdataoutliers.Day(d) - (start - meanwindow) + 1 - ndel) = [];
                         ndel = ndel + 1;
                     end
                 end
@@ -58,8 +62,12 @@ for i = 1:ninterventions
                     normmean(i, m) = mean(meanwindowdata(percentile75:end));
                 else
                     % exclude bottom quartile from mean methods (3, 4, 5)
-                    percentile25 = round(size(meanwindowdata,2) * .25) + 1;
-                    normmean(i, m) = mean(meanwindowdata(percentile25:end));
+%                     percentile25 = round(size(meanwindowdata,2) * .25) + 1;
+%                     normmean(i, m) = mean(meanwindowdata(percentile25:end));
+                   percentile10 = round(size(meanwindowdata,2) * .1) + 1;
+                   percentile90 = round(size(meanwindowdata,2) * .9);
+                   normmean(i, m) = mean(meanwindowdata(percentile10:percentile90));
+                   fprintf('Came here\n');
                 end
                 % for mumethod 5, if the interventions is sequential, take the
                 % max of mean calculated above and the overall upper 50% mean
