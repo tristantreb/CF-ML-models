@@ -62,12 +62,9 @@ for i = 1:ninterventions
                     normmean(i, m) = mean(meanwindowdata(percentile75:end));
                 else
                     % exclude bottom quartile from mean methods (3, 4, 5)
-%                     percentile25 = round(size(meanwindowdata,2) * .25) + 1;
-%                     normmean(i, m) = mean(meanwindowdata(percentile25:end));
-                   percentile10 = round(size(meanwindowdata,2) * .1) + 1;
-                   percentile90 = round(size(meanwindowdata,2) * .9);
-                   normmean(i, m) = mean(meanwindowdata(percentile10:percentile90));
-                   fprintf('Came here\n');
+                    percentile25 = round(size(meanwindowdata,2) * .25) + 1;
+                    normmean(i, m) = mean(meanwindowdata(percentile25:end));
+                    fprintf('Exclude bottom quartile\n');
                 end
                 % for mumethod 5, if the interventions is sequential, take the
                 % max of mean calculated above and the overall upper 50% mean
@@ -127,6 +124,12 @@ for i = 1:ninterventions
         end
     end
 end
+basedir = setBaseDir();
+subfolder = 'MatlabSavedVariables';
+outputfilename = sprintf('%smuNorm.mat', study);
+fprintf('Saving Mean for Mu Normalisation to file %s\n', outputfilename);
+fprintf('\n');
+save(fullfile(basedir, subfolder, outputfilename), 'normmean');
 
 end
 

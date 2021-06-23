@@ -87,7 +87,6 @@ normstd = calculateSigmaNormalisation(amInterventions, measures, demographicstab
 
 % calculate additive normalisation (mu) based on methodology
 % and then create normalised data cube.
-% TODO % what happens here?
 normmean = calculateMuNormalisationRecovery(amDatacube, amInterventions, measures, demographicstable, ...
     dataoutliers, align_wind, ninterventions, nmeasures, mumethod, study);
 
