@@ -7,6 +7,7 @@
 % ------
 % clinical and measurements data
 % BRalignmentmodelinputs_recovery_gap*.mat
+% BRmuNorm.mat          mu normalisation for mean window
 %
 % Output:
 % -------
@@ -15,9 +16,12 @@
 init;
 
 modelinputfile = 'BRalignmentmodelinputs_recovery_gap10.mat';
+munormfile = 'BRmuNorm.mat';
 
 % load amInterventions, amDatacube, measures and count info
 load(fullfile(basedir, subfolder, modelinputfile));
+% load normmean
+load(fullfile(basedir, subfolder, munormfile));
 
 % load measures
 [datamatfile, ~, ~] = getRawDataFilenamesForStudy(study);
@@ -44,14 +48,11 @@ subplot(2,1,2)
 barInterventions(ivandmeasurestable.IVDateNum,ivandmeasurestable.IVStopDateNum,...
     sprintf('The %i interventions grouped by duration (all interventions included)',size(ivandmeasurestable,1)))
 
-%% parameters
+%% plot
+% parameters
 days_prior = 35; % include mu normalisation window [-35, -25] days
 days_post = 39; % treatment generally durate 2 weeks, includes day 0
 
-%% plot 
-
-% TODO % add meanwindow
-% TODO % add mean computed
 % TODO % add which Drug Therapy has been started, and if within range, plot it
 
 % note amInterventions date 0 is study start date, i.e. broffset (not patient start date)
@@ -90,6 +91,7 @@ for i = 1:ninterventions
             [yl(1) yl(1) yl(2) yl(2)], getRouteColor(amInterventions.Route{i}), 'FaceAlpha', '0.1', 'EdgeColor', 'none');
         fill([-35 -25 -25 -35], ...
             [yl(1) yl(1) yl(2) yl(2)], 'k', 'FaceAlpha', '0.04', 'EdgeColor', 'none');
+        yline(normmean(i,m))
         hold off
 
         xlim([-days_prior days_post+1])
@@ -101,6 +103,7 @@ for i = 1:ninterventions
             set(gca, 'YDir','reverse')
         end
     end
+    legend('Values',[amInterventions.Route{i} ' treatment'],'Meanwindow','Normmean')
     % write title
     sgtitle(sprintf('Intervention %i, patient %i', i, id))
     saveas(gcf,fullfile(plotfolder,sprintf('Intervention%i_ID%i.png', i, id)))
