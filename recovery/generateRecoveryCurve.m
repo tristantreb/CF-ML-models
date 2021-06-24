@@ -13,15 +13,14 @@ filename = sprintf('%sintrnormdatacube_recovery.mat', study);
 fprintf('Loading alignment model Inputs data %s\n', filename);
 load(fullfile(basedir, subfolder, filename));
 
-%% high level 
-
-fprintf('amIntreNormcube contains %i values, %i NaN, %i zeros\n',numel(amIntrNormcube), sum(sum(sum(isnan(amIntrNormcube)))), sum(sum(sum(amIntrNormcube == 0))))
-
 %% 
+
+% size, #Nan, #0
+fprintf('amIntreNormcube contains %i values, %i NaN, %i zeros\n',numel(amIntrNormcube), sum(sum(sum(isnan(amIntrNormcube)))), sum(sum(sum(amIntrNormcube == 0))))
 
 % TODO % issue with code from Damian, last day of align_wind is not normalised
 
-% derive high level parameters
+% align_wind
 align_wind = size(amIntrNormcube,2)-1;% TODO % remove - 1
 
 % initialise outputs
@@ -29,11 +28,7 @@ z = zeros(align_wind,length(measures.Index));
 s = z;
 n = z;
 
-% do for one measure
-m = 1; % calories
-
-%% 
-
+% calculate z, s, n
 for m = measures.Index
     % get z, s for each point of the latent profile
     for d = 1:align_wind
@@ -44,22 +39,42 @@ for m = measures.Index
     end
 end
 
-%% plot
+%% plot #measures latent curves
 
 figure('DefaultAxesFontSize',12,'Position', [1 1 2000 1000])
 
-t = tiledlayout(4,4);
+tiledlayout(4,4);
 meas = 1:17; meas(5)=[];
 
-for m = meas %[1, 2, 6, 8, 12, 14, 16, 17]
+for m = meas
     ax = nexttile;
     plotresults(ax,0:align_wind-1,z(:,m),s(:,m),n(:,m),measures.DisplayName{m},amIntrNormcube);
 end
 
 saveas(gcf,fullfile(plotfolder,'UnalignedModel_munorm_before_ape.png'))
 
-function plotresults(ax,x,z,s,n,m_name,data)
+%% violently superpose all interventions curves for selected measure 
+% not conclusive
 
+figure('DefaultAxesFontSize',12,'Position', [1 1 2000 1000])
+tiledlayout(4,2);
+meas = 1:17; meas(5)=[];
+for m = [14, 17, 6, 2, 3, 12, 16, 8] %meas
+    nexttile;
+    hold on
+    for i = 1:size(amIntrNormcube,1)
+        plot(1:align_wind,smooth(amIntrNormcube(i,1:end-1,m),3))
+    end
+    ylabel(sprintf('%s Normalised',measures.DisplayName{m}))
+    hold off
+end
+sgtitle(sprintf('Violently superpose all %i interventions curves',size(amIntrNormcube,1)))
+saveas(gcf,fullfile(plotfolder,'All_timeseries_superposition.png'))
+
+%% functions
+
+function plotresults(ax,x,z,s,n,m_name,data)
+% plot latent curve for one measure
 yyaxis(ax,'left')
 plot(x,z,'.b',x,z-s,'.b',x,z+s,'.b')
 hold on
