@@ -7,6 +7,9 @@ subfolder = 'MatlabSavedVariables';
 study = 'BR';
 plotfolder = '/Users/tristan.trebaol/Documents/PDM/Project/PlotsRecovery/';
 
+chosentreatgap = 10;
+data_window = 40;
+
 % colors
 cvcol   = [0.94  0.52  0.15];
 admcol  = [0.694 0.627 0.78]; 

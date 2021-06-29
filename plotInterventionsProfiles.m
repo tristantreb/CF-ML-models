@@ -38,14 +38,16 @@ brDrugTherapy.DateNum = datenum(brDrugTherapy.DrugTherapyStartDate) - broffset;
 
 figure('DefaultAxesFontSize',12,'Position', [1 1 1500 600])
 subplot(2,1,1)
-barInterventions(amInterventions.IVDateNum,amInterventions.IVStopDateNum,...
+barHistogram(amInterventions.IVStopDateNum-amInterventions.IVDateNum,...
+    'Intervention duration (days)',...
     sprintf('The %i interventions grouped by duration (post data completeness filter)',size(amInterventions,1)))
 
 % bonus: same plot for all interventions
 %load(fullfile(basedir, subfolder, 'BRivandmeasures_recovery_gap10.mat')); % note BRivandmeasures_gap*.mat also works
 
 subplot(2,1,2)
-barInterventions(ivandmeasurestable.IVDateNum,ivandmeasurestable.IVStopDateNum,...
+barHistogram(ivandmeasurestable.IVStopDateNum-ivandmeasurestable.IVDateNum,...
+    'Intervention duration (days)',...
     sprintf('The %i interventions grouped by duration (all interventions included)',size(ivandmeasurestable,1)))
 
 %% plot
@@ -57,7 +59,7 @@ days_post = 39; % treatment generally durate 2 weeks, includes day 0
 
 % note amInterventions date 0 is study start date, i.e. broffset (not patient start date)
 
-for i = 1:ninterventions
+for i = 20%:ninterventions
     figure('DefaultAxesFontSize',12,'Position', [1 1 1500 600])
     t = tiledlayout(4,2);
     
@@ -66,7 +68,7 @@ for i = 1:ninterventions
     stop = amInterventions.IVStopDateNum(i);
     range = start - days_prior : start + days_post;
         
-    for m = [14, 17, 6, 2, 3, 12, 16, 8]
+    for m = 6%[14, 17, 6, 2, 3, 12, 16, 8]
         nexttile;
         
         % get raw data
@@ -86,6 +88,12 @@ for i = 1:ninterventions
             'MarkerEdgeColor','b',...
             'MarkerFaceColor','g');
         hold on
+        plot(data.DateNum-start, smooth(y,5),...
+            'Color', [0, 0.65, 1], ...
+            'LineStyle', '-',...
+            'LineWidth',1);
+        %plot(data.DateNum-start, fillmissing(y,'movmean',10),'ro');
+
         yl = ylim;
         fill([0 stop-start stop-start 0], ...
             [yl(1) yl(1) yl(2) yl(2)], getRouteColor(amInterventions.Route{i}), 'FaceAlpha', '0.1', 'EdgeColor', 'none');
@@ -105,27 +113,12 @@ for i = 1:ninterventions
     end
     legend('Values',[amInterventions.Route{i} ' treatment'],'Meanwindow','Normmean')
     % write title
-    sgtitle(sprintf('Intervention %i, patient %i', i, id))
+    sgtitle(sprintf('Intervention %i, patient %i, data window %i', i, id, data_window))
     saveas(gcf,fullfile(plotfolder,sprintf('Intervention%i_ID%i.png', i, id)))
-    close all;
+    %close all;
 end
 
 %% functions
-function barInterventions(start, stop, plottitle)
-% bar plot with interventions grouped by duration
-% Input: start and stop define the span of each intervention
-% Output: bar plot
-
-Intr = table(stop - start,'VariableNames',{'Duration'});
-Intr = groupcounts(Intr, 'Duration');
-bar(Intr.Duration, Intr.GroupCount)
-grid('on')
-title(plottitle)
-xlabel('Intervention duration (days)')
-ylabel('Frequency')
-xticks(min(Intr.Duration):max(Intr.Duration))
-yticks(0:10:max(Intr.GroupCount)+10)
-end
 
 function out = getRouteColor(route)
 % assign the color for the corresponding route
