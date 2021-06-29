@@ -59,7 +59,7 @@ days_post = 39; % treatment generally durate 2 weeks, includes day 0
 
 % note amInterventions date 0 is study start date, i.e. broffset (not patient start date)
 
-for i = 20%:ninterventions
+for i = 1:ninterventions
     figure('DefaultAxesFontSize',12,'Position', [1 1 1500 600])
     t = tiledlayout(4,2);
     
