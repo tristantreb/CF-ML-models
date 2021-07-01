@@ -118,7 +118,6 @@ h.YLabel = 'Intervention';
 h.CellLabelColor = 'none';
 h.GridVisible = 'off';
 
-save results
 filename = sprintf('%s-HeatmapInterventions', study);
 subfolder = sprintf('Plots/%s', study);
 if ~exist(strcat(basedir, plotfolder), 'dir')
