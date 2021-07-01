@@ -1,4 +1,4 @@
-function [interventions] = createListOfInterventionsRecovery(ivandmeasurestable, physdata, offset)
+function [interventions] = createListOfInterventionsRecovery(ivandmeasurestable, physdata, offset, data_window)
 
 % creates the list of distinct Antiobiotic treatments in a structure to be used by the alignment model
 % 
@@ -23,10 +23,10 @@ maxmeasdate = max(physdata.ScaledDateNum);
 %    {'SmartCareID', 'Hospital', 'IVStartDate', 'IVDateNum', 'IVStopDate', 'IVStopDateNum', 'Route', 'Type', 'SequentialIntervention', 'DaysWithMeasures', 'AvgMeasuresPerDay'});
 
 % now we are looking more precisely at only the select measures we use for
-% the data window (20 days), we can use total measures >= 50 - which really
+% the data window (see value below days), we can use total measures >= 50 - which really
 % means on average 2 measurements per day (and 2 come from fitbit
 % automatically - so still very generous on data completeness
-interventions = ivandmeasurestable(ivandmeasurestable.TotalMeasures >= 40, ...
+interventions = ivandmeasurestable(ivandmeasurestable.TotalMeasures >= data_window*2, ...
     {'SmartCareID', 'Hospital', 'IVStartDate', 'IVDateNum', 'IVStopDate', 'IVStopDateNum', 'Route', 'Type', 'SequentialIntervention', 'DaysWithMeasures', 'AvgMeasuresPerDay'});
 
 
