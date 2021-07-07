@@ -1,8 +1,13 @@
 function [normmean] = calculateMuNormalisationRecovery(amDatacube, amInterventions, measures, demographicstable, ...
     dataoutliers, align_wind, ninterventions, nmeasures, mumethod, study)
 
-% calculateMuNormalisation - - populates an array of ninterventions by
-% nmeasures with the additive normalisation (mu) values
+% populates an array of ninterventions by nmeasures with the additive 
+% normalisation (mu) values
+% 
+% Output:
+% -------
+% normmean            vector with choosen reference mean for each intervention 
+% *muNorm.mat         normmean exported
 
 invmeasarray = getInvertedMeasures(study);
 exnormmeas   = getExNormMeasures(study);
