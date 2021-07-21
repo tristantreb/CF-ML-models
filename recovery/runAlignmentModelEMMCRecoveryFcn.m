@@ -211,21 +211,22 @@ temp_max_points = zeros(nlatentcurves, 1);
 temp_ex_start   = zeros(1, nlatentcurves);
 
 % plot and save aligned curves (pre and post)
-amEMMCPlotAndSaveAlignedCurves(unaligned_profile, meancurvemean, meancurvecount, meancurvestd, ...
+amEMMCPlotAndSaveAlignedCurvesRecovery(unaligned_profile, meancurvemean, meancurvecount, meancurvestd, ...
     amInterventions.Offset, amInterventions.LatentCurve, ...
     measures, temp_max_points, min_offset, max_offset, align_wind, nmeasures, run_type, temp_ex_start, sigmamethod, plotname, 'Plots', nlatentcurves);
 
 toc
 fprintf('\n');
 
-%if ismember(study, {'SC', 'CL', 'BR'})
-if ismember(study, {'SC', 'CL'})
-    ex_start = amEMMCCalcExStartsFromTestLabels(amLabelledInterventions(intrkeepidx, :), amInterventions, ...
-                overall_pdoffset, max_offset, 'Plots', plotname, ninterventions, nlatentcurves);
-else
-   ex_start = input('Look at best start and enter exacerbation start: ');
-   fprintf('\n'); 
-end
+% if ismember(study, {'SC', 'CL', 'BR'})
+% if ismember(study, {'SC', 'CL'})
+%     ex_start = amEMMCCalcExStartsFromTestLabels(amLabelledInterventions(intrkeepidx, :), amInterventions, ...
+%                 overall_pdoffset, max_offset, 'Plots', plotname, ninterventions, nlatentcurves);
+% else
+%    ex_start = input('Look at best start and enter exacerbation start: ');
+%    fprintf('\n'); 
+% end
+ex_start=zeros(nlatentcurves,1);
 
 tic
 run_type = 'Best Alignment';
@@ -238,11 +239,11 @@ mkdir(strcat(basedir, plotsubfolder));
 [amInterventions] = amEMMCCalcConfidenceBounds(overall_pdoffset, amInterventions, min_offset, max_offset, ninterventions, confidencethreshold, confidencemode);
 [amInterventions] = amEMMCCalcAbsPredAndBounds(amInterventions, ex_start, nlatentcurves);
 
-[sorted_interventions, max_points] = amEMMCVisualiseAlignmentDetail(amIntrNormcube, amHeldBackcube, amInterventions, meancurvemean, ...
+[sorted_interventions, max_points] = amEMMCVisualiseAlignmentDetailRecovery(amIntrNormcube, amHeldBackcube, amInterventions, meancurvemean, ...
     meancurvecount, meancurvestd, overall_pdoffset, measures, min_offset, max_offset, align_wind, nmeasures, ninterventions, ...
     run_type, ex_start, curveaveragingmethod, plotname, plotsubfolder, nlatentcurves);
 
-amEMMCPlotAndSaveAlignedCurves(unaligned_profile, meancurvemean, meancurvecount, meancurvestd, ...
+amEMMCPlotAndSaveAlignedCurvesRecovery(unaligned_profile, meancurvemean, meancurvecount, meancurvestd, ...
     amInterventions.Offset, amInterventions.LatentCurve, ...
     measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder, nlatentcurves);
 
