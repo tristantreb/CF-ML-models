@@ -10,8 +10,8 @@ for i = 1:ninterventions
     scid   = amInterventions.SmartCareID(i);
     start = amInterventions.IVScaledDateNum(i);
     
-    icperiodend = align_wind + max_offset;% - 1; goes from 1 to 20
-    dcperiodend = start + align_wind + max_offset - 1; % goes from start to start + 19
+    icperiodend = align_wind + (max_offset - 1); % max_offset of 1 means curve cannot be shifted
+    dcperiodend = start + align_wind + (max_offset - 1) - 1; % -1 to have the same amount of days
     
     if curveaveragingmethod == 1
         fprintf('*** WARNING *** curveaveragingmethod 1 not implemented');
