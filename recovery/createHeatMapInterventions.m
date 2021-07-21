@@ -6,13 +6,14 @@ init;
 load(fullfile(basedir, subfolder, 'breatheclinicaldata.mat'),'brPatient');
 cdPatient=brPatient; clear brPatient;
 
-modelinputfile = 'BRalignmentmodelinputs_recovery_gap10.mat';
+modelinputfile = 'BRalignmentmodelinputs_recovery_gap10_datawind_20.mat';
 % load amInterventions, amDatacube, measures and count info
 load(fullfile(basedir, subfolder, modelinputfile));
 
 temp = hsv(64);
 brightness = 0.9;
 
+%% 
 if ismember(study, {'SC', 'TM'})
     colors(1,:)  = temp(4,:);
     colors(2,:)  = temp(6,:);
@@ -45,36 +46,36 @@ elseif ismember(study, {'CL'})
     nmeasures = 15;
 elseif ismember(study, {'BR'})
     colors(1,:)  = temp(4,:);
-    colors(2,:)  = temp(5,:);
-    colors(3,:)  = temp(6,:);
-    colors(4,:)  = temp(7,:);
-    colors(5,:)  = temp(8,:);
-    colors(6,:)  = temp(9,:);
-    colors(7,:)  = temp(10,:);
-    colors(8,:)  = temp(11,:);
-    colors(9,:)  = temp(12,:);
-    colors(10,:)  = temp(13,:);
-    colors(11,:)  = temp(14,:);
-    colors(12,:)  = temp(15,:);
-    colors(13,:)  = temp(16,:);
-    colors(14,:)  = temp(17,:);
-    colors(15,:)  = temp(18,:);
-    colors(16,:)  = temp(19,:);
-    colors(17,:)  = temp(20,:);
-    colors(18,:)  = temp(21,:);
-    colors(19,:)  = [1 0 1];
-    nmeasures = 18;
+    colors(2,:)  = temp(6,:);
+    colors(3,:)  = temp(7,:);
+    colors(4,:)  = temp(8,:);
+    colors(5,:)  = temp(9,:);
+    colors(6,:)  = temp(10,:);
+    colors(7,:)  = temp(11,:);
+    colors(8,:)  = temp(12,:);
+    colors(9,:)  = temp(13,:);
+    colors(10,:)  = temp(14,:);
+    colors(11,:)  = temp(15,:);
+    colors(12,:)  = temp(16,:);
+    colors(13,:)  = temp(17,:);
+    colors(14,:)  = temp(18,:);
+    colors(15,:)  = temp(20,:);
+    colors(16,:)  = temp(21,:);
+    colors(17,:)  = temp(22,:);
+    colors(18,:)  = [1 0 1]; % purple for treatment end
+    colors(19,:)  = temp(32,:); % blue for treatment start
+    nmeasures = 19;
 else
     fprintf('**** Unknown Study ****');
     return;
 end
 
-colors(1:end - 1, :) = colors(1:end - 1,:) .* brightness;
+colors(1:end , :) = colors(1:end,:) .* brightness;
 
 % % get the date scaling offset for each patient
 % patientoffsets = getPatientOffsets(physdata);
 
-%%
+%% 
 days_prior = 35;
 days_post = 39;
 intrwindow = days_prior+days_post+1;
@@ -106,13 +107,29 @@ pdcountmtable = varfun(@max, physdata(:, {'SmartCareID','DateNum'}), 'GroupingVa
 
 intrrangetable = outerjoin(intrrangetable,pdcountmtable,'Type', 'Left','Leftkeys',{'ID' 'Date'},'RightKeys',{'SmartCareID' 'DateNum'});
 
+% if stop date belongs to data range, change color
+% ncqnnot vectorize as many dates can be spotted for one intervention
+for i = 1:size(intrrangetable,1)
+    % ID and date equality
+    if sum(ismember(amInterventions.SmartCareID,intrrangetable.ID(i)) ...
+            & ismember(amInterventions.IVStopDateNum,intrrangetable.Date(i)))
+        
+        intrrangetable.GroupCount(i) = 18;
+    elseif sum(ismember(amInterventions.SmartCareID,intrrangetable.ID(i)) ...
+            & ismember(amInterventions.IVDateNum,intrrangetable.Date(i)))
+        
+        intrrangetable.GroupCount(i) = 19;
+    end
+end
+
 % create the heatmap
 title = sprintf('%s-Heatmap of Measures per Intervention', study);
 
-[f, p] = createFigureAndPanel(title, 'portrait', 'a4');
+f = figure('Name', title,'Position', [1 1 2000 1000]);
+p = uipanel('Parent',f,'BorderType','none', 'BackgroundColor', 'white');
 h = heatmap(p, intrrangetable, 'IntrDate', 'Label', 'Colormap', colors, 'MissingDataColor', 'black', ...
     'ColorVariable','GroupCount','ColorMethod','max', 'MissingDataLabel', 'No data');
-h.Title = ' ';
+h.Title = sprintf('Heatmap of measures for the %i interventions. Legend: cyan = start date, pink = stop date',ninterventions);
 h.XLabel = 'Days';
 h.YLabel = 'Intervention';
 h.CellLabelColor = 'none';
@@ -123,5 +140,6 @@ subfolder = sprintf('Plots/%s', study);
 if ~exist(strcat(basedir, plotfolder), 'dir')
     mkdir(strcat(basedir, plotfolder));
 end
+set(gca,'FontSize',6);
 saveas(gcf,fullfile(plotfolder,[filename '.png']))
 close(f);
