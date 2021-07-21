@@ -23,8 +23,8 @@ for m = 1:nmeasures
         measures(m, :), max_points, min_offset, max_offset, align_wind, run_type, ex_start, sigmamethod, anchor, subplottitle); 
 end
 
-% ax = subplot(plotsdown, plotsacross, nmeasures + 1, 'Parent', p);
-% amEMPlotOffsetHistogram(ax, offsets, max_offset);
+ax = subplot(plotsdown, plotsacross, nmeasures + 1, 'Parent', p);
+amEMPlotOffsetHistogramRecovery(ax, offsets, max_offset);
 
 % save plot
 savePlotInDir(f, plottitle, plotsubfolder);
