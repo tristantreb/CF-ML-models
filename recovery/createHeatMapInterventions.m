@@ -59,11 +59,11 @@ elseif ismember(study, {'BR'})
     colors(12,:)  = temp(16,:);
     colors(13,:)  = temp(17,:);
     colors(14,:)  = temp(18,:);
-    colors(15,:)  = temp(20,:);
-    colors(16,:)  = temp(21,:);
-    colors(17,:)  = temp(22,:);
-    colors(18,:)  = [1 0 1]; % purple for treatment end
-    colors(19,:)  = temp(32,:); % blue for treatment start
+    colors(15,:)  = temp(19,:);
+    colors(16,:)  = temp(22,:);
+    colors(17,:)  = temp(25,:);
+    colors(18,:)  = [1 0 1]; % pink for treatment end
+    colors(19,:)  = temp(32,:); % cyan for treatment start
     nmeasures = 19;
 else
     fprintf('**** Unknown Study ****');
@@ -134,6 +134,7 @@ h.XLabel = 'Days';
 h.YLabel = 'Intervention';
 h.CellLabelColor = 'none';
 h.GridVisible = 'off';
+h.ColorLimits = [0 19];
 
 filename = sprintf('%s-HeatmapInterventions', study);
 subfolder = sprintf('Plots/%s', study);
@@ -143,3 +144,6 @@ end
 set(gca,'FontSize',6);
 saveas(gcf,fullfile(plotfolder,[filename '.png']))
 close(f);
+
+%% plot only the measures used in model
+
