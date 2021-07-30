@@ -118,7 +118,8 @@ elseif measuresmask == 21
     measures.Mask(idx) = 1;
 elseif measuresmask == 22
     % project breathe
-    idx = ismember(measures.DisplayName, {'RestingHR'});
+    idx = ismember(measures.DisplayName, {'Cough', 'FEV1', 'MinsAsleep', 'O2Saturation', ...
+        'PulseRate', 'Temperature', 'Wellness'});
     measures.Mask(idx) = 1;
 elseif measuresmask == 23
     % project breathe
