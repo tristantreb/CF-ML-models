@@ -58,7 +58,7 @@ toc
 tic
 basedir = setBaseDir();
 subfolder = 'MatlabSavedVariables';
-outputfilename = sprintf('%salignmentmodelinputs_recovery_gap%d_datawind_%d.mat', study, treatgap, data_windowgit );
+outputfilename = sprintf('%salignmentmodelinputs_recovery_gap%d_datawind_%d.mat', study, treatgap, data_window );
 fprintf('Saving output variables to file %s\n', outputfilename);
 save(fullfile(basedir, subfolder,outputfilename), 'amInterventions','amDatacube', 'measures', 'npatients','ndays', 'nmeasures', 'ninterventions');
 toc

@@ -27,24 +27,30 @@
 % MASTER FILE TO RUN AN RECOVERY MODEL
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/
+init;
 % check source code root directory -> setBaseDir
 
 % CLINICAL, ID and StudyNumber (gmail)
-% check dates input -> getLatestBreatheDatesForHosp
+% now automaticaly loads most recent file
 % check folder MatlabSavedVariables exists
-%loadbreatheclinicaldatanew;
+%loadbreatheclinicalREDCapdata;
 
 % MAGIC BULLET, guid (Globally Unique Identifier)
 % loads raw data 
 %breatheAzureAccess;
 
 %check date input -> getLatestBreatheMeasDate
-%loadbreathedata; %datademographics
+%loadbreathemeasurementdata; %datademographics
 
 % creates treatment lists - merge concurrent treatments
 %checkBreatheTreatmentsVsSelectMeasuresPost;
 %gap in treatments
+
+% confront clinical vs home measures
+% weight
+%checkBreatheClinicalVsHomeWeightMeasures;
+% fev1
+%checkBreatheClinicalVsHomeFEV1Measures;
 
 %createAlignmentModelInputsRecovery;
 % study number
@@ -57,4 +63,4 @@ addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/
 % missing files
 % BR_LabelledInterventions_gap10consensus.mat - given
 % BRelectivetreatments_gap10.xlsx - given
-runAlignmentModelEMMCScriptRecovery;
+%runAlignmentModelEMMCScriptRecovery;

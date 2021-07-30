@@ -12,12 +12,11 @@
 % -------
 % *dataoutliers.mat     MAT-file storing data outliers
 
-clear; close all; clc;
+init;
 
 [studynbr, study, studyfullname] = selectStudy();
-treatgap = selectTreatmentGap();
 
-modelinputsmatfile = sprintf('%salignmentmodelinputs_recovery_gap%d.mat', study, treatgap);
+modelinputsmatfile = sprintf('%salignmentmodelinputs_recovery_gap%d_datawind_%i.mat', study, chosentreatgap, data_window);
 datademographicsfile = sprintf('%sdatademographicsbypatient.mat', study);
 fprintf('\n');
 
