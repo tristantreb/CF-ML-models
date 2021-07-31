@@ -1,10 +1,13 @@
 function barHistogram(data, plottitle, xtitle)
 % bar plot with interventions grouped by duration
-% Input: vector that need groupby, xlabel, title
+%
+% Input: vector that need groupby, title, xlabel, 
+% ------
 % Output: bar plot
+% -------
 arguments
     data (:,1) double
-    plottitle (1,1) string = "Distribution of the data inputs"
+    plottitle (1,1) string = "Data distribution"
     xtitle (1,1) string = "Data"
 end
 

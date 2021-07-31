@@ -8,7 +8,7 @@ study = 'BR';
 plotfolder = '/Users/tristan.trebaol/Documents/PDM/Project/PlotsRecovery/';
 
 chosentreatgap = 10;
-data_window = 40;
+data_window = 20;
 
 % colors
 % cvcol   = [0.94  0.52  0.15];

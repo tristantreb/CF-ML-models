@@ -1,13 +1,17 @@
-% plot the measures profile for each intervention used in the model
+% explores the list of interventions
 %
-% 1) bar plot of interventions' duration
+% - explore drug therapies (display two tables)
+% - display bar plots of interventions durations
+% - plot the measures profile for each intervention used in the model
+% 
 % 
 % 
 % Input:
 % ------
 % clinical and measurements data
-% BRalignmentmodelinputs_recovery_gap*.mat
-% BRmuNorm.mat          mu normalisation for mean window
+% BRalignmentmodelinputs_recovery_gap*.mat  uses amInterventions ID, start,
+% stop date, 
+% BRmuNorm.mat                              mu normalisation for mean window
 %
 % Output:
 % -------
@@ -15,7 +19,7 @@
 
 init;
 
-modelinputfile = 'BRalignmentmodelinputs_recovery_gap10.mat';
+modelinputfile = 'BRalignmentmodelinputs_recovery_gap10_datawind20.mat';
 munormfile = 'BRmuNorm.mat';
 
 % load amInterventions, amDatacube, measures and count info
@@ -27,30 +31,30 @@ load(fullfile(basedir, subfolder, munormfile));
 [datamatfile, ~, ~] = getRawDataFilenamesForStudy(study);
 [brphysdata, broffset, ~] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study);
 
-% load CFTR modulators therapy
+%% load CFTR modulators therapy
 load(fullfile(basedir, subfolder, 'breatheclinicaldata.mat'),'brDrugTherapy');
-% clean modulators tables
-brDrugTherapy.DrugTherapyType = cleanDrugTherapyNamings(brDrugTherapy.DrugTherapyType);
-% adds columns with serial date num
-brDrugTherapy.DateNum = datenum(brDrugTherapy.DrugTherapyStartDate) - broffset;
 
-%% meta information about interventions
+% explore drug therapies
+getDrugTherapyInfo(brDrugTherapy);
+
+%% display bar plots of interventions durations
 
 figure('DefaultAxesFontSize',12,'Position', [1 1 1500 600])
 subplot(2,1,1)
 barHistogram(amInterventions.IVStopDateNum-amInterventions.IVDateNum,...
-    'Intervention duration (days)',...
-    sprintf('The %i interventions grouped by duration (post data completeness filter)',size(amInterventions,1)))
+    sprintf('The %i interventions grouped by duration (post data completeness filter)',size(amInterventions,1)),...
+    'Intervention duration (days)')
 
 % bonus: same plot for all interventions
-%load(fullfile(basedir, subfolder, 'BRivandmeasures_recovery_gap10.mat')); % note BRivandmeasures_gap*.mat also works
+load(fullfile(basedir, subfolder, 'BRivandmeasures_recovery_gap10.mat')); % note BRivandmeasures_gap*.mat also works
 
 subplot(2,1,2)
 barHistogram(ivandmeasurestable.IVStopDateNum-ivandmeasurestable.IVDateNum,...
-    'Intervention duration (days)',...
-    sprintf('The %i interventions grouped by duration (all interventions included)',size(ivandmeasurestable,1)))
+    sprintf('The %i interventions grouped by duration (all interventions included)',size(ivandmeasurestable,1)),...
+    'Intervention duration (days)')
 
-%% plot
+%% plot the measures profile for each intervention used in the model
+
 % parameters
 days_prior = 35; % include mu normalisation window [-35, -25] days
 days_post = 39; % treatment generally durate 2 weeks, includes day 0
@@ -67,8 +71,14 @@ for i = 1:ninterventions
     start = amInterventions.IVDateNum(i);
     stop = amInterventions.IVStopDateNum(i);
     range = start - days_prior : start + days_post;
+    
+    measurestoplot = ["FEV1", "Wellness",...
+            "FEF2575", "Cough",...
+            "PulseRate","O2Saturation",...
+            "RestingHR","Weight"];
+    
+    for m = mapMeasuresToIndex(measurestoplot,measures)
         
-    for m = 6%[14, 17, 6, 2, 3, 12, 16, 8]
         nexttile;
         
         % get raw data
@@ -113,9 +123,9 @@ for i = 1:ninterventions
     end
     legend('Values',[amInterventions.Route{i} ' treatment'],'Meanwindow','Normmean')
     % write title
-    sgtitle(sprintf('Intervention %i, patient %i, data window %i', i, id, data_window))
+    sgtitle(sprintf('Intervention %i, patient %i, data window %i, smooth 5', i, id, data_window))
     saveas(gcf,fullfile(plotfolder,sprintf('Intervention%i_ID%i.png', i, id)))
-    %close all;
+    close all;
 end
 
 %% functions
@@ -127,5 +137,16 @@ switch route
         out = [1     0.85  0   ];
     case {'IV', 'IVPBO'}
         out = [1     0     0   ];
+end
+end
+
+function m_idx = mapMeasuresToIndex(m, measures)
+% subsitutes the measure name by its index thans to the "measures" array
+%
+% Note: vectorisation is agnostic of the ordering of m, it takes the 
+% ordering of measures. Hence we made this function
+m_idx = zeros(1,length(m));
+for i = 1:length(m)
+    m_idx(1,i) = measures{ismember(measures.DisplayName, m(i)),'Index'};
 end
 end
