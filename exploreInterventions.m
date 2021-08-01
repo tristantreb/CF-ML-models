@@ -31,10 +31,10 @@ load(fullfile(basedir, subfolder, munormfile));
 [datamatfile, ~, ~] = getRawDataFilenamesForStudy(study);
 [brphysdata, broffset, ~] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study);
 
-%% load CFTR modulators therapy
+% load CFTR modulators therapy
 load(fullfile(basedir, subfolder, 'breatheclinicaldata.mat'),'brDrugTherapy');
 
-% explore drug therapies
+%% explore drug therapies
 getDrugTherapyInfo(brDrugTherapy);
 
 %% display bar plots of interventions durations
@@ -72,10 +72,10 @@ for i = 1:ninterventions
     stop = amInterventions.IVStopDateNum(i);
     range = start - days_prior : start + days_post;
     
-    measurestoplot = ["FEV1", "Wellness",...
-            "FEF2575", "Cough",...
-            "PulseRate","O2Saturation",...
-            "RestingHR","Weight"];
+    measurestoplot = ["FEV1", "O2Saturation",...
+            "FEF2575", "Weight",...
+            "PulseRate","Wellness",...
+            "RestingHR","Cough"];
     
     for m = mapMeasuresToIndex(measurestoplot,measures)
         
@@ -121,7 +121,7 @@ for i = 1:ninterventions
             set(gca, 'YDir','reverse')
         end
     end
-    legend('Values',[amInterventions.Route{i} ' treatment'],'Meanwindow','Normmean')
+    legend('Values','Smoothed curve', [amInterventions.Route{i} ' treatment'],'Meanwindow','Normmean','Location','southwest')
     % write title
     sgtitle(sprintf('Intervention %i, patient %i, data window %i, smooth 5', i, id, data_window))
     saveas(gcf,fullfile(plotfolder,sprintf('Intervention%i_ID%i.png', i, id)))
