@@ -24,7 +24,17 @@ disp(table(Drug_therapy,Count))
 % group drug therapies by patients
 list = string(zeros(length(patients),1));
 for i = 1:length(patients)
-    drugs_list = brDrugTherapy(brDrugTherapy.ID == patients(i),{'DrugTherapyStopDate', 'DrugTherapyType'});;
+    drugs_list = brDrugTherapy(brDrugTherapy.ID == patients(i),{'DrugTherapyStopDate', 'DrugTherapyType', 'DrugTherapyStartDate'});
+    
+    % merge therapies that are consecutiveley the same 
+    % TODO % this should be handled at source (in redcap)
+    for j = 1:size(drugs_list,1)-1
+        if strcmp(drugs_list.DrugTherapyType(j), drugs_list.DrugTherapyType(j+1))
+            drugs_list.DrugTherapyStartDate(j+1) = drugs_list.DrugTherapyStartDate(j);
+            drugs_list(j,:)=[];
+        end
+    end
+    
     list(i,1) = join(string(drugs_list.DrugTherapyType),', ');
     if ~isnat(drugs_list.DrugTherapyStopDate(end))
         list(i,1) = append(list(i,1),", _Therapy Stopped_");
@@ -49,4 +59,3 @@ fprintf('Found %i drug mix among %i patients:\n', length(Drugs_mix), length(pati
 disp(table(Drugs_mix,Patient_count,IDs))
 
 end
-
