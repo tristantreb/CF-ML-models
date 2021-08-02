@@ -98,7 +98,8 @@ for i = 1:ninterventions
             'MarkerEdgeColor','b',...
             'MarkerFaceColor','g');
         hold on
-        plot(data.DateNum-start, smooth(y,5),...
+        smoothing_factor=5;
+        plot(data.DateNum-start, smooth(y,smoothing_factor),...
             'Color', [0, 0.65, 1], ...
             'LineStyle', '-',...
             'LineWidth',1);
@@ -123,7 +124,7 @@ for i = 1:ninterventions
     end
     legend('Values','Smoothed curve', [amInterventions.Route{i} ' treatment'],'Meanwindow','Normmean','Location','southwest')
     % write title
-    sgtitle(sprintf('Intervention %i, patient %i, data window %i, smooth 5', i, id, data_window))
+    sgtitle(sprintf('Intervention %i (from %s to %s), patient %i, smooth %i', i, datestr(broffset-1+start), datestr(broffset-1+stop), id, smoothing_factor))
     saveas(gcf,fullfile(plotfolder,sprintf('Intervention%i_ID%i.png', i, id)))
     close all;
 end
