@@ -12,10 +12,10 @@ function [normmean] = calculateMuNormalisationRecovery(amDatacube, amInterventio
 invmeasarray = getInvertedMeasures(study);
 exnormmeas   = getExNormMeasures(study);
 
-apewindow = 25; 
-
 normmean = zeros(ninterventions, nmeasures);
 for i = 1:ninterventions
+    
+    apewindow = 25; 
     if mumethod == 1
         meanwindow = 8;
     elseif mumethod == 2
@@ -29,10 +29,10 @@ for i = 1:ninterventions
     % case 1: no data 25 days before treatment
     % decision: take patient interquartile mean
     if (start - apewindow - meanwindow) <= 0
-        meanwindow = start - apewindow - 1; apewindow = 0;
+        meanwindow = start - apewindow - 1; apewindow = 0; 
     end
     if meanwindow < 1
-        meanwindow = 1; apewindow = 0;
+        meanwindow = 1; apewindow = 0; 
         fprintf('meanwindow = 1\n')
     end
     for m = 1:nmeasures
