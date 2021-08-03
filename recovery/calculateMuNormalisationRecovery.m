@@ -14,8 +14,8 @@ exnormmeas   = getExNormMeasures(study);
 
 normmean = zeros(ninterventions, nmeasures);
 for i = 1:ninterventions
-    
-    apewindow = 25; 
+
+    apewindow = 25; % input from Damian's study
     if mumethod == 1
         meanwindow = 8;
     elseif mumethod == 2
@@ -26,14 +26,19 @@ for i = 1:ninterventions
     scid   = amInterventions.SmartCareID(i);
     start = amInterventions.IVScaledDateNum(i);
 
-    % case 1: no data 25 days before treatment
-    % decision: take patient interquartile mean
-    if (start - apewindow - meanwindow) <= 0
-        meanwindow = start - apewindow - 1; apewindow = 0; 
+    % case 1: no data 35 days before treatment
+    % case 2: stable mean [-35; -25] days from treatment is during a
+    % previous exacerbation from the same patient or even before it
+    if i-1 > 0 && amInterventions.SmartCareID(i-1) == scid
+        previous_stop = amInterventions.IVScaledStopDateNum(i-1);
+    else
+        previous_stop = 0; % same as case 1
     end
-    if meanwindow < 1
+    
+    % decision for both: take patient interquartile mean
+    if (start - apewindow - meanwindow) <= 0 || (start - apewindow - meanwindow) < previous_stop
         meanwindow = 1; apewindow = 0; 
-        fprintf('meanwindow = 1\n')
+        fprintf('meanwindow = 1 - ')
     end
     for m = 1:nmeasures
         if ~ismember(measures.DisplayName(m), exnormmeas)
@@ -45,7 +50,7 @@ for i = 1:ninterventions
                 ndel = 0;
                 for d = 1:size(tmpdataoutliers,1)
                     if (start - meanwindow) <= tmpdataoutliers.Day(d) && (start - 1) >= tmpdataoutliers.Day(d)
-                        fprintf('For Invervention %d, excluding Data outlier (ID %d, Measure %d, Day %d) from meanwindow\n', i, scid, m, tmpdataoutliers.Day(d));
+                        fprintf('For Intervention %d, excluding Data outlier (ID %d, Measure %d, Day %d) from meanwindow\n', i, scid, m, tmpdataoutliers.Day(d));
                         meanwindowdata(tmpdataoutliers.Day(d) - (start - meanwindow) + 1 - ndel) = [];
                         ndel = ndel + 1;
                     end
