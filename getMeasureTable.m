@@ -27,5 +27,6 @@ function [out] = getMeasureTable(brphysdata,recording_type,category)
 
 colnames = {'SmartCareID','ScaledDateNum','DateNum',category,'UserName','CaptureType','Date_TimeRecorded'};
 out = brphysdata(ismember(brphysdata.RecordingType, recording_type),colnames);
+out = renamevars(out,{'SmartCareID', category},{'ID', recording_type});
 end
 
