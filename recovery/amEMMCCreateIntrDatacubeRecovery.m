@@ -4,8 +4,8 @@ function [amIntrDatacube] = amEMMCCreateIntrDatacubeRecovery(amDatacube, amInter
 % by intervention (for each measure)
 
 amIntrDatacube = NaN(ninterventions, align_wind + offset.span-1 + abs(offset.down), nmeasures);
-% note: offset.max is present to pour additional data to the right of the
-% meancurveswhen offset is positive
+% note: offset.down is present to pour additional data to the right when
+% curve is shifted to the left by abs(offset.down) slots
 
 midx = measures.Index(ismember(measures.DisplayName, 'LungFunction'));
 
@@ -14,13 +14,13 @@ for i = 1:ninterventions
     start = amInterventions.IVScaledDateNum(i);
     
     icperiodend = align_wind + offset.span-1 + abs(offset.down); % offset of  means curve cannot be shifted
-    dcperiodend = start-1 + align_wind + 2*abs(offset.down);
+    dcperiodend = start-1 + align_wind + offset.up + abs(offset.down);
     
     if curveaveragingmethod == 1
         fprintf('*** WARNING *** curveaveragingmethod 1 not implemented');
     else
         icperiodstart = 1; % put 1 because it is used as an index below (should be 0)
-        dcperiodstart = start - offset.up; 
+        dcperiodstart = start + offset.down; 
     end
     
     % ajust to min offset to first datapoint for this intervention

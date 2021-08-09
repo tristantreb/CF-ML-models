@@ -70,9 +70,9 @@ end
 % partially vectorised implementation for improved performance
 for m = 1:nmeasures
     outdist = -log(outprior) + log(measuresrange(m));
-    actidx = ~isnan(amIntrCube(currinter, offset.up + 1 : offset.up + align_wind, m)) & amHeldBackcube(currinter, offset.up + 1 : offset.up + align_wind, m) == 0;
-    offsettempmean = tempmean(offset.up + 1 + curroffsetval : offset.up + align_wind + curroffsetval, m);
-    intrdata       = amIntrCube(currinter, offset.up + 1 :  offset.up + align_wind, m);
+    actidx = ~isnan(amIntrCube(currinter, abs(offset.down) + 1 : abs(offset.down) + align_wind, m)) & amHeldBackcube(currinter, abs(offset.down) + 1 : abs(offset.down) + align_wind, m) == 0;
+    offsettempmean = tempmean(abs(offset.down) + 1 + curroffsetval : abs(offset.down) + align_wind + curroffsetval, m);
+    intrdata       = amIntrCube(currinter, abs(offset.down) + 1 :  abs(offset.down) + align_wind, m);
     
     if allowvshift && sum(actidx) ~= 0
         vshift(1, currinter, m, curroffsetidx) = (sum(offsettempmean(actidx)) - sum(intrdata(actidx))) / sum(actidx);
@@ -85,8 +85,8 @@ for m = 1:nmeasures
     
     if sigmamethod == 4
         regdist = ((offsettempmean - intrdata' - vshift(1, currinter, m, curroffsetidx)) .^ 2) ...
-                    ./ (2 * (tempstd(offset.up + 1 + curroffsetval : offset.up + align_wind + curroffsetval, m) .^ 2)) ...
-                    + log(tempstd(offset.up + 1 + curroffsetval : offset.up + align_wind + curroffsetval, m)) ...
+                    ./ (2 * (tempstd(abs(offset.down) + 1 + curroffsetval : abs(offset.down) + align_wind + curroffsetval, m) .^ 2)) ...
+                    + log(tempstd(abs(offset.down) + 1 + curroffsetval : abs(offset.down) + align_wind + curroffsetval, m)) ...
                     + log((2 * pi) ^ 0.5) ...
                     - log(1 - outprior);
     else

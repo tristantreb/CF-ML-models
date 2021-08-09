@@ -4,7 +4,7 @@ function amEMPlotAlignedCurveRecovery(ax, mprofile_pre, mmeancurvemean, mmeancur
 % amEMPlotAlignedCurve - plots a latent curve for a given measure (pre and post alignment)
 
 % initialise plot areas
-xl = [-offset.up - 0.5, align_wind + abs(offset.down) - 0.5];  % intervention starts at day 0
+xl = [offset.down - 0.5, align_wind + offset.up - 0.5];  % intervention starts at day 0
 yl = [min((mmeancurvemean * .99)) ...
       max((mmeancurvemean * 1.01))];
   
@@ -48,10 +48,10 @@ ax.YAxis(2).Color = 'black';
 ax.YAxis(2).FontSize = 6;
 ylabel('Count of Data points');
 if isequal(run_type,'Best Alignment')
-    bar(-offset.up : align_wind + abs(offset.down)-1, max_points, 1.0, 'EdgeColor', 'none', 'FaceColor', [0.3, 0.3, 0.3], 'FaceAlpha', 0.4);
+    bar(offset.down : align_wind + offset.up-1, max_points, 1.0, 'EdgeColor', 'none', 'FaceColor', [0.3, 0.3, 0.3], 'FaceAlpha', 0.4);
 end
 hold on;
-bar(-offset.up : align_wind + abs(offset.down)-1, mmeancurvecount, 1.0, 'EdgeColor', 'none', 'FaceColor', 'black', 'FaceAlpha', 0.5, 'LineWidth', 0.2);
+bar(offset.down : align_wind + offset.up-1, mmeancurvecount, 1.0, 'EdgeColor', 'none', 'FaceColor', 'black', 'FaceAlpha', 0.5, 'LineWidth', 0.2);
 hold off;
 
 if isequal(run_type,'Best Alignment')

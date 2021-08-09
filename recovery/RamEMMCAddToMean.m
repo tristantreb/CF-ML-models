@@ -18,9 +18,9 @@ for n = 1:nlatentcurves
                      && ~isnan(amIntrCube(currinter, i - offsetval(offsetidx), m)) ... % point exists
                      && amHeldBackcube(currinter, i - offsetval(offsetidx), m)==0 % point not held back
                          
-                    meancurvesumsq(n, i, m) = meancurvesumsq(n, + i, m) + (((amIntrCube(currinter, i - offsetval(offsetidx), m) + vshift(n, currinter, m, offsetidx)) ^ 2) * overall_pdoffset(n, currinter, offsetidx));
+                    meancurvesumsq(n, i, m) = meancurvesumsq(n, i, m)   + (((amIntrCube(currinter, i - offsetval(offsetidx), m) + vshift(n, currinter, m, offsetidx)) ^ 2) * overall_pdoffset(n, currinter, offsetidx));
                     meancurvesum(n, i, m)   = meancurvesum(n, i, m)     +  ((amIntrCube(currinter, i - offsetval(offsetidx), m) + vshift(n, currinter, m, offsetidx))      * overall_pdoffset(n, currinter, offsetidx));
-                    meancurvecount(n, i, m) = meancurvecount(n, i, m)   + overall_pdoffset(n, currinter, offsetidx); % notesum(overall_pdoffset(n, currinter, :) = 1 if 0 nan values for this measure
+                    meancurvecount(n, i, m) = meancurvecount(n, i, m)   + overall_pdoffset(n, currinter, offsetidx); % note: sum(overall_pdoffset(n, currinter, :) = 1 if 0 nan values for this measure
                 end
             end
         end

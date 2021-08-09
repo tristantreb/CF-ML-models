@@ -3,8 +3,8 @@ function [xl, yl] = plotLatentCurveRecovery(ax, offset, align_wind, meancurve, x
 % plotLatentCurve - plots the latent curve actual and smoothed
 
 if anchor == 1
-    dto = align_wind + abs(offset.down) - 1;
-    dfrom = -offset.up;
+    dto = align_wind + offset.up - 1;
+    dfrom = offset.down;
 % else
 %     dto = align_wind + offset.span-1;
 %     dfrom = 1;
