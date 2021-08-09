@@ -2,7 +2,7 @@ function [mversion, study, treatgap, testlabelmthd, testlabeltxt, ...
     modelinputsmatfile, datademographicsfile, dataoutliersfile, labelledinterventionsfile, electivefile, ...
     sigmamethod, mumethod, curveaveragingmethod, smoothingmethod, datasmoothmethod, ...
     measuresmask, runmode, randomseed, intrmode, modelrun, imputationmode, confidencemode, printpredictions, ...
-    max_offset, align_wind, data_wind, outprior, heldbackpct, confidencethreshold, nlatentcurves, countthreshold, scenario, vshiftmode, vshiftmax] ...
+    offset, align_wind, data_wind, outprior, heldbackpct, confidencethreshold, nlatentcurves, countthreshold, scenario, vshiftmode, vshiftmax] ...
     = amEMMCSetModelRunParametersFromTableRecovery(amRunParameters)
 
 % amEMMCSetModelRunParameters - sets the various run parameters for the model
@@ -44,7 +44,9 @@ modelrun                  = amRunParameters.modelrun;
 imputationmode            = amRunParameters.imputationmode;
 confidencemode            = amRunParameters.confidencemode;
 printpredictions          = amRunParameters.printpredictions;
-max_offset                = amRunParameters.max_offset;
+offset.down                = amRunParameters.offset_down; % offset.down is negative or equal to 0
+offset.up                = amRunParameters.offset_up; % offset.up is positive or equal to 0
+offset.span               = abs(offset.down) + offset.up + 1; % 0 is also an offset
 align_wind                = amRunParameters.align_wind;
 outprior                  = amRunParameters.outprior;
 heldbackpct               = amRunParameters.heldbackpct;

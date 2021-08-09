@@ -1,5 +1,5 @@
 function [sorted_interventions, max_points] = amEMVisualiseAlignmentDetailRecovery(amIntrCube, amHeldBackcube, amInterventions, ...
-    meancurvemean, meancurvecount, meancurvestd, overall_pdoffset, measures, min_offset, max_offset, align_wind, ...
+    meancurvemean, meancurvecount, meancurvestd, overall_pdoffset, measures, offset, align_wind, ...
     nmeasures, ninterventions, run_type, ex_start, curveaveragingmethod, plotname, plotsubfolder)
 
 % amEMVisualiseAlignmentDetail - creates a plot of horizontal bars showing 
@@ -11,19 +11,19 @@ datatable = table('Size',[1 3], ...
     'VariableNames', {'Intervention', 'ScaledDateNum', 'Count'});
 
 rowtoadd = datatable;
-max_points = zeros(1, max_offset + align_wind - 1);
+max_points = zeros(1, align_wind + offset.span-1);
 sorted_interventions = amInterventions(:, {'IntrNbr','Offset'});
 sorted_interventions = sortrows(sorted_interventions, {'Offset', 'IntrNbr'}, {'descend', 'ascend'});
 
-for i = 1:max_offset + align_wind - 1
+for i = 1:align_wind + offset.span-1
     if curveaveragingmethod == 1
-        max_points(1, i) = size(sorted_interventions.Offset(sorted_interventions.Offset <= (max_offset + align_wind - i) ...
-            & sorted_interventions.Offset > (align_wind - i)),1);
+        fprintf(" curveaveragingmethod == 1 not implemented here");
     else
-        if (i - align_wind) <= 0
-            max_points(1, i) = ninterventions;
+        if i <= abs(offset.up)
+            max_points(1, i) = sum(i > sorted_interventions.Offset );
         else
-            max_points(1,i) = size(sorted_interventions.Offset(sorted_interventions.Offset <= (max_offset + align_wind - i)),1);
+            max_points(1,i) = ninterventions;
+            % Note: data is imputed on the right side, hence no data loss
         end
     end
 end
@@ -34,7 +34,7 @@ for m = 1:nmeasures
     % add a dummy rows to ensure all days from -49 to -1 show on the heatmap
     rowtoadd.Intervention = 0;
     rowtoadd.Count = 2;
-    for d = 1:max_offset + align_wind - 1
+    for d = 1:align_wind + offset.span-1
         rowtoadd.ScaledDateNum = d;
         datatable = [datatable ; rowtoadd];
     end
@@ -42,22 +42,31 @@ for m = 1:nmeasures
     for i = 1:ninterventions
         scid = amInterventions.SmartCareID(i);
         start = amInterventions.IVScaledDateNum(i);
-        offset = amInterventions.Offset(i);
+        curroffset = amInterventions.Offset(i);
 
         %fprintf('Intervention %2d, patient %3d, start %3d, best_offset %2d\n', i, scid, start, offset);
         rowtoadd.Intervention = amInterventions.IntrNbr(i);
         rowtoadd.Count = 2;
         for d = 1:align_wind
-            if ~isnan(amIntrCube(i, (max_offset-1) + d, m)) % TODO % why not offset?
-                rowtoadd.ScaledDateNum = d + offset; % TODO % check offset
+            if ~isnan(amIntrCube(i, offset.up + d, m)) 
+                rowtoadd.ScaledDateNum = d-1 + curroffset;
                 datatable = [datatable ; rowtoadd];
             end
         end
         rowtoadd.Count = 1;
         if curveaveragingmethod == 2
-            for d = 1:max_offset - 1
-                if ~isnan(amIntrCube(i, (max_offset-1) + d, m))
-                    rowtoadd.ScaledDateNum = d + offset;
+            for d = 1:offset.up % look for days imputed to the left
+                if ~isnan(amIntrCube(i, d, m)) && ... % point exists
+                        d + curroffset > 0 % point is not shifted outside of the left boundary
+                        %abs(d) - offset.up > curroffset % point in boundary
+                    rowtoadd.ScaledDateNum = d-1 + curroffset - offset.up;
+                    datatable = [datatable ; rowtoadd];
+                end
+            end
+            for d = 1:2*abs(offset.down) % look for days imputed to the right
+                if d + curroffset <= abs(offset.down) ... % point in boundary
+                        && ~isnan(amIntrCube(i, offset.up + align_wind + d, m)) % point exists
+                    rowtoadd.ScaledDateNum = d-1 + curroffset + align_wind;
                     datatable = [datatable ; rowtoadd];
                 end
             end
@@ -76,7 +85,7 @@ for m = 1:nmeasures
     
     [f, p] = createFigureAndPanel(plottitle, 'portrait', 'a4');
     
-    xl = [0.5, (max_offset + align_wind) + 1 - 0.5];
+    xl = [-offset.up - 0.5, align_wind + abs(offset.down) - 1 + 0.5];
     yl = [min(meancurvemean(:, m)) max(meancurvemean(:, m))];
     
     if isnan(yl(1))
@@ -89,12 +98,12 @@ for m = 1:nmeasures
     ax = subplot(plotsdown,plotsacross, 1:6,'Parent',p);
     yyaxis left;
     
-    [xl, yl] = plotLatentCurveRecovery(ax, max_offset, align_wind, min_offset, (meancurvemean(:, m)), xl, yl, 'blue', ':', 0.5, anchor);
+    [xl, yl] = plotLatentCurveRecovery(ax, offset, align_wind, (meancurvemean(:, m)), xl, yl, 'blue', ':', 0.5, anchor);
     %[xl, yl] = plotLatentCurve(ax, max_offset, align_wind, min_offset, smooth(meancurvemean(:, m), 5), xl, yl, 'blue', '-', 0.5, anchor);
-    [xl, yl] = plotLatentCurveRecovery(ax, max_offset, align_wind, min_offset, movmean(meancurvemean(:, m), 3, 'omitnan'), xl, yl, 'blue', '-', 0.5, anchor);
+    [xl, yl] = plotLatentCurveRecovery(ax, offset, align_wind, movmean(meancurvemean(:, m), 3, 'omitnan'), xl, yl, 'blue', '-', 0.5, anchor);
     
     ax.XAxis.FontSize = 8;
-    xlabel('Days prior to Intervention');
+    xlabel('Days To Intervention');
     ax.YAxis(1).Color = 'blue';
     ax.YAxis(1).FontSize = 8;
     ylabel('Normalised Measure', 'FontSize', 8);
@@ -109,10 +118,10 @@ for m = 1:nmeasures
     ylabel('Count of Data points');
     
     if isequal(run_type,'Best Alignment')
-        bar([1 : max_offset + align_wind - 1], max_points, 0.5, 'FaceColor', 'white', 'FaceAlpha', 0.1);
+        bar(-offset.up : align_wind + abs(offset.down)-1, max_points, 0.5, 'FaceColor', 'white', 'FaceAlpha', 0.1);
     end
     hold on;
-    bar([1 : max_offset + align_wind - 1], meancurvecount(:, m), 0.5, 'FaceColor', 'black', 'FaceAlpha', 0.25, 'LineWidth', 0.2);
+    bar(-offset.up : align_wind + abs(offset.down)-1, meancurvecount(:, m), 0.5, 'FaceColor', 'black', 'FaceAlpha', 0.25, 'LineWidth', 0.2);
     hold off;
     if isequal(run_type,'Best Alignment')
         ylbar = [0 max(max_points) * 4];
@@ -128,10 +137,10 @@ for m = 1:nmeasures
     h = heatmap(p, datatable, 'ScaledDateNum', 'Intervention', 'Colormap', colors, 'MissingDataColor', 'white', ...
         'ColorVariable','Count','ColorMethod','max', 'MissingDataLabel', 'No data', 'ColorBarVisible', 'off', 'FontSize', 8);
     h.Title = ' ';
-    h.XLabel = 'Days Prior to Intervention';
+    h.XLabel = 'Days To Intervention';
     h.YLabel = 'Intervention';
     h.YDisplayData = sorted_interventions.IntrNbr;
-    h.XLimits = {1, max(datatable.ScaledDateNum)};
+    h.XLimits = {-offset.up, align_wind + abs(offset.down)-1};
     h.CellLabelColor = 'none';
     h.GridVisible = 'on';
     
@@ -153,25 +162,25 @@ for m = 1:nmeasures
             qnbr   = qupper - qlower + 1;
             fprintf('Quintile %d, Lower = %d, Upper = %d, Size = %d\n', q, qlower, qupper, qnbr);
             
-            temp_meancurvesumsq    = zeros(max_offset + align_wind - 1, nmeasures);
-            temp_meancurvesum      = zeros(max_offset + align_wind - 1, nmeasures);
-            temp_meancurvecount    = zeros(max_offset + align_wind - 1, nmeasures);
-            temp_meancurvemean     = zeros(max_offset + align_wind - 1, nmeasures);
-            temp_meancurvestd      = zeros(max_offset + align_wind - 1, nmeasures);
+            temp_meancurvesumsq    = zeros(align_wind + offset.span-1, nmeasures);
+            temp_meancurvesum      = zeros(align_wind + offset.span-1, nmeasures);
+            temp_meancurvecount    = zeros(align_wind + offset.span-1, nmeasures);
+            temp_meancurvemean     = zeros(align_wind + offset.span-1, nmeasures);
+            temp_meancurvestd      = zeros(align_wind + offset.span-1, nmeasures);
             
             %problem here
             temp_interventions = amInterventions(ismember(amInterventions.IntrNbr, sorted_interventions.IntrNbr(qlower:qupper)),:);
             
             for i = 1:qnbr
-                [temp_meancurvesumsq, temp_meancurvesum, temp_meancurvecount] = amEMAddToMean(temp_meancurvesumsq, temp_meancurvesum, temp_meancurvecount, ...
+                [temp_meancurvesumsq, temp_meancurvesum, temp_meancurvecount] = RamEMAddToMean(temp_meancurvesumsq, temp_meancurvesum, temp_meancurvecount, ...
                     overall_pdoffset(ismember(amInterventions.IntrNbr, sorted_interventions.IntrNbr(qlower:qupper)), :), amIntrCube(ismember(amInterventions.IntrNbr, sorted_interventions.IntrNbr(qlower:qupper)), :, :), ...
                     amHeldBackcube(ismember(amInterventions.IntrNbr, sorted_interventions.IntrNbr(qlower:qupper)), :, :), i, ...
-                    min_offset, max_offset, align_wind, nmeasures);
-                [temp_meancurvemean, temp_meancurvestd] = calcMeanAndStd(temp_meancurvesumsq, temp_meancurvesum, temp_meancurvecount, min_offset, max_offset, align_wind);
+                    offset, align_wind, nmeasures);
+                [temp_meancurvemean, temp_meancurvestd] = RamEMMCCalcMeanAndStd(temp_meancurvesumsq, temp_meancurvesum, temp_meancurvecount);
             end
             
             qintrminoffset = min(amInterventions.Offset(ismember(amInterventions.IntrNbr, sorted_interventions.IntrNbr(qlower:qupper))));
-            qdataminoffset = max_offset + align_wind - max(find(max(temp_meancurvecount, [], 2)~=0)) + 1;
+            qdataminoffset = align_wind + offset.span - max(find(max(temp_meancurvecount, [], 2)~=0)) + 1;
             qto = max(qintrminoffset, qdataminoffset);
             
             %qintrmaxoffset = max(amInterventions.Offset(sorted_interventions.Intervention(qlower:qupper))) + align_wind;
@@ -180,13 +189,13 @@ for m = 1:nmeasures
             
             if curveaveragingmethod == 1
                 qintrmaxoffset = max(amInterventions.Offset(ismember(amInterventions.IntrNbr, sorted_interventions.IntrNbr(qlower:qupper)))) + align_wind;
-                qdatamaxoffset = max_offset + align_wind - min(find(min(temp_meancurvecount, [], 2)~=0));
+                qdatamaxoffset = align_wind + offset.span - min(find(min(temp_meancurvecount, [], 2)~=0));
                 qfrom = max(qintrmaxoffset, qdatamaxoffset);
             else
-                qfrom = max_offset + align_wind - 1;
+                qfrom = align_wind + offset.span-1;
             end
             
-            xl = [0.5, (max_offset + align_wind) + 1 - 0.5];
+            xl = [0.5, (align_wind + offset.span) + 0.5];
             yl = [min(min(temp_meancurvemean(:, m)), min(meancurvemean(:, m))) max(max(temp_meancurvemean(:, m)), max(meancurvemean(:, m)))];
             
             if isnan(yl(1))
@@ -203,29 +212,29 @@ for m = 1:nmeasures
             yyaxis left;
             
             % plot latent curve and vertical line for ex_start (if chosen at this point)
-            [xl, yl] = plotLatentCurveRecovery(ax, max_offset, align_wind, min_offset, (meancurvemean(:, m)), xl, yl, 'blue', ':', 0.5, anchor);
+            [xl, yl] = plotLatentCurveRecovery(ax, offset, align_wind, (meancurvemean(:, m)), xl, yl, 'blue', ':', 0.5, anchor);
             %[xl, yl] = plotLatentCurve(ax, max_offset, align_wind, min_offset, smooth(meancurvemean(:, m), 5), xl, yl, 'blue', '-', 0.5, anchor);
-            [xl, yl] = plotLatentCurveRecovery(ax, max_offset, align_wind, min_offset, movmean(meancurvemean(:, m), 3, 'omitnan'), xl, yl, 'blue', '-', 0.5, anchor);
+            [xl, yl] = plotLatentCurveRecovery(ax, offset, align_wind, movmean(meancurvemean(:, m), 3, 'omitnan'), xl, yl, 'blue', '-', 0.5, anchor);
             
             if ex_start ~= 0
                 [xl, yl] = plotVerticalLine(ax, ex_start, xl, yl, 'blue', '--', 0.5); % plot ex_start
             end
             
             ax.XAxis.FontSize = 8;
-            xlabel('Days prior to Intervention');
+            xlabel('Days To Intervention');
             ax.YAxis(1).Color = 'blue';
             ax.YAxis(1).FontSize = 8;
             ylabel('Normalised Measure', 'FontSize', 8);
             
             % plot latent curve for the quintile of interventions
-            line([-1 * qfrom: -1 * qto], temp_meancurvemean(max_offset + align_wind - qfrom : max_offset + align_wind - qto, m), 'Color', 'red','LineStyle', ':');
-            line([-1 * qfrom: -1 * qto], smooth(temp_meancurvemean(max_offset + align_wind - qfrom : max_offset + align_wind - qto, m), 5), 'Color', 'red','LineStyle', '-');
+            line([-1 * qfrom: -1 * qto], temp_meancurvemean(align_wind + offset.span - qfrom : align_wind + offset.span - qto, m), 'Color', 'red','LineStyle', ':');
+            line([-1 * qfrom: -1 * qto], smooth(temp_meancurvemean(align_wind + offset.span - qfrom : align_wind + offset.span - qto, m), 5), 'Color', 'red','LineStyle', '-');
 
             yyaxis right
             ax.YAxis(2).Color = 'black';
             ax.YAxis(2).FontSize = 8;
             ylabel('Count of Data points');
-            bar([-1 * (max_offset + align_wind - 1): -1], temp_meancurvecount(1:max_offset + align_wind - 1, m), 0.5, 'FaceColor', 'black', 'FaceAlpha', 0.15);
+            bar([-1 * (align_wind + offset.span-1): -1], temp_meancurvecount(1:align_wind + offset.span-1, m), 0.5, 'FaceColor', 'black', 'FaceAlpha', 0.15);
             ylim([0 (max(max_points) * 4 / nbuckets)]);
         end
         

@@ -1,5 +1,5 @@
 function [normmean] = calculateMuNormalisationRecovery(amDatacube, amInterventions, measures, demographicstable, ...
-    dataoutliers, align_wind, ninterventions, nmeasures, mumethod, study)
+    dataoutliers, ninterventions, nmeasures, mumethod, study)
 
 % populates an array of ninterventions by nmeasures with the additive 
 % normalisation (mu) values
@@ -36,9 +36,13 @@ for i = 1:ninterventions
     end
     
     % decision for both: take patient interquartile mean
-    if (start - apewindow - meanwindow) <= 0 || (start - apewindow - meanwindow) < previous_stop
+    if (start - apewindow - meanwindow) <= 0 
         meanwindow = 1; apewindow = 0; 
-        fprintf('meanwindow = 1 - ')
+        fprintf('No data 35 days before treatment - using inter-quartile mean for all measures of intervention %i\n', i)
+    end
+     if (start - apewindow - meanwindow) < previous_stop
+        meanwindow = 1; apewindow = 0; 
+        fprintf('Mean window perturbed by previous patient intervention - using inter-quartile mean for all measures of intervention %i\n', i)
     end
     for m = 1:nmeasures
         if ~ismember(measures.DisplayName(m), exnormmeas)

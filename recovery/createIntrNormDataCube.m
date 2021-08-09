@@ -70,7 +70,7 @@ detaillog = true;
     demographicstable, measuresmask, align_wind, npatients, ndays, ninterventions, nmeasures, study);
 
 % create cube for data window data by intervention (for each measure)
-[amIntrDatacube] = amEMMCCreateIntrDatacubeRecovery(amDatacube, amInterventions, measures, align_wind, ...
+[amIntrDatacube] = amEMMCCreateIntrDatacubeRecovery_withoutoffset(amDatacube, amInterventions, measures, align_wind, ...
     max_offset, ninterventions, nmeasures, curveaveragingmethod, datasmoothmethod);
 
 % pre-process intervention table and associated measurement data
@@ -88,7 +88,7 @@ normstd = calculateSigmaNormalisation(amInterventions, measures, demographicstab
 % calculate additive normalisation (mu) based on methodology
 % and then create normalised data cube.
 normmean = calculateMuNormalisationRecovery(amDatacube, amInterventions, measures, demographicstable, ...
-    dataoutliers, align_wind, ninterventions, nmeasures, mumethod, study);
+    dataoutliers, ninterventions, nmeasures, mumethod, study);
 
 % populate normalised data cube by intervention
 [amIntrNormcube] = createNormalisedIntrDatacube(amIntrDatacube, normmean, normstd, ...

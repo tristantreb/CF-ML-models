@@ -1,11 +1,11 @@
 function [meancurvesumsq, meancurvesum, meancurvecount, meancurvemean, meancurvestd, amInterventions, ...
     hstg, pdoffset, overall_hist, overall_pdoffset, ...
     animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset, ...
-    vshift, isOutlier, pptsstruct, qual, min_offset, iter, miniiter] = ...
+    vshift, isOutlier, pptsstruct, qual, iter, miniiter] = ...
     amEMMCAlignCurvesRecovery(meancurvesumsq, meancurvesum, meancurvecount, amIntrCube, amHeldBackcube, ...
         animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset, ...
         hstg, pdoffset, overall_hist, overall_pdoffset, vshift, isOutlier, ...
-        amInterventions, outprior, measures, normstd, min_offset, max_offset, align_wind, ...
+        amInterventions, outprior, measures, normstd, offset, align_wind, ...
         nmeasures, ninterventions, nlatentcurves, sigmamethod, smoothingmethod, ...
         runmode, countthreshold, aniterations, maxiterations, allowvshift, vshiftmax, miniiter, fnmodelrun)
 
@@ -24,28 +24,28 @@ prior_overall_pdoffset = overall_pdoffset;
 while (smmpddiff > pddiffthreshold && iter < maxiterations)
     ok = 1;
     
-    % remove current intervention's curve from latent profile, so that the 
-    [meancurvesumsq, meancurvesum, meancurvecount] = amEMMCRemoveFromMean(meancurvesumsq, meancurvesum, meancurvecount, ...
-        overall_pdoffset, amIntrCube, amHeldBackcube, vshift, pnt, min_offset, max_offset, align_wind, nmeasures, nlatentcurves);
+    % remove current intervention's curve from latent profile
+    [meancurvesumsq, meancurvesum, meancurvecount] = RamEMMCRemoveFromMean(meancurvesumsq, meancurvesum, meancurvecount, ...
+        overall_pdoffset, amIntrCube, amHeldBackcube, vshift, pnt, offset, align_wind, nmeasures, nlatentcurves);
     
     % find and keep track of points that have too few data points contributing 
     % to them 
-    [pptsstruct] = amEMMCFindProblemDataPoints(meancurvesumsq, meancurvesum, meancurvecount, measures.Mask, ...
-        min_offset, max_offset, align_wind, nmeasures, countthreshold, nlatentcurves);
+    [pptsstruct] = RamEMMCFindProblemDataPoints(meancurvesumsq, meancurvesum, meancurvecount, measures.Mask, ...
+        align_wind, nmeasures, countthreshold, nlatentcurves);
     
     % 1) add the adjustments to the various meancurve arrays 
     % 2) recalculate mean and std arrays
     [meancurvesumsq, meancurvesum, meancurvecount] = amEMMCAddAdjacentAdjustments(meancurvesumsq, meancurvesum, meancurvecount, pptsstruct, nlatentcurves);
-    [meancurvemean, meancurvestd] = amEMMCCalcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind);
+    [meancurvemean, meancurvestd] = RamEMMCCalcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount);
      
-    % 1)returns best offset, best curve
+    % 1)returns best offset, best curvelco
     % 2) returns distance, p(offset) -> per measure and summed/normalised
     % over all measures
     % 3) returns vshift and isOutlier
     if ok == 1
-        [better_offset, better_curve, hstg, pdoffset, overall_hist, overall_pdoffset, vshift, isOutlier] = amEMMCBestFit(meancurvemean, meancurvestd, amIntrCube, amHeldBackcube, ...
+        [better_offset, better_curve, hstg, pdoffset, overall_hist, overall_pdoffset, vshift, isOutlier] = RamEMMCBestFit(meancurvemean, meancurvestd, amIntrCube, amHeldBackcube, ...
             measures.Mask, measures.OverallRange, normstd, hstg, pdoffset, overall_hist, overall_pdoffset, vshift, isOutlier, outprior, ...
-            pnt, min_offset, max_offset, align_wind, nmeasures, sigmamethod, smoothingmethod, runmode, nlatentcurves, allowvshift, vshiftmax);
+            pnt, offset, align_wind, nmeasures, sigmamethod, smoothingmethod, runmode, nlatentcurves, allowvshift, vshiftmax);
     else
         better_offset = amInterventions.Offset(pnt);
         better_curve  = amInterventions.LatentCurve(pnt);
@@ -84,10 +84,15 @@ while (smmpddiff > pddiffthreshold && iter < maxiterations)
             fprintf('Exceeded storage for animated iterations\n');
         end
     end
+    
     [meancurvesumsq, meancurvesum, meancurvecount] = amEMMCRemoveAdjacentAdjustments(meancurvesumsq, meancurvesum, meancurvecount, pptsstruct, nlatentcurves);
-    [meancurvesumsq, meancurvesum, meancurvecount] = amEMMCAddToMean(meancurvesumsq, meancurvesum, meancurvecount, ...
-        overall_pdoffset, amIntrCube, amHeldBackcube, vshift, pnt, min_offset, max_offset, align_wind, nmeasures, nlatentcurves);
-    [meancurvemean, meancurvestd] = amEMMCCalcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind);
+    [meancurvesumsq, meancurvesum, meancurvecount] = RamEMMCAddToMean(meancurvesumsq, meancurvesum, meancurvecount, ...
+        overall_pdoffset, amIntrCube, amHeldBackcube, vshift, pnt,  offset, align_wind, nmeasures, nlatentcurves);
+    [meancurvemean, meancurvestd] = RamEMMCCalcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount);
+    
+    for i = 1:ninterventions % map offsetval to offsetidx
+        amInterventions.Offsetidx(i) = find(offset.down:offset.up == amInterventions.Offset(i));
+    end
     
     pnt = pnt+1;
     % one full iteration accross all interventions done
@@ -115,18 +120,18 @@ while (smmpddiff > pddiffthreshold && iter < maxiterations)
         qual = 0;
         qualcount = 0;
         for i=1:ninterventions
-            [meancurvesumsq, meancurvesum, meancurvecount] = amEMMCRemoveFromMean(meancurvesumsq, meancurvesum, meancurvecount, ...
-                overall_pdoffset, amIntrCube, amHeldBackcube, vshift, i, min_offset, max_offset, align_wind, nmeasures, nlatentcurves);
+            [meancurvesumsq, meancurvesum, meancurvecount] = RamEMMCRemoveFromMean(meancurvesumsq, meancurvesum, meancurvecount, ...
+                overall_pdoffset, amIntrCube, amHeldBackcube, vshift, i, offset, align_wind, nmeasures, nlatentcurves);
             %[meancurvesumsq, meancurvesum, meancurvecount] = amEMMCAddAdjacentAdjustments(meancurvesumsq, meancurvesum, meancurvecount, pptsstruct, nlatentcurves);
-            [meancurvemean, meancurvestd] = amEMMCCalcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind);
+            [meancurvemean, meancurvestd] = RamEMMCCalcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount);
             
             lc = amInterventions.LatentCurve(i);
             % when just calculating objfcn value, run without allowing
             % additional vertical shifting
             tmpallowvshift = false;
-            [iqual, icount] = amEMMCCalcObjFcn(meancurvemean(lc, :, :), meancurvestd(lc, :, :), amIntrCube, amHeldBackcube, ...
+            [iqual, icount] = RamEMMCCalcObjFcn(meancurvemean(lc, :, :), meancurvestd(lc, :, :), amIntrCube, amHeldBackcube, ...
                 vshift(lc, :, :, :), isOutlier(lc, :, :, :, :), outprior, measures.Mask, measures.OverallRange, normstd, hstg(lc, :, :, :), i, ...
-                amInterventions.Offset(i), max_offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod, tmpallowvshift, vshiftmax); 
+                amInterventions.Offsetidx(i), offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod, tmpallowvshift, vshiftmax); 
             
             qual = qual + iqual;
             qualcount = qualcount + icount;
@@ -134,9 +139,9 @@ while (smmpddiff > pddiffthreshold && iter < maxiterations)
             %fprintf('Intervention %d, qual = %.4f\n', i, qual/qualcount);
     
             %[meancurvesumsq, meancurvesum, meancurvecount] = amEMMCRemoveAdjacentAdjustments(meancurvesumsq, meancurvesum, meancurvecount, pptsstruct, nlatentcurves);
-            [meancurvesumsq, meancurvesum, meancurvecount] = amEMMCAddToMean(meancurvesumsq, meancurvesum, meancurvecount, ...
-                overall_pdoffset, amIntrCube, amHeldBackcube, vshift, i, min_offset, max_offset, align_wind, nmeasures, nlatentcurves);
-            [meancurvemean, meancurvestd] = amEMMCCalcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind);
+            [meancurvesumsq, meancurvesum, meancurvecount] = RamEMMCAddToMean(meancurvesumsq, meancurvesum, meancurvecount, ...
+                overall_pdoffset, amIntrCube, amHeldBackcube, vshift, i, offset, align_wind, nmeasures, nlatentcurves);
+            %[meancurvemean, meancurvestd] = amEMMCCalcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount);
         end
         
         qual = qual / qualcount;
@@ -155,7 +160,7 @@ while (smmpddiff > pddiffthreshold && iter < maxiterations)
 end
 
 %[meancurvesumsq, meancurvesum, meancurvecount] = amEMMCAddAdjacentAdjustments(meancurvesumsq, meancurvesum, meancurvecount, pptsstruct, nlatentcurves);
-[meancurvemean, meancurvestd] = amEMMCCalcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind);
+[meancurvemean, meancurvestd] = RamEMMCCalcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount);
 
 
 end
