@@ -35,14 +35,19 @@ female = sum(ismember(cdPatient.Sex,'Female'));
 age_mean = mean(cdPatient.CalcAgeExact);
 age_std = std(cdPatient.CalcAgeExact);
 
-% BMI (kg/m2
-bmi_mean = mean(cdPatient.Weight ./ (cdPatient.Height./100),'omitnan');
-bmi_std = std(cdPatient.Weight ./ (cdPatient.Height./100),'omitnan');
+% BMI (kg/m2)
+bmi_val = cdPatient.Weight ./ cdPatient.Height.^2 * 10000;
+bmi_mean = mean(bmi_val,'omitnan');
+bmi_std = std(bmi_val,'omitnan');
+histogram(sort(bmi_val))
+xlabel('BMI');
+ylabel('Frequency');
 
 % FEV1 (% of predicted)
 FEV1PrctPredicted = getMergedFEV1PercentagePredicted(brphysdata, cdPatient, cdPFT);
 FEV1_mean = mean(FEV1PrctPredicted.Value,'omitnan');
 FEV1_std = std(FEV1PrctPredicted.Value, 'omitnan');
+NFEV1 = size(FEV1PrctPredicted,1);
 % -> segment based on volume
 % <40%
 v40andunder = sum(FEV1PrctPredicted.Value<40);
@@ -59,15 +64,14 @@ F508del_heterozygous = sum(ismember(cdPatient.CFGene1,'F508del') | ismember(cdPa
 other_mutations =  sum(not(ismember(cdPatient.CFGene1,'F508del')) & not(ismember(cdPatient.CFGene2,'F508del')));
 fprintf('\nChecksum on genotype: %i (0 = no error)\n', F508del_homozygous+F508del_heterozygous+other_mutations - N);
 
-% CFQ-R treatment domain score
 
 %% Prescribed CFTR modulators
-[Drugsbypatients] = getDrugTherapyInfo(cdDrugTherapy);
+[Drugsbypatients] = getDrugTherapyInfo(cdDrugTherapy, cdPatient);
 
-symkevi = sum(contains(Drugsbypatients.list,"Symkevi"));
-trikafta = sum(contains(Drugsbypatients.list,"Trikafta"));
-ivacaftor = sum(contains(Drugsbypatients.list,"Ivacaftor"));
-orkambi = sum(contains(Drugsbypatients.list,"Orkambi"));
+symkevi = sum(contains(Drugsbypatients.History,"Symkevi"));
+trikafta = sum(contains(Drugsbypatients.History,"Trikafta"));
+ivacaftor = sum(contains(Drugsbypatients.History,"Ivacaftor"));
+orkambi = sum(contains(Drugsbypatients.History,"Orkambi"));
 
 %% Prescribed medication
  
@@ -104,9 +108,13 @@ iv_list_unique = unique(cdAntibiotics.AntibioticName(ismember(cdAntibiotics.Rout
 % list of orally taken ab
 oral_list_unique = unique(cdAntibiotics.AntibioticName(ismember(cdAntibiotics.Route,'Oral')));
 
+AntibioticList = string(ab_list_unique);
+Count = groupcounts(ab_list.AntibioticName);
+disp(table(AntibioticList, Count));
+
 %% draw table
 
-alinea = "    ";
+alinea = "      ";
 
 r = table('Size',[40 2],...
     'VariableTypes',{'string','string'},...
@@ -118,10 +126,10 @@ r = addLine(r,3,"BMI (kg/m2)",sprintf('%.1f +/-%.1f', bmi_mean, bmi_std));
 
 r = addLine(r,4,"FEV1 (% of predicted)",sprintf('%.1f +/-%.1f', FEV1_mean, FEV1_std));
 r = addLine(r,5,alinea+"Sub-grouping","");
-r = addLine(r,6,alinea+alinea+"< 40%",sprintf('%i (%.0f%%)', v40andunder, v40andunder*100/N));
-r = addLine(r,7,alinea+alinea+">= 40% to < 70%",sprintf('%i (%.0f%%)', v4070, v4070*100/N));
-r = addLine(r,8,alinea+alinea+">= 70% to < 90%",sprintf('%i (%.0f%%)', v7090, v7090*100/N));
-r = addLine(r,9,alinea+alinea+">= 90%",sprintf('%i (%.0f%%)', v90andover, v90andover*100/N));
+r = addLine(r,6,alinea+alinea+"< 40%",sprintf('%i (%.0f%%)', v40andunder, v40andunder*100/NFEV1));
+r = addLine(r,7,alinea+alinea+">= 40% to < 70%",sprintf('%i (%.0f%%)', v4070, v4070*100/NFEV1));
+r = addLine(r,8,alinea+alinea+">= 70% to < 90%",sprintf('%i (%.0f%%)', v7090, v7090*100/NFEV1));
+r = addLine(r,9,alinea+alinea+">= 90%",sprintf('%i (%.0f%%)', v90andover, v90andover*100/NFEV1));
 
 r = addLine(r,10,"Genotype","");
 r = addLine(r,11,alinea+"F508del homozygous",sprintf('%i (%.0f%%)', F508del_homozygous, F508del_homozygous*100/N));
@@ -134,10 +142,14 @@ r = addLine(r,16,alinea+"Symkevi",sprintf('%i (%.0f%%)', symkevi, symkevi*100/N)
 r = addLine(r,17,alinea+"Ivacaftor",sprintf('%i (%.0f%%)', ivacaftor, ivacaftor*100/N));
 r = addLine(r,18,alinea+"Okrambi",sprintf('%i (%.0f%%)', orkambi, orkambi*100/N));
 
-r = addLine(r,19,"Prescribed Antibiotics","");
-r = addLine(r,20,alinea+"IVs",sprintf('%i (%.0f%%)', iv, iv*100/N));
-r = addLine(r,21,alinea+"Inhaled antibiotic",sprintf('%i (%.0f%%)', inhaled, inhaled*100/N));
-r = addLine(r,22,alinea+"Azithromycin",sprintf('%i (%.0f%%)', azithromycin, azithromycin*100/N));
+r = addLine(r,19,"N",sprintf('%i', N));
+r = addLine(r,20,"Computations of 1) Female, Age, BMI, Genotype, P. CFTR M. with clinical data, 2) FEV1 with home monitoring or clinical data. P. CFTR M. concern any period within the study.","");
+
+% r = addLine(r,19,"Prescribed Antibiotics","");
+% r = addLine(r,20,alinea+"Oral",sprintf('%i (%.0f%%)', oral, oral*100/N));
+% r = addLine(r,21,alinea+"IVs",sprintf('%i (%.0f%%)', iv, iv*100/N));
+% r = addLine(r,22,alinea+"Inhaled antibiotic",sprintf('%i (%.0f%%)', inhaled, inhaled*100/N));
+% r = addLine(r,23,alinea+"Azithromycin",sprintf('%i (%.0f%%)', azithromycin, azithromycin*100/N));
 % CFQ-R
 % dornase alfa
 % hypertonic saline
@@ -157,6 +169,7 @@ function FEV1prctpredicted = getMergedFEV1PercentagePredicted(brphysdata, cdPati
 BRPrctPredicted = calcBRFEV1PrctPredicted(brphysdata,cdPatient);
 
 % -> calulate based on clinical data
+func = @(x) mean(x);
 FEV1clinical = varfun(func,cdPFT,'GroupingVariables','ID','InputVariables','FEV1');
 FEV1clinical = outerjoin(FEV1clinical, cdPatient, 'Type', 'Left', 'Keys', 'ID', 'RightVariables', {'CalcPredictedFEV1'});
 FEV1clinical.PercentagePredicted = FEV1clinical.Fun_FEV1 ./ FEV1clinical.CalcPredictedFEV1 * 100;
@@ -175,10 +188,9 @@ fprintf('Patient lung volume semgentation thus uses %i out of %i\n', n_fev1breat
 FEV1 = outerjoin(FEV1clinical, BRPrctPredicted, 'Keys', {'ID'}, 'MergeKeys', 1, 'LeftVariables', {'ID', 'PercentagePredicted'}, 'RightVariables', {'ID', 'Value'});
 % impute all breathe not nan indexes into clinical, thereby overwriting
 % clinical if applicable
-idxtoreplace = isnan(FEV1.PercentagePredicted_FEV1breathe) & ~isnan(FEV1.PercentagePredicted_FEV1clinical);
+idxtoreplace = isnan(FEV1.Value) & ~isnan(FEV1.PercentagePredicted);
 % 
-FEV1.PercentagePredicted_FEV1breathe(idxtoreplace) = FEV1.PercentagePredicted_FEV1clinical(idxtoreplace);
-FEV1 = renamevars(FEV1, 'PercentagePredicted_FEV1breathe', 'Value');
+FEV1.Value(idxtoreplace) = FEV1.PercentagePredicted(idxtoreplace);
 FEV1prctpredicted = FEV1(:,{'ID','Value'});
 
 end

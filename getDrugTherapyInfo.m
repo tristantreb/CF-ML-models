@@ -1,4 +1,4 @@
-function [Drugsbypatients] = getDrugTherapyInfo(brDrugTherapy) 
+function [Drugsbypatients] = getDrugTherapyInfo(brDrugTherapy, brPatient) 
 % - groupcount the different drug therapies over patients
 % - define drugs mix: list of the drug therapies given to a patient, sorted in time
 % - groupcount the different drugs mix over patients and details the concerned patients IDs
@@ -13,16 +13,9 @@ function [Drugsbypatients] = getDrugTherapyInfo(brDrugTherapy)
 
 patients = unique(brDrugTherapy.ID);
 
-%%% find (drug therapies, count) and display it
-Drug_therapy = categorical(unique(brDrugTherapy.DrugTherapyType));
-Count = countcats(categorical(brDrugTherapy.DrugTherapyType));
-fprintf('Found %i drug therapies among %i patients:\n', sum(Count), length(patients))
-disp(table(Drug_therapy,Count))
-
-%%% find (drug mix, count, IDs) and display it
-
 % group drug therapies by patients
-list = string(zeros(length(patients),1));
+History = string(zeros(length(patients),1));
+Current = string(zeros(length(patients),1));
 for i = 1:length(patients)
     drugs_list = brDrugTherapy(brDrugTherapy.ID == patients(i),{'DrugTherapyStopDate', 'DrugTherapyType', 'DrugTherapyStartDate'});
     
@@ -35,27 +28,51 @@ for i = 1:length(patients)
         end
     end
     
-    list(i,1) = join(string(drugs_list.DrugTherapyType),', ');
+    History(i,1) = join(string(drugs_list.DrugTherapyType),', ');
+    Current(i,1) = string(drugs_list.DrugTherapyType(end));
     if ~isnat(drugs_list.DrugTherapyStopDate(end))
-        list(i,1) = append(list(i,1),", _Therapy Stopped_");
+        History(i,1) = append(History(i,1),", _Therapy Stopped_");
+        Current(i,1) = "_Therapy Stopped_";
     end
 end
 
-% (out var) table with patients and their associated drug mix
-Drugsbypatients = table(patients,list);
+% (out var) table with patients and their associated history
+Drugsbypatients = table(patients,History,Current);
+Drugsbypatients = outerjoin(Drugsbypatients, brPatient, 'LeftKeys', 'patients', 'RightKeys', 'ID', 'LeftVariables', {'patients', 'History', 'Current'}, 'RightVariables', 'ID');
+idxtoreplace = isnan(Drugsbypatients.patients);
+Drugsbypatients.History(idxtoreplace) = "_No Therapy_";
+Drugsbypatients.Current(idxtoreplace) = "_No Therapy_";
+Drugsbypatients = removevars(Drugsbypatients,'patients');
 
-% group patients by drug mix
-Drugs_mix = categorical(unique(list));
-Patient_count = countcats(categorical(list));
+% find (drug therapies, count) and display it (after doublons were discarded)
+CFTR_modulator = categorical(unique(brDrugTherapy.DrugTherapyType));
+druglisttable = table(CFTR_modulator);
+for i = 1:size(druglisttable,1)
+    druglisttable.Amount_prescribed(i) = sum(contains(Drugsbypatients.History,string(druglisttable.CFTR_modulator(i))));
+end
+druglisttable = sortrows(druglisttable,2,'descend');
+fprintf('Found %i CFTR modulators among %i patients:\n', sum(druglisttable.Amount_prescribed), length(patients));
+disp(druglisttable)
+
+% view patients with current drug therapy
+currenttable =  groupcounts(Drugsbypatients,'Current');
+currenttable = sortrows(currenttable,2,'descend');
+fprintf('Current repartition of the CFTR modulators among the %i patients\n', size(currenttable,1));
+disp(currenttable);
+
+%%% find (patient CFTR modulator history, count, IDs) and display it
+% group patients by their history
+historytable =  groupcounts(Drugsbypatients,'History');
 
 % get patient IDs for each drug mix
-IDs = string(zeros(length(Drugs_mix),1));
-for i = 1:length(Drugs_mix)
-    IDs(i,1) = join(string(Drugsbypatients{ismember(Drugsbypatients.list,string(Drugs_mix(i))),'patients'}),', ');
+ID = string(zeros(size(historytable,1)));
+for i = 1:size(historytable,1)
+    ID(i,1) = join(string(Drugsbypatients{ismember(Drugsbypatients.History,string(historytable.History(i))),'ID'}),', ');
 end
 
 % display results
-fprintf('Found %i drug mix among %i patients:\n', length(Drugs_mix), length(patients))
-disp(table(Drugs_mix,Patient_count,IDs))
+fprintf('The %i patients have %i differents CFTR modulator history:\n', sum(historytable.GroupCount), size(historytable,1));
+historytable = sortrows(historytable,2,'descend');
+disp(historytable)
 
 end
