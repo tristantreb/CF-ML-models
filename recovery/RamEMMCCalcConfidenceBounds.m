@@ -1,4 +1,4 @@
-function [amInterventions] = RamEMMCCalcConfidenceBounds(overall_pdoffset, amInterventions, offset_span, ninterventions, confidencethreshold, confidencemode)
+function [amInterventions] = RamEMMCCalcConfidenceBounds(overall_pdoffset, amInterventions, offset, ninterventions, confidencethreshold, confidencemode)
 
 % amEMMCCalcConfidenceBounds - calculates the lower and upper confidence bounds
 % around the predicted offset
@@ -15,9 +15,11 @@ amInterventions.UpperBound1(:) = amInterventions.Offset;
 %amInterventions.UpperBound2(:) = -1;
 amInterventions.ConfidenceProb(:) = 0;
 
+offsetval = offset.down:offset.up;
+
 for i = 1:ninterventions
     
-    adjconfthreshold = confidencethreshold * sum(overall_pdoffset(amInterventions.LatentCurve(i), i, 1:offset_span));
+    adjconfthreshold = confidencethreshold * sum(overall_pdoffset(amInterventions.LatentCurve(i), i, 1:offset.span));
     
     % Contiguous mode: populate the confidence bounds until they contain 
     % at least the probability defined by the confidence threshold. Start 
@@ -28,7 +30,7 @@ for i = 1:ninterventions
     
     elseif confidencemode == 2
         % Maximum mode: select days in order of most likely days
-        [sortedprob, sortedidx] = sort(overall_pdoffset(amInterventions.LatentCurve(i), i, 1: offset_span),'descend');
+        [sortedprob, sortedidx] = sort(overall_pdoffset(amInterventions.LatentCurve(i), i, 1: offset.span),'descend');
         cumprob = 0;
         n = 0;
         while cumprob < adjconfthreshold && n <= size(sortedidx,3)
