@@ -20,7 +20,7 @@ for n = 1:nlatentcurves
     for a=1:align_wind
         for m=1:nmeasures
             if (measuresmask(m) == 1) && (meancurvecount(n, a, m) < countthreshold)
-                [adjsumsqpt, adjsumpt, adjcountpt, range] = RgetAdjacentDataPoints(meancurvesumsq(n, :, m), meancurvesum(n, :, m), meancurvecount(n, :, m), a, m, countthreshold, max_offset, align_wind);
+                [adjsumsqpt, adjsumpt, adjcountpt, range] = RgetAdjacentDataPoints(meancurvesumsq(n, :, m), meancurvesum(n, :, m), meancurvecount(n, :, m), a, m, countthreshold, align_wind);
                 ppts(currppt, :) = [a, m, adjsumsqpt, adjsumpt, adjcountpt, range];
                 currppt = currppt + 1;
                 if currppt > 1000
