@@ -1,4 +1,4 @@
-function runAlignmentModelEMMCRecoveryFcn(amRunParameters)
+function runAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist)
 
 % runs the alignment model (EM version) given a set of run parameters.
 %
@@ -44,7 +44,6 @@ if ismember(study, {'SC', 'CL', 'BR'})
     fprintf('Loading latest labelled test data file %s\n', labelledinterventionsfile);
     load(fullfile(basedir, subfolder, labelledinterventionsfile), 'amLabelledInterventions');
 end
-    
 
 if ismember(study, {'BR', 'CL'})
     subfolder = sprintf('DataFiles/%s', study);
@@ -66,6 +65,13 @@ fprintf('Preparing input data\n');
 baseplotname = sprintf('%s%s_gp%d_lm%d_sig%d_mu%d_ca%d_sm%d_rm%d_in%d_im%d_cm%d_mm%d_od%d_ou%d_dw%d_nl%d_rs%d_ds%d_ct%d_sc%s_vs%d_vm%.1f', study, mversion, treatgap, testlabelmthd, sigmamethod, mumethod, curveaveragingmethod, ...
     smoothingmethod, runmode, intrmode, imputationmode, confidencemode, measuresmask, offset.down, offset.up, align_wind, nlatentcurves, randomseed, datasmoothmethod, countthreshold, scenario, vshiftmode, vshiftmax);
 detaillog = true;
+
+% overwrite ninterventions with interventionslist and amInterventions if
+% necessary
+if not(isempty(interventionslist))
+    amInterventions = amInterventions(interventionslist,:);
+    ninterventions = size(amInterventions,1);
+end
 
 % 1) select a set of measures, 2) filter corresponding data and 
 % 3) compute high level statistics (for each measure)
@@ -164,13 +170,7 @@ if maxiterations2 ~= 0
         amInterventions, outprior, measures, normstd, offset, align_wind, ...
         nmeasures, ninterventions, nlatentcurves, sigmamethod, smoothingmethod, ...
         runmode, countthreshold, aniterations, maxiterations2, allowvshift2, vshiftmax, miniiter, fnmodelrun);
-    
     niterations = niterations + niterations2;
-    [meancurvesumsq, meancurvesum, meancurvecount, meancurvemean, meancurvestd, amInterventions, initial_offsets, initial_latentcurve, ...
-       animatedmeancurvemean, profile_pre, animatedoffsets, animatedlc, hstg, pdoffset, overall_hist, overall_pdoffset, animated_overall_pdoffset, ...
-       vshift, isOutlier, pptsstruct, qual, niterations, run_type] = amEMMCAlignCurvesRecovery(amIntrNormcube, amHeldBackcube, amInterventions, ...
-       outprior, measures, normstd, offset, align_wind, nmeasures, ninterventions, nlatentcurves, ...
-       detaillog, sigmamethod, smoothingmethod, runmode, randomseed, countthreshold, maxiterations, allowvshift, fnmodelrun);
     fprintf('%s - ErrFcn = %.8f\n', run_type, qual);
     toc
 end
@@ -236,7 +236,7 @@ plotsubfolder = strcat('Plots', '/', plotname);
 mkdir(strcat(basedir, plotsubfolder));
 %strcat(measures.ShortName{logical(measures.RawMeas)})
 
-[amInterventions] = RamEMMCCalcConfidenceBounds(overall_pdoffset, amInterventions, offset.span, ninterventions, confidencethreshold, confidencemode);
+[amInterventions] = RamEMMCCalcConfidenceBounds(overall_pdoffset, amInterventions, offset, ninterventions, confidencethreshold, confidencemode);
 [amInterventions] = RamEMMCCalcAbsPredAndBounds(amInterventions, recovery_start, nlatentcurves);
 [sorted_interventions, max_points] = amEMMCVisualiseAlignmentDetailRecovery(amIntrNormcube, amHeldBackcube, amInterventions, meancurvemean, ...
     meancurvecount, meancurvestd, overall_pdoffset, measures, offset, align_wind, nmeasures, ninterventions, ...
@@ -284,7 +284,7 @@ if printpredictions == 1
     tic
     fprintf('Plotting prediction results\n');
     normmode = 1; % plot regular measurement data
-    for i=1:ninterventions
+    for i=ninterventions
         amEMMCPlotsAndSavePredictions(amInterventions, amIntrDatacube, measures, pdoffset, ...
             overall_pdoffset, hstg, overall_hist, vshift, meancurvemean, normmean, normstd, isOutlier, recovery_start, ...
             i, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder, normmode);
