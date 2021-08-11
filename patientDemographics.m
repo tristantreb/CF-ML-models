@@ -154,16 +154,7 @@ fprintf(sprintf('Saved %s as Excel file\n', filename));
 %% functions
 function FEV1prctpredicted = getMergedFEV1PercentagePredicted(brphysdata, cdPatient, cdPFT)
 
-fprintf('\nFEV1 percentage predicted\n');
-% -> calculate PercentagePredicted based on brphysdata
-FEV1breathe = getMeasureTable(brphysdata,'FEV1Recording','FEV');
-% calculate true value based on mean
-func = @(x) mean(x);
-FEV1breathe = varfun(func,FEV1breathe,'GroupingVariables','ID','InputVariables','FEV1Recording');
-% adds predicted FEV1
-FEV1breathe = outerjoin(FEV1breathe, cdPatient, 'Type', 'Left', 'Keys', 'ID', 'RightVariables', {'CalcPredictedFEV1'});
-% computes % predicted
-FEV1breathe.PercentagePredicted = FEV1breathe.Fun_FEV1Recording ./ FEV1breathe.CalcPredictedFEV1 * 100;
+BRPrctPredicted = calcBRFEV1PrctPredicted(brphysdata,cdPatient);
 
 % -> calulate based on clinical data
 FEV1clinical = varfun(func,cdPFT,'GroupingVariables','ID','InputVariables','FEV1');
@@ -172,16 +163,16 @@ FEV1clinical.PercentagePredicted = FEV1clinical.Fun_FEV1 ./ FEV1clinical.CalcPre
 
 % decide which to use
 n_fev1clinical = sum(ismember(cdPatient.ID, FEV1clinical.ID));
-n_fev1breathe = sum(ismember(cdPatient.ID, FEV1breathe.ID));
+n_fev1breathe = sum(ismember(cdPatient.ID, BRPrctPredicted.ID));
 fprintf('Number of patients with FEV1 recording in:\n - the clinical data: %i\n - the breathe data: %i\n', ...
     n_fev1clinical, n_fev1breathe);
-n_gain = sum(ismember(cdPatient.ID, FEV1clinical.ID) | ismember(cdPatient.ID, FEV1breathe.ID)) - max(n_fev1clinical,n_fev1breathe);
+n_gain = sum(ismember(cdPatient.ID, FEV1clinical.ID) | ismember(cdPatient.ID, BRPrctPredicted.ID)) - max(n_fev1clinical,n_fev1breathe);
 % currently more values in breathe data, let's use it as a reference and
 % add
 fprintf('We add %i patients by imputing the missing breathe FEV1 data with clinical FEV1\n', n_gain);
 fprintf('Patient lung volume semgentation thus uses %i out of %i\n', n_fev1breathe + n_gain, size(cdPatient,1));
 % get indexes from both and values fro clinical
-FEV1 = outerjoin(FEV1clinical, FEV1breathe, 'Keys', {'ID'}, 'MergeKeys', 1, 'LeftVariables', {'ID', 'PercentagePredicted'}, 'RightVariables', {'ID', 'PercentagePredicted'});
+FEV1 = outerjoin(FEV1clinical, BRPrctPredicted, 'Keys', {'ID'}, 'MergeKeys', 1, 'LeftVariables', {'ID', 'PercentagePredicted'}, 'RightVariables', {'ID', 'Value'});
 % impute all breathe not nan indexes into clinical, thereby overwriting
 % clinical if applicable
 idxtoreplace = isnan(FEV1.PercentagePredicted_FEV1breathe) & ~isnan(FEV1.PercentagePredicted_FEV1clinical);
