@@ -1,12 +1,12 @@
 init;
 
 % differentiating parameters
-nl = 2;
+nl = 3;
 dw = 20;
 mm = 22;
 
 % load all files that are similar except their random seed
-dircontent = dir(fullfile(basedir, subfolder, sprintf('BRvEMMC_gp10_lm1_sig4_mu4_ca2_sm2_rm4_in1_im1_cm2_mm%i_mo1_dw%i_nl%i_rs*_ds1_ct5_sc22-V_vs0_vm0.0*.mat',mm,dw, nl)));
+dircontent = dir(fullfile(basedir, subfolder, sprintf('*BRvEMMC_gp10_lm1_sig4_mu4_ca2_sm2_rm4_in1_im1_cm2_mm%i_od-5_ou6_dw%i_nl%i_rs*_ds1_ct5_sc22-V_vs1_vm0.4*.mat',mm,dw, nl)));
 ModelResultsFiles = cell(size(dircontent,1),1);
 for a = 1:size(ModelResultsFiles,1)
     ModelResultsFiles{a} = dircontent(a).name;

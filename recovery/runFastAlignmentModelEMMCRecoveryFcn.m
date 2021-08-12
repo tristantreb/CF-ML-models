@@ -262,7 +262,7 @@ fprintf('\n');
 tic
 basedir = setBaseDir();
 subfolder = 'MatlabSavedVariables';
-outputfilename = sprintf('%s-%s.mat', nameaddendum, plotname);
+outputfilename = sprintf('%s%s.mat', nameaddendum, plotname);
 fprintf('Saving alignment model results to file %s\n', outputfilename);
 fprintf('\n');
 save(fullfile(basedir, subfolder, outputfilename), 'amDatacube', 'amIntrDatacube', 'amIntrNormcube', ...

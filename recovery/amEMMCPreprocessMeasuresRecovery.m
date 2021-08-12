@@ -21,14 +21,12 @@ measures = getMeasuresMask(measuresmask, measures);
 % patients and days)
 
 for m = 1:nmeasures
-    %tempdata = zeros(ninterventions * align_wind, 1);
     tempdata = [];
     for i = 1:ninterventions
         scid   = amInterventions.SmartCareID(i);
         start = amInterventions.IVScaledDateNum(i);
         periodstart = start;
         tempdata = [tempdata; amDatacube(scid, periodstart:(start + align_wind - 1), m)'];  
-        %tempdata( ((i-1) * align_wind) + 1 : (i * align_wind) ) = reshape(amDatacube(scid, (start - align_wind):(start - 1), m), align_wind, 1);
     end
     tempdata(1) = [];
     

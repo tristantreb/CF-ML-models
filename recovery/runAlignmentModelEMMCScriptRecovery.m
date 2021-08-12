@@ -34,6 +34,6 @@ amRunParameters = readtable(fullfile(basedir, subfolder, runparameterfile));
 
 for rp = 1:size(amRunParameters,1)
     %createIntrNormDataCube(amRunParameters(rp, :)); % used to get muNorm.mat
-    runAlignmentModelEMMCRecoveryFcn(amRunParameters(rp, :));
-    %runFastAlignmentModelEMMCRecoveryFcn(amRunParameters(rp, :));
+    %runAlignmentModelEMMCRecoveryFcn(amRunParameters(rp, :));
+    runFastAlignmentModelEMMCRecoveryFcn(amRunParameters(rp, :),[],"");
 end

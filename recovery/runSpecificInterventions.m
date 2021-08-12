@@ -86,7 +86,7 @@ if sum(amInterventions.IVStartDate == datetime(tempdate(:,2))) == size(amInterve
     for nfield=1:length(fields)
         interventions = getfield(intr, fields{nfield});
 
-        runFastAlignmentModelEMMCRecoveryFcn(amRunParameters,interventions,string(fields(nfield)));
+        runFastAlignmentModelEMMCRecoveryFcn(amRunParameters,interventions,string(fields(nfield)+"_"));
     end
 else
     fprintf("Cannot run, amInterventions and treatobs don't match\n")
