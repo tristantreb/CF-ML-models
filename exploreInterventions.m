@@ -1,5 +1,7 @@
 % explores the list of interventions
-%
+% 
+% - plot patient enrolment time
+% - plot number of interventions par patient
 % - explore drug therapies (display two tables)
 % - display bar plots of interventions durations
 % - plot the measures profile for each intervention used in the model
@@ -32,10 +34,36 @@ load(fullfile(basedir, subfolder, munormfile));
 [brphysdata, broffset, ~] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study);
 
 % load CFTR modulators therapy
-load(fullfile(basedir, subfolder, 'breatheclinicaldata.mat'),'brDrugTherapy');
+load(fullfile(basedir, subfolder, 'breatheclinicaldata.mat'),'brDrugTherapy', 'brPatient');
 
 %% explore drug therapies
-getDrugTherapyInfo(brDrugTherapy);
+getDrugTherapyInfo(brDrugTherapy, brPatient);
+
+%% patient enrollment time
+
+% patient enrolment time
+newest_date = max(datenum(brPatient.PatClinDate));
+idx = ~isnat(brPatient.WithdrawalDate);
+brPatient.TimeEnrolled(idx) = datenum(brPatient.WithdrawalDate(idx)) - datenum(brPatient.StudyDate(idx));
+brPatient.TimeEnrolled(not(idx)) = newest_date - datenum(brPatient.StudyDate(~idx));
+brPatient.TimeEnrolled=brPatient.TimeEnrolled/365.25*12; % in months
+figure('DefaultAxesFontSize',16,'Position', [1 1 600 300])
+histogram(brPatient.TimeEnrolled,'BinWidth',3,'FaceColor','k','FaceAlpha',0.4,'EdgeColor','k','LineWidth',1)
+xticks(0:3:30)
+xlabel('Enrollment time (months)')
+ylabel('Number of patients')
+saveas(gcf,fullfile(plotfolder,sprintf('Patient_enrolment_time_from%s_to%s.png',min(brPatient.PatClinDate),max(brPatient.PatClinDate))));
+close all;
+
+
+%% display #interventions per patient
+
+IDs = brPatient.ID(brPatient.TimeEnrolled > 0);
+nintr = groupcounts(amInterventions,'SmartCareID');
+% patient enrolled since > 12 months
+nintr = nintr(ismember(nintr.SmartCareID,IDs),:);
+nintr_patient = size(nintr,1)/size(IDs,1)
+
 
 %% display bar plots of interventions durations
 
@@ -53,6 +81,9 @@ barHistogram(ivandmeasurestable.IVStopDateNum-ivandmeasurestable.IVDateNum,...
     sprintf('The %i interventions grouped by duration (all interventions included)',size(ivandmeasurestable,1)),...
     'Intervention duration (days)')
 
+saveas(gcf,fullfile(plotfolder,sprintf('Bar graph of the interventions duration (%i and %i).png', size(amInterventions,1), size(ivandmeasurestable,1))));
+close all;
+
 %% plot the measures profile for each intervention used in the model
 
 % parameters
@@ -63,7 +94,7 @@ days_post = 39; % treatment generally durate 2 weeks, includes day 0
 
 % note amInterventions date 0 is study start date, i.e. broffset (not patient start date)
 
-for i = 1:ninterventions
+for i = 89%]%1:ninterventions
     figure('DefaultAxesFontSize',12,'Position', [1 1 1500 600])
     t = tiledlayout(4,2);
     
@@ -72,14 +103,31 @@ for i = 1:ninterventions
     stop = amInterventions.IVStopDateNum(i);
     range = start - days_prior : start + days_post;
     
-    measurestoplot = ["FEV1", "O2Saturation",...
-            "FEF2575", "Weight",...
-            "PulseRate","Wellness",...
-            "RestingHR","Cough"];
+    % visualize all treatments within range before or after
+    start_in_range = amInterventions.IVDateNum(amInterventions.SmartCareID == id);
+    stop_in_range = amInterventions.IVStopDateNum(amInterventions.SmartCareID == id);
+    route_in_range = string(amInterventions.Route(amInterventions.SmartCareID == id));
+    start_in_range(not(ismember(start_in_range, range))) = nan;
+    stop_in_range(not(ismember(stop_in_range, range))) = nan;
+
+    idx = isnan(start_in_range) & not(isnan(stop_in_range));
+    start_in_range(idx) = range(1);
+    idx = isnan(stop_in_range) & not(isnan(start_in_range));
+    stop_in_range(idx) = range(end);
+    
+    start_in_range(isnan(start_in_range))=[];
+    route_in_range(isnan(stop_in_range)) = [];
+    stop_in_range(isnan(stop_in_range))=[];
+
+    
+    measurestoplot = ["FEV1", "Wellness",...
+            "FEF2575", "Cough",...
+            "PulseRate","O2Saturation",...
+            "Temperature","MinsAsleep"];
 %     measurestoplot = ["FEV1", "O2Saturation",...
 %             "PulseRate", "HasColdOrFlu",...
-%             "MinAsleep","Wellness",...
-%             "MinAwake","Temperature"];
+%             "MinsAsleep","Wellness",...
+%             "MinsAwake","Temperature"];
     
     for m = mapMeasuresToIndex(measurestoplot,measures)
         
@@ -88,11 +136,11 @@ for i = 1:ninterventions
         % get raw data
         data = getMeasureTable(brphysdata,measures.Name{m},measures.Column{m});
         % get data specific to current intervention
-        data = data( ismember( data.SmartCareID, id ) & ...
+        data = data( ismember( data.ID, id ) & ...
             ismember( data.DateNum, range ), : );
 
         % plot
-        y = eval(sprintf('data.%s',measures.Column{m}));
+        y = eval(sprintf('data.%s',measures.Name{m}));
         plot(data.DateNum-start, y,...
             'Color', [0, 0.65, 1], ...
             'LineStyle', ':', ...
@@ -107,13 +155,20 @@ for i = 1:ninterventions
             'Color', [0, 0.65, 1], ...
             'LineStyle', '-',...
             'LineWidth',1);
-        %plot(data.DateNum-start, fillmissing(y,'movmean',10),'ro');
-
+        if length(y)>1 && min(y) ~= max(y)
+            ylim([min(y), max(y)]);
+        end
         yl = ylim;
-        fill([0 stop-start stop-start 0], ...
-            [yl(1) yl(1) yl(2) yl(2)], getRouteColor(amInterventions.Route{i}), 'FaceAlpha', '0.1', 'EdgeColor', 'none');
+        for j = 1:length(start_in_range)
+            startdate = start_in_range(j) - start;
+            stopdate = stop_in_range(j) - start;
+            route = route_in_range(j);
+            fill([startdate stopdate stopdate startdate], ...
+                [yl(1) yl(1) yl(2) yl(2)], getRouteColor(route), 'FaceAlpha', '0.1', 'EdgeColor', 'none');
+        end
         fill([-35 -25 -25 -35], ...
             [yl(1) yl(1) yl(2) yl(2)], 'k', 'FaceAlpha', '0.04', 'EdgeColor', 'none');
+
         yline(normmean(i,m))
         hold off
 
@@ -126,13 +181,40 @@ for i = 1:ninterventions
             set(gca, 'YDir','reverse')
         end
     end
-    legend('Values','Smoothed curve', [amInterventions.Route{i} ' treatment'],'Meanwindow','Normmean','Location','southwest')
+    if length(route_in_range) == 1
+        legend('Values','Smoothed curve', [amInterventions.Route{i} ' treatment'],'Meanwindow','Normmean','Location','eastoutside')
+    elseif length(route_in_range) == 2
+        if start_in_range(1) == start
+            legend('Values','Smoothed curve', [amInterventions.Route{i} ' treatment'], [amInterventions.Route{i+1} ' treatment'],'Meanwindow','Normmean','Location','eastoutside')
+        else
+            legend('Values','Smoothed curve', [amInterventions.Route{i-1} ' treatment'], [amInterventions.Route{i} ' treatment'],'Meanwindow','Normmean','Location','eastoutside')
+        end
+    else
+        continue;
+    end
     % write title
     sgtitle(sprintf('Intervention %i (from %s to %s), patient %i, smooth %i', i, datestr(broffset-1+start), datestr(broffset-1+stop), id, smoothing_factor))
     saveas(gcf,fullfile(plotfolder,sprintf('Intervention%i_ID%i.png', i, id)))
     close all;
 end
 
+%%
+mm = 22; % 34
+measures = getMeasuresMask(mm, measures);
+measures = measures.Index(logical(measures.Mask));
+nmeasures=length(measures);
+
+align_wind = 20;
+i = 1;
+
+r = nan(nmeasures, nmeasures);
+
+for x = 1:measures
+    for y = 1:nmeasures
+        X = amIntrDatacube(i,1:align_wind,x)
+        r(x,y) = xcorr(amIntrDatacube(i,1:align_wind,x),amIntrDatacube(i,1:align_wind,y));
+    end
+end
 %% functions
 
 function out = getRouteColor(route)
