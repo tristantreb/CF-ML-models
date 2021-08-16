@@ -26,7 +26,7 @@ maxmeasdate = max(physdata.ScaledDateNum);
 % the data window (see value below days), we can use total measures >= 50 - which really
 % means on average 2 measurements per day (and 2 come from fitbit
 % automatically - so still very generous on data completeness
-interventions = ivandmeasurestable(ivandmeasurestable.TotalMeasures >= data_window*2, ...
+interventions = ivandmeasurestable(ivandmeasurestable.TotalMeasures >= data_window*2 & ivandmeasurestable.DaysWithMeasures >= data_window/3, ...
     {'SmartCareID', 'Hospital', 'IVStartDate', 'IVDateNum', 'IVStopDate', 'IVStopDateNum', 'Route', 'Type', 'SequentialIntervention', 'DaysWithMeasures', 'AvgMeasuresPerDay'});
 
 
