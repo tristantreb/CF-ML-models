@@ -16,6 +16,7 @@
 % alignmentmodelinputs_recovery_gap*.mat
 
 init;
+chosentreatgap = selectTreatmentGap();
 
 [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study);
 [physdata, offset] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study);
@@ -58,7 +59,7 @@ toc
 tic
 basedir = setBaseDir();
 subfolder = 'MatlabSavedVariables';
-outputfilename = sprintf('%salignmentmodelinputs_recovery_gap%d_datawind%d.mat', study, treatgap, data_window );
+outputfilename = sprintf('%salignmentmodelinputs_recovery_gap%d_datawind%d.mat', study, chosentreatgap, data_window );
 fprintf('Saving output variables to file %s\n', outputfilename);
 save(fullfile(basedir, subfolder,outputfilename), 'amInterventions','amDatacube', 'measures', 'npatients','ndays', 'nmeasures', 'ninterventions');
 toc

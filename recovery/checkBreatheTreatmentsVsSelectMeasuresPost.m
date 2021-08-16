@@ -24,8 +24,8 @@ init;
 [physdata, offset] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study);
 [cdPatient, ~, ~, cdAntibiotics, ~, ~, ~, ~, ~, ~, ~] = loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study);
 
-selectmeas = {'CoughRecording', 'FEV1Recording', 'MinsAsleepRecording', 'O2SaturationRecording', 'PulseRateRecording', ...
-           'RestingHRRecording', 'TemperatureRecording', 'WellnessRecording'};
+selectmeas = {'CoughRecording', 'FEV1Recording', 'FEF2575Recording', 'MinsAsleepRecording', 'O2SaturationRecording', 'PulseRateRecording', ...
+           'TemperatureRecording', 'WellnessRecording'};
 
 tic
 if studynbr == 3

@@ -72,6 +72,8 @@ if not(isempty(interventionslist))
     amInterventions = amInterventions(interventionslist,:);
     ninterventions = size(amInterventions,1);
 end
+% uniquemeasure = getMeasuresMask(measuresmask, measures);
+% nameaddendum = string(uniquemeasure.DisplayName(logical(uniquemeasure.Mask))) + '_';
 
 % 1) select a set of measures, 2) filter corresponding data and 
 % 3) compute high level statistics (for each measure)
@@ -102,7 +104,7 @@ normmean = calculateMuNormalisationRecovery(amDatacube, amInterventions, measure
     dataoutliers, ninterventions, nmeasures, mumethod, study);
 
 % populate normalised data cube by intervention
-[amIntrNormcube] = RcreateNormalisedIntrDatacube(amIntrDatacube, normmean, normstd, ninterventions, nmeasures, sigmamethod);
+[amIntrNormcube] = RcreateNormalisedIntrDatacube(amIntrDatacube, normmean, normstd, ninterventions, nmeasures, measures, sigmamethod);
 
 % populate index array for held back points (to be used for imputation
 % held back points is an options triggered by imputationmode = 2, to remove
@@ -126,17 +128,17 @@ fprintf('\n');
 if vshiftmode == 0
     fprintf('Running alignment - without vertical shift\n');
     allowvshift1 = false;
-    maxiterations1 = 200;
+    maxiterations1 = 120;
     maxiterations2 = 0;
 elseif vshiftmode == 1
     fprintf('Running alignment - with vertical shift\n');
     allowvshift1 = true;
-    maxiterations1 = 200;
+    maxiterations1 = 120;
     maxiterations2 = 0;
 elseif vshiftmode == 2
     fprintf('Running alignment - initially without vertical shift, then with\n');
     allowvshift1 = false;
-    maxiterations1 = 200;
+    maxiterations1 = 120;
     allowvshift2 = true;
     maxiterations2 = 50;
     

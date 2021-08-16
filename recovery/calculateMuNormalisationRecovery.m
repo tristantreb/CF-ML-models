@@ -38,11 +38,11 @@ for i = 1:ninterventions
     % decision for both: take patient interquartile mean
     if (start - apewindow - meanwindow) <= 0 
         meanwindow = 1; apewindow = 0; 
-        % fprintf('No data 35 days before treatment - using inter-quartile mean for all measures of intervention %i\n', i)
+        fprintf('No data 35 days before treatment - using inter-quartile mean for all measures of intervention %i\n', i)
     end
      if (start - apewindow - meanwindow) < previous_stop
         meanwindow = 1; apewindow = 0; 
-        % fprintf('Mean window perturbed by previous patient intervention - using inter-quartile mean for all measures of intervention %i\n', i)
+        fprintf('Mean window perturbed by previous patient intervention - using inter-quartile mean for all measures of intervention %i\n', i)
     end
     for m = 1:nmeasures
         if ~ismember(measures.DisplayName(m), exnormmeas)
@@ -54,7 +54,7 @@ for i = 1:ninterventions
                 ndel = 0;
                 for d = 1:size(tmpdataoutliers,1)
                     if (start - meanwindow) <= tmpdataoutliers.Day(d) && (start - 1) >= tmpdataoutliers.Day(d)
-                        % fprintf('For Intervention %d, excluding Data outlier (ID %d, Measure %d, Day %d) from meanwindow\n', i, scid, m, tmpdataoutliers.Day(d));
+                        fprintf('For Intervention %d, excluding Data outlier (ID %d, Measure %d, Day %d) from meanwindow\n', i, scid, m, tmpdataoutliers.Day(d));
                         meanwindowdata(tmpdataoutliers.Day(d) - (start - meanwindow) + 1 - ndel) = [];
                         ndel = ndel + 1;
                     end
@@ -65,7 +65,7 @@ for i = 1:ninterventions
             else
                 meanwindowdata = sort(meanwindowdata(~isnan(meanwindowdata)), 'descend');
             end
-            if size(meanwindowdata,2) >= 3
+            if size(meanwindowdata,2) >= 5
                 if mumethod == 1
                     % take mean of mean window (8 days prior to data window -
                     % as long as there are 3 or more data points in the window
@@ -78,7 +78,7 @@ for i = 1:ninterventions
                     % exclude bottom quartile from mean methods (3, 4, 5)
                     percentile25 = round(size(meanwindowdata,2) * .25) + 1;
                     normmean(i, m) = mean(meanwindowdata(percentile25:end));
-                    % fprintf('Exclude bottom quartile\n');
+                    fprintf('Exclude bottom quartile\n');
                 end
                 % for mumethod 5, if the interventions is sequential, take the
                 % max of mean calculated above and the overall upper 50% mean
@@ -90,7 +90,7 @@ for i = 1:ninterventions
                             percentile50 = round(size(alldata,2) * .5) + 1;
                             upper50mean = mean(alldata(percentile50:end));
                             if upper50mean > normmean(i,m)
-                                % fprintf('Sequential intervention, and using upper 50%% mean instead for intervention %d, measure %d\n', i, m);
+                                fprintf('Sequential intervention, and using upper 50%% mean instead for intervention %d, measure %d\n', i, m);
                             end
                             normmean(i,m) = max(upper50mean, normmean(i,m));
                         else
@@ -98,7 +98,7 @@ for i = 1:ninterventions
                             percentile50 = round(size(alldata,2) * .5) + 1;
                             upper50mean = mean(alldata(percentile50:end));
                             if upper50mean < normmean(i,m)
-                                % fprintf('Sequential intervention, and using upper 50%% mean instead for intervention %d, measure %d\n', i, m);
+                                fprintf('Sequential intervention, and using upper 50%% mean instead for intervention %d, measure %d\n', i, m);
                             end
                             normmean(i,m) = min(upper50mean, normmean(i,m));
                         end 
@@ -111,7 +111,7 @@ for i = 1:ninterventions
                     % for mumethod 5, use the upper 50 percent mean over all
                     % patient/measurement data
                     if mumethod == 5
-                        % fprintf('Using upper 50%% mean for intervention %d, measure %d\n', i, m);
+                        fprintf('Using upper 50%% mean for intervention %d, measure %d\n', i, m);
                         if ~ismember(measures.DisplayName(m), invmeasarray)
                             alldata = sort(amDatacube(scid, ~isnan(amDatacube(scid, :, m)), m),'ascend');
                         else
@@ -122,13 +122,13 @@ for i = 1:ninterventions
                     % else use inter quartile mean over all patient/measurement
                     % data
                     else
-                        % fprintf('Using inter-quartile mean for intervention %d, measure %d\n', i, m);
+                        fprintf('Using inter-quartile mean for intervention %d, measure %d\n', i, m);
                         column = getColumnForMeasure(measures.Name{m});
                         ddcolumn = sprintf('Fun_%s',column);
                         normmean(i, m) = demographicstable{demographicstable.SmartCareID == scid & ismember(demographicstable.RecordingType, measures.Name{m}),{ddcolumn}}(5);
                     end
                 else
-                    % fprintf('No measures for intervention %d, measure %d\n', i, m);
+                    fprintf('No measures for intervention %d, measure %d\n', i, m);
                     normmean(i,m) = 0;
                 end
             end

@@ -14,13 +14,15 @@ for i = 1:ninterventions
     start = amInterventions.IVScaledDateNum(i);
     
     icperiodend = align_wind + offset.span-1 + abs(offset.down); % offset of  means curve cannot be shifted
-    dcperiodend = start-1 + align_wind + offset.up + abs(offset.down);
+    %dcperiodend = start-1 + align_wind + offset.up + abs(offset.down);
+    dcperiodend = start-1 + align_wind + offset.span-1 + abs(offset.down);
     
     if curveaveragingmethod == 1
         fprintf('*** WARNING *** curveaveragingmethod 1 not implemented');
     else
         icperiodstart = 1; % put 1 because it is used as an index below (should be 0)
-        dcperiodstart = start + offset.down; 
+        %dcperiodstart = start + offset.down; 
+        dcperiodstart = start; 
     end
     
     % ajust to min offset to first datapoint for this intervention

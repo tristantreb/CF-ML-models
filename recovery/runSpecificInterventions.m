@@ -1,22 +1,29 @@
 init;
 subfolder = 'ExcelFiles';
 filename = 'BRTreatmentsObservation.xlsx';
-treatobs = readtable(fullfile(basedir, subfolder, filename), 'Sheet', 'recovery');
+treatobs = readtable(fullfile(basedir, subfolder, filename), 'Sheet', 'recovery new');
 
 % get labels
 before = getLabelsCount(treatobs.LabelBeforeTreatment);
 during = getLabelsCount(treatobs.LabelDuringTreatment);
 after = getLabelsCount(treatobs.LabelAfterTreatment);
 
-fprintf('Before: %i decline, %i stable, %i improves, %i undefined\n', before.d, before.s, before.i, before.no);
-fprintf('During: %i decline, %i stable, %i improves, %i undefined\n', during.d, during.s, during.i, during.no);
-fprintf('After: %i decline, %i stable, %i improves, %i undefined\n', after.d, after.s, after.i, after.no);
-
 % load brphysdata for volume segmentation
 subfolder = 'MatlabSavedVariables';
 [datamatfile, clinicalmatfile, ~] = getRawDataFilenamesForStudy(study);
 [brphysdata, broffset, ~] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study);
 cdPatient = loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study);
+
+
+%% treatobs statistics
+
+ninterventions = size(treatobs,1);
+fprintf('Before: %i decline, %i stable, %i improves, %i undefined\n', before.d, before.s, before.i,ninterventions-before.d-before.s-before.i);
+fprintf('During: %i decline, %i stable, %i improves, %i undefined\n', during.d, during.s, during.i, ninterventions-during.d-during.s-during.i);
+fprintf('After: %i decline, %i stable, %i improves, %i undefined\n', after.d, after.s, after.i, ninterventions-after.d-after.s-after.i);
+
+fprintf('average measures per day %.1f +/- %.1f, days with measures %.1f +/- %.1f\n', mean(treatobs.DaysWithMeasures), std(treatobs.DaysWithMeasures), mean(treatobs.AvgMeasuresPerDay), std(treatobs.AvgMeasuresPerDay));
+fprintf('interventions with few measures (<4 per day) %i\n', sum(treatobs.AvgMeasuresPerDay<4));
 
 %% behaviour during intervention
 
@@ -53,11 +60,11 @@ intr.t1_orallist = treatobs.IntrNbr(t1_oralmask);
 FEV1PrctPredicted = calcBRFEV1PrctPredicted(brphysdata,cdPatient);
 
 % <40%
-[intr.v40andunderlist, v40andunder_nbr] = getVolumeList(FEV1PrctPredicted.Value<40, FEV1PrctPredicted, treatobs);
+[intr.v50andunderlist, v50andunder_nbr] = getVolumeList(FEV1PrctPredicted.Value<50, FEV1PrctPredicted, treatobs);
 % >=40% to <70%
-[intr.v4070list, v4070_nbr] = getVolumeList(FEV1PrctPredicted.Value>=40 & FEV1PrctPredicted.Value<70, FEV1PrctPredicted, treatobs);
+[intr.v5080list, v5080_nbr] = getVolumeList(FEV1PrctPredicted.Value>=50 & FEV1PrctPredicted.Value<80, FEV1PrctPredicted, treatobs);
 % >= 70%
-[intr.v70andoverlist, v70andover_nbr] = getVolumeList(FEV1PrctPredicted.Value>=70, FEV1PrctPredicted, treatobs);
+[intr.v80andoverlist, v80andover_nbr] = getVolumeList(FEV1PrctPredicted.Value>=80, FEV1PrctPredicted, treatobs);
 
 %% data quality and duration
 
@@ -92,24 +99,24 @@ else
     fprintf("Cannot run, amInterventions and treatobs don't match\n")
 end
 
-%% write table
+%% write treatobs table
 
- writetable(treatobs, fullfile(basedir, subfolder, filename),'Sheet','recovery');
+%  writetable(treatobs, fullfile(basedir, subfolder, filename),'Sheet','recovery new');
  
  
 %% estimate acceptable offset amount at boundaries
-
-% an offset can be found only for treatments that have show an "i" during
-% treatment
-% when offset can't be found -> permanent decline shifted down, permanent
-% improve shifted up
-proportion_no_offset = 1-during.i/(during.d + during.i + during.i);
-
-% let's calculate what's the reasonnable amount of interventions where the
-% offset cannot be found 
-sum(Count)*proportion_no_offset
-
-% 34/2 + 8 = 25 is acceptable
+% 
+% % an offset can be found only for treatments that have show an "i" during
+% % treatment
+% % when offset can't be found -> permanent decline shifted down, permanent
+% % improve shifted up
+% proportion_no_offset = 1-during.i/(during.d + during.i + during.i);
+% 
+% % let's calculate what's the reasonnable amount of interventions where the
+% % offset cannot be found 
+% sum(Count)*proportion_no_offset
+% 
+% % 34/2 + 8 = 25 is acceptable
 
 %% functions
 function labels = getLabelsCount(list)

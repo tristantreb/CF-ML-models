@@ -1,4 +1,4 @@
-function [amIntrNormcube] = RcreateNormalisedIntrDatacube(amIntrDatacube, normmean, normstd, ninterventions, nmeasures, sigmamethod)
+function [amIntrNormcube] = RcreateNormalisedIntrDatacube(amIntrDatacube, normmean, normstd, ninterventions, nmeasures, measures, sigmamethod)
 
 % createNormalisedIntrDatacube - creates the normalised data cube by
 % intervention (for each measure)
@@ -10,15 +10,26 @@ function [amIntrNormcube] = RcreateNormalisedIntrDatacube(amIntrDatacube, normme
 % is using a by day/measure sigma.
 
 amIntrNormcube = amIntrDatacube;
+invmeasarray = getInvertedMeasures('BR');
 
 for i = 1:ninterventions
     for m = 1:nmeasures
-        if sigmamethod == 4
-            amIntrNormcube(i, :, m) = ...
-                (amIntrDatacube(i, :, m) - normmean(i, m)) / normstd(i, m);
-        else 
-            amIntrNormcube(i, :, m) = ...
-                (amIntrDatacube(i, :, m) - normmean(i, m));
+        if ~ismember(measures.DisplayName(m),invmeasarray)
+            if sigmamethod == 4
+                amIntrNormcube(i, :, m) = ...
+                    (amIntrDatacube(i, :, m) - normmean(i, m)) / normstd(i, m);
+            else 
+                amIntrNormcube(i, :, m) = ...
+                    (amIntrDatacube(i, :, m) - normmean(i, m));
+            end
+        else
+            if sigmamethod == 4
+                amIntrNormcube(i, :, m) = ...
+                    - (amIntrDatacube(i, :, m) - normmean(i, m)) / normstd(i, m);
+            else 
+                amIntrNormcube(i, :, m) = ...
+                    - (amIntrDatacube(i, :, m) - normmean(i, m));
+            end
         end
     end
 end

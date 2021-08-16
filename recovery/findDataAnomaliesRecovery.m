@@ -15,8 +15,9 @@
 init;
 
 [studynbr, study, studyfullname] = selectStudy();
+chosentreatgap = selectTreatmentGap();
 
-modelinputsmatfile = sprintf('%salignmentmodelinputs_recovery_gap%d_datawind_%i.mat', study, chosentreatgap, data_window);
+modelinputsmatfile = sprintf('%salignmentmodelinputs_recovery_gap%d_datawind%i.mat', study, chosentreatgap, data_window);
 datademographicsfile = sprintf('%sdatademographicsbypatient.mat', study);
 fprintf('\n');
 
