@@ -25,7 +25,7 @@ fprintf('%i patients did not provide any measurement: %s\n', N_no_measures, pati
 % cdEndStudy = cdEndStudy(ismember(cdEndStudy.ID, cdPatient.ID),:);
 % cdHghtWght = cdHghtWght(ismember(cdHghtWght.ID, cdPatient.ID),:);
 
-%% 
+%%
 N = size(unique(cdPatient.ID),1);
 
 % Female

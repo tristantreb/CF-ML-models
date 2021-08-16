@@ -11,6 +11,10 @@ function [Drugsbypatients] = getDrugTherapyInfo(brDrugTherapy, brPatient)
 % - displays two tables
 % - table with patients and their associated drug mix
 
+% sort by date and ID
+brDrugTherapy = sortrows(brDrugTherapy,'DrugTherapyStartDate','ascend');
+brDrugTherapy = sortrows(brDrugTherapy,'ID','ascend');
+
 patients = unique(brDrugTherapy.ID);
 
 % group drug therapies by patients
@@ -65,10 +69,11 @@ disp(currenttable);
 historytable =  groupcounts(Drugsbypatients,'History');
 
 % get patient IDs for each drug mix
-ID = string(zeros(size(historytable,1)));
+ID = string(zeros(size(historytable,1),1));
 for i = 1:size(historytable,1)
     ID(i,1) = join(string(Drugsbypatients{ismember(Drugsbypatients.History,string(historytable.History(i))),'ID'}),', ');
 end
+historytable.IDs = ID;
 
 % display results
 fprintf('The %i patients have %i differents CFTR modulator history:\n', sum(historytable.GroupCount), size(historytable,1));
