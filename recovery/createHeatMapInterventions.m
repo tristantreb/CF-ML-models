@@ -15,7 +15,7 @@ load(fullfile(basedir, subfolder, modelinputfile));
 daysprior = 35;
 dayspost = 39;
 
-for measuresmask = [0 21 22 30 31 32 33]
+for measuresmask = 34
     plotHeatMap(measuresmask, daysprior, dayspost, amInterventions, physdata, measures, study);
     % save value
     filename = sprintf('%s-HeatmapInterventions-mm%i', study, measuresmask);
@@ -101,7 +101,7 @@ h.YLabel = 'Intervention';
 h.CellLabelColor = 'none';
 h.GridVisible = 'off';
 h.ColorLimits = [1 size(colors,1)+1];
-set(gca,'FontSize',6);
+set(gca,'FontSize',10);
 end
 
 function colors = getColors(nmeasures)
