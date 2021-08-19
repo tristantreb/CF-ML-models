@@ -5,12 +5,13 @@ init;
 % load measures
 [datamatfile, ~, ~] = getRawDataFilenamesForStudy(study);
 [brphysdata, broffset, ~] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study);
+load(fullfile(basedir, subfolder, 'breatheclinicaldata.mat'),'brPatient');
 
-%% load patient master files
-master = [readtable('../../DataFiles/BR/PatientMasterFiles/PBPatientMasterCDF20210305.xlsx'); ...
-    readtable('../../DataFiles/BR/PatientMasterFiles/PBPatientMasterPAP20210315.xlsx')];
-master  = master(:,[1 4 6 7]);
-% note: master 20210315 contains 266 patients
+%% load patient brPatient files
+brPatient = [readtable('../../DataFiles/BR/PatientbrPatientFiles/PBPatientbrPatientCDF20210305.xlsx'); ...
+    readtable('../../DataFiles/BR/PatientbrPatientFiles/PBPatientbrPatientPAP20210315.xlsx')];
+brPatient  = brPatient(:,[1 4 6 7]);
+% note: brPatient 20210315 contains 266 patients
 % latest date
 maxStudyDate = datenum(getLatestBreatheMeasDate,'yyyymmdd') - broffset;
 
@@ -60,11 +61,11 @@ dataresting_heart_rate = table2array(brphysdata(i,[1 3 11]));
 clear i
 
 %% specific code for fevAnalysis
-p_filter=0; % activate fevAnalysis
+p_filter=1; % activate fevAnalysis
 
 if p_filter == 1
     % load treatments
-    load(fullfile(basedir, subfolder, 'BRivandmeasures_gap10.mat'));
+    load(fullfile(basedir, subfolder, 'BRivandmeasures_recovery_gap10.mat'));
     % load CFTR modulators therapy
     load(fullfile(basedir, subfolder, 'breatheclinicaldata.mat'));%,'brDrugTherapy');
 
@@ -78,13 +79,14 @@ if p_filter == 1
     n_post_m = 15; % days after modulator therapy start
     
     % remove patient 601, 621 578 (erroneous behavior) 
-    dataFEV1 = dataFEV1(~ismember(dataFEV1(:,1), [621 601 578]),:);
+    patients_erroneous = [221,201,178]; 
+    dataFEV1 = dataFEV1(~ismember(dataFEV1(:,1), patients_erroneous),:);
 end
 
 %% build array with id, seniority and commitment
 
 % enter the data type you want to use
-type = "resting_heart_rate"
+type = "FEV1";
 data = eval("data"+type);
 
 patients = unique(data(:,1));
@@ -115,24 +117,24 @@ for i = 1:length(patients)
         
         % get minDate
         % if no study start date for patient
-        if isnat(master.StudyDate(master.ID == patients(i)))
+        if isnat(brPatient.StudyDate(brPatient.ID == patients(i)))
             %  look at consent date
-            if isnat(master.ConsentDate(master.ID == patients(i)))
+            if isnat(brPatient.ConsentDate(brPatient.ID == patients(i)))
                 % if no consent date, take overall study start date
                 minDate = 0;
             else % else take consent date
-                minDate = datenum(master.ConsentDate(master.ID == patients(i))) - broffset;
+                minDate = datenum(brPatient.ConsentDate(brPatient.ID == patients(i))) - broffset;
             end
         else % else take study start date
-            minDate = datenum(master.StudyDate(master.ID == patients(i))) - broffset;
+            minDate = datenum(brPatient.StudyDate(brPatient.ID == patients(i))) - broffset;
         end
         
         % get maxDate
-        if isnat(master.WithdrawalDate(master.ID == patients(i)))
+        if isnat(brPatient.WithdrawalDate(brPatient.ID == patients(i)))
             % if no withdrawal, take current maxDate
             maxDate = maxStudyDate;
         else % else take withdrawal date
-            maxDate = datenum(master.WithdrawalDate(master.ID == patients(i)) - broffset);
+            maxDate = datenum(brPatient.WithdrawalDate(brPatient.ID == patients(i)) - broffset);
         end
     end
     
@@ -169,16 +171,16 @@ hold on
 histogram(commitment(commitment(:,4)>threshold,6),10,'BinLimit',[0,100])
 title(sprintf('Commitment to %s recording',strrep(type,"_"," ")),  ...
     [' mean: ' num2str(mean(commitment(:,6),'omitnan'),2), '%, median: ' num2str(median(commitment(:,6),'omitnan'),2) '%, ' ...
-    num2str(sum(commitment(:,4))) ' measurements, ' num2str(sum(commitment(:,4)~=0)) ' patients out of ' num2str(length(unique(brphysdata.SmartCareID)))])
-xlabel("Density of measurements over enrollment period %")
-ylabel('#patients')
-legend('all measurements', ['measurements count > ' num2str(threshold)])
+    num2str(sum(commitment(:,4))) ' measurements, ' num2str(sum(commitment(:,4)~=0)) ' patients'])% out of ' num2str(length(unique(brphysdata.SmartCareID)))])
+xlabel("Density of measurements over stable enrolment period %")
+ylabel('Number of patients')
+legend('all measurements', [' > ' num2str(threshold) ' measurements per patient'])
 grid('on')
 hold off
 
-saveas(gcf,fullfile(plotfolder,sprintf('patientCommitment%s_CDF20210305_PAP20210315.png',type)))
+saveas(gcf,fullfile(plotfolder,sprintf('patientCommitment%s.png',type)))
 close all
-%% Create table with evolution of data count each 6 months
+%% Create table with evolution of data count each 6 months - unused
 
 days_span = 364/2; % 6 months window
 
@@ -205,14 +207,14 @@ for i = 1:length(day_span)-1
 end
 %% find percentage of patients and measurements corresponding to a density threshold
 
-idx = commitment(:,6)>28; % idx patients over 30% density of measurements
+idx = commitment(:,6)>=30; % idx patients over D% density of measurements
 %idx = data(:,4)>50; % idx patients over 50 measurements count
 
-prct_patients = 100*sum(idx)/198;%length(data(:,1))*100; 
+prct_patients = 100*sum(idx)/220%length(data(:,1))*100; 
 
-prct_measurements = 100*sum(commitment(idx,4))/sum(commitment(:,4)); % all measurements: %length(FEVdata);%
+prct_measurements = 100*sum(commitment(idx,4))/sum(commitment(:,4)) % all measurements: %length(FEVdata);%
 
-%% investigate data completeness
+%% investigate data completeness - unused
 
 patients_FEV1 = unique(dataFEV1(:,1));
 patients_FEV6 = unique(dataFEV6(:,1));

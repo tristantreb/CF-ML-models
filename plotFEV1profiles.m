@@ -16,14 +16,17 @@ init;
 [datamatfile, ~, ~] = getRawDataFilenamesForStudy(study);
 [brphysdata, broffset, ~] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study);
 % load treatments
-load(fullfile(basedir, subfolder, 'BRivandmeasures_gap10.mat'));
+load(fullfile(basedir, subfolder, 'BRivandmeasures_recovery_gap10.mat'));
 % load CFTR modulators therapy
 load(fullfile(basedir, subfolder, 'breatheclinicaldata.mat'),'brDrugTherapy');
 
 % clean modulators tables
-brDrugTherapy.DrugTherapyType = cleanDrugTherapyNamings(brDrugTherapy.DrugTherapyType);
-% adds columns with serial date num
 brDrugTherapy.DateNum = datenum(brDrugTherapy.DrugTherapyStartDate) - broffset;
+brDrugTherapy.StopDateNum = datenum(brDrugTherapy.DrugTherapyStopDate) - broffset;
+% remove patients with negative dates
+neg_dates = size(brDrugTherapy,1);
+brDrugTherapy(brDrugTherapy.DateNum < 0,:)=[];
+neg_dates = neg_dates - size(brDrugTherapy,1);
 
 %% extract signals
 
@@ -76,10 +79,10 @@ n_post_m=1; % take one day for the modulators
 p_filter=1; % treatments and modulators
 
 
-p_all_patients = 501%unique(FEVdata(:,1));
+p_all_patients = 101:106%unique(dataFEV1(:,1));
 patients_missing_trikafta = [835, 812, 803, 598, 525, 523, 517, 516, 501];
 
-for patient = p_all_patients'
+for patient = p_all_patients
 
     % mask revealing patient data
     mask_patient = dataFEV1(:,1) == patient;
@@ -102,23 +105,27 @@ for patient = p_all_patients'
         drugcol = [0     0.8   0.6 ];
         
         % plot patient
-        figure('DefaultAxesFontSize',12,'Position', [1 1 2000 300])
+        figure('DefaultAxesFontSize',12,'Position', [1 1 2000 1000])
         
-        subplot(8,1,1)
+        %subplot(8,1,1)
         
         % referenced on patient mean
         avg = mean(dataFEV1(mask_patient, 3)); 
-        ylim([-0.8 0.8]); yl=[-0.8 0.8];
         
         x = dataFEV1(mask_patient, 2); % date
         y = dataFEV1(mask_patient, 3); % measurements
 
+        ylim([-0.8 0.8]); 
+        yl = ylim;
+        xlim([min(x) max(x)]);
+        
         % plot raw measures
         plot(datetime(datestr(x+broffset)),y-avg,'.','MarkerEdgeColor','b')
         xlabel('Day')
         ylabel('FEV1 (L)')
         title(sprintf('Patient %i, mean FEV1: %1.1f L', patient, avg))
         grid('on')
+        hold on
 
         % first patient's measurement date
         first_date = min(x);
@@ -132,6 +139,7 @@ for patient = p_all_patients'
          end
 
          % plot modulators influence period
+         % BEWARE: NO DIFFERENCE BETWEEN TRIKAFTA AND OTHER MODULATORS
          seq = extractConsecutiveSequences(days_m(days_m>first_date),0);
          for a = 1:size(seq,2)
             temp = datetime(datestr(seq{a}+broffset));
@@ -140,9 +148,8 @@ for patient = p_all_patients'
          end
          
          %saveas(gcf,fullfile(plotfolder,['FEV1Profile_ID' num2str(patient) '.png']))
-         %close all
+         close all
+         hold off
         
     end
 end
-
-%function plot

@@ -1,5 +1,8 @@
-function out = cleanDrugTherapyNamings(str_array)
+% useful only for pre-REDCAP update datasets
 % inputs: array, output: array with cleaned drugtherapy names
+
+function out = cleanDrugTherapyNamings(str_array)
+
     fprintf('Clean drug therapy namings.\nInitial drug therapy list:\n')
     disp(categorical(unique(str_array)));
     out = replace(str_array,["symkevi","Symkevi Modulator"],"Symkevi");
