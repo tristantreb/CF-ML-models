@@ -1,4 +1,4 @@
-function [Drugsbypatients] = getDrugTherapyInfo(brDrugTherapy, brPatient) 
+function [Drugsbypatients, historytable] = getDrugTherapyInfo(brDrugTherapy, brPatient) 
 % - groupcount the different drug therapies over patients
 % - define drugs mix: list of the drug therapies given to a patient, sorted in time
 % - groupcount the different drugs mix over patients and details the concerned patients IDs
@@ -61,7 +61,7 @@ disp(druglisttable)
 % view patients with current drug therapy
 currenttable =  groupcounts(Drugsbypatients,'Current');
 currenttable = sortrows(currenttable,2,'descend');
-fprintf('Current repartition of the CFTR modulators among the %i patients\n', size(currenttable,1));
+fprintf('Current repartition of the CFTR modulators among the %i patients\n', size(Drugsbypatients,1));
 disp(currenttable);
 
 %%% find (patient CFTR modulator history, count, IDs) and display it
