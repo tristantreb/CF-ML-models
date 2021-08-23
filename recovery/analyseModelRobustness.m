@@ -60,13 +60,7 @@ Ttest = T;
 % curve allocation with new indices
 
 % find the rs which has most in common with all
-best_match = 2;
-% matchmatrix = nan(nrs-1);
-% for i = 2:nrs
-%     for j = 2:nrs
-%         matchmatrix(i-1,j-1) = sum(Ttest{:,i}==1 & Ttest{:,j}==1);
-%     end
-% end
+best_match = 1;
 
 % put the right latent curve index
 
@@ -91,15 +85,18 @@ for rscol = 2:nfiles+1
     Different = Ttest(not(idx_same),:);
 
     % more than 2 out of 7 are different
-    allowed_false = 2;
+    allowed_false = 1;
     idx_same_almost = sum(Ttest{:,2:8},2) <= nfiles + allowed_false | sum(Ttest{:,2:8},2) >= 2*nfiles - allowed_false;
+    allowed_false = 2;
+    idx_difft = sum(Ttest{:,2:8},2) <= nfiles + allowed_false | sum(Ttest{:,2:8},2) >= 2*nfiles - allowed_false;
     SameAlmost = Ttest(idx_same_almost,:);
-    VeryDifferent = Ttest(not(idx_same_almost),:);
+    VeryDifferent = Ttest(not(idx_difft),:);
 
+    SameAlmostIDs(rscol-1,1) = join(string(SameAlmost.ID),", ");
     OutlierIntr(rscol-1,1) = join(string(VeryDifferent.ID),", ");
     ExactSameClass(rscol-1,1) = sum(idx_same);
-    AlmostSame_Less2Err(rscol-1,1) = sum(idx_same_almost);
-    Diff_Over3Err(rscol-1,1) = sum(not(idx_same_almost));
+    AlmostSame_Less1Err(rscol-1,1) = sum(idx_same_almost);
+    Diff_Over3Err(rscol-1,1) = sum(not(idx_difft));
 end
 
 fprintf('%i interventions have the exact same class\n', size(Same,1));
@@ -115,14 +112,15 @@ disp(map)
 Class1 = map(1,2:end)';
 Class2 = map(2,2:end)';
 
-RSview = table(T.Properties.VariableNames(2:end)',Iterations, Obj, Class1, Class2, ExactSameClass,AlmostSame_Less2Err, Diff_Over3Err,OutlierIntr);
+RSview = table(T.Properties.VariableNames(2:end)',Iterations, Obj, Class1, Class2, ExactSameClass,AlmostSame_Less1Err, Diff_Over3Err,OutlierIntr);
 
-%% draw bar plot of consistency of affilitation to class 1
+%% redo this a last time for the best reference
 
-ref_rs = 'rs3';
+% reference random seed
+ref_rs = 'rs1';
 
 Ttest = T;
-yes1 = Ttest{:,rscol} == 1;
+yes1 = Ttest{:,ref_rs} == 1;
 for i = 2:nfiles+1
     % get logicals
     yes2 = Ttest{:,i} == 1;
@@ -137,9 +135,18 @@ end
 
 N_class = sum(Ttest{:,2:nfiles+1}==1,2);
 N_class = table(N_class,'VariableNames',{'Class1'});
+
+% 0 and 7 means 0 error
+N_class.Class1( N_class.Class1 == 7) = 0;
+% 1 and 6 means 1 error
+N_class.Class1( N_class.Class1 == 6) = 1;
+N_class.Class1( N_class.Class1 == 5) = 2;
+N_class.Class1( N_class.Class1 == 4) = 3;
+
 Grouped = groupcounts(N_class,'Class1');
 
-%% 
+%% draw bar plot of consistency of affilitation to class 1
+
 figure('DefaultAxesFontSize',16,'Position', [1 1 2000 600])
 % Get the table in string form.
 TString = evalc('disp(RSview)');
@@ -156,35 +163,22 @@ annotation(gcf,'Textbox','String',TString,'Interpreter','Tex',...
 % uitable('Data',RSview{:,:},'ColumnName',RSview.Properties.VariableNames,...
 %     'RowName',RSview.Properties.RowNames,'Units', 'Normalized', 'Position',[0, 0, 1, 1]);
 
-%
+%%
 subplot(2,2,3)
 
-b = bar(Grouped.Class1,Grouped.GroupCount);
+b = bar(Grouped.Class1,Grouped.Percent,0.4,'FaceColor',[0.6 0.6 0.6],'EdgeColor','k','LineWidth',1);
 b.FaceColor = 'flat'; 
-b.CData(4,:) = [1 0.2 0.2]; b.CData(5,:) = [1 0.2 0.2];
-title=sprintf('Consistency of affiliation to class 1 for %i rs (vs=%.1f)',nfiles, vs);
+b.CData(4,:) = [1 0 0];
+title=sprintf('Number of classification error (vs=%.1f)', vs);
 xlabel(title)
-ylabel('Number of interventions')
-grid('on')
+ylabel('Amount of interventions (%)')
 saveas(gcf,fullfile(plotfolder,sprintf('%s.png',title)))
 % close all
 
-%% sorted view
+%% outlying interventions
 
-% create a mapping for each rs to set the right class, and see which
-% interventions are changing class
-
-% now which rs, which index initially
-
-map = sort(map,1);
-[temp, order] = sort(map(1,:));
-disp(map(:,order));
-
-% if same class size, take the first one and apply most similar
-% interventions to this idx (hopefully some interventions are consistently
-% in the same class)
-
-
+outliers = [8 41 55 94 102 104];
+amInterventions(ismember(amInterventions.IntrNbr,outliers),:)
 
 %% consistency of the curve allocation for different random seeds
 accuracy = zeros(ninterventions,nl);
