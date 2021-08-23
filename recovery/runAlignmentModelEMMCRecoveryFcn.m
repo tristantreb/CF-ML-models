@@ -102,7 +102,7 @@ normmean = calculateMuNormalisationRecovery(amDatacube, amInterventions, measure
     dataoutliers, ninterventions, nmeasures, mumethod, study);
 
 % populate normalised data cube by intervention
-[amIntrNormcube] = RcreateNormalisedIntrDatacube(amIntrDatacube, normmean, normstd, ninterventions, nmeasures, sigmamethod);
+[amIntrNormcube] = RcreateNormalisedIntrDatacube(amIntrDatacube, normmean, normstd, ninterventions, nmeasures, measures, sigmamethod);
 
 % populate index array for held back points (to be used for imputation
 % held back points is an options triggered by imputationmode = 2, to remove

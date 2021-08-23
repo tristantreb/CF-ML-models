@@ -36,6 +36,8 @@ load(fullfile(basedir, subfolder, munormfile));
 % load CFTR modulators therapy
 load(fullfile(basedir, subfolder, 'breatheclinicaldata.mat'),'brDrugTherapy', 'brPatient');
 
+load('/Users/tristan.trebaol/Documents/PDM/Project/MatlabSavedVariables/BRivandmeasures_recovery_gap10.mat')
+
 %% explore drug therapies
 getDrugTherapyInfo(brDrugTherapy, brPatient);
 
@@ -50,8 +52,8 @@ brPatient.TimeEnrolled=brPatient.TimeEnrolled/365.25*12; % in months
 figure('DefaultAxesFontSize',16,'Position', [1 1 600 300])
 histogram(brPatient.TimeEnrolled,'BinWidth',3,'FaceColor','k','FaceAlpha',0.4,'EdgeColor','k','LineWidth',1)
 xticks(0:3:30)
-xlabel('Enrollment time (months)')
-ylabel('Number of patients')
+xlabel('Enrolment time (months)')
+ylabel('Number of participants')
 saveas(gcf,fullfile(plotfolder,sprintf('Patient_enrolment_time_from%s_to%s.png',min(brPatient.PatClinDate),max(brPatient.PatClinDate))));
 close all;
 
@@ -59,11 +61,22 @@ close all;
 %% display #interventions per patient
 
 IDs = brPatient.ID(brPatient.TimeEnrolled > 0);
-nintr = groupcounts(amInterventions,'SmartCareID');
+%nintr = groupcounts(amInterventions,'SmartCareID');
+nintr = groupcounts(ivandmeasurestable,'SmartCareID');
 % patient enrolled since > 12 months
-nintr = nintr(ismember(nintr.SmartCareID,IDs),:);
-nintr_patient = size(nintr,1)/size(IDs,1)
+nintr_patient = nintr(ismember(nintr.SmartCareID,IDs),:);
+fprintf('Proportion of patients with at least one intervention %.2f\n', size(nintr,1)/size(IDs,1));
 
+nintr = groupcounts(nintr_patient,'GroupCount');
+nintr(end+1,:) = table( 0, size(unique(brPatient.ID),1) - size(unique(ivandmeasurestable.SmartCareID),1), 0);
+
+figure('DefaultAxesFontSize',16,'Position', [1 1 600 300])
+b = bar(nintr.GroupCount,nintr.GroupCount_1,'FaceColor','k','FaceAlpha',0.4,'EdgeColor','k','LineWidth',1);
+xlabel('Number of antibiotic treatments');
+ylabel('Number of participants');
+b.FaceColor = 'flat'; b.CData(1,:) = [1 1 1];
+saveas(gcf,fullfile(plotfolder,sprintf('bar_intrperpatient_before_filter.png')));
+close all;
 
 %% display bar plots of interventions durations
 
@@ -94,7 +107,7 @@ days_post = 39; % treatment generally durate 2 weeks, includes day 0
 
 % note amInterventions date 0 is study start date, i.e. broffset (not patient start date)
 
-for i = 89%]%1:ninterventions
+for i = 1:ninterventions
     figure('DefaultAxesFontSize',12,'Position', [1 1 1500 600])
     t = tiledlayout(4,2);
     

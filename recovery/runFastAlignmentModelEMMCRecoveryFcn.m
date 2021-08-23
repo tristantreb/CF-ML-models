@@ -128,17 +128,17 @@ fprintf('\n');
 if vshiftmode == 0
     fprintf('Running alignment - without vertical shift\n');
     allowvshift1 = false;
-    maxiterations1 = 120;
+    maxiterations1 = 200;
     maxiterations2 = 0;
 elseif vshiftmode == 1
     fprintf('Running alignment - with vertical shift\n');
     allowvshift1 = true;
-    maxiterations1 = 120;
+    maxiterations1 = 200;
     maxiterations2 = 0;
 elseif vshiftmode == 2
     fprintf('Running alignment - initially without vertical shift, then with\n');
     allowvshift1 = false;
-    maxiterations1 = 120;
+    maxiterations1 = 200;
     allowvshift2 = true;
     maxiterations2 = 50;
     
