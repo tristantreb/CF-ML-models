@@ -1,15 +1,25 @@
+% analyse the relation between patient characteristics and subset of interventions
+% 
+% Input: 
+% ------
+% - clinical measurements
+% - ivandmeasurestable (all interventions)
+% - predictive model inputs (damian)
+% 
+% Output: graphs and pvalues from adapted function amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery 
+% -------
+
 init;
 
 % load files
-
-[datamatfile, clinicalmatfile, ~] = getRawDataFilenamesForStudy(study);
+[~, clinicalmatfile, ~] = getRawDataFilenamesForStudy(study);
 
 [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, ~, cdCRP, ...
     cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact] ...
             = loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study);
 
 load(fullfile(basedir,subfolder,'BRivandmeasures_recovery_gap10.mat'));
-load(fullfile(basedir,subfolder,'BRpredictivemodelinputs.mat'), 'pmPatients', 'pmPatientMeasStats');
+load(fullfile(basedir,subfolder,'BRpredictivemodelinputs.mat'), 'pmPatientMeasStats');
 
 % load 1 model results file
 % specify parameters to spot the right file in dir
@@ -17,7 +27,7 @@ nl = 1; dw = 20; mm = 34; vm=0.4; rs=4;
 % load all files that are similar except their random seed
 dircontent = dir(fullfile(basedir, subfolder, sprintf('*BRvEMMC_gp10_lm1_sig4_mu4_ca2_sm2_rm4_in1_im1_cm2_mm%i_od0_ou15_dw%i_nl%i_rs%i_ds1_ct5_sc22-V_vs1_vm%.1f*.mat',mm,dw, nl, rs, vm)));
 
-%%
+%% option: merge two intervention sets (to compare results from runSpecificInterventions)
 
 if nl == 1
     ModelResultsFile = dircontent(9).name;
@@ -45,10 +55,11 @@ end
 plotname = 'Wilcoxon tests';
 plotsubfolder = 'PlotsRecovery/';
 
-%% removing outliers interventions
+%% option: removing outliers interventions
+
+outlier=0;
 
 patientsinit = unique(amInterventions.SmartCareID);
-outlier=0;
 
 % remove outlying interventions
 if outlier
@@ -62,7 +73,7 @@ patientsintr = unique(amInterventions.SmartCareID);
 ninterventions = size(amInterventions,1);
 
 
-%%
+%% manually setting recovery start and computing time to response
 
 % adding time to treatment response to amInterventions
 %rs1
@@ -76,6 +87,9 @@ idxC1 = amInterventions.LatentCurve == 1;
 idxC2 = not(idxC1);
 amInterventions.TimeToResponse(idxC1) = getTimeToResponse(recovery_start_C1, amInterventions(idxC1,:));
 amInterventions.TimeToResponse(idxC2) = getTimeToResponse(recovery_start_C2, amInterventions(idxC2,:));
+
+
+%%% run the function %%%
 
 % from pmPatients, uses only BMI, sex age, equivalent info in
 % cdPatient
@@ -91,6 +105,7 @@ wcxpvaltable = amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery(amInterventio
     ivandmeasurestable,cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder,...
     ninterventions, nl, scenario, rs, study); 
 
+%% functions
 function tau = getTimeToResponse(recovery_start, amInterventions)
 
 tau = zeros(size(amInterventions,1),1);

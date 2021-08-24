@@ -1,3 +1,5 @@
+% plot heatmap with  #measurements per day for all interventions 
+
 init;
 
 % load data brphysdata, broffset, brPatient, study
@@ -10,7 +12,8 @@ modelinputfile = 'BRalignmentmodelinputs_recovery_gap10_datawind20.mat';
 % load amInterventions, amDatacube, measures and count info
 load(fullfile(basedir, subfolder, modelinputfile));
 
-%% 
+%% plot
+
 % choose measure mask
 daysprior = 35;
 dayspost = 39;

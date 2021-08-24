@@ -1,3 +1,5 @@
+% main script to run alignment models (EMMC versions)
+
 init;
 
 basedir = setBaseDir();

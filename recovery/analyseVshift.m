@@ -1,3 +1,11 @@
+% used to find the optimal maximum vertical shift value
+% 
+% Input: alignment results mat file
+% ------
+% 
+% Output: histogram of the vertical shift's distribution 
+% -------
+
 init;
 
 % differentiating parameters

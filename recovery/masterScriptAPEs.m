@@ -1,4 +1,4 @@
-% master script to run an alignment model
+% master script to run an alignment model for APEs (prior to redcap)
 
 % Documentation Standard
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -15,6 +15,7 @@
 % -------
 % "variables, files, plots in the same way as input"
 
+
 % CREATE DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%
 % Add m2html to path
@@ -23,6 +24,7 @@
 % raises a display issue
 % addpath /Users/tristan.trebaol/Documents/PDM/Project/m2html/
 % m2html('mfiles','Code/','htmldir','Documentation/','recursive','on', 'global','on','todo','on');
+
 
 % MASTER FILE TO RUN AN ALIGNMENT MODEL
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

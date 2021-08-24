@@ -13,7 +13,8 @@
 % clinical and measurements data
 % BRalignmentmodelinputs_recovery_gap*.mat  uses amInterventions ID, start,
 % stop date, 
-% BRmuNorm.mat                              mu normalisation for mean window
+% BRmuNorm.mat                              mu normalisation for mean
+% window - created by running CreateIntrNormDataCube
 %
 % Output:
 % -------

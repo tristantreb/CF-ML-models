@@ -1,4 +1,4 @@
-% master script to run an recovery model
+% master script to run an alignment model for recovery (post redcap migration)
 
 % Documentation Standard
 %%%%%%%%%%%%%%%%%%%%%%%%

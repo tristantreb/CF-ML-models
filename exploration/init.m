@@ -1,18 +1,14 @@
 clear; clc;
-% model
-addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/pdm/recovery/updatedModel;
-addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/smartcare/;
 
 % helpers
 addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/pdm/helperfunctions/;
-
+addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/smartcare/;
 
 basedir = setBaseDir();
 subfolder = 'MatlabSavedVariables';
 study = 'BR';
 plotfolder = '/Users/tristan.trebaol/Documents/PDM/Project/PlotsRecovery/';
 
-% needed for createAlignmentModelInputsRecovery, findDataAnomaliesRecovery
 data_window = 20;
 
 % colors

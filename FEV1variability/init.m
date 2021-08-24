@@ -1,13 +1,14 @@
-clear;
+clear; clc;
+
+% helpers
+addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/pdm/helperfunctions/;
 addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/smartcare/;
-addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/pdm/;
-addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/pdm/recovery/;
+
 basedir = setBaseDir();
 subfolder = 'MatlabSavedVariables';
 study = 'BR';
 plotfolder = '/Users/tristan.trebaol/Documents/PDM/Project/PlotsRecovery/';
 
-chosentreatgap = 10;
 data_window = 20;
 
 % colors

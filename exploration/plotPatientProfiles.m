@@ -1,3 +1,14 @@
+% plot a profile of each measures for each patient over the whole enrolment period
+% 
+% script extracted and adapted from visualisePatientSummary.m
+% 
+% Input:
+% ------
+% clinical and home measurements data
+% 
+% Output: one plot per patient (containing all measures)
+% -------
+
 init;
 
 [studynbr, study, ~] = selectStudy();

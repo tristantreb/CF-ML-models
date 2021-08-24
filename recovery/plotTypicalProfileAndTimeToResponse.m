@@ -1,3 +1,15 @@
+% plot typical profile and compute time to response
+
+% multiple options can be selected for different typical profile rendering
+
+% Input: alignment results mat file
+% ------
+% 
+% Output: 
+% -------
+% - typical profile + treatment start/end below
+% - bar graph with time to treatment response
+
 init;
 
 % change during model result selection
@@ -190,9 +202,10 @@ linkaxes([ax1,ax2],'x');
 saveas(gcf,fullfile(plotfolder,sprintf('%sprofile_align_%s.png',prefix,align)))
 %close all;
 
-%% plot reference profile for one measure
+%% plot reference profile for one measure only
 
 day_recovery_start=7;
+
 x = -day_recovery_start : (size(meancurvemean,2) - day_recovery_start -1 );
 mm = 22; % 34 don't plot FEF2575 because very similar to FEV1 (helped convergence)
 measures = getMeasuresMask(mm, measures);  measures.Mask(16) = false; % temperature not meaningful

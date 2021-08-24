@@ -1,12 +1,13 @@
-% finds the typical profile of the recovery with zero offset
-%
+% plot an unaligned profile
+
 % Input:
 % ------
 % *intrnormdatacube_recovery.mat
 %
-% Output:
+% Output: different kinds of plots
 % -------
-%
+% unaligned model
+% violently superpose all interventions on one plot (not conclusive)
 
 init;
 filename = sprintf('%sintrnormdatacube_recovery.mat', study);
@@ -18,54 +19,11 @@ load(fullfile(basedir, subfolder, filename));
 % size, #Nan, #0
 fprintf('amIntreNormcube contains %i values, %i NaN, %i zeros\n',numel(amIntrNormcube), sum(sum(sum(isnan(amIntrNormcube)))), sum(sum(sum(amIntrNormcube == 0))))
 
-% TODO % issue with code, last day of align_wind is not normalised
-
 % align_wind
 align_wind = size(amIntrNormcube,2)-1;% TODO % remove - 1
 ninterventions = size(amIntrNormcube,1);
 
-%% number of points
-figure('DefaultAxesFontSize',12,'Position', [1 1 2000 1000])
-tiledlayout(4,4);
-meas = 1:17; meas(5)=[];
-for m = meas
-    nexttile;
-    barHistogram(sum(~isnan(amIntrNormcube(:,1:align_wind,m)),2)',...
-        measures.DisplayName{m},...
-        'Days with records');
-end
-title=sprintf('#recordings over the %i days data window (%i selected interventions)', align_wind, size(amIntrNormcube,1));
-sgtitle(title);
-saveas(gcf,fullfile(plotfolder,[title '.png']));
-close all;
-
-%% span of recording
-
-figure('DefaultAxesFontSize',12,'Position', [1 1 2000 1000])
-tiledlayout(4,4);
-for m = meas
-    span=nan(ninterventions,1);
-    nexttile;
-    %find position of first and last non nan element
-    for i=1:ninterventions
-        logic=~isnan(amIntrNormcube(i,1:align_wind,m));
-        idx=find(logic==1);
-        if length(idx) >= 1
-            span(i) = idx(end)-idx(1)+1;
-        else
-            span(i)=0;
-        end
-    end
-    barHistogram(span,...
-        measures.DisplayName{m},...
-        'Days with records')
-end
-title=sprintf('Span of recordings per measure (%i days data window, %i selected interventions)', align_wind, size(amIntrNormcube,1));
-sgtitle(title);
-saveas(gcf,fullfile(plotfolder,[title '.png']));
-close all;
-
-%%
+%% compute Z and S - MLE of data
 
 % initialise outputs
 z = zeros(align_wind,length(measures.Index));
@@ -114,11 +72,6 @@ for m = [14, 17, 6, 2, 3, 12, 16, 8] %meas
 end
 sgtitle(sprintf('Violently superpose all %i interventions curves',size(amIntrNormcube,1)))
 saveas(gcf,fullfile(plotfolder,'All_timeseries_superposition.png'))
-
-%% curve clustering
-
-plot(smooth(fillmissing(amIntrNormcube(35,1:end-1,6),'linear'),5))
-
 
 %% functions
 

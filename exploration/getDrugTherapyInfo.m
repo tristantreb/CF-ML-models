@@ -1,4 +1,6 @@
 function [Drugsbypatients, historytable] = getDrugTherapyInfo(brDrugTherapy, brPatient) 
+% all information about CFTR modulator therapies is centralised here
+% 
 % - groupcount the different drug therapies over patients
 % - define drugs mix: list of the drug therapies given to a patient, sorted in time
 % - groupcount the different drugs mix over patients and details the concerned patients IDs

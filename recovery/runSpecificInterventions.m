@@ -1,3 +1,24 @@
+% run a model with a manually selected subset of interventions
+% 
+% it creates all subset of x interventions at once and then run a model for 
+% each of them based on a reference parameter file. 
+% currently 5 general groups for segmentation:
+% - behaviour during intervention
+% - volumes
+% - treatment type and CFTR modulator therapies
+% - data quality and duration
+% 
+% Note: in the end only faillist was used, not enough data for most others
+% 
+% Input:
+% ------
+% BRTreatmentsObservation.xlsx        excel file with results of expert eye observation
+% clinical and home measurements data
+% parameter file
+% 
+% Output: x models run with runFastAlignmentModelEMMCRecoveryFcn
+% -------
+
 init;
 subfolder = 'ExcelFiles';
 filename = 'BRTreatmentsObservation.xlsx';
@@ -41,7 +62,7 @@ fprintf('interventions with few measures (<4 per day) %i\n', sum(treatobs.AvgMea
 [intr.tb_faillist, intr.tb_failnolist, tb_failnbr] = getLists( contains(treatobs.LabelAfterTreatment,"d") ...
     | contains(treatobs.LabelDuringTreatment,"d"), treatobs);
 
-%% treatment type
+%% treatment type and CFTR modulator therapies
 
 %IVPBO, Oral, IV
 t1_ivpbomask = contains(treatobs.Route, "IVPBO");

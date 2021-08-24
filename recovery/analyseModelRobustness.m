@@ -1,3 +1,18 @@
+% analyse the model robustness (classification consistency for various)
+% 
+% - harmonise the class numbers by evaluating 1-1 closeness with each rs taken as reference
+% - convert table to text and plot RSview
+% - plot classification error
+% - display curve allocation
+% 
+% 
+% Input: alignment results mat file
+% ------
+% 
+% Output: one plot with text summary and classiciation error
+% -------
+
+
 init;
 
 % differentiating parameters
@@ -34,7 +49,7 @@ fprintf('---------------\n');
 load(fullfile(basedir, subfolder,ModelResultsFiles{1}),'amInterventions');
 ninterventions = size(amInterventions,1);
 
-%%
+%% create main table
 T = table(amInterventions.IntrNbr,'VariableNames',{'ID'});
 
 for i = 1:nfiles
@@ -145,7 +160,7 @@ N_class.Class1( N_class.Class1 == 4) = 3;
 
 Grouped = groupcounts(N_class,'Class1');
 
-%% draw bar plot of consistency of affilitation to class 1
+%% convert table to text and plot RSview
 
 figure('DefaultAxesFontSize',16,'Position', [1 1 2000 600])
 % Get the table in string form.
@@ -163,7 +178,10 @@ annotation(gcf,'Textbox','String',TString,'Interpreter','Tex',...
 % uitable('Data',RSview{:,:},'ColumnName',RSview.Properties.VariableNames,...
 %     'RowName',RSview.Properties.RowNames,'Units', 'Normalized', 'Position',[0, 0, 1, 1]);
 
-%%
+%% plot classification error
+
+% draw bar plot of consistency of affilitation to class 1
+
 subplot(2,2,3)
 
 b = bar(Grouped.Class1,Grouped.Percent,0.4,'FaceColor',[0.6 0.6 0.6],'EdgeColor','k','LineWidth',1);

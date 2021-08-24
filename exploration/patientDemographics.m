@@ -1,3 +1,21 @@
+% create an excel with current BR patient demographics
+% 
+% Examples:
+% - female
+% - age
+% - bmi
+% - FEV1% predicted
+% - CFTR modulators
+% - antibiotics
+% 
+% Input: clinical and home measurements files
+% ------
+% 
+% Output:
+% -------
+% BRPatientDemographics.xlsx
+% 
+
 init;
 
 [datamatfile, clinicalmatfile, ~] = getRawDataFilenamesForStudy(study);

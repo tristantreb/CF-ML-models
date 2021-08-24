@@ -1,6 +1,6 @@
 function runFastAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist, nameaddendum)
 
-% runs the alignment model (EM version) given a set of run parameters.
+% fast version with 1 plot (typical profile) + alignment result matfile
 %
 % This version allows for multiple versions of the latent curves.
 % 
