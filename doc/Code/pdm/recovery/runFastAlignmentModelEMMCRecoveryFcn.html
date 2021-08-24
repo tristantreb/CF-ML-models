@@ -1,0 +1,361 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of runFastAlignmentModelEMMCRecoveryFcn</title>
+  <meta name="keywords" content="runFastAlignmentModelEMMCRecoveryFcn">
+  <meta name="description" content="fast version with 1 plot (typical profile) + alignment result matfile">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">recovery</a> &gt; runFastAlignmentModelEMMCRecoveryFcn.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>runFastAlignmentModelEMMCRecoveryFcn
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>fast version with 1 plot (typical profile) + alignment result matfile</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function runFastAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist, nameaddendum) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> fast version with 1 plot (typical profile) + alignment result matfile
+
+ This version allows for multiple versions of the latent curves.
+ 
+ Input:
+ ------
+ amRunParameters                 parameter file
+ *alignmentmodelinputs_gap*.mat  modelinputsmatfile
+ *datademographicsbypatient.mat  datademographicsfile
+ *dataoutliers.mat               dataoutliersfile
+ *LabelledInterventions*.mat     labelledinterventionsfile (manually generated)
+ *electivetreatments_gap10.xlsx  electivefile (manually generated)
+ 
+ Output:
+ -------
+ mutliple plots
+ *obj*.mat                       results (very long file name)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/recovery/updatedModel/FastamEMMCVisualiseAlignmentDetailRecovery.html" class="code" title="function [sorted_interventions, max_points] = FastamEMMCVisualiseAlignmentDetailRecovery(amIntrNormcube, amHeldBackcube, amInterventions, meancurvemean,meancurvecount, meancurvestd, overall_pdoffset, measures, offset, align_wind, nmeasures, ninterventions,run_type, ex_start, curveaveragingmethod, plotname, plotsubfolder, nlatentcurves)">FastamEMMCVisualiseAlignmentDetailRecovery</a>	amEMMCVisualiseAlignmentDetail - wrapper around the</li><li><a href="../../../Code/pdm/recovery/updatedModel/RamEMMCAddToMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = RamEMMCAddToMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, vshift, currinter, offset, align_wind, nmeasures, nlatentcurves)">RamEMMCAddToMean</a>	amEMMCAddToMean - add an underlying curve to each set of mean curves (sumsq, sum and count)</li><li><a href="../../../Code/pdm/recovery/updatedModel/RamEMMCCalcAbsPredAndBounds.html" class="code" title="function [amInterventions] = RamEMMCCalcAbsPredAndBounds(amInterventions, ex_start, nlatentcurves)">RamEMMCCalcAbsPredAndBounds</a>	amEMMCCalcAbsPredAndBounds - calculates the prediction and lower/upper</li><li><a href="../../../Code/pdm/recovery/updatedModel/RamEMMCCalcConfidenceBounds.html" class="code" title="function [amInterventions] = RamEMMCCalcConfidenceBounds(overall_pdoffset, amInterventions, offset, ninterventions, confidencethreshold, confidencemode)">RamEMMCCalcConfidenceBounds</a>	amEMMCCalcConfidenceBounds - calculates the lower and upper confidence bounds</li><li><a href="../../../Code/pdm/recovery/updatedModel/RamEMMCCalcImputedProbabilities.html" class="code" title="function [amImputedCube, imputedscore] = RamEMMCCalcImputedProbabilities(amIntrCube, amHeldBackcube,meancurvemean, meancurvestd, normstd, overall_pdoffset, offset, align_wind, nmeasures,ninterventions,sigmamethod, smoothingmethod, imputationmode, latentcurve, nlatentcurves)">RamEMMCCalcImputedProbabilities</a>	getImputedProbabilities - gets the probabilities for the set of held back</li><li><a href="../../../Code/pdm/recovery/updatedModel/RamEMMCCalcMeanAndStd.html" class="code" title="function [meancurvemean, meancurvestd] = RamEMMCCalcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount)">RamEMMCCalcMeanAndStd</a>	amEMMCCalcMeanAndStd - recalc meancurvemean and meancurvestd arrays</li><li><a href="../../../Code/pdm/recovery/updatedModel/RamEMMCCalcTotalOutliers.html" class="code" title="function [totaloutliers, totalpoints] = RamEMMCCalcTotalOutliers(amIntrDatacube, isOutlier, amHeldBackcube, offsetsidx, latentcurve, offset, align_wind, ninterventions)">RamEMMCCalcTotalOutliers</a>	amEMMCCalcTotalOutliers - sums up the total outliers after alignment</li><li><a href="../../../Code/pdm/recovery/updatedModel/RamEMMCInitialiseAlignment.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount, amInterventions, initial_offsets, initial_latentcurve,animatedmeancurvemean, animatedoffsets, animatedlc, hstg, pdoffset, overall_hist, overall_pdoffset, animated_overall_pdoffset,vshift, isOutlier, aniterations, run_type] =RamEMMCInitialiseAlignment(amIntrCube, amHeldBackcube, amInterventions, measures, offset, align_wind,nmeasures, ninterventions, nlatentcurves, runmode, randomseed)">RamEMMCInitialiseAlignment</a>	amEMMCInitialiseAlignment - function to initialise the various variables</li><li><a href="../../../Code/pdm/recovery/updatedModel/RcreateHeldBackcube.html" class="code" title="function [amHeldBackcube] = RcreateHeldBackcube(amIntrDatacube, offset, align_wind, ninterventions, nmeasures, heldbackpct, imputationmode)">RcreateHeldBackcube</a>	createHeldBackcube - creates an index array indicating points to be held</li><li><a href="../../../Code/pdm/recovery/updatedModel/RcreateNormalisedIntrDatacube.html" class="code" title="function [amIntrNormcube] = RcreateNormalisedIntrDatacube(amIntrDatacube, normmean, normstd, ninterventions, nmeasures, measures, sigmamethod)">RcreateNormalisedIntrDatacube</a>	createNormalisedIntrDatacube - creates the normalised data cube by</li><li><a href="../../../Code/pdm/recovery/updatedModel/amEMMCAlignCurvesRecovery.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount, meancurvemean, meancurvestd, amInterventions,hstg, pdoffset, overall_hist, overall_pdoffset,animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset,vshift, isOutlier, pptsstruct, qual, iter, miniiter] =amEMMCAlignCurvesRecovery(meancurvesumsq, meancurvesum, meancurvecount, amIntrCube, amHeldBackcube,animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset,hstg, pdoffset, overall_hist, overall_pdoffset, vshift, isOutlier,amInterventions, outprior, measures, normstd, offset, align_wind,nmeasures, ninterventions, nlatentcurves, sigmamethod, smoothingmethod,runmode, countthreshold, aniterations, maxiterations, allowvshift, vshiftmax, miniiter, fnmodelrun)">amEMMCAlignCurvesRecovery</a>	amEMMCAlignCurves - function to align measurement curves prior to</li><li><a href="../../../Code/pdm/recovery/updatedModel/amEMMCCreateIntrDatacubeRecovery.html" class="code" title="function [amIntrDatacube] = amEMMCCreateIntrDatacubeRecovery(amDatacube, amInterventions, measures, align_wind, offset, ninterventions, nmeasures, curveaveragingmethod, datasmoothmethod)">amEMMCCreateIntrDatacubeRecovery</a>	createIntrDatacube - creates the data cube for offset + alignement window</li><li><a href="../../../Code/pdm/recovery/updatedModel/amEMMCPlotAndSaveAlignedCurvesRecovery.html" class="code" title="function amEMMCPlotAndSaveAlignedCurvesRecovery(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets, latentcurves,measures, max_points, offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder, nlatentcurves)">amEMMCPlotAndSaveAlignedCurvesRecovery</a>	amEMMCPlotAndSaveAlignedCurves - wrapper around the</li><li><a href="../../../Code/pdm/recovery/updatedModel/amEMMCPreprocessMeasuresRecovery.html" class="code" title="function [amDatacube, measures, nmeasures] = amEMMCPreprocessMeasuresRecovery(amDatacube, amInterventions, measures,demographicstable, measuresmask, align_wind, npatients, ndays, ninterventions, nmeasures, study)">amEMMCPreprocessMeasuresRecovery</a>	amEMMCPreprocessMeasures - 1) select a set of measures, 2) filter</li><li><a href="../../../Code/pdm/recovery/updatedModel/amEMMCSetModelRunParametersFromTableRecovery.html" class="code" title="function [mversion, study, treatgap, testlabelmthd, testlabeltxt,modelinputsmatfile, datademographicsfile, dataoutliersfile, labelledinterventionsfile, electivefile,sigmamethod, mumethod, curveaveragingmethod, smoothingmethod, datasmoothmethod,measuresmask, runmode, randomseed, intrmode, modelrun, imputationmode, confidencemode, printpredictions,offset, align_wind, data_wind, outprior, heldbackpct, confidencethreshold, nlatentcurves, countthreshold, scenario, vshiftmode, vshiftmax]= amEMMCSetModelRunParametersFromTableRecovery(amRunParameters)">amEMMCSetModelRunParametersFromTableRecovery</a>	amEMMCSetModelRunParameters - sets the various run parameters for the model</li><li><a href="../../../Code/pdm/recovery/updatedModel/calculateMuNormalisationRecovery.html" class="code" title="function [normmean] = calculateMuNormalisationRecovery(amDatacube, amInterventions, measures, demographicstable,dataoutliers, ninterventions, nmeasures, mumethod, study)">calculateMuNormalisationRecovery</a>	populates an array of ninterventions by nmeasures with the additive</li><li><a href="../../../Code/smartcare/amEMMCConvertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = amEMMCConvertFromLogSpaceAndNormalise(distfcn)">amEMMCConvertFromLogSpaceAndNormalise</a>	amEMMCConvertFromLogSpaceAndNormalise - takes the results from a 'distance'</li><li><a href="../../../Code/smartcare/amEMMCPlotsAndSavePredictions.html" class="code" title="function amEMMCPlotsAndSavePredictions(amInterventions, amIntrcube, measures, pdoffset,overall_pdoffset, hstg, overall_hist, vshift, meancurvemean, normmean, normstd, isOutlier,ex_start_array, thisinter, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder, normmode)">amEMMCPlotsAndSavePredictions</a>	amEMMCPlotsAndSavePredictions - plots measures prior to</li><li><a href="../../../Code/smartcare/amEMMCPreprocessInterventions.html" class="code" title="function [amInterventions, amIntrDatacube, ninterventions, intrkeepidx] = amEMMCPreprocessInterventions(amInterventions,amIntrDatacube, amElectiveTreatments, measures, nmeasures, max_offset, align_wind, ninterventions,  intrmode, study)">amEMMCPreprocessInterventions</a>	1) for each intervention, calculate data window completeness (without the interpolated measurements)</li><li><a href="../../../Code/smartcare/calculateSigmaNormalisation.html" class="code" title="function [normstd] = calculateSigmaNormalisation(amInterventions, measures, demographicstable, ninterventions, nmeasures, sigmamethod, study)">calculateSigmaNormalisation</a>	calculateSigmaNormalisation - populates an array of ninterventions by</li><li><a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="runAlignmentModelEMMCScriptRecovery.html" class="code" title="">runAlignmentModelEMMCScriptRecovery</a>	main script to run alignment models (EMMC versions)</li><li><a href="runSpecificInterventions.html" class="code" title="">runSpecificInterventions</a>	run a model with a manually selected subset of interventions</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function runFastAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist, nameaddendum)</a>
+0002 
+0003 <span class="comment">% fast version with 1 plot (typical profile) + alignment result matfile</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% This version allows for multiple versions of the latent curves.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Input:</span>
+0008 <span class="comment">% ------</span>
+0009 <span class="comment">% amRunParameters                 parameter file</span>
+0010 <span class="comment">% *alignmentmodelinputs_gap*.mat  modelinputsmatfile</span>
+0011 <span class="comment">% *datademographicsbypatient.mat  datademographicsfile</span>
+0012 <span class="comment">% *dataoutliers.mat               dataoutliersfile</span>
+0013 <span class="comment">% *LabelledInterventions*.mat     labelledinterventionsfile (manually generated)</span>
+0014 <span class="comment">% *electivetreatments_gap10.xlsx  electivefile (manually generated)</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% Output:</span>
+0017 <span class="comment">% -------</span>
+0018 <span class="comment">% mutliple plots</span>
+0019 <span class="comment">% *obj*.mat                       results (very long file name)</span>
+0020 
+0021 <span class="comment">% set the various model run parameters</span>
+0022 [mversion, study, treatgap, testlabelmthd, testlabeltxt, <span class="keyword">...</span>
+0023     modelinputsmatfile, datademographicsfile, dataoutliersfile, labelledinterventionsfile, electivefile, <span class="keyword">...</span>
+0024     sigmamethod, mumethod, curveaveragingmethod, smoothingmethod, datasmoothmethod, <span class="keyword">...</span>
+0025     measuresmask, runmode, randomseed, intrmode, modelrun, imputationmode, confidencemode, printpredictions, <span class="keyword">...</span>
+0026     offset, align_wind, ~, outprior, heldbackpct, confidencethreshold, nlatentcurves, countthreshold, scenario, vshiftmode, vshiftmax] <span class="keyword">...</span>
+0027     = <a href="../../../Code/pdm/recovery/updatedModel/amEMMCSetModelRunParametersFromTableRecovery.html" class="code" title="function [mversion, study, treatgap, testlabelmthd, testlabeltxt,modelinputsmatfile, datademographicsfile, dataoutliersfile, labelledinterventionsfile, electivefile,sigmamethod, mumethod, curveaveragingmethod, smoothingmethod, datasmoothmethod,measuresmask, runmode, randomseed, intrmode, modelrun, imputationmode, confidencemode, printpredictions,offset, align_wind, data_wind, outprior, heldbackpct, confidencethreshold, nlatentcurves, countthreshold, scenario, vshiftmode, vshiftmax]= amEMMCSetModelRunParametersFromTableRecovery(amRunParameters)">amEMMCSetModelRunParametersFromTableRecovery</a>(amRunParameters);
+0028 
+0029 fprintf(<span class="string">'Running Alignment Model %s\n'</span>, mversion);
+0030 fprintf(<span class="string">'\n'</span>);
+0031 
+0032 <span class="comment">% load the required input data</span>
+0033 tic
+0034 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0035 subfolder = <span class="string">'MatlabsavedVariables'</span>;
+0036 fnmodelrun = fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>,modelrun));
+0037 fprintf(<span class="string">'Loading alignment model Inputs data %s\n'</span>, modelinputsmatfile);
+0038 load(fullfile(basedir, subfolder, modelinputsmatfile));
+0039 fprintf(<span class="string">'Loading datademographics by patient %s\n'</span>, datademographicsfile);
+0040 load(fullfile(basedir, subfolder, datademographicsfile));
+0041 fprintf(<span class="string">'Loading data outliers %s\n'</span>, dataoutliersfile);
+0042 load(fullfile(basedir, subfolder, dataoutliersfile));
+0043 <span class="keyword">if</span> ismember(study, {<span class="string">'SC'</span>, <span class="string">'CL'</span>, <span class="string">'BR'</span>})
+0044     fprintf(<span class="string">'Loading latest labelled test data file %s\n'</span>, labelledinterventionsfile);
+0045     load(fullfile(basedir, subfolder, labelledinterventionsfile), <span class="string">'amLabelledInterventions'</span>);
+0046 <span class="keyword">end</span>
+0047 
+0048 <span class="keyword">if</span> ismember(study, {<span class="string">'BR'</span>, <span class="string">'CL'</span>})
+0049     subfolder = sprintf(<span class="string">'DataFiles/%s'</span>, study);
+0050 <span class="keyword">else</span>
+0051     subfolder = <span class="string">'DataFiles'</span>;
+0052 <span class="keyword">end</span>
+0053 
+0054 fprintf(<span class="string">'Loading elective treatment file %s\n'</span>, electivefile);
+0055 elopts = detectImportOptions(fullfile(basedir, subfolder, electivefile));
+0056 elopts.VariableTypes(:, ismember(elopts.VariableNames, {<span class="string">'Hospital'</span>})) = {<span class="string">'char'</span>};
+0057 elopts.VariableTypes(:, ismember(elopts.VariableNames, {<span class="string">'PatientNbr'</span>, <span class="string">'ID'</span>, <span class="string">'IVScaledDateNum'</span>})) = {<span class="string">'double'</span>};
+0058 amElectiveTreatments = readtable(fullfile(basedir, subfolder, electivefile), elopts);
+0059 amElectiveTreatments.ElectiveTreatment(:) = <span class="string">'Y'</span>;
+0060 toc
+0061 
+0062 tic
+0063 fprintf(<span class="string">'Preparing input data\n'</span>);
+0064 
+0065 baseplotname = sprintf(<span class="string">'%s%s_gp%d_lm%d_sig%d_mu%d_ca%d_sm%d_rm%d_in%d_im%d_cm%d_mm%d_od%d_ou%d_dw%d_nl%d_rs%d_ds%d_ct%d_sc%s_vs%d_vm%.1f'</span>, study, mversion, treatgap, testlabelmthd, sigmamethod, mumethod, curveaveragingmethod, <span class="keyword">...</span>
+0066     smoothingmethod, runmode, intrmode, imputationmode, confidencemode, measuresmask, offset.down, offset.up, align_wind, nlatentcurves, randomseed, datasmoothmethod, countthreshold, scenario, vshiftmode, vshiftmax);
+0067 detaillog = true;
+0068 
+0069 <span class="comment">% overwrite ninterventions with interventionslist and amInterventions if</span>
+0070 <span class="comment">% necessary</span>
+0071 <span class="keyword">if</span> not(isempty(interventionslist))
+0072     amInterventions = amInterventions(interventionslist,:);
+0073     ninterventions = size(amInterventions,1);
+0074 <span class="keyword">end</span>
+0075 <span class="comment">% uniquemeasure = getMeasuresMask(measuresmask, measures);</span>
+0076 <span class="comment">% nameaddendum = string(uniquemeasure.DisplayName(logical(uniquemeasure.Mask))) + '_';</span>
+0077 
+0078 <span class="comment">% 1) select a set of measures, 2) filter corresponding data and</span>
+0079 <span class="comment">% 3) compute high level statistics (for each measure)</span>
+0080 [amDatacube, measures, nmeasures] = <a href="../../../Code/pdm/recovery/updatedModel/amEMMCPreprocessMeasuresRecovery.html" class="code" title="function [amDatacube, measures, nmeasures] = amEMMCPreprocessMeasuresRecovery(amDatacube, amInterventions, measures,demographicstable, measuresmask, align_wind, npatients, ndays, ninterventions, nmeasures, study)">amEMMCPreprocessMeasuresRecovery</a>(amDatacube, amInterventions, measures, <span class="keyword">...</span>
+0081     demographicstable, measuresmask, align_wind, npatients, ndays, ninterventions, nmeasures, study);
+0082 
+0083 <span class="comment">% create cube for data window data by intervention (for each measure)</span>
+0084 [amIntrDatacube] = <a href="../../../Code/pdm/recovery/updatedModel/amEMMCCreateIntrDatacubeRecovery.html" class="code" title="function [amIntrDatacube] = amEMMCCreateIntrDatacubeRecovery(amDatacube, amInterventions, measures, align_wind, offset, ninterventions, nmeasures, curveaveragingmethod, datasmoothmethod)">amEMMCCreateIntrDatacubeRecovery</a>(amDatacube, amInterventions, measures, align_wind, <span class="keyword">...</span>
+0085     offset, ninterventions, nmeasures, curveaveragingmethod, datasmoothmethod);
+0086 
+0087 <span class="comment">% pre-process intervention table and associated measurement data</span>
+0088 
+0089 <span class="comment">% no need to modify max_offset here for Breathe</span>
+0090 <span class="comment">% 1) (not for BR) calculate data window completeness without interpolated measurements (#actual_points/#max_points*100)</span>
+0091 <span class="comment">% 2) merge elective treatments into amInterventions</span>
+0092 <span class="comment">% 3) optionnally remove sequential interventions if intrmode == 2</span>
+0093 <span class="comment">% Interp measures concerns CLIMB</span>
+0094 [amInterventions, amIntrDatacube, ninterventions, intrkeepidx] = <a href="../../../Code/smartcare/amEMMCPreprocessInterventions.html" class="code" title="function [amInterventions, amIntrDatacube, ninterventions, intrkeepidx] = amEMMCPreprocessInterventions(amInterventions,amIntrDatacube, amElectiveTreatments, measures, nmeasures, max_offset, align_wind, ninterventions,  intrmode, study)">amEMMCPreprocessInterventions</a>(amInterventions, <span class="keyword">...</span>
+0095     amIntrDatacube, amElectiveTreatments, measures, nmeasures, offset.span, align_wind, ninterventions, intrmode, study);
+0096 
+0097 <span class="comment">% populate multiplicative normalisation (sigma) values based on methodology</span>
+0098 <span class="comment">% selected</span>
+0099 normstd = <a href="../../../Code/smartcare/calculateSigmaNormalisation.html" class="code" title="function [normstd] = calculateSigmaNormalisation(amInterventions, measures, demographicstable, ninterventions, nmeasures, sigmamethod, study)">calculateSigmaNormalisation</a>(amInterventions, measures, demographicstable, ninterventions, nmeasures, sigmamethod, study);
+0100 
+0101 <span class="comment">% calculate additive normalisation (mu) based on methodology</span>
+0102 <span class="comment">% and then create normalised data cube.</span>
+0103 normmean = <a href="../../../Code/pdm/recovery/updatedModel/calculateMuNormalisationRecovery.html" class="code" title="function [normmean] = calculateMuNormalisationRecovery(amDatacube, amInterventions, measures, demographicstable,dataoutliers, ninterventions, nmeasures, mumethod, study)">calculateMuNormalisationRecovery</a>(amDatacube, amInterventions, measures, demographicstable, <span class="keyword">...</span>
+0104     dataoutliers, ninterventions, nmeasures, mumethod, study);
+0105 
+0106 <span class="comment">% populate normalised data cube by intervention</span>
+0107 [amIntrNormcube] = <a href="../../../Code/pdm/recovery/updatedModel/RcreateNormalisedIntrDatacube.html" class="code" title="function [amIntrNormcube] = RcreateNormalisedIntrDatacube(amIntrDatacube, normmean, normstd, ninterventions, nmeasures, measures, sigmamethod)">RcreateNormalisedIntrDatacube</a>(amIntrDatacube, normmean, normstd, ninterventions, nmeasures, measures, sigmamethod);
+0108 
+0109 <span class="comment">% populate index array for held back points (to be used for imputation</span>
+0110 <span class="comment">% held back points is an options triggered by imputationmode = 2, to remove</span>
+0111 <span class="comment">% heldbackpct (1%) of points prior to finding the latent curve. The</span>
+0112 <span class="comment">% difference between the value of those points and their corresponding twin</span>
+0113 <span class="comment">% on the latent curve is an indicator of how well the model worked.</span>
+0114 [amHeldBackcube] = <a href="../../../Code/pdm/recovery/updatedModel/RcreateHeldBackcube.html" class="code" title="function [amHeldBackcube] = RcreateHeldBackcube(amIntrDatacube, offset, align_wind, ninterventions, nmeasures, heldbackpct, imputationmode)">RcreateHeldBackcube</a>(amIntrDatacube, offset, align_wind, ninterventions, nmeasures, heldbackpct, imputationmode);
+0115 
+0116 toc
+0117 fprintf(<span class="string">'\n'</span>);
+0118 
+0119 <span class="comment">% 1) initialise mean curve arrays (sum, sum squared, count)</span>
+0120 <span class="comment">% 2) initialise offset probability distribution</span>
+0121 <span class="comment">% 3) set the method for multiple latent curve initialisation</span>
+0122 [meancurvesumsq, meancurvesum, meancurvecount, amInterventions, initial_offsets, initial_latentcurve, <span class="keyword">...</span>
+0123     animatedmeancurvemean, animatedoffsets, animatedlc, hstg, pdoffset, overall_hist, overall_pdoffset, animated_overall_pdoffset, <span class="keyword">...</span>
+0124     vshift, isOutlier, aniterations, run_type] = <span class="keyword">...</span>
+0125     <a href="../../../Code/pdm/recovery/updatedModel/RamEMMCInitialiseAlignment.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount, amInterventions, initial_offsets, initial_latentcurve,animatedmeancurvemean, animatedoffsets, animatedlc, hstg, pdoffset, overall_hist, overall_pdoffset, animated_overall_pdoffset,vshift, isOutlier, aniterations, run_type] =RamEMMCInitialiseAlignment(amIntrCube, amHeldBackcube, amInterventions, measures, offset, align_wind,nmeasures, ninterventions, nlatentcurves, runmode, randomseed)">RamEMMCInitialiseAlignment</a>(amIntrNormcube, amHeldBackcube, amInterventions, measures, offset, align_wind, <span class="keyword">...</span>
+0126     nmeasures, ninterventions, nlatentcurves, runmode, randomseed);
+0127 
+0128 <span class="keyword">if</span> vshiftmode == 0
+0129     fprintf(<span class="string">'Running alignment - without vertical shift\n'</span>);
+0130     allowvshift1 = false;
+0131     maxiterations1 = 200;
+0132     maxiterations2 = 0;
+0133 <span class="keyword">elseif</span> vshiftmode == 1
+0134     fprintf(<span class="string">'Running alignment - with vertical shift\n'</span>);
+0135     allowvshift1 = true;
+0136     maxiterations1 = 200;
+0137     maxiterations2 = 0;
+0138 <span class="keyword">elseif</span> vshiftmode == 2
+0139     fprintf(<span class="string">'Running alignment - initially without vertical shift, then with\n'</span>);
+0140     allowvshift1 = false;
+0141     maxiterations1 = 200;
+0142     allowvshift2 = true;
+0143     maxiterations2 = 50;
+0144     
+0145 <span class="keyword">end</span>
+0146 miniiter = 0;
+0147 
+0148 tic
+0149 <span class="comment">% align curves, find best offset and best latent</span>
+0150 [meancurvesumsq, meancurvesum, meancurvecount, meancurvemean, meancurvestd, amInterventions, <span class="keyword">...</span>
+0151     hstg, pdoffset, overall_hist, overall_pdoffset, <span class="keyword">...</span>
+0152     animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset, <span class="keyword">...</span>
+0153     vshift, isOutlier, pptsstruct, qual, niterations, miniiter] = <span class="keyword">...</span>
+0154     <a href="../../../Code/pdm/recovery/updatedModel/amEMMCAlignCurvesRecovery.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount, meancurvemean, meancurvestd, amInterventions,hstg, pdoffset, overall_hist, overall_pdoffset,animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset,vshift, isOutlier, pptsstruct, qual, iter, miniiter] =amEMMCAlignCurvesRecovery(meancurvesumsq, meancurvesum, meancurvecount, amIntrCube, amHeldBackcube,animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset,hstg, pdoffset, overall_hist, overall_pdoffset, vshift, isOutlier,amInterventions, outprior, measures, normstd, offset, align_wind,nmeasures, ninterventions, nlatentcurves, sigmamethod, smoothingmethod,runmode, countthreshold, aniterations, maxiterations, allowvshift, vshiftmax, miniiter, fnmodelrun)">amEMMCAlignCurvesRecovery</a>(meancurvesumsq, meancurvesum, meancurvecount, amIntrNormcube, amHeldBackcube, <span class="keyword">...</span>
+0155         animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset, <span class="keyword">...</span>
+0156         hstg, pdoffset, overall_hist, overall_pdoffset, vshift, isOutlier, <span class="keyword">...</span>
+0157         amInterventions, outprior, measures, normstd, offset, align_wind, <span class="keyword">...</span>
+0158         nmeasures, ninterventions, nlatentcurves, sigmamethod, smoothingmethod, <span class="keyword">...</span>
+0159         runmode, countthreshold, aniterations, maxiterations1, allowvshift1, vshiftmax, miniiter, fnmodelrun);
+0160 fprintf(<span class="string">'%s - ErrFcn = %.8f\n'</span>, run_type, qual);
+0161 toc
+0162 
+0163 <span class="keyword">if</span> maxiterations2 ~= 0
+0164     tic
+0165     [meancurvesumsq, meancurvesum, meancurvecount, meancurvemean, meancurvestd, amInterventions, <span class="keyword">...</span>
+0166     hstg, pdoffset, overall_hist, overall_pdoffset, <span class="keyword">...</span>
+0167     animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset, <span class="keyword">...</span>
+0168     vshift, isOutlier, pptsstruct, qual, niterations2, miniiter] = <span class="keyword">...</span>
+0169     <a href="../../../Code/pdm/recovery/updatedModel/amEMMCAlignCurvesRecovery.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount, meancurvemean, meancurvestd, amInterventions,hstg, pdoffset, overall_hist, overall_pdoffset,animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset,vshift, isOutlier, pptsstruct, qual, iter, miniiter] =amEMMCAlignCurvesRecovery(meancurvesumsq, meancurvesum, meancurvecount, amIntrCube, amHeldBackcube,animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset,hstg, pdoffset, overall_hist, overall_pdoffset, vshift, isOutlier,amInterventions, outprior, measures, normstd, offset, align_wind,nmeasures, ninterventions, nlatentcurves, sigmamethod, smoothingmethod,runmode, countthreshold, aniterations, maxiterations, allowvshift, vshiftmax, miniiter, fnmodelrun)">amEMMCAlignCurvesRecovery</a>(meancurvesumsq, meancurvesum, meancurvecount, amIntrNormcube, amHeldBackcube, <span class="keyword">...</span>
+0170         animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset, <span class="keyword">...</span>
+0171         hstg, pdoffset, overall_hist, overall_pdoffset, vshift, isOutlier, <span class="keyword">...</span>
+0172         amInterventions, outprior, measures, normstd, offset, align_wind, <span class="keyword">...</span>
+0173         nmeasures, ninterventions, nlatentcurves, sigmamethod, smoothingmethod, <span class="keyword">...</span>
+0174         runmode, countthreshold, aniterations, maxiterations2, allowvshift2, vshiftmax, miniiter, fnmodelrun);
+0175     niterations = niterations + niterations2;
+0176     fprintf(<span class="string">'%s - ErrFcn = %.8f\n'</span>, run_type, qual);
+0177     toc
+0178 <span class="keyword">end</span>
+0179 
+0180 <span class="comment">% remove points from latent curves that don't have enough underlying data</span>
+0181 <span class="comment">% points contributing</span>
+0182 meancurvemean(meancurvecount  &lt; countthreshold) = nan;
+0183 meancurvestd(meancurvecount   &lt; countthreshold) = nan;
+0184 meancurvesumsq(meancurvecount &lt; countthreshold) = nan;
+0185 meancurvesum(meancurvecount   &lt; countthreshold) = nan;
+0186 meancurvecount(meancurvecount &lt; countthreshold) = nan;
+0187 
+0188 <span class="comment">% save the zero offset pre-profile to unaligned_profile so all plots show a</span>
+0189 <span class="comment">% consistent unaligned curve as the pre-profile.</span>
+0190 <span class="comment">% *** updated to use final curve set assignment with initial uniform offset</span>
+0191 <span class="comment">% distribution for this ***</span>
+0192 <span class="comment">% unaligned_profile = profile_pre;</span>
+0193 tmp_meancurvesum      = zeros(nlatentcurves, align_wind + offset.span-1, nmeasures);
+0194 tmp_meancurvesumsq    = zeros(nlatentcurves, align_wind + offset.span-1, nmeasures);
+0195 tmp_meancurvecount    = zeros(nlatentcurves, align_wind + offset.span-1, nmeasures);
+0196 tmp_overall_pdoffset  = zeros(nlatentcurves, ninterventions,  offset.span);
+0197 <span class="keyword">for</span> i = 1:ninterventions
+0198     <span class="keyword">if</span> runmode == 5
+0199         tmp_overall_pdoffset(:, i, :) = 0;
+0200         tmp_overall_pdoffset(amInterventions.LatentCurve(i), i, 1) = 1;
+0201     <span class="keyword">else</span>
+0202         tmp_overall_pdoffset(amInterventions.LatentCurve(i), i,:) = <a href="../../../Code/smartcare/amEMMCConvertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = amEMMCConvertFromLogSpaceAndNormalise(distfcn)">amEMMCConvertFromLogSpaceAndNormalise</a>(zeros(1, offset.span));
+0203     <span class="keyword">end</span>
+0204 <span class="keyword">end</span>
+0205 <span class="keyword">for</span> i = 1:ninterventions
+0206     [tmp_meancurvesumsq, tmp_meancurvesum, tmp_meancurvecount] = <a href="../../../Code/pdm/recovery/updatedModel/RamEMMCAddToMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = RamEMMCAddToMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, vshift, currinter, offset, align_wind, nmeasures, nlatentcurves)">RamEMMCAddToMean</a>(tmp_meancurvesumsq, tmp_meancurvesum, tmp_meancurvecount, <span class="keyword">...</span>
+0207         tmp_overall_pdoffset, amIntrNormcube, amHeldBackcube, zeros(nlatentcurves, ninterventions, nmeasures, offset.span), i, <span class="keyword">...</span>
+0208         offset, align_wind, nmeasures, nlatentcurves);
+0209 <span class="keyword">end</span>
+0210 [unaligned_profile, ~] = <a href="../../../Code/pdm/recovery/updatedModel/RamEMMCCalcMeanAndStd.html" class="code" title="function [meancurvemean, meancurvestd] = RamEMMCCalcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount)">RamEMMCCalcMeanAndStd</a>(tmp_meancurvesumsq, tmp_meancurvesum, tmp_meancurvecount);
+0211 
+0212 plotname = sprintf(<span class="string">'%s_obj%.8f'</span>, baseplotname, qual);
+0213 temp_max_points = zeros(nlatentcurves, 1);
+0214 temp_ex_start   = zeros(1, nlatentcurves);
+0215 
+0216 <span class="comment">% plot and save aligned curves (pre and post)</span>
+0217 <a href="../../../Code/pdm/recovery/updatedModel/amEMMCPlotAndSaveAlignedCurvesRecovery.html" class="code" title="function amEMMCPlotAndSaveAlignedCurvesRecovery(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets, latentcurves,measures, max_points, offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder, nlatentcurves)">amEMMCPlotAndSaveAlignedCurvesRecovery</a>(unaligned_profile, meancurvemean, meancurvecount, meancurvestd, <span class="keyword">...</span>
+0218     amInterventions.Offset, amInterventions.LatentCurve, <span class="keyword">...</span>
+0219     measures, temp_max_points, offset, align_wind, nmeasures, run_type, temp_ex_start, sigmamethod, plotname, <span class="string">'Plots'</span>, nlatentcurves);
+0220 
+0221 toc
+0222 fprintf(<span class="string">'\n'</span>);
+0223 
+0224 <span class="comment">% if ismember(study, {'SC', 'CL', 'BR'})</span>
+0225 <span class="comment">%     recovery_start = amEMMCCalcExStartsFromTestLabels(amLabelledInterventions(intrkeepidx, :), amInterventions, ...</span>
+0226 <span class="comment">%                 overall_pdoffset, max_offset, 'Plots', plotname, ninterventions, nlatentcurves);</span>
+0227 <span class="comment">% else</span>
+0228 <span class="comment">%    recovery_start = input('Look at best start and enter recovery start: ');</span>
+0229 <span class="comment">%    fprintf('\n');</span>
+0230 <span class="comment">% end</span>
+0231 recovery_start=zeros(nlatentcurves,1);
+0232 
+0233 tic
+0234 run_type = <span class="string">'Best Alignment'</span>;
+0235 ex_text = sprintf(<span class="string">'%d'</span>, recovery_start);
+0236 plotname = sprintf(<span class="string">'%s_ni%d_ex%s_obj%.8f'</span>, baseplotname, niterations, ex_text, qual);
+0237 plotsubfolder = strcat(<span class="string">'Plots'</span>, <span class="string">'/'</span>, plotname);
+0238 mkdir(strcat(basedir, plotsubfolder));
+0239 <span class="comment">%strcat(measures.ShortName{logical(measures.RawMeas)})</span>
+0240 
+0241 [amInterventions] = <a href="../../../Code/pdm/recovery/updatedModel/RamEMMCCalcConfidenceBounds.html" class="code" title="function [amInterventions] = RamEMMCCalcConfidenceBounds(overall_pdoffset, amInterventions, offset, ninterventions, confidencethreshold, confidencemode)">RamEMMCCalcConfidenceBounds</a>(overall_pdoffset, amInterventions, offset, ninterventions, confidencethreshold, confidencemode);
+0242 [amInterventions] = <a href="../../../Code/pdm/recovery/updatedModel/RamEMMCCalcAbsPredAndBounds.html" class="code" title="function [amInterventions] = RamEMMCCalcAbsPredAndBounds(amInterventions, ex_start, nlatentcurves)">RamEMMCCalcAbsPredAndBounds</a>(amInterventions, recovery_start, nlatentcurves);
+0243 [sorted_interventions, max_points] = <a href="../../../Code/pdm/recovery/updatedModel/FastamEMMCVisualiseAlignmentDetailRecovery.html" class="code" title="function [sorted_interventions, max_points] = FastamEMMCVisualiseAlignmentDetailRecovery(amIntrNormcube, amHeldBackcube, amInterventions, meancurvemean,meancurvecount, meancurvestd, overall_pdoffset, measures, offset, align_wind, nmeasures, ninterventions,run_type, ex_start, curveaveragingmethod, plotname, plotsubfolder, nlatentcurves)">FastamEMMCVisualiseAlignmentDetailRecovery</a>(amIntrNormcube, amHeldBackcube, amInterventions, meancurvemean, <span class="keyword">...</span>
+0244     meancurvecount, meancurvestd, overall_pdoffset, measures, offset, align_wind, nmeasures, ninterventions, <span class="keyword">...</span>
+0245     run_type, recovery_start, curveaveragingmethod, plotname, plotsubfolder, nlatentcurves);
+0246 
+0247 <span class="comment">% amEMMCPlotAndSaveAlignedCurvesRecovery(unaligned_profile, meancurvemean, meancurvecount, meancurvestd, ...</span>
+0248 <span class="comment">%     amInterventions.Offset, amInterventions.LatentCurve, ...</span>
+0249 <span class="comment">%     measures, max_points, offset, align_wind, nmeasures, run_type, recovery_start, sigmamethod, plotname, plotsubfolder, nlatentcurves);</span>
+0250 
+0251 <span class="comment">% calculate the total number of outliers and the total number of data</span>
+0252 <span class="comment">% points</span>
+0253 [totaloutliers, totalpoints] = <a href="../../../Code/pdm/recovery/updatedModel/RamEMMCCalcTotalOutliers.html" class="code" title="function [totaloutliers, totalpoints] = RamEMMCCalcTotalOutliers(amIntrDatacube, isOutlier, amHeldBackcube, offsetsidx, latentcurve, offset, align_wind, ninterventions)">RamEMMCCalcTotalOutliers</a>(amIntrDatacube, isOutlier, amHeldBackcube, <span class="keyword">...</span>
+0254     amInterventions.Offsetidx, amInterventions.LatentCurve, offset, align_wind, ninterventions);
+0255 
+0256 <span class="comment">% calculate imputed probabilities for held back points</span>
+0257 [amImputedCube, imputedscore] = <a href="../../../Code/pdm/recovery/updatedModel/RamEMMCCalcImputedProbabilities.html" class="code" title="function [amImputedCube, imputedscore] = RamEMMCCalcImputedProbabilities(amIntrCube, amHeldBackcube,meancurvemean, meancurvestd, normstd, overall_pdoffset, offset, align_wind, nmeasures,ninterventions,sigmamethod, smoothingmethod, imputationmode, latentcurve, nlatentcurves)">RamEMMCCalcImputedProbabilities</a>(amIntrNormcube, amHeldBackcube, <span class="keyword">...</span>
+0258     meancurvemean, meancurvestd, normstd, overall_pdoffset, offset, align_wind, <span class="keyword">...</span>
+0259     nmeasures, ninterventions, sigmamethod, smoothingmethod, imputationmode, amInterventions.LatentCurve, nlatentcurves);
+0260 
+0261 toc
+0262 fprintf(<span class="string">'\n'</span>);
+0263 
+0264 tic
+0265 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0266 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0267 outputfilename = sprintf(<span class="string">'%s%s.mat'</span>, nameaddendum, plotname);
+0268 fprintf(<span class="string">'Saving alignment model results to file %s\n'</span>, outputfilename);
+0269 fprintf(<span class="string">'\n'</span>);
+0270 save(fullfile(basedir, subfolder, outputfilename), <span class="string">'amDatacube'</span>, <span class="string">'amIntrDatacube'</span>, <span class="string">'amIntrNormcube'</span>, <span class="keyword">...</span>
+0271     <span class="string">'amHeldBackcube'</span>, <span class="string">'amImputedCube'</span>, <span class="string">'imputedscore'</span>, <span class="string">'amInterventions'</span>, <span class="string">'intrkeepidx'</span>, <span class="keyword">...</span>
+0272     <span class="string">'meancurvesumsq'</span>, <span class="string">'meancurvesum'</span>, <span class="string">'meancurvecount'</span>, <span class="string">'meancurvemean'</span>, <span class="string">'meancurvestd'</span>, <span class="string">'animatedmeancurvemean'</span>, <span class="keyword">...</span>
+0273     <span class="string">'initial_offsets'</span>, <span class="string">'initial_latentcurve'</span>, <span class="string">'animatedoffsets'</span>, <span class="string">'animatedlc'</span>, <span class="string">'qual'</span>, <span class="string">'unaligned_profile'</span>, <span class="keyword">...</span>
+0274     <span class="string">'hstg'</span>, <span class="string">'pdoffset'</span>, <span class="string">'overall_hist'</span>, <span class="string">'overall_pdoffset'</span>, <span class="string">'animated_overall_pdoffset'</span>, <span class="keyword">...</span>
+0275     <span class="string">'vshift'</span>, <span class="string">'pptsstruct'</span>, <span class="string">'isOutlier'</span>, <span class="string">'outprior'</span>, <span class="string">'totaloutliers'</span>, <span class="string">'totalpoints'</span>, <span class="keyword">...</span>
+0276     <span class="string">'sorted_interventions'</span>, <span class="string">'max_points'</span>, <span class="string">'normmean'</span>, <span class="string">'normstd'</span>, <span class="string">'measures'</span>, <span class="string">'baseplotname'</span>, <span class="string">'plotname'</span>, <span class="string">'plotsubfolder'</span>, <span class="keyword">...</span>
+0277     <span class="string">'study'</span>, <span class="string">'mversion'</span>, <span class="string">'treatgap'</span>, <span class="string">'testlabelmthd'</span>, <span class="string">'sigmamethod'</span>,<span class="string">'offset'</span>, <span class="string">'align_wind'</span>, <span class="string">'recovery_start'</span>, <span class="string">'confidencethreshold'</span>, <span class="keyword">...</span>
+0278     <span class="string">'sigmamethod'</span>, <span class="string">'mumethod'</span>, <span class="string">'curveaveragingmethod'</span>, <span class="string">'smoothingmethod'</span>, <span class="string">'datasmoothmethod'</span>, <span class="string">'countthreshold'</span>, <span class="keyword">...</span>
+0279     <span class="string">'measuresmask'</span>, <span class="string">'runmode'</span>, <span class="string">'randomseed'</span>, <span class="string">'intrmode'</span>, <span class="string">'imputationmode'</span>, <span class="string">'heldbackpct'</span>, <span class="string">'confidencemode'</span>, <span class="string">'printpredictions'</span>, <span class="keyword">...</span>
+0280     <span class="string">'nmeasures'</span>, <span class="string">'ninterventions'</span>, <span class="string">'niterations'</span>, <span class="string">'nlatentcurves'</span>, <span class="string">'scenario'</span>, <span class="string">'vshiftmode'</span>, <span class="string">'vshiftmax'</span>, <span class="keyword">...</span>
+0281     <span class="string">'modelinputsmatfile'</span>, <span class="string">'datademographicsfile'</span>, <span class="string">'dataoutliersfile'</span>, <span class="string">'labelledinterventionsfile'</span>, <span class="string">'electivefile'</span>);
+0282 toc
+0283 fprintf(<span class="string">'\n'</span>);
+0284 
+0285 <span class="keyword">if</span> printpredictions == 1
+0286     tic
+0287     fprintf(<span class="string">'Plotting prediction results\n'</span>);
+0288     normmode = 1; <span class="comment">% plot regular measurement data</span>
+0289     <span class="keyword">for</span> i=ninterventions
+0290         <a href="../../../Code/smartcare/amEMMCPlotsAndSavePredictions.html" class="code" title="function amEMMCPlotsAndSavePredictions(amInterventions, amIntrcube, measures, pdoffset,overall_pdoffset, hstg, overall_hist, vshift, meancurvemean, normmean, normstd, isOutlier,ex_start_array, thisinter, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder, normmode)">amEMMCPlotsAndSavePredictions</a>(amInterventions, amIntrDatacube, measures, pdoffset, <span class="keyword">...</span>
+0291             overall_pdoffset, hstg, overall_hist, vshift, meancurvemean, normmean, normstd, isOutlier, recovery_start, <span class="keyword">...</span>
+0292             i, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder, normmode);
+0293     <span class="keyword">end</span>
+0294     toc
+0295     fprintf(<span class="string">'\n'</span>);
+0296 <span class="keyword">end</span>
+0297 
+0298 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

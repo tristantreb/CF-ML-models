@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotHorizontalLine</title>
+  <meta name="keywords" content="plotHorizontalLine">
+  <meta name="description" content="plotHotizontalLine - plots a horizontal line">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; plotHorizontalLine.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>plotHorizontalLine
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>plotHotizontalLine - plots a horizontal line</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [xl, yl] = plotHorizontalLine(ax, yval, xl, yl, colour, linestyle, linewidth) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> plotHotizontalLine - plots a horizontal line</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="am4PlotsAndSavePredictions.html" class="code" title="function am4PlotsAndSavePredictions(amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset,overall_pdoffset_all, overall_pdoffset_xAL, hstg, overall_hist, overall_hist_all, overall_hist_xAL, offsets,meancurvemean, normmean, ex_start, thisinter, nmeasures, max_offset, align_wind, study, version)">am4PlotsAndSavePredictions</a>	am4PlotsAndSavePredictions - plots measures prior to</li><li><a href="amEMMCCompareModelRunToTestData.html" class="code" title="function amEMMCCompareModelRunToTestData(amLabelledInterventions, amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset,hstg, overall_hist, meancurvemean, normmean, normstd, ex_start, nmeasures, ninterventions, nlatentcurves, max_offset,align_wind, sigmamethod, study, mversion, modelrun, modelidx, testsetmode)">amEMMCCompareModelRunToTestData</a>	amEMMCCompareModelRunToTestData - compares the output of a chosen model run to</li><li><a href="amEMMCCompareModelRuns.html" class="code" title="function amEMMCCompareModelRuns(modelrun1, modelidx1, modelrun2, modelidx2)">amEMMCCompareModelRuns</a>	</li><li><a href="amEMMCCreateLabelledInterventions.html" class="code" title="function [amLabelledInterventions] = amEMMCCreateLabelledInterventions(amIntrDatacube, amLabelledInterventions,interfrom, interto, measures, normmean, max_offset, align_wind, study, nmeasures, labelmode, basetestlabelfilename)">amEMMCCreateLabelledInterventions</a>	amEMMCCreateLabelledInterventions - plots measurement data and asks for lower</li><li><a href="amEMMCPlotLabelledInterventions.html" class="code" title="function amEMMCPlotLabelledInterventions(amIntrDatacube, amInterventions, amLabelledInterventions,measures, normmean, max_offset, align_wind, study, nmeasures)">amEMMCPlotLabelledInterventions</a>	amEMMCPlotLabelledInterventions - plots all the labelled test data</li><li><a href="amEMMCPlotSingleMeasureByLCSet.html" class="code" title="function amEMMCPlotSingleMeasureByLCSet(amInterventions, amIntrDatacube, normmean, measure, measures,ex_start_array, max_offset, align_wind, plotname, plotsubfolder, nlatentcurves)">amEMMCPlotSingleMeasureByLCSet</a>	amEMMCPlotSingleMeasureByLCSet - plots a given measure prior to</li><li><a href="amEMMCPlotsAndSavePredictions.html" class="code" title="function amEMMCPlotsAndSavePredictions(amInterventions, amIntrcube, measures, pdoffset,overall_pdoffset, hstg, overall_hist, vshift, meancurvemean, normmean, normstd, isOutlier,ex_start_array, thisinter, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder, normmode)">amEMMCPlotsAndSavePredictions</a>	amEMMCPlotsAndSavePredictions - plots measures prior to</li><li><a href="amEMPlotsAndSavePredictions.html" class="code" title="function amEMPlotsAndSavePredictions(amInterventions, amIntrDatacube, measures, pdoffset,overall_pdoffset, hstg, overall_hist, meancurvemean, normmean, normstd, isOutlier,ex_start, thisinter, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder)">amEMPlotsAndSavePredictions</a>	amEMPlotsAndSavePredictions - plots measures prior to</li><li><a href="compareModelRunToTestData.html" class="code" title="function compareModelRunToTestData(amLabelledInterventions, amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset,hstg, overall_hist, meancurvemean, normmean, normstd, ex_start, nmeasures, ninterventions, min_offset, max_offset,align_wind, study, mversion, modelrun, modelidx)">compareModelRunToTestData</a>	compareModelRunToTestData - compares the output of a chosen model run to</li><li><a href="compareModelRuns.html" class="code" title="function compareModelRuns(modelrun1, modelidx1, modelrun2, modelidx2)">compareModelRuns</a>	</li><li><a href="compareModelRunsScript.html" class="code" title="">compareModelRunsScript</a>	</li><li><a href="createLabelledInterventions.html" class="code" title="function [amLabelledInterventions] = createLabelledInterventions(amIntrDatacube, amLabelledInterventions,pdoffset, overall_pdoffset, interfrom, interto, measures, normmean, max_offset, align_wind, ex_start,study, nmeasures)">createLabelledInterventions</a>	createLabelledInterventions - plots measurement data and asks for lower</li><li><a href="plotLabelledInterventions.html" class="code" title="function plotLabelledInterventions(amIntrDatacube, amInterventions, amLabelledInterventions,pdoffset, overall_pdoffset, measures, normmean, max_offset, align_wind, ex_start,study, nmeasures)">plotLabelledInterventions</a>	plotLabelledInterventions - plots all the labelled test data</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [xl, yl] = plotHorizontalLine(ax, yval, xl, yl, colour, linestyle, linewidth)</a>
+0002 
+0003 <span class="comment">% plotHotizontalLine - plots a horizontal line</span>
+0004 
+0005 <span class="comment">% plot horizontal line</span>
+0006 line(ax, xl, [yval yval], <span class="keyword">...</span>
+0007     <span class="string">'Color'</span>, colour, <span class="keyword">...</span>
+0008     <span class="string">'LineStyle'</span>,linestyle, <span class="keyword">...</span>
+0009     <span class="string">'LineWidth'</span>, linewidth);
+0010 yl = [min(min(yval * 0.99), yl(1)) max(max(yval * 1.01), yl(2))];
+0011 ylim(yl);
+0012 
+0013 <span class="keyword">end</span>
+0014</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

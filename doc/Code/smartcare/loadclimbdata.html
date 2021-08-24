@@ -1,0 +1,367 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadclimbdata</title>
+  <meta name="keywords" content="loadclimbdata">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadclimbdata.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadclimbdata
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="analyseAndHandleDateOutliers.html" class="code" title="function [physdata] = analyseAndHandleDateOutliers(physdata, study, doupdates)">analyseAndHandleDateOutliers</a>	analyseAndHandleDateOutliers - function to do the following :-</li><li><a href="analyseOvernightMeasures.html" class="code" title="function [physdataout] = analyseOvernightMeasures(physdata, smartcareID, doupdates, detaillog)">analyseOvernightMeasures</a>	analyseOvernightMeasures - analyses measures recorded between 00:00 and</li><li><a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>	appendDeletedRows - appends a set of deleted measurement rows to the</li><li><a href="convertSputumColourToNumeric.html" class="code" title="function [rawmeasdata, sputumcolouridx] = convertSputumColourToNumeric(rawmeasdata)">convertSputumColourToNumeric</a>	convertSputumColourToNumeric - create an index table of all sputum</li><li><a href="correctClimbDataAnomalies.html" class="code" title="function [physdata, physdata_deleted] = correctClimbDataAnomalies(physdata, physdata_deleted)">correctClimbDataAnomalies</a>	correctClimbDataAnomalies - looks at various outliers in the measures</li><li><a href="createClimbMeasuresTable.html" class="code" title="function [clphysdata] = createClimbMeasuresTable(nrows)">createClimbMeasuresTable</a>	createClimbMeasuresTable - creates empty copy of all the physdata</li><li><a href="createInterpMeasure.html" class="code" title="function [clphysdata] = createInterpMeasure(clphysdata, rectype, detaillog)">createInterpMeasure</a>	createInterpMeasure - function to add a new measure of interpolated</li><li><a href="createMeasuresHeatmapWithStudyPeriod.html" class="code" title="function createMeasuresHeatmapWithStudyPeriod(physdata, offset, cdPatient, study)">createMeasuresHeatmapWithStudyPeriod</a>	createMeasuresHeatmapWithStudyPeriod - creates the Patient/Measures</li><li><a href="generateDataDemographicsByPatientFn.html" class="code" title="function generateDataDemographicsByPatientFn(physdata, cdPatient, study)">generateDataDemographicsByPatientFn</a>	generateDataDemographicsByPatientFn - function that creates data</li><li><a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>	getColumnForMeasure - returns the column name from physdata for the</li><li><a href="getColumnForRawClimbMeasure.html" class="code" title="function [column] = getColumnForRawClimbMeasure(measure)">getColumnForRawClimbMeasure</a>	getColumnForRawClimbMeasure - returns the column name from the input</li><li><a href="handleDuplicateMeasures.html" class="code" title="function [physdata] = handleDuplicateMeasures(physdata, study, doupdates, detaillog)">handleDuplicateMeasures</a>	handleDuplicateMeasures -  Analyse and correct for duplicate measures</li><li><a href="plotMeasuresByHour.html" class="code" title="function plotMeasuresByHour(physdata, smartcareID, imagefilename, study)">plotMeasuresByHour</a>	plotMeasuresByHour - for each measure, plot a histogram of number of</li><li><a href="printDataDemographics.html" class="code" title="function printDataDemographics(physdata, smartcareID)">printDataDemographics</a>	printDataDemographics - calculates and prints the count, mean, std, min, max</li><li><a href="scaleDaysByPatient.html" class="code" title="function [physdata] = scaleDaysByPatient(physdata,doupdates)">scaleDaysByPatient</a>	scaleDateByPatient - adds a new column to physdata for the scaled datenum</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; clc; close all;
+0002 
+0003 
+0004 tic
+0005 fprintf(<span class="string">'Loading Clinical Data\n'</span>);
+0006 fprintf(<span class="string">'---------------------\n'</span>);
+0007 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0008 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0009 clinicalmatfile = <span class="string">'climbclinicaldata.mat'</span>;
+0010 load(fullfile(basedir, subfolder, clinicalmatfile));
+0011 fprintf(<span class="string">'Done\n'</span>);
+0012 toc
+0013 fprintf(<span class="string">'\n'</span>);
+0014 
+0015 study = <span class="string">'CL'</span>;
+0016 
+0017 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0018 subfolder = sprintf(<span class="string">'DataFiles/%s/MeasurementDataFinal'</span>, study);
+0019 
+0020 clphysdata = <a href="createClimbMeasuresTable.html" class="code" title="function [clphysdata] = createClimbMeasuresTable(nrows)">createClimbMeasuresTable</a>(0);
+0021 clphysdata_deleted = clphysdata;
+0022 clphysdata_deleted.Reason(:) = {<span class="string">''</span>};
+0023 
+0024 measfilelisting = dir(fullfile(basedir, subfolder, <span class="string">'*.xls*'</span>));
+0025 MeasFiles = cell(size(measfilelisting,1),1);
+0026 <span class="keyword">for</span> a = 1:size(MeasFiles,1)
+0027     MeasFiles{a} = measfilelisting(a).name;
+0028 <span class="keyword">end</span>
+0029 
+0030 nmeasfile = size(MeasFiles,1);
+0031 fprintf(<span class="string">'Measurement files to ingest\n'</span>);
+0032 fprintf(<span class="string">'---------------------------\n'</span>);
+0033 <span class="keyword">for</span> i = 1:nmeasfile
+0034     fprintf(<span class="string">'%2d: %s\n'</span>, i, MeasFiles{i});
+0035 <span class="keyword">end</span>
+0036 fprintf(<span class="string">'\n'</span>);
+0037 fprintf(<span class="string">'---------------------------\n'</span>);
+0038 fprintf(<span class="string">'\n'</span>);
+0039 
+0040 measdatasheetname = <span class="string">'CFRemoteMonitoring-from-2017-01'</span>;
+0041 canadalungdsname = <span class="string">'Canada data'</span>;
+0042 
+0043 <span class="keyword">for</span> i = 1:nmeasfile
+0044     tic
+0045     fprintf(<span class="string">'Processing %2d: %s\n'</span>, i, MeasFiles{i});
+0046     mfopts = detectImportOptions(fullfile(basedir, subfolder, MeasFiles{i}), <span class="string">'Sheet'</span>, measdatasheetname);
+0047     mfopts.VariableTypes(:, ismember(mfopts.VariableNames, {<span class="string">'StartDate'</span>, <span class="string">'EndDate'</span>, <span class="string">'DateRecorded'</span>, <span class="string">'CorrectedCanadaDate'</span>})) = {<span class="string">'datetime'</span>};
+0048     mfopts.VariableTypes(:, ismember(mfopts.VariableNames, {<span class="string">'TimeRecorded'</span>, <span class="string">'CorrectedCanadaTime'</span>})) = {<span class="string">'datetime'</span>};
+0049     mfopts.VariableTypes(:, ismember(mfopts.VariableNames, {<span class="string">'BreathsPerMinute'</span>, <span class="string">'FEV1'</span>, <span class="string">'NumberOfDisturbances'</span>, <span class="keyword">...</span>
+0050         <span class="string">'O2Saturation'</span>, <span class="string">'Pulse_BPM_'</span>, <span class="string">'Rating'</span>, <span class="string">'Temp_degC_'</span>, <span class="string">'WeightInKg'</span>})) = {<span class="string">'double'</span>};
+0051     
+0052     tmpmeasdata = readtable(fullfile(basedir, subfolder, MeasFiles{i}), mfopts, <span class="string">'Sheet'</span>, measdatasheetname);
+0053     <span class="comment">% special processing for sputum colour recordings to convert from text</span>
+0054     <span class="comment">% labels to a numeric index equivalent</span>
+0055     <span class="keyword">if</span> ismember(tmpmeasdata.RecordingType(1), <span class="string">'SputumColorRecording'</span>)
+0056         [tmpmeasdata, sputumcolouridx] = <a href="convertSputumColourToNumeric.html" class="code" title="function [rawmeasdata, sputumcolouridx] = convertSputumColourToNumeric(rawmeasdata)">convertSputumColourToNumeric</a>(tmpmeasdata);
+0057     <span class="keyword">end</span> 
+0058     tmpmeasdata.UserID = upper(tmpmeasdata.UserID);
+0059     
+0060     
+0061     <span class="comment">% special processing for lung function file (canada data on separate</span>
+0062     <span class="comment">% file)</span>
+0063     <span class="keyword">if</span> startsWith(MeasFiles{i}, <span class="string">'Lung'</span>)
+0064         idx = startsWith(tmpmeasdata.UserID, {<span class="string">'IWK'</span>, <span class="string">'LON'</span>});
+0065         fprintf(<span class="string">'Deleting %d rows of canada data from main data sheet\n'</span>, sum(idx));
+0066         tmpmeasdata(idx, :) = [];
+0067         fprintf(<span class="string">'Loading canadiana lung function data from %s sheet\n'</span>, canadalungdsname);
+0068         mfopts = detectImportOptions(fullfile(basedir, subfolder, MeasFiles{i}), <span class="string">'Sheet'</span>, canadalungdsname);
+0069         mfopts.VariableTypes(:, ismember(mfopts.VariableNames, {<span class="string">'StartDate'</span>, <span class="string">'EndDate'</span>, <span class="string">'DateRecorded'</span>, <span class="string">'CorrectedCanadaDate'</span>})) = {<span class="string">'datetime'</span>};
+0070         mfopts.VariableTypes(:, ismember(mfopts.VariableNames, {<span class="string">'TimeRecorded'</span>, <span class="string">'CorrectedCanadaTime'</span>})) = {<span class="string">'datetime'</span>};
+0071         mfopts.VariableTypes(:, ismember(mfopts.VariableNames, {<span class="string">'BreathsPerMinute'</span>, <span class="string">'FEV1'</span>, <span class="string">'NumberOfDisturbances'</span>, <span class="keyword">...</span>
+0072             <span class="string">'O2Saturation'</span>, <span class="string">'Pulse_BPM_'</span>, <span class="string">'Rating'</span>, <span class="string">'Temp_degC_'</span>, <span class="string">'WeightInKg'</span>})) = {<span class="string">'double'</span>};
+0073     
+0074         tmplfdata = readtable(fullfile(basedir, subfolder, MeasFiles{i}), mfopts, <span class="string">'Sheet'</span>, canadalungdsname);
+0075         fprintf(<span class="string">'Loaded %d rows\n'</span>, size(tmplfdata, 1));
+0076         tmpmeasdata = [tmpmeasdata; tmplfdata];
+0077         
+0078         fprintf(<span class="string">'Updating recording type to be FEV1Recording\n'</span>);
+0079         tmpmeasdata.RecordingType(:) = {<span class="string">'FEV1Recording'</span>};
+0080     <span class="keyword">end</span>
+0081     
+0082     nmeasurements = size(tmpmeasdata, 1);
+0083     <span class="keyword">if</span> nmeasurements &gt; 0
+0084         mclphysdata = <a href="createClimbMeasuresTable.html" class="code" title="function [clphysdata] = createClimbMeasuresTable(nrows)">createClimbMeasuresTable</a>(nmeasurements);
+0085         <span class="comment">% ingest user name (force uppercase for consistency) and recording type</span>
+0086         mclphysdata.UserName = upper(tmpmeasdata.UserID);
+0087         mclphysdata.RecordingType = tmpmeasdata.RecordingType;
+0088         <span class="comment">% set the date time recorded from date and time columns in the raw</span>
+0089         <span class="comment">% measurement file</span>
+0090         mclphysdata.Date_TimeRecorded = tmpmeasdata.DateRecorded;
+0091         [tmph, tmpm, tmps] = hms(tmpmeasdata.TimeRecorded);
+0092         mclphysdata.Date_TimeRecorded.Hour   = tmph;
+0093         mclphysdata.Date_TimeRecorded.Minute = tmpm;
+0094         mclphysdata.Date_TimeRecorded.Second = tmps;
+0095         <span class="comment">% override with the timezone corrected columns for the 2 canada</span>
+0096         <span class="comment">% hospitals</span>
+0097         canidx = startsWith(tmpmeasdata.UserID, {<span class="string">'IWK'</span>, <span class="string">'LON'</span>});
+0098         <span class="comment">%canidx = ismember(extractBefore(tmpmeasdata.UserID,4), {'IWK', 'LON'});</span>
+0099         mclphysdata.Date_TimeRecorded(canidx) = tmpmeasdata.CorrectedCanadaDate(canidx);
+0100         [tmph, tmpm, tmps] = hms(tmpmeasdata.CorrectedCanadaTime);
+0101         mclphysdata.Date_TimeRecorded.Hour(canidx)   = tmph(canidx);
+0102         mclphysdata.Date_TimeRecorded.Minute(canidx) = tmpm(canidx);
+0103         mclphysdata.Date_TimeRecorded.Second(canidx) = tmps(canidx);
+0104         <span class="comment">% ingest the measurements using column mapping functions</span>
+0105         inputcolname = <a href="getColumnForRawClimbMeasure.html" class="code" title="function [column] = getColumnForRawClimbMeasure(measure)">getColumnForRawClimbMeasure</a>(tmpmeasdata.RecordingType{1});
+0106         outputcolname = <a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>(tmpmeasdata.RecordingType{1});
+0107         mclphysdata(:, {outputcolname}) = tmpmeasdata(:, {inputcolname});
+0108         <span class="comment">% only includ non-null measurements</span>
+0109         <span class="keyword">if</span> ismember(class(table2array(mclphysdata(:, {outputcolname}))), {<span class="string">'double'</span>})
+0110             nullidx = isnan(table2array(mclphysdata(:, {outputcolname})));
+0111         <span class="keyword">elseif</span> ismember(class(table2array(mclphysdata(:, {outputcolname}))), {<span class="string">'cell'</span>})
+0112             nullidx = ismember(table2array(mclphysdata(:, {outputcolname})), {<span class="string">'NULL'</span>});
+0113         <span class="keyword">else</span>
+0114             fprintf(<span class="string">'Unknown data type for measurement column\n'</span>);
+0115         <span class="keyword">end</span>
+0116         nonnullmeasurements = sum(~nullidx);
+0117         clphysdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(mclphysdata(nullidx, :), clphysdata_deleted, {<span class="string">'NULL Measurement'</span>});
+0118         clphysdata = [clphysdata; mclphysdata(~nullidx,:)];
+0119         fprintf(<span class="string">'%5d Raw Measurements, %5d Non-null measurements\n'</span>, nmeasurements, nonnullmeasurements);
+0120     <span class="keyword">else</span>
+0121         fprintf(<span class="string">'%d Raw Measurements\n'</span>, nmeasurements);
+0122     <span class="keyword">end</span>
+0123     toc
+0124     fprintf(<span class="string">'\n'</span>);
+0125 <span class="keyword">end</span>
+0126 
+0127 clphysdata_original = clphysdata;
+0128 fprintf(<span class="string">'Climb data has %d rows\n'</span>, size(clphysdata, 1));
+0129 fprintf(<span class="string">'\n'</span>);
+0130 
+0131 <span class="comment">% remove dummy user entries</span>
+0132 dummies = {<span class="string">'TEST1'</span>, <span class="string">'TEST2'</span>, <span class="string">'TESTDAVE'</span>};
+0133 idx = ismember(clphysdata.UserName, dummies);
+0134 fprintf(<span class="string">'Removing dummy users - %d rows\n'</span>, sum(idx));
+0135 clphysdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(clphysdata(idx,:), clphysdata_deleted, {<span class="string">'Dummy User'</span>});
+0136 clphysdata(idx,:) = [];
+0137 
+0138 fprintf(<span class="string">'Climb data now has %d rows\n'</span>, size(clphysdata, 1));
+0139 fprintf(<span class="string">'\n'</span>);
+0140 
+0141 <span class="comment">% set study offset</span>
+0142 minmdate = min(clphysdata.Date_TimeRecorded);
+0143 cloffset = datenum(datetime(year(minmdate), month(minmdate), day(minmdate)));
+0144 clphysdata.DateNum = ceil(datenum(datetime(clphysdata.Date_TimeRecorded)+seconds(1)) - cloffset);
+0145 
+0146 <span class="comment">% update with ID</span>
+0147 tic
+0148 fprintf(<span class="string">'Adding ID to the measurement data table\n'</span>);
+0149 fprintf(<span class="string">'--------------------------------------\n'</span>);
+0150 totupdates = 0;
+0151 <span class="keyword">for</span> i = 1:size(clPatient,1)
+0152     id = clPatient.StudyNumber{i};
+0153     scid = clPatient.ID(i);
+0154     idx = ismember(clphysdata.UserName, id);
+0155     fprintf(<span class="string">'Updating ID %3d for UserID %6s - %4d rows updated\n'</span>, scid, id, sum(idx));
+0156     clphysdata.SmartCareID(idx) = scid;
+0157     totupdates = totupdates + sum(idx);
+0158 <span class="keyword">end</span>
+0159 fprintf(<span class="string">'\n'</span>);
+0160 fprintf(<span class="string">'Total rows updated = %d\n'</span>, totupdates);
+0161 fprintf(<span class="string">'Rows with no ID match = %4d\n'</span>, size(clphysdata, 1) - totupdates);
+0162 fprintf(<span class="string">'\n'</span>);
+0163 
+0164 
+0165 idx = (clphysdata.SmartCareID == 0);
+0166 missedids = unique(clphysdata.UserName(idx));
+0167 
+0168 <span class="keyword">if</span> (size(missedids, 1) &gt; 0)
+0169     fprintf(<span class="string">'UserIDs not matched are :-\n'</span>);
+0170     <span class="keyword">for</span> i = 1:size(missedids,1)
+0171         fprintf(<span class="string">'%6s\n'</span>, missedids{i});
+0172     <span class="keyword">end</span>
+0173 <span class="keyword">end</span>
+0174 
+0175 fprintf(<span class="string">'Removing %4d measurements with no patient ID match\n'</span>, sum(idx));
+0176 clphysdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(clphysdata(idx, :), clphysdata_deleted, {<span class="string">'No Patient ID Match'</span>});
+0177 clphysdata(idx, :) = [];
+0178 toc
+0179 fprintf(<span class="string">'\n'</span>);
+0180 
+0181 <span class="comment">% remove blank/zero values</span>
+0182 idx1 = ismember(clphysdata.RecordingType, {<span class="string">'ActivityRecording'</span>});
+0183 idx2 = isnan(clphysdata.Activity_Steps);
+0184 idx3 = clphysdata.Activity_Steps == 0;
+0185 idx = idx1 &amp; (idx2 | idx3);
+0186 fprintf(<span class="string">'Removing %4d blank or zero Activity measurements\n'</span>, sum(idx));
+0187 clphysdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(clphysdata(idx,:), clphysdata_deleted, {<span class="string">'Zero Value'</span>});
+0188 clphysdata(idx,:) = [];
+0189 
+0190 idx1 = ismember(clphysdata.RecordingType, {<span class="string">'AppetiteRecording'</span>, <span class="string">'BreathlessnessRecording'</span>, <span class="string">'CoughRecording'</span>,<span class="string">'SleepActivityRecording'</span>, <span class="string">'SputumVolumeRecording'</span>, <span class="string">'TirednessRecording'</span>, <span class="string">'WellnessRecording'</span>});
+0191 idx2 = isnan(clphysdata.Rating);
+0192 idx = idx1 &amp; idx2;
+0193 fprintf(<span class="string">'Removing %4d blank Rating measurements\n'</span>, sum(idx));
+0194 clphysdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(clphysdata(idx,:), clphysdata_deleted, {<span class="string">'Zero Value'</span>});
+0195 clphysdata(idx,:) = [];
+0196 
+0197 idx1 = ismember(clphysdata.RecordingType, {<span class="string">'FEV1Recording'</span>});
+0198 idx2 = isnan(clphysdata.FEV);
+0199 idx3 = clphysdata.FEV == 0;
+0200 idx = idx1 &amp; (idx2 | idx3);
+0201 fprintf(<span class="string">'Removing %4d blank or zero FEV1 measurements\n'</span>, sum(idx));
+0202 clphysdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(clphysdata(idx,:), clphysdata_deleted, {<span class="string">'Zero Value'</span>});
+0203 clphysdata(idx,:) = [];
+0204 
+0205 idx1 = ismember(clphysdata.RecordingType, {<span class="string">'O2SaturationRecording'</span>});
+0206 idx2 = isnan(clphysdata.O2Saturation);
+0207 idx3 = clphysdata.O2Saturation == 0;
+0208 idx = idx1 &amp; (idx2 | idx3);
+0209 fprintf(<span class="string">'Removing %4d blank or zero O2 Saturation measurements\n'</span>, sum(idx));
+0210 clphysdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(clphysdata(idx,:), clphysdata_deleted, {<span class="string">'Zero Value'</span>});
+0211 clphysdata(idx,:) = [];
+0212 
+0213 idx1 = ismember(clphysdata.RecordingType, {<span class="string">'PulseRateRecording'</span>});
+0214 idx2 = isnan(clphysdata.Pulse_BPM_);
+0215 idx3 = clphysdata.Pulse_BPM_ == 0;
+0216 idx = idx1 &amp; (idx2 | idx3);
+0217 fprintf(<span class="string">'Removing %4d blank or zero Pulse Rate measurements\n'</span>, sum(idx));
+0218 clphysdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(clphysdata(idx,:), clphysdata_deleted, {<span class="string">'Zero Value'</span>});
+0219 clphysdata(idx,:) = [];
+0220 
+0221 idx1 = ismember(clphysdata.RecordingType, {<span class="string">'RespiratoryRateRecording'</span>});
+0222 idx2 = isnan(clphysdata.BreathsPerMin);
+0223 idx3 = clphysdata.BreathsPerMin == 0;
+0224 idx = idx1 &amp; (idx2 | idx3);
+0225 fprintf(<span class="string">'Removing %4d blank or zero Resp Rate measurements\n'</span>, sum(idx));
+0226 clphysdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(clphysdata(idx,:), clphysdata_deleted, {<span class="string">'Zero Value'</span>});
+0227 clphysdata(idx,:) = [];
+0228 
+0229 idx1 = ismember(clphysdata.RecordingType, {<span class="string">'SleepDisturbanceRecording'</span>});
+0230 idx2 = isnan(clphysdata.NumSleepDisturb);
+0231 idx = idx1 &amp; idx2;
+0232 fprintf(<span class="string">'Removing %4d blank Sleep Disturb measurements\n'</span>, sum(idx));
+0233 clphysdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(clphysdata(idx,:), clphysdata_deleted, {<span class="string">'Zero Value'</span>});
+0234 clphysdata(idx,:) = [];
+0235 
+0236 idx1 = ismember(clphysdata.RecordingType, {<span class="string">'TemperatureRecording'</span>});
+0237 idx2 = isnan(clphysdata.Temp_degC_);
+0238 idx3 = clphysdata.Temp_degC_ == 0;
+0239 idx = idx1 &amp; (idx2 | idx3);
+0240 fprintf(<span class="string">'Removing %4d blank or zero Temperature measurements\n'</span>, sum(idx));
+0241 clphysdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(clphysdata(idx,:), clphysdata_deleted, {<span class="string">'Zero Value'</span>});
+0242 clphysdata(idx,:) = [];
+0243 
+0244 idx1 = ismember(clphysdata.RecordingType, {<span class="string">'WeightRecording'</span>});
+0245 idx2 = isnan(clphysdata.WeightInKg);
+0246 idx3 = clphysdata.WeightInKg == 0;
+0247 idx = idx1 &amp; (idx2 | idx3);
+0248 fprintf(<span class="string">'Removing %4d blank or zero Weight measurements\n'</span>, sum(idx));
+0249 clphysdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(clphysdata(idx,:), clphysdata_deleted, {<span class="string">'Zero Value'</span>});
+0250 clphysdata(idx,:) = [];
+0251 
+0252 <span class="comment">% update sputum colour to be lower case to ensure consistency and rename</span>
+0253 <span class="comment">% recording type to be english spelling</span>
+0254 idx = ismember(clphysdata.RecordingType, {<span class="string">'SputumColorRecording'</span>});
+0255 clphysdata.RecordingType(idx) = {<span class="string">'SputumColourRecording'</span>};
+0256 fprintf(<span class="string">'Updating %4d Sputum Colour to make recording type english spelling\n'</span>, sum(idx));
+0257 fprintf(<span class="string">'\n'</span>);
+0258 
+0259 <span class="comment">% calc and print overall data demographics before data anomaly fixes</span>
+0260 <a href="printDataDemographics.html" class="code" title="function printDataDemographics(physdata, smartcareID)">printDataDemographics</a>(clphysdata, 0);
+0261 fprintf(<span class="string">'\n'</span>);
+0262 
+0263 [clphysdata, clphysdata_deleted] = <a href="correctClimbDataAnomalies.html" class="code" title="function [physdata, physdata_deleted] = correctClimbDataAnomalies(physdata, physdata_deleted)">correctClimbDataAnomalies</a>(clphysdata, clphysdata_deleted);
+0264 
+0265 <span class="comment">% sort measurement data</span>
+0266 clphysdata = sortrows(clphysdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>);
+0267 
+0268 <a href="printDataDemographics.html" class="code" title="function printDataDemographics(physdata, smartcareID)">printDataDemographics</a>(clphysdata, 0);
+0269 
+0270 <a href="plotMeasuresByHour.html" class="code" title="function plotMeasuresByHour(physdata, smartcareID, imagefilename, study)">plotMeasuresByHour</a>(clphysdata, 0, <span class="string">'CL - Measures By Hour Histograms'</span>, study);
+0271 
+0272 doupdates = true;
+0273 detaillog = false;
+0274 clphysdata = <a href="analyseOvernightMeasures.html" class="code" title="function [physdataout] = analyseOvernightMeasures(physdata, smartcareID, doupdates, detaillog)">analyseOvernightMeasures</a>(clphysdata,0, doupdates, detaillog);
+0275 
+0276 clphysdata_predupehandling = clphysdata;
+0277 
+0278 <span class="comment">% generate data demographics by patient</span>
+0279 <a href="generateDataDemographicsByPatientFn.html" class="code" title="function generateDataDemographicsByPatientFn(physdata, cdPatient, study)">generateDataDemographicsByPatientFn</a>(clphysdata, clPatient, study);
+0280 
+0281 <span class="comment">% handle duplicates</span>
+0282 doupdates = true;
+0283 detaillog = false;
+0284 clphysdata = <a href="handleDuplicateMeasures.html" class="code" title="function [physdata] = handleDuplicateMeasures(physdata, study, doupdates, detaillog)">handleDuplicateMeasures</a>(clphysdata, study, doupdates, detaillog);
+0285 
+0286 <span class="comment">% calc and print overall data demographics after data anomaly fixes</span>
+0287 <a href="printDataDemographics.html" class="code" title="function printDataDemographics(physdata, smartcareID)">printDataDemographics</a>(clphysdata, 0);
+0288 
+0289 <span class="comment">% populate ScaledDateNum with the days from first measurement (by patient)</span>
+0290 clphysdata = <a href="scaleDaysByPatient.html" class="code" title="function [physdata] = scaleDaysByPatient(physdata,doupdates)">scaleDaysByPatient</a>(clphysdata, doupdates);
+0291 
+0292 clphysdata_predateoutlierhandling = clphysdata;
+0293 
+0294 <span class="comment">% analyse measurement date outliers and handle as appropriate</span>
+0295 clphysdata = <a href="analyseAndHandleDateOutliers.html" class="code" title="function [physdata] = analyseAndHandleDateOutliers(physdata, study, doupdates)">analyseAndHandleDateOutliers</a>(clphysdata, study, doupdates);
+0296 
+0297 <a href="createMeasuresHeatmapWithStudyPeriod.html" class="code" title="function createMeasuresHeatmapWithStudyPeriod(physdata, offset, cdPatient, study)">createMeasuresHeatmapWithStudyPeriod</a>(clphysdata, cloffset, clPatient, study);
+0298 
+0299 <span class="comment">% create interpolated measures for FEV1 and Weight</span>
+0300 clphysdata = <a href="createInterpMeasure.html" class="code" title="function [clphysdata] = createInterpMeasure(clphysdata, rectype, detaillog)">createInterpMeasure</a>(clphysdata, <span class="string">'FEV1Recording'</span>, detaillog);
+0301 clphysdata = <a href="createInterpMeasure.html" class="code" title="function [clphysdata] = createInterpMeasure(clphysdata, rectype, detaillog)">createInterpMeasure</a>(clphysdata, <span class="string">'WeightRecording'</span>, detaillog);
+0302 
+0303 <span class="comment">% calc and print overall data demographics after data anomaly fixes</span>
+0304 <a href="printDataDemographics.html" class="code" title="function printDataDemographics(physdata, smartcareID)">printDataDemographics</a>(clphysdata, 0);
+0305 
+0306 <span class="comment">% generate data demographics by patient</span>
+0307 <a href="generateDataDemographicsByPatientFn.html" class="code" title="function generateDataDemographicsByPatientFn(physdata, cdPatient, study)">generateDataDemographicsByPatientFn</a>(clphysdata, clPatient, study);
+0308 
+0309 
+0310 tic
+0311 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0312 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0313 outputfilename = <span class="string">'climbdata.mat'</span>;
+0314 fprintf(<span class="string">'Saving output variables to file %s\n'</span>, outputfilename);
+0315 save(fullfile(basedir, subfolder, outputfilename), <span class="string">'clphysdata'</span>, <span class="string">'cloffset'</span>, <span class="string">'sputumcolouridx'</span>, <span class="string">'clphysdata_deleted'</span>, <span class="string">'clphysdata_original'</span>, <span class="string">'clphysdata_predupehandling'</span>, <span class="string">'clphysdata_predateoutlierhandling'</span>);
+0316 
+0317 subfolder = <span class="string">'ExcelFiles'</span>;
+0318 delrowfilename = <span class="string">'ClimbDeletedMeasurementData3.xlsx'</span>;
+0319 writetable(clphysdata_deleted(~ismember(clphysdata_deleted.Reason, {<span class="string">'NULL Measurement'</span>}),:), fullfile(basedir, subfolder, delrowfilename));
+0320 toc</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

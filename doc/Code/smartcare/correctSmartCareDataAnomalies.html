@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of correctSmartCareDataAnomalies</title>
+  <meta name="keywords" content="correctSmartCareDataAnomalies">
+  <meta name="description" content="correctSmartCareDataAnomalies - looks at various outliers in the measures">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; correctSmartCareDataAnomalies.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>correctSmartCareDataAnomalies
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>correctSmartCareDataAnomalies - looks at various outliers in the measures</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [physdataout] = correctSmartCareDataAnomalies(physdata) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> correctSmartCareDataAnomalies - looks at various outliers in the measures
+ and corrects as appropriate. See associated OneNote page 'SmartCare Data 
+ - Anomalies Found' for details</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadsmartcaredata.html" class="code" title="">loadsmartcaredata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [physdataout] = correctSmartCareDataAnomalies(physdata)</a>
+0002 
+0003 <span class="comment">% correctSmartCareDataAnomalies - looks at various outliers in the measures</span>
+0004 <span class="comment">% and corrects as appropriate. See associated OneNote page 'SmartCare Data</span>
+0005 <span class="comment">% - Anomalies Found' for details</span>
+0006 
+0007 tic
+0008 <span class="comment">% handle anomalies in the data</span>
+0009 fprintf(<span class="string">'Correcting anomalies in the data\n'</span>);
+0010 fprintf(<span class="string">'--------------------------------\n'</span>);
+0011 
+0012 <span class="comment">% Activity Reading - &gt; 30,000 steps</span>
+0013 idx1 = find(ismember(physdata.RecordingType, <span class="string">'ActivityRecording'</span>));
+0014 idx2 = find(physdata.Activity_Steps &gt; 30000);
+0015 idx = intersect(idx1,idx2);
+0016 fprintf(<span class="string">'Found    %4d Activity measurements &gt; 30,000 - leave for now\n'</span>, size(idx,1));
+0017 <span class="comment">%temp = sortrows(physdata(idx,:), {'SmartCareID', 'DateNum'}, 'ascend');</span>
+0018 <span class="comment">%temp(:, {'SmartCareID','UserName','RecordingType','Date_TimeRecorded','Activity_Steps'})</span>
+0019 
+0020 <span class="comment">% Lung Function - FEV1% &lt; 10% or &gt; 130%</span>
+0021 idx1 = find(ismember(physdata.RecordingType, <span class="string">'LungFunctionRecording'</span>));
+0022 idx2 = find(physdata.FEV1_ &lt; 10 | physdata.FEV1_ &gt; 130);
+0023 idx3 = intersect(idx1,idx2);
+0024 idx4 = find(physdata.SmartCareID ~= 227);
+0025 idx = intersect(idx3,idx4);
+0026 fprintf(<span class="string">'Removing %4d Lung Function measurements &lt; 10%% or &gt; 130%% (except patient 227)\n'</span>, size(idx,1));
+0027 <span class="comment">%temp = sortrows(physdata(idx,:), {'SmartCareID', 'DateNum'}, 'ascend');</span>
+0028 <span class="comment">%temp(:, {'SmartCareID','UserName','RecordingType','Date_TimeRecorded','FEV1_'})</span>
+0029 physdata(idx,:) = [];
+0030 
+0031 <span class="comment">% note looked further at FEV1% &lt; 20%, all seemed valid except patients 172</span>
+0032 <span class="comment">% and 197 who had multiple (2 or 3) readings within a couple of minutes and</span>
+0033 <span class="comment">% the low score was an outlier. When handling duplicates for FEV1%, propose</span>
+0034 <span class="comment">% to take max on a given day rather than average.</span>
+0035 
+0036 <span class="comment">% O2 Saturation &lt; 80% or &gt; 100%</span>
+0037 idx1 = find(ismember(physdata.RecordingType, <span class="string">'O2SaturationRecording'</span>));
+0038 idx2 = find(physdata.O2Saturation &lt; 80 | physdata.O2Saturation &gt; 100);
+0039 idx = intersect(idx1,idx2);
+0040 fprintf(<span class="string">'Found    %4d O2 Saturation measurements &gt; 100%% or &lt; 80%%\n'</span>, size(idx,1));
+0041 <span class="comment">%temp = sortrows(physdata(idx,:), {'SmartCareID', 'DateNum'}, 'ascend');</span>
+0042 <span class="comment">%temp(:, {'SmartCareID','UserName','RecordingType','Date_TimeRecorded','O2Saturation'})</span>
+0043 
+0044 <span class="comment">% O2 Saturation - update measures for patient 82 at 103% and 104% to be 100% (max allowable)</span>
+0045 idx2 = find(physdata.O2Saturation == 103 | physdata.O2Saturation ==104);
+0046 idx = intersect(idx1,idx2);
+0047 fprintf(<span class="string">'Updating %4d O2 Saturation measurements = 103%% and 104%% to be 100%%\n'</span>, size(idx,1));
+0048 physdata.O2Saturation(idx) = 100;
+0049 
+0050 <span class="comment">% O2 saturation - remove incorrect entries (=127% and &lt; 80%)</span>
+0051 idx2 = find(physdata.O2Saturation == 127 | physdata.O2Saturation &lt; 80);
+0052 idx = intersect(idx1,idx2);
+0053 fprintf(<span class="string">'Removing %4d O2 Saturation measurements = 127%% or &lt; 80%%\n'</span>, size(idx,1));
+0054 physdata(idx,:) = [];
+0055 
+0056 <span class="comment">% Pulse Rate (BPM) &lt; 50 or &gt; 150</span>
+0057 idx1 = find(ismember(physdata.RecordingType, <span class="string">'PulseRateRecording'</span>));
+0058 idx2 = find(physdata.Pulse_BPM_ &lt; 50 | physdata.Pulse_BPM_ &gt; 150);
+0059 idx = intersect(idx1,idx2);
+0060 fprintf(<span class="string">'Found    %4d Pulse Rate measurements &lt; 50 or &gt; 150\n'</span>, size(idx,1));
+0061 <span class="comment">%temp = sortrows(physdata(idx,:), {'SmartCareID', 'DateNum'}, 'ascend');</span>
+0062 <span class="comment">%temp(:, {'SmartCareID','UserName','RecordingType','Date_TimeRecorded','Pulse_BPM_'})</span>
+0063 
+0064 <span class="comment">% Pulse Rate (BPM) - remove those with &lt; 48 and == 511</span>
+0065 idx2 = find(physdata.Pulse_BPM_ &lt; 48 | physdata.Pulse_BPM_ == 511);
+0066 idx = intersect(idx1,idx2);
+0067 fprintf(<span class="string">'Removing %4d Pulse Rate measurements &lt; 48 or == 511\n'</span>, size(idx,1));
+0068 physdata(idx,:) = [];
+0069 
+0070 <span class="comment">% Temperature Recording - convert 4 readings taken in degF to degC</span>
+0071 idx1 = find(ismember(physdata.RecordingType, <span class="string">'TemperatureRecording'</span>));
+0072 idx2 = find(physdata.Temp_degC_ &gt; 96 &amp; physdata.Temp_degC_ &lt; 99);
+0073 idx = intersect(idx1,idx2);
+0074 fprintf(<span class="string">'Converting %2d Temperature measurements in degF to degC\n'</span>, size(idx,1));
+0075 physdata.Temp_degC_(idx) = (physdata.Temp_degC_(idx) - 32) / 1.8;
+0076 
+0077 <span class="comment">% Temperature Recording - remove illogical values (&lt; 30 degC or &gt; 50 degC)</span>
+0078 idx1 = find(ismember(physdata.RecordingType, <span class="string">'TemperatureRecording'</span>));
+0079 idx2 = find(physdata.Temp_degC_ &lt; 30 | physdata.Temp_degC_ &gt; 50);
+0080 idx = intersect(idx1,idx2);
+0081 fprintf(<span class="string">'Removing %4d Illogical Temperature measurements (&gt;50degC or &lt;30degC)\n'</span>, size(idx,1));
+0082 <span class="comment">%temp = sortrows(physdata(idx,:), {'SmartCareID', 'DateNum'}, 'ascend');</span>
+0083 <span class="comment">%temp(:, {'SmartCareID','UserName','RecordingType','Date_TimeRecorded','Temp_degC_'})</span>
+0084 physdata(idx,:) = [];
+0085 
+0086 <span class="comment">% Weight Recording - &lt; 35kg or &gt; 125kg</span>
+0087 idx1 = find(ismember(physdata.RecordingType, <span class="string">'WeightRecording'</span>));
+0088 idx2 = find(physdata.WeightInKg &lt; 35 | physdata.WeightInKg &gt; 125);
+0089 idx = intersect(idx1,idx2);
+0090 fprintf(<span class="string">'Removing %4d Weight measurements &lt; 35kg or &gt; 125kg\n'</span>, size(idx,1));
+0091 <span class="comment">%temp = sortrows(physdata(idx,:), {'SmartCareID', 'DateNum'}, 'ascend');</span>
+0092 <span class="comment">%temp(:, {'SmartCareID','UserName','RecordingType','Date_TimeRecorded','WeightInKg'})</span>
+0093 physdata(idx,:) = [];
+0094 
+0095 fprintf(<span class="string">'SmartCare data now has %d rows\n'</span>, size(physdata,1));
+0096 toc
+0097 fprintf(<span class="string">'\n'</span>);
+0098 
+0099 physdataout = physdata;
+0100 
+0101 <span class="keyword">end</span>
+0102</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

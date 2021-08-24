@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createREDCapDataTable</title>
+  <meta name="keywords" content="createREDCapDataTable">
+  <meta name="description" content="createREDCapDataTable - creates the table corresponding to the REDCap">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createREDCapDataTable.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createREDCapDataTable
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>createREDCapDataTable - creates the table corresponding to the REDCap</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [REDCapData] = createREDCapDataTable(nrows) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> createREDCapDataTable - creates the table corresponding to the REDCap
+ data format - to be used for initial data conversion</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createDataExportForREDCap.html" class="code" title="">createDataExportForREDCap</a>	createDataExportForREDCap.m - a script that takes current clinical data</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [REDCapData] = createREDCapDataTable(nrows)</a>
+0002 
+0003 <span class="comment">% createREDCapDataTable - creates the table corresponding to the REDCap</span>
+0004 <span class="comment">% data format - to be used for initial data conversion</span>
+0005 
+0006 tablevartypes = { <span class="string">'double'</span>               , <span class="string">'cell'</span>                    , <span class="string">'cell'</span>                  , <span class="string">'cell'</span>            , <span class="string">'cell'</span>         , <span class="keyword">...</span>
+0007                   <span class="string">'cell'</span>                 , <span class="string">'cell'</span>                    , <span class="string">'cell'</span>                  , <span class="string">'cell'</span>            , <span class="string">'cell'</span>         , <span class="keyword">...</span>
+0008                   <span class="string">'cell'</span>                 , <span class="string">'cell'</span>                    , <span class="string">'cell'</span>                  , <span class="string">'cell'</span>            , <span class="string">'cell'</span>         , <span class="keyword">...</span>
+0009                   <span class="string">'cell'</span>                 , <span class="string">'cell'</span>                    , <span class="string">'cell'</span>                  , <span class="string">'cell'</span>            , <span class="string">'cell'</span>         , <span class="keyword">...</span>
+0010                   <span class="string">'cell'</span>                 , <span class="keyword">...</span>
+0011                   <span class="keyword">...</span>
+0012                   <span class="string">'cell'</span>                 , <span class="string">'cell'</span>                    , <span class="string">'cell'</span>                  , <span class="string">'cell'</span>            ,<span class="string">'cell'</span>          , <span class="keyword">...</span>
+0013                   <span class="keyword">...</span>
+0014                   <span class="string">'cell'</span>                 , <span class="string">'cell'</span>                    , <span class="string">'cell'</span>                  , <span class="string">'cell'</span>            , <span class="string">'cell'</span>         , <span class="keyword">...</span>
+0015                   <span class="string">'cell'</span>                 , <span class="string">'cell'</span>                    , <span class="string">'cell'</span>                  , <span class="keyword">...</span>
+0016                   <span class="keyword">...</span>
+0017                   <span class="string">'cell'</span>                 , <span class="string">'cell'</span>                    , <span class="string">'cell'</span>                  , <span class="string">'cell'</span>            , <span class="keyword">...</span>
+0018                   <span class="keyword">...</span>
+0019                   <span class="string">'cell'</span>                 , <span class="string">'cell'</span>                    , <span class="string">'cell'</span>                  , <span class="string">'cell'</span>            , <span class="keyword">...</span>
+0020                   <span class="keyword">...</span>
+0021                   <span class="string">'cell'</span>                 , <span class="string">'cell'</span>                    , <span class="string">'cell'</span>                  , <span class="string">'cell'</span>            , <span class="keyword">...</span>
+0022                   <span class="keyword">...</span>
+0023                   <span class="string">'cell'</span>                 , <span class="string">'cell'</span>                    , <span class="string">'cell'</span>                  , <span class="string">'cell'</span>            , <span class="keyword">...</span>
+0024                   <span class="keyword">...</span>
+0025                   <span class="string">'cell'</span>                 , <span class="string">'cell'</span>                    , <span class="string">'cell'</span>                  , <span class="string">'cell'</span>            , <span class="keyword">...</span>
+0026                   <span class="keyword">...</span>
+0027                   <span class="string">'cell'</span>                 , <span class="string">'cell'</span>                    , <span class="string">'cell'</span>                  , <span class="string">'cell'</span>            , <span class="keyword">...</span>
+0028                   <span class="keyword">...</span>
+0029                   <span class="string">'cell'</span>                 , <span class="string">'cell'</span>                    , <span class="string">'cell'</span>                  , <span class="string">'cell'</span>            , <span class="keyword">...</span>
+0030                   <span class="keyword">...</span>
+0031                   <span class="string">'cell'</span>                 , <span class="string">'cell'</span>                    , <span class="string">'cell'</span>                  , <span class="string">'cell'</span>             };
+0032 
+0033 tablevarnames = { <span class="string">'study_id'</span>             , <span class="string">'redcap_repeat_instrument'</span>, <span class="string">'redcap_repeat_instance'</span>, <span class="string">'hospital'</span>        , <span class="string">'study_number'</span> , <span class="keyword">...</span>
+0034                   <span class="string">'study_date'</span>           , <span class="string">'patclindate'</span>             , <span class="string">'dob'</span>                   , <span class="string">'age'</span>             , <span class="string">'gender'</span>       , <span class="keyword">...</span>
+0035                   <span class="string">'heightcm'</span>             , <span class="string">'weightkg'</span>                , <span class="string">'predfev1ltr'</span>           , <span class="string">'cfgene1'</span>         , <span class="string">'cfgene2'</span>      , <span class="keyword">...</span>
+0036                   <span class="string">'patient_comments'</span>     , <span class="string">'consent_status'</span>          , <span class="string">'consent_date'</span>          , <span class="string">'withdrawal_date'</span> , <span class="string">'partition_key'</span>, <span class="keyword">...</span>
+0037                   <span class="string">'patient_info_complete'</span>, <span class="keyword">...</span>
+0038                   <span class="keyword">...</span>
+0039                   <span class="string">'dt_name'</span>              , <span class="string">'dt_start_date'</span>           , <span class="string">'dt_stop_date'</span>          , <span class="string">'dt_comments'</span>     , <span class="string">'drug_therapy_complete'</span>, <span class="keyword">...</span>
+0040                   <span class="keyword">...</span>
+0041                   <span class="string">'ab_name'</span>              , <span class="string">'ab_route'</span>                , <span class="string">'ab_homeiv_s'</span>           , <span class="string">'ab_start_date'</span>   , <span class="string">'ab_stop_date'</span> , <span class="keyword">...</span>
+0042                   <span class="string">'ab_elective'</span>          , <span class="string">'ab_comments'</span>             , <span class="string">'antibiotics_complete'</span>                                       , <span class="keyword">...</span>
+0043                   <span class="keyword">...</span>
+0044                   <span class="string">'ad_start_date'</span>        , <span class="string">'ad_stop_date'</span>            , <span class="string">'ad_comments'</span>           , <span class="string">'admissions_complete'</span>              , <span class="keyword">...</span>
+0045                   <span class="keyword">...</span>
+0046                   <span class="string">'cv_location'</span>          , <span class="string">'cv_attendance_date'</span>      , <span class="string">'cv_comments'</span>           , <span class="string">'clinic_visits_complete'</span>           , <span class="keyword">...</span>
+0047                   <span class="keyword">...</span>
+0048                   <span class="string">'ov_visit_type'</span>        , <span class="string">'ov_attendance_date'</span>      , <span class="string">'ov_comments'</span>           , <span class="string">'other_visits_complete'</span>            , <span class="keyword">...</span>
+0049                   <span class="keyword">...</span>
+0050                   <span class="string">'up_type_of_contact'</span>   , <span class="string">'up_contact_date'</span>         , <span class="string">'up_comments'</span>           , <span class="string">'unplanned_contact_complete'</span>      , <span class="keyword">...</span>
+0051                   <span class="keyword">...</span>
+0052                   <span class="string">'crp_date'</span>             , <span class="string">'crp_level'</span>               , <span class="string">'crp_comments'</span>          , <span class="string">'crps_complete'</span>                    , <span class="keyword">...</span>
+0053                   <span class="keyword">...</span>
+0054                   <span class="string">'pft_date'</span>             , <span class="string">'pft_fev1'</span>                , <span class="string">'pft_comments'</span>          , <span class="string">'pfts_complete'</span>                    , <span class="keyword">...</span>
+0055                   <span class="keyword">...</span>
+0056                   <span class="string">'mb_name'</span>              , <span class="string">'mb_date'</span>                 , <span class="string">'mb_comments'</span>           , <span class="string">'microbiology_complete'</span>            , <span class="keyword">...</span>
+0057                   <span class="keyword">...</span>
+0058                   <span class="string">'hw_meas_date'</span>         , <span class="string">'hw_weight'</span>               , <span class="string">'hw_comments'</span>           , <span class="string">'weight_complete'</span>                  };
+0059                   
+0060                   
+0061 REDCapData      = table(<span class="string">'Size'</span>,[nrows size(tablevarnames, 2)], <span class="string">'VariableTypes'</span>, tablevartypes, <span class="string">'VariableNames'</span>, tablevarnames);
+0062 
+0063 <span class="keyword">end</span>
+0064</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

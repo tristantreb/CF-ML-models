@@ -1,0 +1,335 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of handleBreatheDuplicateMeasures</title>
+  <meta name="keywords" content="handleBreatheDuplicateMeasures">
+  <meta name="description" content="handleBreatheDuplicateMeasures -  Analyse and correct for duplicate measures">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; handleBreatheDuplicateMeasures.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>handleBreatheDuplicateMeasures
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>handleBreatheDuplicateMeasures -  Analyse and correct for duplicate measures</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [physdata] = handleBreatheDuplicateMeasures(physdata, study, doupdates, detaillog) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> handleBreatheDuplicateMeasures -  Analyse and correct for duplicate measures
+ Duplicates are of three types - for a given patient ID and recordingtype :-
+           1) multiple rows with exactly the same date/time
+           2) multiple rows within 60 minutes
+           3) multiple rows for the same day</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="addDupeRows.html" class="code" title="function [alldupeidx, addrows, nsame, nmax, nmean, nsum] = addDupeRows(data, alldupeidx, currdupesetidx, addrows, i, mode, detaillog)">addDupeRows</a>	addDupeRows - adds to dupe rows array and relevant index arrays</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadbreathedata.html" class="code" title="">loadbreathedata</a>	1st Breathe data processing step and analysis from raw measurements</li><li><a href="loadbreathemeasurementdata.html" class="code" title="">loadbreathemeasurementdata</a>	1st Breathe data processing step and analysis from raw measurements</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [physdata] = handleBreatheDuplicateMeasures(physdata, study, doupdates, detaillog)</a>
+0002 
+0003 <span class="comment">% handleBreatheDuplicateMeasures -  Analyse and correct for duplicate measures</span>
+0004 <span class="comment">% Duplicates are of three types - for a given patient ID and recordingtype :-</span>
+0005 <span class="comment">%           1) multiple rows with exactly the same date/time</span>
+0006 <span class="comment">%           2) multiple rows within 60 minutes</span>
+0007 <span class="comment">%           3) multiple rows for the same day</span>
+0008 
+0009 dupefile = sprintf(<span class="string">'%sDuplicates.xlsx'</span>, study);
+0010 <span class="comment">%fitbitrecording = {'CalorieRecording', 'RestingHRRecording', 'MinsAsleepRecording', 'MinsAwakeRecording'};</span>
+0011 
+0012 fprintf(<span class="string">'Handling Breathe Duplicates\n'</span>);
+0013 fprintf(<span class="string">'---------------------------\n'</span>);
+0014 tic
+0015 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0016 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0017 demographicsmatfile = sprintf(<span class="string">'%sdatademographicsbypatient.mat'</span>, study);
+0018 fprintf(<span class="string">'Loading demographic data by patient\n'</span>);
+0019 load(fullfile(basedir, subfolder, demographicsmatfile));
+0020 toc
+0021 fprintf(<span class="string">'\n'</span>);
+0022 
+0023 <span class="comment">% first set cell array of all sleep measures and associated physdata column</span>
+0024 sleepmeas = {<span class="string">'MinsAsleepRecording'</span>; <span class="string">'MinsAwakeRecording'</span>};
+0025 sleepcol  = {<span class="string">'Sleep'</span>};
+0026 
+0027 <span class="comment">% 1 First fix exact date/time/amount dupes for sleep (need to be handled</span>
+0028 <span class="comment">% separately because of the need to sum multiple genuine sleep records that</span>
+0029 <span class="comment">% can be created by fitbit on any given day</span>
+0030 tic
+0031 fprintf(<span class="string">'1) Exact date/time/amount duplicates for sleep\n'</span>);
+0032 
+0033 <span class="comment">% first ensure physdata is sorted correctly</span>
+0034 physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>, sleepcol{1}}, <span class="string">'ascend'</span>);
+0035 
+0036 dupeidx = [];
+0037 addrows = [];
+0038 currdupeset = [];
+0039 pair = false;
+0040 totsame = 0;
+0041 totmax  = 0;
+0042 totmean = 0;
+0043 totsum  = 0;
+0044 <span class="keyword">for</span> i = 1:size(physdata, 1) - 1
+0045     <span class="keyword">if</span> (physdata.SmartCareID(i)              == physdata.SmartCareID(i + 1)              &amp;&amp; <span class="keyword">...</span>
+0046         ismember(physdata.RecordingType(i),  sleepmeas)                                  &amp;&amp; <span class="keyword">...</span>
+0047         ismember(physdata.RecordingType(i),  physdata.RecordingType(i + 1))              &amp;&amp; <span class="keyword">...</span>
+0048         physdata.Date_TimeRecorded(i)        == physdata.Date_TimeRecorded(i + 1)        &amp;&amp; <span class="keyword">...</span>
+0049         table2array(physdata(i, sleepcol)) == table2array(physdata(i + 1, sleepcol)) )
+0050     
+0051         dupeidx = [dupeidx; i];
+0052         currdupeset = [currdupeset; i];
+0053         pair = true;
+0054     <span class="keyword">else</span>
+0055         <span class="keyword">if</span> pair == true
+0056             mode = <span class="string">'na'</span>; <span class="comment">% as this section is for same value matches, mode is irrelevant</span>
+0057             [dupeidx, addrows, nsame, nmax, nmean, nsum] = <a href="addDupeRows.html" class="code" title="function [alldupeidx, addrows, nsame, nmax, nmean, nsum] = addDupeRows(data, alldupeidx, currdupesetidx, addrows, i, mode, detaillog)">addDupeRows</a>(physdata, dupeidx, currdupeset, addrows, i, mode, detaillog);
+0058             totsame = totsame + nsame;
+0059             totmax  = totmax  + nmax;
+0060             totmean = totmean + nmean;
+0061             totsum  = totsum  + nsum;
+0062         <span class="keyword">end</span>
+0063         pair = false;
+0064         currdupeset = [];
+0065     <span class="keyword">end</span>
+0066 <span class="keyword">end</span>
+0067 <span class="keyword">if</span> pair == true
+0068     i = i + 1;
+0069     mode = <span class="string">'na'</span>; <span class="comment">% as this section is for same value matches, mode is irrelevant</span>
+0070     [dupeidx, addrows, nsame, nmax, nmean, nsum] = <a href="addDupeRows.html" class="code" title="function [alldupeidx, addrows, nsame, nmax, nmean, nsum] = addDupeRows(data, alldupeidx, currdupesetidx, addrows, i, mode, detaillog)">addDupeRows</a>(physdata, dupeidx, currdupeset, addrows, i, mode, detaillog);
+0071     totsame = totsame + nsame;
+0072     totmax  = totmax  + nmax;
+0073     totmean = totmean + nmean;
+0074     totsum  = totsum  + nsum;
+0075 <span class="keyword">end</span>
+0076 
+0077 writetable(physdata(dupeidx, :), fullfile(basedir, <span class="string">'ExcelFiles'</span>, dupefile), <span class="string">'Sheet'</span>, <span class="string">'ExactTimeAmtSleepDupes'</span>);
+0078 
+0079 <span class="comment">% apply necessary updates.</span>
+0080 <span class="keyword">if</span> doupdates
+0081     fprintf(<span class="string">'Deleting %d exact amount sleep duplicates, and adding back %d single rows\n'</span>, size(dupeidx, 1), size(addrows, 1));
+0082     fprintf(<span class="string">'Same %d, diffmax %d, diffmean %d, diffsum %d, checksum %d\n'</span>, totsame, totmax, totmean, <span class="keyword">...</span>
+0083                 totsum, size(dupeidx, 1) - totsame - totmax - totmean - totsum);
+0084     physdata(dupeidx, :) = [];
+0085     physdata = [physdata; addrows];
+0086     physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>);
+0087 <span class="keyword">end</span>
+0088 toc
+0089 fprintf(<span class="string">'\n'</span>);
+0090 
+0091 <span class="comment">% 2) Remaingin exact date/time dupes</span>
+0092 fprintf(<span class="string">'2) Remaining exact date/time duplicates - sleep diff value, other meas same and diff value\n'</span>);
+0093 dupeidx = [];
+0094 addrows = [];
+0095 currdupeset = [];
+0096 pair = false;
+0097 totsame = 0;
+0098 totmax  = 0;
+0099 totmean = 0;
+0100 totsum  = 0;
+0101 <span class="keyword">for</span> i = 1:size(physdata, 1) - 1
+0102     <span class="keyword">if</span> (physdata.SmartCareID(i)            == physdata.SmartCareID(i + 1)        &amp;&amp; <span class="keyword">...</span>
+0103         ismember(physdata.RecordingType(i),   physdata.RecordingType(i + 1))     &amp;&amp; <span class="keyword">...</span>
+0104         physdata.Date_TimeRecorded(i)      == physdata.Date_TimeRecorded(i + 1)  )
+0105     
+0106         dupeidx = [dupeidx; i];
+0107         currdupeset = [currdupeset; i];
+0108         pair = true;
+0109     <span class="keyword">else</span>
+0110         <span class="keyword">if</span> pair == true
+0111             <span class="keyword">if</span> ismember(physdata.RecordingType(i), sleepmeas)
+0112                 mode = <span class="string">'sum'</span>;
+0113             <span class="keyword">else</span>
+0114                 mode = <span class="string">'max'</span>;
+0115             <span class="keyword">end</span>
+0116             [dupeidx, addrows, nsame, nmax, nmean, nsum] = <a href="addDupeRows.html" class="code" title="function [alldupeidx, addrows, nsame, nmax, nmean, nsum] = addDupeRows(data, alldupeidx, currdupesetidx, addrows, i, mode, detaillog)">addDupeRows</a>(physdata, dupeidx, currdupeset, addrows, i, mode, detaillog);
+0117             totsame = totsame + nsame;
+0118             totmax  = totmax  + nmax;
+0119             totmean = totmean + nmean;
+0120             totsum  = totsum  + nsum;
+0121         <span class="keyword">end</span>
+0122         pair = false;
+0123         currdupeset = [];
+0124     <span class="keyword">end</span>
+0125 <span class="keyword">end</span>
+0126 <span class="keyword">if</span> pair == true
+0127     i = i + 1;
+0128     <span class="keyword">if</span> ismember(physdata.RecordingType(i), sleepmeas)
+0129         mode = <span class="string">'sum'</span>;
+0130     <span class="keyword">else</span>
+0131         mode = <span class="string">'max'</span>;
+0132     <span class="keyword">end</span>
+0133     [dupeidx, addrows, nsame, nmax, nmean, nsum] = <a href="addDupeRows.html" class="code" title="function [alldupeidx, addrows, nsame, nmax, nmean, nsum] = addDupeRows(data, alldupeidx, currdupesetidx, addrows, i, mode, detaillog)">addDupeRows</a>(physdata, dupeidx, currdupeset, addrows, i, mode, detaillog);
+0134     totsame = totsame + nsame;
+0135     totmax  = totmax  + nmax;
+0136     totmean = totmean + nmean;
+0137     totsum  = totsum  + nsum;
+0138 <span class="keyword">end</span>
+0139 
+0140 writetable(physdata(dupeidx, :), fullfile(basedir, <span class="string">'ExcelFiles'</span>, dupefile), <span class="string">'Sheet'</span>, <span class="string">'ExactTimeDupes'</span>);
+0141 
+0142 <span class="comment">% apply necessary updates.</span>
+0143 <span class="keyword">if</span> doupdates
+0144     fprintf(<span class="string">'Deleting %d exact duplicates, and adding back %d single rows\n'</span>, size(dupeidx, 1), size(addrows, 1));
+0145     fprintf(<span class="string">'Same %d, diffmax %d, diffmean %d, diffsum %d, checksum %d\n'</span>, totsame, totmax, totmean, <span class="keyword">...</span>
+0146                 totsum, size(dupeidx, 1) - totsame - totmax - totmean - totsum);
+0147     physdata(dupeidx, :) = [];
+0148     physdata = [physdata; addrows];
+0149     physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>);
+0150 <span class="keyword">end</span>
+0151 toc
+0152  fprintf(<span class="string">'\n'</span>);
+0153 
+0154 <span class="comment">% 3) Fix all similar time dupes</span>
+0155 tic
+0156 fprintf(<span class="string">'3) Similar date/time duplicates\n'</span>);
+0157 dupeidx = [];
+0158 addrows = [];
+0159 currdupeset = [];
+0160 pair = false;
+0161 totsame = 0;
+0162 totmax  = 0;
+0163 totmean = 0;
+0164 totsum  = 0;
+0165 <span class="keyword">for</span> i = 1:size(physdata, 1) - 1
+0166     <span class="keyword">if</span> (physdata.SmartCareID(i)            == physdata.SmartCareID(i + 1)               &amp;&amp; <span class="keyword">...</span>
+0167         ismember(physdata.RecordingType(i),   physdata.RecordingType(i + 1))            &amp;&amp; <span class="keyword">...</span>
+0168         minutes(physdata.Date_TimeRecorded(i + 1) - physdata.Date_TimeRecorded(i)) &lt; 60 )
+0169     
+0170         dupeidx = [dupeidx; i];
+0171         currdupeset = [currdupeset; i];
+0172         pair = true;
+0173     <span class="keyword">else</span>
+0174         <span class="keyword">if</span> pair == true
+0175             <span class="keyword">if</span> ismember(physdata.RecordingType(i), sleepmeas)
+0176                 mode = <span class="string">'sum'</span>;
+0177             <span class="keyword">else</span>
+0178                 mode = <span class="string">'max'</span>;
+0179             <span class="keyword">end</span>
+0180             [dupeidx, addrows, nsame, nmax, nmean, nsum] = <a href="addDupeRows.html" class="code" title="function [alldupeidx, addrows, nsame, nmax, nmean, nsum] = addDupeRows(data, alldupeidx, currdupesetidx, addrows, i, mode, detaillog)">addDupeRows</a>(physdata, dupeidx, currdupeset, addrows, i, mode, detaillog);
+0181             totsame = totsame + nsame;
+0182             totmax  = totmax  + nmax;
+0183             totmean = totmean + nmean;
+0184             totsum  = totsum  + nsum;
+0185         <span class="keyword">end</span>
+0186         pair = false;
+0187         currdupeset = [];
+0188     <span class="keyword">end</span>
+0189 <span class="keyword">end</span>
+0190 <span class="keyword">if</span> pair == true
+0191     i = i + 1;
+0192     <span class="keyword">if</span> ismember(physdata.RecordingType(i), sleepmeas)
+0193         mode = <span class="string">'sum'</span>;
+0194     <span class="keyword">else</span>
+0195         mode = <span class="string">'max'</span>;
+0196     <span class="keyword">end</span>
+0197     [dupeidx, addrows, nsame, nmax, nmean, nsum] = <a href="addDupeRows.html" class="code" title="function [alldupeidx, addrows, nsame, nmax, nmean, nsum] = addDupeRows(data, alldupeidx, currdupesetidx, addrows, i, mode, detaillog)">addDupeRows</a>(physdata, dupeidx, currdupeset, addrows, i, mode, detaillog);
+0198     totsame = totsame + nsame;
+0199     totmax  = totmax  + nmax;
+0200     totmean = totmean + nmean;
+0201     totsum  = totsum  + nsum;
+0202 <span class="keyword">end</span>
+0203 
+0204 writetable(physdata(dupeidx, :), fullfile(basedir, <span class="string">'ExcelFiles'</span>, dupefile), <span class="string">'Sheet'</span>, <span class="string">'SimilarTimeDupes'</span>);
+0205 
+0206 <span class="comment">% apply necessary updates.</span>
+0207 <span class="keyword">if</span> doupdates
+0208     fprintf(<span class="string">'Deleting %d similar time duplicates, and adding back %d single rows\n'</span>, size(dupeidx, 1), size(addrows, 1));
+0209     fprintf(<span class="string">'Same %d, diffmax %d, diffmean %d, diffsum %d, checksum %d\n'</span>, totsame, totmax, totmean, <span class="keyword">...</span>
+0210                 totsum, size(dupeidx, 1) - totsame - totmax - totmean - totsum);
+0211     physdata(dupeidx, :) = [];
+0212     physdata = [physdata; addrows];
+0213 <span class="keyword">end</span>
+0214 physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>);
+0215 toc
+0216 fprintf(<span class="string">'\n'</span>);
+0217 
+0218 <span class="comment">% 4) Fix all same day dupes</span>
+0219 tic
+0220 fprintf(<span class="string">'4) Same day duplicates \n'</span>);
+0221 dupeidx = [];
+0222 addrows = [];
+0223 currdupeset = [];
+0224 pair = false;
+0225 mode = <span class="string">'mean'</span>;
+0226 totsame = 0;
+0227 totmax  = 0;
+0228 totmean = 0;
+0229 totsum  = 0;
+0230 <span class="keyword">for</span> i = 1:size(physdata, 1) - 1
+0231     <span class="keyword">if</span> (physdata.SmartCareID(i)            == physdata.SmartCareID(i + 1)               &amp;&amp; <span class="keyword">...</span>
+0232         ismember(physdata.RecordingType(i),   physdata.RecordingType(i + 1))            &amp;&amp; <span class="keyword">...</span>
+0233         physdata.DateNum(i + 1)            == physdata.DateNum(i)                       )
+0234     
+0235         dupeidx = [dupeidx; i];
+0236         currdupeset = [currdupeset; i];
+0237         pair = true;
+0238     <span class="keyword">else</span>
+0239         <span class="keyword">if</span> pair == true
+0240             <span class="keyword">if</span> ismember(physdata.RecordingType(i), sleepmeas)
+0241                 mode = <span class="string">'sum'</span>;
+0242             <span class="keyword">else</span>
+0243                 mode = <span class="string">'mean'</span>;
+0244             <span class="keyword">end</span>
+0245             [dupeidx, addrows, nsame, nmax, nmean, nsum] = <a href="addDupeRows.html" class="code" title="function [alldupeidx, addrows, nsame, nmax, nmean, nsum] = addDupeRows(data, alldupeidx, currdupesetidx, addrows, i, mode, detaillog)">addDupeRows</a>(physdata, dupeidx, currdupeset, addrows, i, mode, detaillog);
+0246             totsame = totsame + nsame;
+0247             totmax  = totmax  + nmax;
+0248             totmean = totmean + nmean;
+0249             totsum  = totsum  + nsum;
+0250         <span class="keyword">end</span>
+0251         pair = false;
+0252         currdupeset = [];
+0253     <span class="keyword">end</span>
+0254 <span class="keyword">end</span>
+0255 <span class="keyword">if</span> pair == true
+0256     i = i + 1;
+0257     <span class="keyword">if</span> ismember(physdata.RecordingType(i), sleepmeas)
+0258         mode = <span class="string">'sum'</span>;
+0259     <span class="keyword">else</span>
+0260         mode = <span class="string">'mean'</span>;
+0261     <span class="keyword">end</span>
+0262     [dupeidx, addrows, nsame, nmax, nmean, nsum] = <a href="addDupeRows.html" class="code" title="function [alldupeidx, addrows, nsame, nmax, nmean, nsum] = addDupeRows(data, alldupeidx, currdupesetidx, addrows, i, mode, detaillog)">addDupeRows</a>(physdata, dupeidx, currdupeset, addrows, i, mode, detaillog);
+0263     totsame = totsame + nsame;
+0264     totmax  = totmax  + nmax;
+0265     totmean = totmean + nmean;
+0266     totsum  = totsum  + nsum;
+0267 <span class="keyword">end</span>
+0268 
+0269 writetable(physdata(dupeidx, :), fullfile(basedir, <span class="string">'ExcelFiles'</span>, dupefile), <span class="string">'Sheet'</span>, <span class="string">'SameDayDupes'</span>);
+0270 
+0271 <span class="comment">% apply necessary updates.</span>
+0272 <span class="keyword">if</span> doupdates
+0273     fprintf(<span class="string">'Deleting %d same day duplicates, and adding back %d single rows\n'</span>, size(dupeidx, 1), size(addrows, 1));
+0274     fprintf(<span class="string">'Same %d, diffmax %d, diffmean %d, diffsum %d, checksum %d\n'</span>, totsame, totmax, totmean, <span class="keyword">...</span>
+0275                 totsum, size(dupeidx, 1) - totsame - totmax - totmean - totsum);
+0276     physdata(dupeidx, :) = [];
+0277     physdata = [physdata; addrows];
+0278 <span class="keyword">end</span>
+0279 physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>);
+0280 toc
+0281 fprintf(<span class="string">'\n'</span>);
+0282 
+0283 <span class="keyword">end</span>
+0284</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCCalcTotalOutliers</title>
+  <meta name="keywords" content="amEMMCCalcTotalOutliers">
+  <meta name="description" content="amEMMCCalcTotalOutliers - sums up the total outliers after alignment">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCCalcTotalOutliers.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCCalcTotalOutliers
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCCalcTotalOutliers - sums up the total outliers after alignment</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [totaloutliers, totalpoints] = amEMMCCalcTotalOutliers(amIntrDatacube, isOutlier, amHeldBackcube, offsets, latentcurve, max_offset, align_wind, ninterventions) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCCalcTotalOutliers - sums up the total outliers after alignment
+ optimisation has run (as well as the total number of data points) -
+ handling multiple sets of latent curves</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModelEMMCFcn.html" class="code" title="function runAlignmentModelEMMCFcn(amRunParameters)">runAlignmentModelEMMCFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="runAlignmentModelEMMCFcnSplit.html" class="code" title="function runAlignmentModelEMMCFcnSplit(amRunParameters)">runAlignmentModelEMMCFcnSplit</a>	function to run the alignment model (EM version) given a set of run</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [totaloutliers, totalpoints] = amEMMCCalcTotalOutliers(amIntrDatacube, isOutlier, amHeldBackcube, offsets, latentcurve, max_offset, align_wind, ninterventions)</a>
+0002 
+0003 <span class="comment">% amEMMCCalcTotalOutliers - sums up the total outliers after alignment</span>
+0004 <span class="comment">% optimisation has run (as well as the total number of data points) -</span>
+0005 <span class="comment">% handling multiple sets of latent curves</span>
+0006 
+0007 totaloutliers = 0;
+0008 totalpoints   = 0;
+0009 
+0010 <span class="keyword">for</span> i = 1:ninterventions
+0011        totaloutliers = totaloutliers + sum(sum(isOutlier(latentcurve(i), i, :, :, offsets(i) + 1)));
+0012        totalpoints   = totalpoints + sum(sum(~isnan(amIntrDatacube(i, max_offset:max_offset + align_wind -1, :))));
+0013 <span class="keyword">end</span>
+0014 
+0015 totalpoints = totalpoints - sum(sum(sum(amHeldBackcube)));
+0016 
+0017 <span class="keyword">end</span>
+0018</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

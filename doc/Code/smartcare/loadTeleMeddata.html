@@ -1,0 +1,235 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadTeleMeddata</title>
+  <meta name="keywords" content="loadTeleMeddata">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadTeleMeddata.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadTeleMeddata
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="convertTeleMedData.html" class="code" title="function [tmPatient, tmClinicVisits, tmAdmissions, tmAntibiotics, tmCRP, tmPFT, tmphysdata] =convertTeleMedData(tmData, tmPatient, tmClinicVisits, tmAdmissions, tmAntibiotics, tmCRP, tmPFT, tmphysdata,cvrowtoadd, admrowtoadd, poabrowtoadd, ivabrowtoadd, crprowtoadd, pftrowtoadd, phrowtoadd, fileid, offset)">convertTeleMedData</a>	convertTelemedData - converts from TelemedData format to SmartCare format</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; clc; close all;
+0002 
+0003 tic
+0004 fprintf(<span class="string">'Creating TeleMed data structures\n'</span>);
+0005 fprintf(<span class="string">'---------------------------------\n'</span>);
+0006 basedir =<a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0007 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0008 clinicalmatfile = <span class="string">'clinicaldata.mat'</span>;
+0009 scmatfile = <span class="string">'smartcaredata.mat'</span>;
+0010 fprintf(<span class="string">'Loading equivalent smartcare data structures as baseline\n'</span>);
+0011 load(fullfile(basedir, subfolder, clinicalmatfile));
+0012 load(fullfile(basedir, subfolder, scmatfile));
+0013 fprintf(<span class="string">'Done\n'</span>);
+0014 
+0015 tmAdmissions        = cdAdmissions;
+0016 admrowtoadd         = tmAdmissions(1,:);
+0017 tmAdmissions(:,:)   = [];
+0018 
+0019 tmAntibiotics       = cdAntibiotics;
+0020 ivabrowtoadd        = tmAntibiotics(1,:);
+0021 poabrowtoadd        = tmAntibiotics(1,:);
+0022 tmAntibiotics(:,:)  = [];
+0023 
+0024 tmClinicVisits      = cdClinicVisits;
+0025 cvrowtoadd         = tmClinicVisits(1,:); 
+0026 tmClinicVisits(:,:) = [];
+0027 
+0028 tmCRP               = cdCRP;
+0029 crprowtoadd         = tmCRP(1,:);
+0030 tmCRP(:,:)          = [];
+0031 
+0032 tmMicrobiology      = cdMicrobiology;
+0033 tmMicrobiology(:,:) = [];
+0034 
+0035 tmEndStudy          = cdEndStudy;
+0036 tmEndStudy(:,:)     = [];
+0037 
+0038 tmPatient           = cdPatient;
+0039 tmPatient(:,:)      = [];
+0040 
+0041 tmPFT               = cdPFT;
+0042 pftrowtoadd         = tmPFT(1,:);
+0043 tmPFT(:,:)          = [];
+0044 
+0045 tmphysdata          = physdata;
+0046 phrowtoadd          = tmphysdata(1,:);
+0047 tmphysdata(:,:)     = [];
+0048 tmoffset            = datenum(<span class="string">'2013/01/31'</span>);
+0049 
+0050 toc
+0051 fprintf(<span class="string">'\n'</span>);
+0052 
+0053 tic
+0054 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0055 subfolder = <span class="string">'DataFiles/TeleMed'</span>;
+0056 clinicalfile = <span class="string">'FEVdata-complete.xlsx'</span>;
+0057 
+0058 fprintf(<span class="string">'Loading Telemed clinical patient data\n'</span>);
+0059 tmPatientInfo = readtable(fullfile(basedir, subfolder, clinicalfile));
+0060 tmPatientInfo(:,{<span class="string">'AZM'</span>,<span class="string">'inhPx'</span>,<span class="string">'PNL'</span>,<span class="string">'Diabetes'</span>}) = [];
+0061 tmPatientInfo.ID = str2double(strrep(tmPatientInfo.Patient, <span class="string">'K'</span>, <span class="string">''</span>));
+0062 tmPatientInfo = sortrows(tmPatientInfo,{<span class="string">'ID'</span>});
+0063 tmPatientInfo.PredFEV1 = tmPatientInfo.FEV1_L_Av ./ (tmPatientInfo.FEV1___Av/100);
+0064 tmPatientInfo.FEV1SetAs = round(tmPatientInfo.PredFEV1,1);
+0065 
+0066 ntmpatients = size(tmPatientInfo,1);
+0067 tmPatient.ID(1:ntmpatients) = tmPatientInfo.ID;
+0068 tmPatient.Hospital(1:ntmpatients) = {<span class="string">'PAP'</span>};
+0069 <span class="comment">%for i = 1:size(tmPatient,1)</span>
+0070 <span class="comment">%    tmPatient.Hospital{i} = 'PAP';</span>
+0071 <span class="comment">%end</span>
+0072 tmPatient.StudyNumber = cellstr(num2str(tmPatient.ID));
+0073 tmPatient.Age = tmPatientInfo.Age;
+0074 tmPatient.DOB = datetime(2013-tmPatient.Age, 1, 1);
+0075 tmPatient.Sex = tmPatientInfo.Gender;
+0076 tmPatient.Height = tmPatientInfo.Height;
+0077 tmPatient.PredictedFEV1 = tmPatientInfo.PredFEV1;
+0078 tmPatient.FEV1SetAs = tmPatientInfo.FEV1SetAs;
+0079 
+0080 fprintf(<span class="string">'Populate calculated PredictedFEV1 and FEV1SetAs\n'</span>);
+0081 tmMalePatient = tmPatient(ismember(tmPatient.Sex,<span class="string">'M'</span>),:);
+0082 tmFemalePatient = tmPatient(~ismember(tmPatient.Sex,<span class="string">'M'</span>),:);
+0083 tmMalePatient.CalcPredictedFEV1 = (tmMalePatient.Height * 0.01 * 4.3) - (tmMalePatient.Age * 0.029) - 2.49;
+0084 tmFemalePatient.CalcPredictedFEV1 = (tmFemalePatient.Height * 0.01 * 3.95) - (tmFemalePatient.Age * 0.025) - 2.6;
+0085 tmMalePatient.CalcFEV1SetAs = round(tmMalePatient.CalcPredictedFEV1,1);
+0086 tmFemalePatient.CalcFEV1SetAs = round(tmFemalePatient.CalcPredictedFEV1,1);
+0087 tmPatient = sortrows([tmMalePatient ; tmFemalePatient], {<span class="string">'ID'</span>}, <span class="string">'ascend'</span>);
+0088 
+0089 tmEndStudy.ID(1:ntmpatients) = tmPatient.ID;
+0090 tmEndStudy.Hospital = tmPatient.Hospital;
+0091 tm.StudyNumber = tmPatient.StudyNumber;
+0092 <span class="keyword">for</span> i = 1:size(tmEndStudy,1)
+0093     tmEndStudy.EndOfStudyReason{i} = <span class="string">'Completed Study'</span>;
+0094 <span class="keyword">end</span>
+0095 
+0096 toc
+0097 fprintf(<span class="string">'\n'</span>);
+0098 
+0099 tic
+0100 <span class="keyword">for</span> i = 1:ntmpatients
+0101     tmdatafile = sprintf(<span class="string">'K%d.xlsx'</span>, i);
+0102     fprintf(<span class="string">'Loading data for Patient K%d\n'</span>, i);
+0103     tmData = readtable(fullfile(basedir, subfolder, tmdatafile));
+0104     tmData(:,{<span class="string">'PEANg_ml'</span>, <span class="string">'IVAminophylline'</span>, <span class="string">'POTheophylline'</span>, <span class="string">'Steroids'</span>, <span class="string">'WCC'</span>, <span class="string">'Fat'</span>, <span class="string">'Bone'</span>, <span class="string">'Muscle'</span>, <span class="string">'Visceral'</span>, <span class="string">'peakFlow'</span>, <span class="string">'Calories'</span>, <span class="string">'Distance'</span>, <span class="string">'Duration'</span>}) = []; 
+0105     <span class="keyword">if</span> i ~= 11 &amp;&amp; i ~= 15
+0106         tmData.Date = datetime(tmData.Date, <span class="string">'InputFormat'</span>, <span class="string">'dd.MM.yy'</span>);
+0107     <span class="keyword">end</span>
+0108     [tmPatient, tmClinicVisits, tmAdmissions, tmAntibiotics, tmCRP, tmPFT, tmphysdata] = <span class="keyword">...</span><span class="comment">,</span>
+0109         <a href="convertTeleMedData.html" class="code" title="function [tmPatient, tmClinicVisits, tmAdmissions, tmAntibiotics, tmCRP, tmPFT, tmphysdata] =convertTeleMedData(tmData, tmPatient, tmClinicVisits, tmAdmissions, tmAntibiotics, tmCRP, tmPFT, tmphysdata,cvrowtoadd, admrowtoadd, poabrowtoadd, ivabrowtoadd, crprowtoadd, pftrowtoadd, phrowtoadd, fileid, offset)">convertTeleMedData</a>(tmData, tmPatient, tmClinicVisits, tmAdmissions, tmAntibiotics, tmCRP, tmPFT, tmphysdata, <span class="keyword">...</span>
+0110         cvrowtoadd, admrowtoadd, poabrowtoadd, ivabrowtoadd, crprowtoadd, pftrowtoadd, phrowtoadd, i, tmoffset);
+0111     fprintf(<span class="string">'\n'</span>);    
+0112 <span class="keyword">end</span>
+0113 
+0114 <span class="comment">% populate id's in clinical tables</span>
+0115 fprintf(<span class="string">'Populating ids in clinical tables\n'</span>);
+0116 tmClinicVisits.ClinicID = [1:size(tmClinicVisits,1)]';
+0117 tmAdmissions.HospitalAdmissionID = [1:size(tmAdmissions,1)]';
+0118 tmAntibiotics.AntibioticID = [1:size(tmAntibiotics,1)]';
+0119 tmCRP.CRPID = [1:size(tmCRP,1)]';
+0120 tmPFT.LungFunctionID = [1:size(tmPFT,1)]';
+0121 tmEndStudy.EndOfStudyID = [1:size(tmEndStudy,1)]';
+0122 
+0123 <span class="comment">% populate Study Date in clinical patient table</span>
+0124 fprintf(<span class="string">'Populating study date in clinical patient table\n'</span>);
+0125 minDatesByPatient = varfun(@min, tmphysdata(:,{<span class="string">'SmartCareID'</span>, <span class="string">'Date_TimeRecorded'</span>}), <span class="string">'GroupingVariables'</span>, <span class="string">'SmartCareID'</span>);
+0126 minDatesByPatient.GroupCount = [];
+0127 minDatesByPatient.Properties.VariableNames({<span class="string">'SmartCareID'</span>}) = {<span class="string">'ID'</span>};
+0128 minDatesByPatient.Properties.VariableNames({<span class="string">'min_Date_TimeRecorded'</span>}) = {<span class="string">'MinPatientDate'</span>};
+0129 tmPatient = innerjoin(tmPatient, minDatesByPatient);
+0130 tmPatient.StudyDate = tmPatient.MinPatientDate;
+0131 tmPatient.MinPatientDate = [];
+0132 
+0133 <span class="comment">% populate ScaledDateNum in measurement data table</span>
+0134 fprintf(<span class="string">'Populating ScaledDateNum in measurement data\n'</span>);
+0135 minDatesByPatient = varfun(@min, tmphysdata(:,{<span class="string">'SmartCareID'</span>, <span class="string">'DateNum'</span>}), <span class="string">'GroupingVariables'</span>, <span class="string">'SmartCareID'</span>);
+0136 minDatesByPatient.GroupCount = [];
+0137 minDatesByPatient.Properties.VariableNames({<span class="string">'min_DateNum'</span>}) = {<span class="string">'MinPatientDateNum'</span>};
+0138 tmphysdata = innerjoin(tmphysdata,minDatesByPatient);
+0139 tmphysdata.ScaledDateNum = tmphysdata.DateNum - tmphysdata.MinPatientDateNum + 1;
+0140 tmphysdata.MinPatientDateNum = [];
+0141 
+0142 <span class="comment">% remove invalid HR and O2 measures from patient K14</span>
+0143 tmphysdata(isnan(tmphysdata.DateNum),:) = [];
+0144 
+0145 <span class="comment">%remove 0 measurements for LungFunction, O2 Saturation, Pulse</span>
+0146 counter = 1;
+0147 idloc = zeros(1,2);
+0148 <span class="keyword">for</span> i=1:size(tmphysdata,1)
+0149     <span class="keyword">if</span> isequal(tmphysdata.RecordingType(i),cellstr(<span class="string">'LungFunctionRecording'</span>))
+0150         <span class="keyword">if</span> tmphysdata.FEV1_(i) == 0
+0151             idloc(counter) = i;
+0152             counter = counter+1;
+0153         <span class="keyword">end</span>
+0154     <span class="keyword">elseif</span> isequal(tmphysdata.RecordingType(i),cellstr(<span class="string">'O2SaturationRecording'</span>))
+0155         <span class="keyword">if</span> tmphysdata.O2Saturation(i) == 0
+0156             idloc(counter) = i;
+0157             counter = counter+1;
+0158         <span class="keyword">end</span>
+0159     <span class="keyword">elseif</span> isequal(tmphysdata.RecordingType(i),cellstr(<span class="string">'PulseRateRecording'</span>))
+0160         <span class="keyword">if</span> tmphysdata.Pulse_BPM_(i) == 0
+0161             idloc(counter) = i;
+0162             counter = counter+1;
+0163         <span class="keyword">end</span>
+0164     <span class="keyword">else</span>
+0165     <span class="keyword">end</span>
+0166 <span class="keyword">end</span>
+0167 
+0168 tmphysdata(idloc,:) = [];
+0169 fprintf(<span class="string">'Removed %d measurement rows with zero values\n'</span>, counter - 1);
+0170 
+0171 toc
+0172 fprintf(<span class="string">'\n'</span>);    
+0173 
+0174 tic
+0175 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0176 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0177 tmclinicalmatfile = <span class="string">'telemedclinicaldata.mat'</span>;
+0178 tmmatfile = <span class="string">'telemeddata.mat'</span>;
+0179 fprintf(<span class="string">'Saving telemed clinical data variables to file %s\n'</span>, tmclinicalmatfile);
+0180 save(fullfile(basedir, subfolder,tmclinicalmatfile), <span class="string">'tmPatient'</span>, <span class="string">'tmClinicVisits'</span>, <span class="string">'tmPFT'</span>, <span class="string">'tmAdmissions'</span>, <span class="string">'tmAntibiotics'</span>, <span class="string">'tmCRP'</span>, <span class="string">'tmMicrobiology'</span>, <span class="string">'tmEndStudy'</span>);
+0181 fprintf(<span class="string">'Saving telemed measurement data variables to file %s\n'</span>, tmclinicalmatfile);
+0182 save(fullfile(basedir, subfolder, tmmatfile), <span class="string">'tmphysdata'</span>, <span class="string">'tmoffset'</span>);
+0183 
+0184 toc
+0185 
+0186 
+0187 
+0188</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

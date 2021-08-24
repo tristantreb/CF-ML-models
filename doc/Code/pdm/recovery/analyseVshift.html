@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of analyseVshift</title>
+  <meta name="keywords" content="analyseVshift">
+  <meta name="description" content="used to find the optimal maximum vertical shift value">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">recovery</a> &gt; analyseVshift.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>analyseVshift
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>used to find the optimal maximum vertical shift value</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> used to find the optimal maximum vertical shift value
+ 
+ Input: alignment results mat file
+ ------
+ 
+ Output: histogram of the vertical shift's distribution 
+ -------</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function plotverticalshift(vshift,offsets,ninterventions,vshiftmax)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% used to find the optimal maximum vertical shift value</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% Input: alignment results mat file</span>
+0004 <span class="comment">% ------</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Output: histogram of the vertical shift's distribution</span>
+0007 <span class="comment">% -------</span>
+0008 
+0009 <a href="init.html" class="code" title="">init</a>;
+0010 
+0011 <span class="comment">% differentiating parameters</span>
+0012 nl = 1;
+0013 dw = 20;
+0014 mm = 34;
+0015 <span class="comment">%vm=0.7;</span>
+0016 
+0017 <span class="comment">% load all files that are similar except their random seed</span>
+0018 dircontent = dir(fullfile(basedir, subfolder, sprintf(<span class="string">'*BRvEMMC_gp10_lm1_sig4_mu4_ca2_sm2_rm4_in1_im1_cm2_mm%i_od0_ou15_dw%i_nl%i_rs*_ds1_ct5_sc22-V_vs1_vm*.mat'</span>,mm,dw, nl)));
+0019 ModelResultsFiles = cell(size(dircontent,1),1);
+0020 <span class="keyword">for</span> a = 1:size(ModelResultsFiles,1)
+0021     ModelResultsFiles{a} = dircontent(a).name;
+0022 <span class="keyword">end</span>
+0023 
+0024 nfiles = size(ModelResultsFiles,1);
+0025 fprintf(<span class="string">'Loading results\n'</span>);
+0026 fprintf(<span class="string">'---------------\n'</span>);
+0027 
+0028 figure(<span class="string">'DefaultAxesFontSize'</span>,17,<span class="string">'Position'</span>, [1 1 1600 400])
+0029 t = tiledlayout(1,3);
+0030 <span class="keyword">for</span> i = 1:nfiles
+0031     <span class="comment">% link #column with filename</span>
+0032     fprintf(<span class="string">'Model number %3i - Filename: %s\n'</span>, i, ModelResultsFiles{i});
+0033     load(fullfile(basedir, subfolder,ModelResultsFiles{i}),<span class="string">'vshift'</span>, <span class="string">'amInterventions'</span>,<span class="string">'ninterventions'</span>,<span class="string">'vshiftmax'</span>); 
+0034     <span class="keyword">if</span> ismember(vshiftmax,[0.2 0.4 0.7])
+0035         <a href="#_sub1" class="code" title="subfunction plotverticalshift(vshift,offsets,ninterventions,vshiftmax)">plotverticalshift</a>(vshift,amInterventions.Offset,ninterventions,vshiftmax);
+0036     <span class="keyword">end</span>
+0037 <span class="keyword">end</span>
+0038 
+0039 <span class="comment">%%</span>
+0040 <a name="_sub0" href="#_subfunctions" class="code">function plotverticalshift(vshift,offsets,ninterventions,vshiftmax)</a>
+0041 
+0042 <span class="comment">% plot vshift for best matching offset</span>
+0043 <span class="keyword">for</span> i = 1:ninterventions
+0044     best(i) = vshift(1,i,6,offsets(i)+1);
+0045 <span class="keyword">end</span>
+0046 
+0047 nexttile;
+0048 histogram(best',2*vshiftmax*10+1,<span class="string">'BinWidth'</span>,0.1)
+0049 title([<span class="string">'\alpha'</span> sprintf(<span class="string">' = %.1f'</span>,vshiftmax)]);
+0050 ylim([0,55])
+0051 xlabel(<span class="string">'Vertical shift of most probable offset (after convergence)'</span>)
+0052 ylabel(<span class="string">'#interventions'</span>)
+0053 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

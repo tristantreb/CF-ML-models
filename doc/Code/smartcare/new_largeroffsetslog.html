@@ -1,0 +1,237 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of new_largeroffsetslog</title>
+  <meta name="keywords" content="new_largeroffsetslog">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; new_largeroffsetslog.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>new_largeroffsetslog
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="new_flexible_align.html" class="code" title="function [final, plp, plp2, hstg, qualete] = new_flexible_align(normcube, dubiousproblem, max_offset, align_wind, run_mode)">new_flexible_align</a>	run_mode = 'new';</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; close all; clc;
+0002 
+0003 tic
+0004 fprintf(<span class="string">'Loading saved variables\n'</span>);
+0005 load(<span class="string">'endtoendworkspace.mat'</span>);
+0006 load(<span class="string">'largeroffsets_workspace.mat'</span>);
+0007 <span class="comment">% added to load new data</span>
+0008 load(<span class="string">'newdata.mat'</span>);
+0009 toc
+0010 fprintf(<span class="string">'\n'</span>);
+0011 
+0012 tic
+0013 run_mode = <span class="string">'new'</span>;
+0014 basedir = <span class="string">'./'</span>;
+0015 subfolder = <span class="string">'Plots'</span>;
+0016 <span class="keyword">if</span> run_mode == <span class="string">'new'</span>
+0017     <span class="comment">% run with new data</span>
+0018     realcube = newrealcube;
+0019     intrfin = newintrfin;
+0020     prefix = <span class="string">'New'</span>;
+0021 <span class="keyword">else</span>
+0022     realcube = safecube;
+0023     prefix = <span class="string">'Old'</span>;
+0024 <span class="keyword">end</span>
+0025 
+0026 [a b] = size(intrfin);
+0027 cubefin = NaN(300,650,6);
+0028 sum = zeros(6,1);
+0029 count = zeros(6,1);
+0030 meanwindow = 7;
+0031 max_offset = 25; <span class="comment">% should not be greater than ex_start (set lower down) as this implies intervention before exacerbation !</span>
+0032 align_wind = 20;
+0033 <span class="comment">%align_wind = 23;</span>
+0034 meanfin = NaN(300,6);
+0035 
+0036 fprintf(<span class="string">'Normalising measurement data\n'</span>);
+0037 <span class="keyword">for</span> x=1:a
+0038     <span class="keyword">for</span> k=1:6
+0039         sum(k) = 0;
+0040         count(k) = 0;
+0041     <span class="keyword">end</span>
+0042     <span class="keyword">for</span> i=1:meanwindow
+0043         <span class="keyword">for</span> j=1:6
+0044            <span class="keyword">if</span> (intrfin.Start(x)-align_wind-i &gt; 0) &amp; (isnan(realcube(intrfin.ID(x),intrfin.Start(x)-align_wind-i,j)) == 0) &amp; (count(j) &lt; 3)
+0045                 sum(j) = sum(j) + realcube(intrfin.ID(x),intrfin.Start(x)-align_wind-i,j);
+0046                 count(j) = count(j)+1;
+0047            <span class="keyword">end</span>
+0048         <span class="keyword">end</span>
+0049     <span class="keyword">end</span>
+0050     <span class="keyword">for</span> i=1:max_offset+align_wind
+0051         <span class="keyword">for</span> j=1:6
+0052            <span class="keyword">if</span> count(j) &gt; 1
+0053          
+0054                meanfin(intrfin.ID(x),j) = sum(j)/count(j);
+0055            <span class="keyword">else</span>
+0056                meanfin(intrfin.ID(x),j) = means{intrfin.ID(x),j};
+0057            <span class="keyword">end</span>
+0058            <span class="keyword">if</span> (intrfin.Start(x)-(max_offset+align_wind+1)+i &gt; 0) &amp; (isnan(realcube(intrfin.ID(x),intrfin.Start(x)-(max_offset+align_wind+1)+i,j)) == 0)
+0059                <span class="keyword">if</span> count(j) &gt; 1
+0060                    
+0061                     cubefin(intrfin.ID(x),intrfin.Start(x)-(max_offset+align_wind+1)+i,j) = (realcube(intrfin.ID(x),intrfin.Start(x)-(max_offset+align_wind+1)+i,j)- sum(j)/count(j))/stdds{intrfin.ID(x),j};
+0062                <span class="keyword">else</span>
+0063                     cubefin(intrfin.ID(x),intrfin.Start(x)-(max_offset+align_wind+1)+i,j) = (realcube(intrfin.ID(x),intrfin.Start(x)-(max_offset+align_wind+1)+i,j)- means{intrfin.ID(x),j})/stdds{intrfin.ID(x),j};
+0064                <span class="keyword">end</span>
+0065            <span class="keyword">end</span>
+0066         <span class="keyword">end</span>
+0067     <span class="keyword">end</span>
+0068 <span class="keyword">end</span>
+0069 toc
+0070 fprintf(<span class="string">'\n'</span>);
+0071 
+0072 tic
+0073 cubefin(:,:,4:5) = []; <span class="comment">%remove unwanted features</span>
+0074 realcube(:,:,4:5) = [];
+0075 meanfin(:,4:5) = [];
+0076 
+0077 <span class="comment">%find the best possible alignment by randomising</span>
+0078 <span class="comment">%set the baseline alignment coming from (0,...,0) offset initialisation</span>
+0079 <span class="keyword">for</span> i=1:a
+0080         intrfin.offset(i) = 0;
+0081     <span class="keyword">end</span>
+0082 [best_offsets, best_profile, best_profile2, best_histogram, best_qual] = <a href="new_flexible_align.html" class="code" title="function [final, plp, plp2, hstg, qualete] = new_flexible_align(normcube, dubiousproblem, max_offset, align_wind, run_mode)">new_flexible_align</a>(cubefin,intrfin,max_offset,align_wind, run_mode);
+0083 fprintf(<span class="string">'Baseline - zero offset start - ErrFcn = %6.1f\n'</span>, best_qual);
+0084 toc
+0085 fprintf(<span class="string">'\n'</span>);
+0086 
+0087 numiter = 20;
+0088 <span class="keyword">for</span> j=1:numiter
+0089     tic
+0090     <span class="keyword">for</span> i=1:a
+0091         intrfin.offset(i) = floor(rand*max_offset);
+0092     <span class="keyword">end</span>
+0093     [offsets, profile, profile2, histogram, qual] = <a href="new_flexible_align.html" class="code" title="function [final, plp, plp2, hstg, qualete] = new_flexible_align(normcube, dubiousproblem, max_offset, align_wind, run_mode)">new_flexible_align</a>(cubefin,intrfin,max_offset,align_wind, run_mode);
+0094     <span class="keyword">if</span> qual &lt; best_qual
+0095         best_offsets = offsets;
+0096         best_profile = profile;
+0097         best_profile2 = profile2;
+0098         best_histogram = histogram;
+0099         best_qual = qual; 
+0100     <span class="keyword">end</span>
+0101     fprintf(<span class="string">'Random offset - start %d/%d - ErrFcn = %6.1f\n'</span>, j, numiter, qual);
+0102     toc
+0103 <span class="keyword">end</span>
+0104 fprintf(<span class="string">'\n'</span>);
+0105 
+0106 tic
+0107 close all;
+0108 fprintf(<span class="string">'Plotting results\n'</span>);
+0109 <span class="comment">% choose where to label exacerbation start on the best_profile</span>
+0110 <span class="keyword">if</span> run_mode == <span class="string">'new'</span>
+0111     ex_start = -25;
+0112 <span class="keyword">else</span>
+0113     ex_start = -21;
+0114 <span class="keyword">end</span>
+0115 
+0116 <span class="comment">% do l_1 normalisation of the histogram to obtain posterior probabilities,</span>
+0117 <span class="comment">% person x feature fixed</span>
+0118 <span class="keyword">for</span> i=1:4
+0119     <span class="keyword">for</span> j=1:a
+0120         best_histogram(i,j,:) = best_histogram(i,j,:) / norm(reshape(best_histogram(i,j,:),[1 max_offset]),inf) ;
+0121     <span class="keyword">end</span>
+0122 <span class="keyword">end</span>
+0123 pos = [ 1 2 6 7 ; 4 5 9 10; 11 12 16 17; 14 15 19 20];
+0124 <span class="comment">%days = [1:max_offset+align_wind+1];</span>
+0125 days = [-1*(max_offset+align_wind):0];
+0126 
+0127 <span class="keyword">for</span> i=1:a
+0128 <span class="comment">%for i = 38:41</span>
+0129         f = figure ;
+0130         set(gcf, <span class="string">'Units'</span>, <span class="string">'Normalized'</span>, <span class="string">'OuterPosition'</span>, [0, 0.04, 1, 0.96]);
+0131         p = uipanel(<span class="string">'Parent'</span>,f,<span class="string">'BorderType'</span>,<span class="string">'none'</span>); 
+0132         name = sprintf(<span class="string">'%s Data - Exacerbation %d - ID %d Date %d'</span>, prefix, i, intrfin.ID(i), intrfin.Start(i));
+0133         fprintf(<span class="string">'%s - Best Offset = %d\n'</span>, name, best_offsets(i));
+0134         p.Title = name;
+0135         <span class="comment">%p.Title = [num2str(i),' ; ID = ',num2str(intrfin.ID(i))];</span>
+0136         p.TitlePosition = <span class="string">'centertop'</span>;
+0137         p.FontSize = 20;
+0138         p.FontWeight = <span class="string">'bold'</span>; 
+0139         <span class="keyword">for</span> k=1:4
+0140             current = NaN(1,max_offset+align_wind+1);
+0141             <span class="keyword">for</span> j=1:max_offset+align_wind
+0142                 <span class="keyword">if</span> intrfin.Start(i) - j &gt; 0
+0143                     current(max_offset+align_wind+1-j) = realcube(intrfin.ID(i),intrfin.Start(i)-j,k);
+0144                 <span class="keyword">end</span>
+0145             <span class="keyword">end</span>
+0146             subplot(4,5,pos(k,:),<span class="string">'Parent'</span>,p)   
+0147             plot(days,current,<span class="string">'y-o'</span>,<span class="keyword">...</span>
+0148                 <span class="string">'LineWidth'</span>,2,<span class="keyword">...</span>
+0149                 <span class="string">'MarkerSize'</span>,5,<span class="keyword">...</span>
+0150                 <span class="string">'MarkerEdgeColor'</span>,<span class="string">'b'</span>,<span class="keyword">...</span>
+0151                 <span class="string">'MarkerFaceColor'</span>,<span class="string">'g'</span>);
+0152             xlim([min(days) max(days)]);
+0153             yl = ylim;
+0154             xl = xlim;
+0155             yl = [0.9*yl(1) 1.1*yl(2)];
+0156             yl(1) = min(yl(1),0.9*meanfin(intrfin.ID(i),k));
+0157             yl(2) = max(yl(2),1.1*meanfin(intrfin.ID(i),k));
+0158             ylim(yl);
+0159             title(tit(k));
+0160             hold on
+0161             <span class="comment">%line( [ex_start+best_offsets(i) ex_start+best_offsets(i)] , yl,'Color','red','LineWidth',2);</span>
+0162             <span class="comment">%line( [max_offset+align_wind+1 max_offset+align_wind+1] , yl,'Color','magenta','LineWidth',2);</span>
+0163             line( [ex_start+best_offsets(i) ex_start+best_offsets(i)] , yl, <span class="string">'Color'</span>, <span class="string">'red'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="string">'LineWidth'</span>, 2);
+0164             line( [ex_start ex_start], [yl(1), yl(1)+(yl(2)-yl(1)) * 0.1], <span class="string">'Color'</span>, <span class="string">'black'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="string">'LineWidth'</span>, 2);
+0165             line( [0 0] , yl, <span class="string">'Color'</span>, <span class="string">'magenta'</span>, <span class="string">'LineStyle'</span>,<span class="string">':'</span>, <span class="string">'LineWidth'</span>, 2);
+0166             line( xl,[meanfin(intrfin.ID(i),k) meanfin(intrfin.ID(i),k)], <span class="string">'Color'</span>, <span class="string">'black'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="string">'LineWidth'</span>, 2);
+0167             hold off;
+0168         <span class="keyword">end</span>
+0169         <span class="comment">%plot the histogram</span>
+0170         <span class="keyword">for</span> k=1:4
+0171             subplot(4,5,-2+k*5,<span class="string">'Parent'</span>,p)
+0172             <span class="comment">%scatter([max_offset:-1:1],best_histogram(k,i,:),'o','MarkerFaceColor','g');</span>
+0173             scatter([0:max_offset-1],best_histogram(k,i,:),<span class="string">'o'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'g'</span>);
+0174             line( [best_offsets(i) +best_offsets(i)] , [0 1],<span class="string">'Color'</span>,<span class="string">'red'</span>, <span class="string">'LineStyle'</span>,<span class="string">':'</span>,<span class="string">'LineWidth'</span>,2);
+0175             title(tit(k));
+0176             xlim([0 max_offset-1]);
+0177             ylim([0 1]);
+0178         <span class="keyword">end</span>
+0179         
+0180         <span class="comment">%filename = sprintf('%s Data - Exacerbation %d - ID %d Date %d.png', prefix, i, intrfin.ID(i), intrfin.Start(i));</span>
+0181         basedir = <span class="string">'./'</span>;
+0182         subfolder = <span class="string">'Plots'</span>;
+0183         filename = [name <span class="string">'.png'</span>];
+0184         saveas(f,fullfile(basedir, subfolder, filename));
+0185         <span class="comment">%saveas(f,['im',num2str(i),'.png']);</span>
+0186         close(f);
+0187 <span class="keyword">end</span>
+0188 toc
+0189 
+0190</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

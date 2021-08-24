@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getGroupedIVTreatmentDates</title>
+  <meta name="keywords" content="getGroupedIVTreatmentDates">
+  <meta name="description" content="getGroupedIVTreatmentDates - gets the start and end dates for a batch of">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; getGroupedIVTreatmentDates.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>getGroupedIVTreatmentDates
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>getGroupedIVTreatmentDates - gets the start and end dates for a batch of</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [groupedtreatmentdates] = getGroupedIVTreatmentDates(abset) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> getGroupedIVTreatmentDates - gets the start and end dates for a batch of
+ antibiotic treatments (collapses multiple drugs and contiguous/overlapping
+ treatments)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="visualiseMeasures.html" class="code" title="">visualiseMeasures</a>	</li><li><a href="visualiseMeasuresFcn.html" class="code" title="function visualiseMeasuresFcn(physdata, offset, cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits, cdCRP, cdPFT, measures, study)">visualiseMeasuresFcn</a>	visualiseMeasuresFcn - plots clinical and home measures</li><li><a href="visualiseMeasuresForPaperFcn.html" class="code" title="function visualiseMeasuresForPaperFcn(physdata, offset, cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits,cdCRP, cdPFT, cdNewMeds, measures, nmeasures, study)">visualiseMeasuresForPaperFcn</a>	visualiseMeasuresForPaperFcn - plots clinical and home measures</li><li><a href="visualiseMeasuresForPaperFcn2.html" class="code" title="function visualiseMeasuresForPaperFcn2(physdata, offset, amDatacube, cdPatient, cdAntibiotics,cdCRP, cdPFT, cdNewMeds, measures, nmeasures, ndays, study)">visualiseMeasuresForPaperFcn2</a>	visualiseMeasuresForPaperFcn2 - plots clinical and home measures</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [groupedtreatmentdates] = getGroupedIVTreatmentDates(abset)</a>
+0002 <span class="comment">% getGroupedIVTreatmentDates - gets the start and end dates for a batch of</span>
+0003 <span class="comment">% antibiotic treatments (collapses multiple drugs and contiguous/overlapping</span>
+0004 <span class="comment">% treatments)</span>
+0005 
+0006 <span class="keyword">if</span> size(abset,1) &gt; 0
+0007     abset = sortrows(unique(abset(:,{<span class="string">'StartDate'</span>, <span class="string">'StopDate'</span>})), {<span class="string">'StartDate'</span>, <span class="string">'StopDate'</span>});
+0008     abset = varfun(@max, abset, <span class="string">'GroupingVariables'</span>, <span class="string">'StartDate'</span>);
+0009     abset.Properties.VariableNames{<span class="string">'max_StopDate'</span>} = <span class="string">'StopDate'</span>;
+0010     abset.GroupCount = [];
+0011 
+0012     groupedtreatmentdates = abset(1:1,:);
+0013     rowtoadd = groupedtreatmentdates;
+0014     groupedtreatmentdates = [];
+0015     delidx = [];
+0016 
+0017     priorstartdate = abset.StartDate(1);
+0018     priorstopdate = abset.StopDate(1);
+0019     <span class="keyword">for</span> a = 2:size(abset,1)
+0020         <span class="keyword">if</span> abset.StartDate(a) == priorstopdate
+0021             rowtoadd.StartDate = priorstartdate;
+0022             rowtoadd.StopDate = abset.StopDate(a);
+0023             groupedtreatmentdates = [groupedtreatmentdates; rowtoadd];
+0024             delidx = [delidx ; a-1 ; a];
+0025             priorstopdate = abset.StopDate(a);
+0026         <span class="keyword">elseif</span> abset.StartDate(a) &gt; priorstartdate &amp; abset.StopDate(a) &lt;= priorstopdate
+0027             delidx = [delidx ; a ];
+0028         <span class="keyword">else</span>
+0029             priorstartdate = abset.StartDate(a);
+0030             priorstopdate = abset.StopDate(a);
+0031         <span class="keyword">end</span>    
+0032     <span class="keyword">end</span>
+0033     
+0034     abset(delidx,:) = [];
+0035     <span class="keyword">if</span> size(groupedtreatmentdates,1) &gt; 0
+0036         groupedtreatmentdates = varfun(@max, groupedtreatmentdates, <span class="string">'GroupingVariables'</span>, <span class="string">'StartDate'</span>);
+0037         groupedtreatmentdates.Properties.VariableNames{<span class="string">'max_StopDate'</span>} = <span class="string">'StopDate'</span>;
+0038         groupedtreatmentdates.GroupCount = [];
+0039     <span class="keyword">end</span>
+0040     groupedtreatmentdates = sortrows([abset ; groupedtreatmentdates], {<span class="string">'StartDate'</span>,<span class="string">'StopDate'</span>}, <span class="string">'ascend'</span>);
+0041 <span class="keyword">else</span>
+0042     groupedtreatmentdates = abset;
+0043 <span class="keyword">end</span>
+0044 
+0045 <span class="keyword">end</span>
+0046</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

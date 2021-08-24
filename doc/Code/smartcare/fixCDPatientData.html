@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of fixCDPatientData</title>
+  <meta name="keywords" content="fixCDPatientData">
+  <meta name="description" content="fixCDPatientData - fix anomalies in Patient data">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; fixCDPatientData.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>fixCDPatientData
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>fixCDPatientData - fix anomalies in Patient data</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [cdPatientOut] = fixCDPatientData(cdPatient) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> fixCDPatientData - fix anomalies in Patient data</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadclinicaldata.html" class="code" title="">loadclinicaldata</a>	</li><li><a href="loadupdatedclinicaldata.html" class="code" title="">loadupdatedclinicaldata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [cdPatientOut] = fixCDPatientData(cdPatient)</a>
+0002 
+0003 <span class="comment">% fixCDPatientData - fix anomalies in Patient data</span>
+0004 
+0005 tic
+0006 fprintf(<span class="string">'Fixing Patient data anomalies\n'</span>);
+0007 fprintf(<span class="string">'-----------------____--------\n'</span>);
+0008 
+0009 <span class="comment">% Fix non-numeric value of Weight</span>
+0010 idx1 = find(cdPatient.ID == 88);
+0011 idx2 = find(ismember(cdPatient.Weight,<span class="string">'75,4'</span>));
+0012 idx = intersect(idx1,idx2);
+0013 cdPatient.Weight(idx) = {<span class="string">'75.4'</span>};
+0014 updates = size(idx,1);
+0015 fprintf(<span class="string">'Fixing %2d mis-typed Weight values\n'</span>, updates);
+0016 
+0017 <span class="comment">% now can convert StopDate to a datetime format</span>
+0018 cdPatient.Weight = str2double(cdPatient.Weight);
+0019 
+0020 <span class="comment">% fix typo in study start date for patient 36</span>
+0021 idx = find(cdPatient.ID == 36);
+0022 cdPatient.StudyDate(idx) = datetime(<span class="string">'21/10/2015'</span>);
+0023 updates = size(idx,1);
+0024 fprintf(<span class="string">'Fixing %2d incorrect Study Dates\n'</span>, updates);
+0025 
+0026 <span class="comment">% fix height in m - convert to cm</span>
+0027 idx = find(cdPatient.Height &lt; 2.2);
+0028 cdPatient.Height(idx) = cdPatient.Height(idx) * 100;
+0029 updates = size(idx,1);
+0030 fprintf(<span class="string">'Fixing %2d Heights in m - converted to cm\n'</span>, updates);
+0031 
+0032 <span class="comment">% pending followups from Emem on :_</span>
+0033 <span class="comment">% 1) Patient 179, weight and height = 57.9. Awaiting correct height</span>
+0034 <span class="comment">% 2) Patient 70, weight = 105kg. Awaiting confirmation this is correct</span>
+0035 <span class="comment">% 3) Patient 42, weight = 117kg. Awaiting confirmation this is correct</span>
+0036 <span class="comment">% 4) Patient 201, weight = 34.3kg. Awaiting confirmation this is correct</span>
+0037 
+0038 <span class="comment">% add column for calculated age - as the Age column has some mistakes</span>
+0039 fprintf(<span class="string">'Adding column for calculated Age\n'</span>);
+0040 cdPatient.CalcAge = floor(years(cdPatient.StudyDate - cdPatient.DOB));
+0041 cdPatient.CalcAgeExact = years(cdPatient.StudyDate - cdPatient.DOB);
+0042 
+0043 <span class="comment">% add columns for calculated PredictedFEV1 and FEV1SetAs based on</span>
+0044 <span class="comment">% sex/age/height using ECSC formulae</span>
+0045 fprintf(<span class="string">'Adding columns for calculated PredictedFEV1 and FEV1SetAs\n'</span>);
+0046 cdMalePatient = cdPatient(ismember(cdPatient.Sex,<span class="string">'Male'</span>),:);
+0047 cdFemalePatient = cdPatient(~ismember(cdPatient.Sex,<span class="string">'Male'</span>),:);
+0048 
+0049 cdMalePatient.CalcPredictedFEV1 = (cdMalePatient.Height * 0.01 * 4.3) - (cdMalePatient.CalcAge * 0.029) - 2.49;
+0050 cdMalePatient.CalcPredictedFEV1OrigAge = (cdMalePatient.Height * 0.01 * 4.3) - (cdMalePatient.Age * 0.029) - 2.49;
+0051 cdFemalePatient.CalcPredictedFEV1 = (cdFemalePatient.Height * 0.01 * 3.95) - (cdFemalePatient.CalcAge * 0.025) - 2.6;
+0052 cdFemalePatient.CalcPredictedFEV1OrigAge = (cdFemalePatient.Height * 0.01 * 3.95) - (cdFemalePatient.Age * 0.025) - 2.6;
+0053 
+0054 cdMalePatient.CalcFEV1SetAs = round(cdMalePatient.CalcPredictedFEV1,1);
+0055 cdMalePatient.CalcFEV1SetAsOrigAge = round(cdMalePatient.CalcPredictedFEV1OrigAge,1);
+0056 cdFemalePatient.CalcFEV1SetAs = round(cdFemalePatient.CalcPredictedFEV1,1);
+0057 cdFemalePatient.CalcFEV1SetAsOrigAge = round(cdFemalePatient.CalcPredictedFEV1OrigAge,1);
+0058 
+0059 cdPatient = sortrows([cdMalePatient ; cdFemalePatient], {<span class="string">'ID'</span>}, <span class="string">'ascend'</span>);
+0060 
+0061 
+0062 cdPatientOut = cdPatient;
+0063 
+0064 toc
+0065 fprintf(<span class="string">'\n'</span>);
+0066 
+0067 <span class="keyword">end</span>
+0068</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

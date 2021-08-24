@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of analyseModelRobustness</title>
+  <meta name="keywords" content="analyseModelRobustness">
+  <meta name="description" content="analyse the model robustness (classification consistency for various)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">recovery</a> &gt; analyseModelRobustness.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>analyseModelRobustness
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>analyse the model robustness (classification consistency for various)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> analyse the model robustness (classification consistency for various)
+ 
+ - harmonise the class numbers by evaluating 1-1 closeness with each rs taken as reference
+ - convert table to text and plot RSview
+ - plot classification error
+ - display curve allocation
+ 
+ 
+ Input: alignment results mat file
+ ------
+ 
+ Output: one plot with text summary and classiciation error
+ -------</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function out = getCurveAllocation(row,nl)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% analyse the model robustness (classification consistency for various)</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% - harmonise the class numbers by evaluating 1-1 closeness with each rs taken as reference</span>
+0004 <span class="comment">% - convert table to text and plot RSview</span>
+0005 <span class="comment">% - plot classification error</span>
+0006 <span class="comment">% - display curve allocation</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Input: alignment results mat file</span>
+0010 <span class="comment">% ------</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% Output: one plot with text summary and classiciation error</span>
+0013 <span class="comment">% -------</span>
+0014 
+0015 
+0016 <a href="init.html" class="code" title="">init</a>;
+0017 
+0018 <span class="comment">% differentiating parameters</span>
+0019 nl = 2;
+0020 dw = 20;
+0021 mm = 34;
+0022 vs=0.4;
+0023 
+0024 <span class="comment">% load all files that are similar except their random seed</span>
+0025 dircontent = dir(fullfile(basedir, subfolder, sprintf(<span class="string">'*BRvEMMC_gp10_lm1_sig4_mu4_ca2_sm2_rm4_in1_im1_cm2_mm%i_od0_ou15_dw%i_nl%i_rs*_ds1_ct5_sc22-V_vs1_vm%.1f*.mat'</span>,mm,dw, nl,vs)));
+0026 ModelResultsFiles = cell(size(dircontent,1),1);
+0027 <span class="keyword">for</span> a = 1:size(ModelResultsFiles,1)
+0028     ModelResultsFiles{a} = dircontent(a).name;
+0029 <span class="keyword">end</span>
+0030 
+0031 
+0032 nfiles = size(ModelResultsFiles,1);
+0033 fprintf(<span class="string">'Loading results\n'</span>);
+0034 fprintf(<span class="string">'---------------\n'</span>);
+0035 
+0036 <span class="comment">% for i = 1:nfiles</span>
+0037 <span class="comment">%     % link #column with filename</span>
+0038 <span class="comment">%     fprintf('Model number %3i - Filename: %s\n', i, ModelResultsFiles{i});</span>
+0039 <span class="comment">%     load(fullfile(basedir, subfolder,ModelResultsFiles{i}),'amInterventions');</span>
+0040 <span class="comment">%     % add latent cruve allocation</span>
+0041 <span class="comment">%     curveallocation(:,i+1) = amInterventions.LatentCurve;</span>
+0042 <span class="comment">%     rs(:,i+1) =</span>
+0043 <span class="comment">% end</span>
+0044 <span class="comment">% curveallocation(:,1) = amInterventions.IntrNbr;</span>
+0045 <span class="comment">% ninterventions = size(curveallocation,1);</span>
+0046 
+0047 
+0048 <span class="comment">%-&gt; started to add rs in top row</span>
+0049 load(fullfile(basedir, subfolder,ModelResultsFiles{1}),<span class="string">'amInterventions'</span>);
+0050 ninterventions = size(amInterventions,1);
+0051 
+0052 <span class="comment">%% create main table</span>
+0053 T = table(amInterventions.IntrNbr,<span class="string">'VariableNames'</span>,{<span class="string">'ID'</span>});
+0054 
+0055 <span class="keyword">for</span> i = 1:nfiles
+0056     <span class="comment">% link #column with filename</span>
+0057     fprintf(<span class="string">'Model number %3i - Filename: %s\n'</span>, i, ModelResultsFiles{i});
+0058     load(fullfile(basedir, subfolder,ModelResultsFiles{i}),<span class="string">'amInterventions'</span>,<span class="string">'niterations'</span>);
+0059     <span class="comment">% add latent cruve allocation</span>
+0060     T = addvars(T,amInterventions.LatentCurve);
+0061     temp = split(ModelResultsFiles{i},<span class="string">'_'</span>);
+0062     T = renamevars(T,sprintf(<span class="string">'Var%i'</span>,i+1),temp(17));
+0063     
+0064     Iterations(i,1) = niterations;
+0065     obj = temp{25};
+0066     Obj(i,1) = str2num(obj(4:end-4));
+0067     
+0068 <span class="keyword">end</span>
+0069 
+0070 <span class="comment">%% harmonise the class numbers by evaluating 1-1 closeness with each rs taken as reference</span>
+0071 
+0072 Ttest = T;
+0073 
+0074 <span class="comment">% identify switching interventions, iterations, smm,</span>
+0075 <span class="comment">% curve allocation with new indices</span>
+0076 
+0077 <span class="comment">% find the rs which has most in common with all</span>
+0078 best_match = 1;
+0079 
+0080 <span class="comment">% put the right latent curve index</span>
+0081 
+0082 changed = zeros(nfiles,1);
+0083 <span class="keyword">for</span> rscol = 2:nfiles+1
+0084     yes1 = Ttest{:,rscol} == 1;
+0085     <span class="keyword">for</span> i = 2:nfiles+1
+0086         <span class="comment">% get logicals</span>
+0087         yes2 = Ttest{:,i} == 1;
+0088 
+0089         <span class="comment">% if yes1 has more in common with not(yes2), rename yes2 indices</span>
+0090         <span class="keyword">if</span> sum(yes1 &amp; yes2) &lt; sum(yes1 &amp; not(yes2))
+0091             Ttest{yes2,i} = 2;
+0092             Ttest{not(yes2),i} = 1;
+0093             changed(i-1)=1;
+0094         <span class="keyword">end</span>
+0095     <span class="keyword">end</span>
+0096 
+0097     <span class="comment">% show different lines</span>
+0098     idx_same = sum(Ttest{:,2:8},2) == nfiles | sum(Ttest{:,2:8},2) == 2*nfiles;
+0099     Same = Ttest(idx_same,:);
+0100     Different = Ttest(not(idx_same),:);
+0101 
+0102     <span class="comment">% more than 2 out of 7 are different</span>
+0103     allowed_false = 1;
+0104     idx_same_almost = sum(Ttest{:,2:8},2) &lt;= nfiles + allowed_false | sum(Ttest{:,2:8},2) &gt;= 2*nfiles - allowed_false;
+0105     allowed_false = 2;
+0106     idx_difft = sum(Ttest{:,2:8},2) &lt;= nfiles + allowed_false | sum(Ttest{:,2:8},2) &gt;= 2*nfiles - allowed_false;
+0107     SameAlmost = Ttest(idx_same_almost,:);
+0108     VeryDifferent = Ttest(not(idx_difft),:);
+0109 
+0110     SameAlmostIDs(rscol-1,1) = join(string(SameAlmost.ID),&quot;, &quot;);
+0111     OutlierIntr(rscol-1,1) = join(string(VeryDifferent.ID),&quot;, &quot;);
+0112     ExactSameClass(rscol-1,1) = sum(idx_same);
+0113     AlmostSame_Less1Err(rscol-1,1) = sum(idx_same_almost);
+0114     Diff_Over3Err(rscol-1,1) = sum(not(idx_difft));
+0115 <span class="keyword">end</span>
+0116 
+0117 fprintf(<span class="string">'%i interventions have the exact same class\n'</span>, size(Same,1));
+0118 fprintf(<span class="string">'%i interventions are classified similary in %i, %i times out of %i rs\n'</span>, size(SameAlmost,1), nfiles-allowed_false, nfiles-allowed_false+1, nfiles);
+0119 fprintf(<span class="string">'%i interventions are classified have a repartition 3,4 \n'</span>, size(VeryDifferent,1));
+0120 
+0121 map(1:nl,1) = 1:nl;
+0122 <span class="keyword">for</span> i = 2:nfiles+1
+0123     map(1:nl,i) = groupcounts(Ttest{:,i});
+0124 <span class="keyword">end</span>
+0125 fprintf(<span class="string">'Result of the curve allocation for %i interventions:\n'</span>,ninterventions);
+0126 disp(map)
+0127 Class1 = map(1,2:end)';
+0128 Class2 = map(2,2:end)';
+0129 
+0130 RSview = table(T.Properties.VariableNames(2:end)',Iterations, Obj, Class1, Class2, ExactSameClass,AlmostSame_Less1Err, Diff_Over3Err,OutlierIntr);
+0131 
+0132 <span class="comment">%% redo this a last time for the best reference</span>
+0133 
+0134 <span class="comment">% reference random seed</span>
+0135 ref_rs = <span class="string">'rs1'</span>;
+0136 
+0137 Ttest = T;
+0138 yes1 = Ttest{:,ref_rs} == 1;
+0139 <span class="keyword">for</span> i = 2:nfiles+1
+0140     <span class="comment">% get logicals</span>
+0141     yes2 = Ttest{:,i} == 1;
+0142 
+0143     <span class="comment">% if yes1 has more in common with not(yes2), rename yes2 indices</span>
+0144     <span class="keyword">if</span> sum(yes1 &amp; yes2) &lt; sum(yes1 &amp; not(yes2))
+0145         Ttest{yes2,i} = 2;
+0146         Ttest{not(yes2),i} = 1;
+0147         changed(i-1)=1;
+0148     <span class="keyword">end</span>
+0149 <span class="keyword">end</span>
+0150 
+0151 N_class = sum(Ttest{:,2:nfiles+1}==1,2);
+0152 N_class = table(N_class,<span class="string">'VariableNames'</span>,{<span class="string">'Class1'</span>});
+0153 
+0154 <span class="comment">% 0 and 7 means 0 error</span>
+0155 N_class.Class1( N_class.Class1 == 7) = 0;
+0156 <span class="comment">% 1 and 6 means 1 error</span>
+0157 N_class.Class1( N_class.Class1 == 6) = 1;
+0158 N_class.Class1( N_class.Class1 == 5) = 2;
+0159 N_class.Class1( N_class.Class1 == 4) = 3;
+0160 
+0161 Grouped = groupcounts(N_class,<span class="string">'Class1'</span>);
+0162 
+0163 <span class="comment">%% convert table to text and plot RSview</span>
+0164 
+0165 figure(<span class="string">'DefaultAxesFontSize'</span>,16,<span class="string">'Position'</span>, [1 1 2000 600])
+0166 <span class="comment">% Get the table in string form.</span>
+0167 TString = evalc(<span class="string">'disp(RSview)'</span>);
+0168 <span class="comment">% Use TeX Markup for bold formatting and underscores.</span>
+0169 TString = strrep(TString,<span class="string">'&lt;strong&gt;'</span>,<span class="string">'\bf'</span>);
+0170 TString = strrep(TString,<span class="string">'&lt;/strong&gt;'</span>,<span class="string">'\rm'</span>);
+0171 TString = strrep(TString,<span class="string">'_'</span>,<span class="string">'\_'</span>);
+0172 <span class="comment">% Get a fixed-width font.</span>
+0173 FixedWidth = get(0,<span class="string">'FixedWidthFontName'</span>);
+0174 <span class="comment">% Output the table using the annotation command.</span>
+0175 annotation(gcf,<span class="string">'Textbox'</span>,<span class="string">'String'</span>,TString,<span class="string">'Interpreter'</span>,<span class="string">'Tex'</span>,<span class="keyword">...</span>
+0176     <span class="string">'FontName'</span>,FixedWidth,<span class="string">'Units'</span>,<span class="string">'Normalized'</span>,<span class="string">'Position'</span>,[0 0 1 1]);
+0177 
+0178 <span class="comment">% uitable('Data',RSview{:,:},'ColumnName',RSview.Properties.VariableNames,...</span>
+0179 <span class="comment">%     'RowName',RSview.Properties.RowNames,'Units', 'Normalized', 'Position',[0, 0, 1, 1]);</span>
+0180 
+0181 <span class="comment">%% plot classification error</span>
+0182 
+0183 <span class="comment">% draw bar plot of consistency of affilitation to class 1</span>
+0184 
+0185 subplot(2,2,3)
+0186 
+0187 b = bar(Grouped.Class1,Grouped.Percent,0.4,<span class="string">'FaceColor'</span>,[0.6 0.6 0.6],<span class="string">'EdgeColor'</span>,<span class="string">'k'</span>,<span class="string">'LineWidth'</span>,1);
+0188 b.FaceColor = <span class="string">'flat'</span>; 
+0189 b.CData(4,:) = [1 0 0];
+0190 title=sprintf(<span class="string">'Number of classification error (vs=%.1f)'</span>, vs);
+0191 xlabel(title)
+0192 ylabel(<span class="string">'Amount of interventions (%)'</span>)
+0193 saveas(gcf,fullfile(plotfolder,sprintf(<span class="string">'%s.png'</span>,title)))
+0194 <span class="comment">% close all</span>
+0195 
+0196 <span class="comment">%% outlying interventions</span>
+0197 
+0198 outliers = [8 41 55 94 102 104];
+0199 amInterventions(ismember(amInterventions.IntrNbr,outliers),:)
+0200 
+0201 <span class="comment">%% consistency of the curve allocation for different random seeds</span>
+0202 accuracy = zeros(ninterventions,nl);
+0203 <span class="keyword">for</span> i = 1:ninterventions
+0204     accuracy(i,:) = <a href="#_sub1" class="code" title="subfunction out = getCurveAllocation(row,nl)">getCurveAllocation</a>(curveallocation(i,2:end),nl);
+0205 <span class="keyword">end</span>
+0206 
+0207 <span class="comment">%% function</span>
+0208 
+0209 
+0210 <a name="_sub0" href="#_subfunctions" class="code">function out = getCurveAllocation(row,nl)</a>
+0211 <span class="comment">% return number of latent curves</span>
+0212 out = zeros(1,nl);
+0213 <span class="keyword">for</span> i = 1:nl
+0214     <span class="keyword">for</span> j = row
+0215         <span class="keyword">if</span> i == j
+0216             out(i) = out(i)+1;
+0217         <span class="keyword">end</span>
+0218     <span class="keyword">end</span>
+0219     <span class="comment">%out(i) = out(i)*100/length(row);</span>
+0220 <span class="keyword">end</span>
+0221 
+0222 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

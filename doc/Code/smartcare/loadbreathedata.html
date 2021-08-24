@@ -1,0 +1,359 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadbreathedata</title>
+  <meta name="keywords" content="loadbreathedata">
+  <meta name="description" content="1st Breathe data processing step and analysis from raw measurements">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadbreathedata.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadbreathedata
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>1st Breathe data processing step and analysis from raw measurements</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> 1st Breathe data processing step and analysis from raw measurements
+ takes the raw home measurement files, along with the GUID to 
+ study email mapping file and processes them. The main steps performed are: 
+ i) Filtering
+     a. removing patients with no measurement data
+     b. removing measurement data for unknown patients or those with no clinical data
+     c. removing records marked as deleted
+     d. removing measurement records before the study start date for each patient
+     e. removing measurement records after the last clinical data update date for each patient
+ ii) Removing data anomalies - upper and lower treshold 
+ iii) Handling duplicate records
+ #not for Breathe iv)    Handling patients with small amounts of data or very sparse data
+ v) Creates various plots visualise the study data and spreadsheets to allow results of the 
+ processing to analysed in more detail (ie which records where deleted and why).
+ 
+ Input:
+ ------
+ latest Breathe measdate from eponym function
+ raw measurements data
+ breatheclinicaldata.mat               contains clinical data and patient master file
+
+ Output:
+ -------
+ breathedata.mat with the following variables (sorted from earliest to latest processed):
+ - broffset                            date of the study's first recorded measurement
+ - brphysdata_original                 raw measures
+ - brphysdata_deleted                  deleted measures
+ - brphysdata_predupehandling          measures before handling duplicates 
+ - brphysdata_predateoutlierhandling   same as final data since no outliers handling here
+ - brphysdata                          final data table
+ * NB * brphysdata features contain:
+     - DateNum                         #days since broffset
+     - ScaleDateNum                    #days since patient 's 1st recorded measure
+ 
+ HeatmapAllPatientsWithStudyPeriod     Plots the temporal data count heatmap
+ datademographicsbypatient             .mat and Excel files with boxchart like statistics
+ BreatheDeletedMeasurementData         Excel containing brphysdata_deleted</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="addBreatheRowsForLungFcn.html" class="code" title="function [physdata] = addBreatheRowsForLungFcn(physdata, brPatient)">addBreatheRowsForLungFcn</a>	addBreatheRowsForLungFcn - adds the rows to physdata for Lung Function</li><li><a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>	addBreatheRowsForMeasure - adds the rows to physdata (and</li><li><a href="correctBreatheDataAnomalies.html" class="code" title="function [brphysdata, brphysdata_deleted] = correctBreatheDataAnomalies(brphysdata, brphysdata_deleted)">correctBreatheDataAnomalies</a>	correctBreatheDataAnomalies - looks at various outliers in the measures</li><li><a href="createBreatheMeasuresTable.html" class="code" title="function [brphysdata] = createBreatheMeasuresTable(nrows)">createBreatheMeasuresTable</a>	createBreatheMeasuresTable - creates a copy of the physdata</li><li><a href="createMeasuresHeatmapWithStudyPeriod.html" class="code" title="function createMeasuresHeatmapWithStudyPeriod(physdata, offset, cdPatient, study)">createMeasuresHeatmapWithStudyPeriod</a>	createMeasuresHeatmapWithStudyPeriod - creates the Patient/Measures</li><li><a href="generateDataDemographicsByPatientFn.html" class="code" title="function generateDataDemographicsByPatientFn(physdata, cdPatient, study)">generateDataDemographicsByPatientFn</a>	generateDataDemographicsByPatientFn - function that creates data</li><li><a href="getLatestBreatheMeasDate.html" class="code" title="function [measdate] = getLatestBreatheMeasDate()">getLatestBreatheMeasDate</a>	getLatestBreatheMeasDate - convenience function to centralise getting the</li><li><a href="handleBreatheDuplicateMeasures.html" class="code" title="function [physdata] = handleBreatheDuplicateMeasures(physdata, study, doupdates, detaillog)">handleBreatheDuplicateMeasures</a>	handleBreatheDuplicateMeasures -  Analyse and correct for duplicate measures</li><li><a href="plotMeasuresByHour.html" class="code" title="function plotMeasuresByHour(physdata, smartcareID, imagefilename, study)">plotMeasuresByHour</a>	plotMeasuresByHour - for each measure, plot a histogram of number of</li><li><a href="printDataDemographics.html" class="code" title="function printDataDemographics(physdata, smartcareID)">printDataDemographics</a>	printDataDemographics - calculates and prints the count, mean, std, min, max</li><li><a href="scaleDaysByPatient.html" class="code" title="function [physdata] = scaleDaysByPatient(physdata,doupdates)">scaleDaysByPatient</a>	scaleDateByPatient - adds a new column to physdata for the scaled datenum</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% 1st Breathe data processing step and analysis from raw measurements</span>
+0002 <span class="comment">% takes the raw home measurement files, along with the GUID to</span>
+0003 <span class="comment">% study email mapping file and processes them. The main steps performed are:</span>
+0004 <span class="comment">% i) Filtering</span>
+0005 <span class="comment">%     a. removing patients with no measurement data</span>
+0006 <span class="comment">%     b. removing measurement data for unknown patients or those with no clinical data</span>
+0007 <span class="comment">%     c. removing records marked as deleted</span>
+0008 <span class="comment">%     d. removing measurement records before the study start date for each patient</span>
+0009 <span class="comment">%     e. removing measurement records after the last clinical data update date for each patient</span>
+0010 <span class="comment">% ii) Removing data anomalies - upper and lower treshold</span>
+0011 <span class="comment">% iii) Handling duplicate records</span>
+0012 <span class="comment">% #not for Breathe iv)    Handling patients with small amounts of data or very sparse data</span>
+0013 <span class="comment">% v) Creates various plots visualise the study data and spreadsheets to allow results of the</span>
+0014 <span class="comment">% processing to analysed in more detail (ie which records where deleted and why).</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% Input:</span>
+0017 <span class="comment">% ------</span>
+0018 <span class="comment">% latest Breathe measdate from eponym function</span>
+0019 <span class="comment">% raw measurements data</span>
+0020 <span class="comment">% breatheclinicaldata.mat               contains clinical data and patient master file</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">% Output:</span>
+0023 <span class="comment">% -------</span>
+0024 <span class="comment">% breathedata.mat with the following variables (sorted from earliest to latest processed):</span>
+0025 <span class="comment">% - broffset                            date of the study's first recorded measurement</span>
+0026 <span class="comment">% - brphysdata_original                 raw measures</span>
+0027 <span class="comment">% - brphysdata_deleted                  deleted measures</span>
+0028 <span class="comment">% - brphysdata_predupehandling          measures before handling duplicates</span>
+0029 <span class="comment">% - brphysdata_predateoutlierhandling   same as final data since no outliers handling here</span>
+0030 <span class="comment">% - brphysdata                          final data table</span>
+0031 <span class="comment">% * NB * brphysdata features contain:</span>
+0032 <span class="comment">%     - DateNum                         #days since broffset</span>
+0033 <span class="comment">%     - ScaleDateNum                    #days since patient 's 1st recorded measure</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">% HeatmapAllPatientsWithStudyPeriod     Plots the temporal data count heatmap</span>
+0036 <span class="comment">% datademographicsbypatient             .mat and Excel files with boxchart like statistics</span>
+0037 <span class="comment">% BreatheDeletedMeasurementData         Excel containing brphysdata_deleted</span>
+0038 
+0039 clear; clc; close all;
+0040 
+0041 tic
+0042 fprintf(<span class="string">'Loading Breathe Clinical Data\n'</span>);
+0043 fprintf(<span class="string">'-----------------------------\n'</span>);
+0044 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0045 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0046 clinicalmatfile = <span class="string">'breatheclinicaldata.mat'</span>;
+0047 load(fullfile(basedir, subfolder, clinicalmatfile));
+0048 fprintf(<span class="string">'Done\n'</span>);
+0049 toc
+0050 fprintf(<span class="string">'\n'</span>);
+0051 
+0052 study = <span class="string">'BR'</span>;
+0053 
+0054 fprintf(<span class="string">'Loading Project Breathe measurement data\n'</span>);
+0055 fprintf(<span class="string">'----------------------------------------\n'</span>);
+0056 
+0057 brphysdata = <a href="createBreatheMeasuresTable.html" class="code" title="function [brphysdata] = createBreatheMeasuresTable(nrows)">createBreatheMeasuresTable</a>(0);
+0058 brphysdata_deleted = brphysdata;
+0059 brphysdata_deleted.Reason(:) = {<span class="string">''</span>};
+0060 
+0061 <span class="comment">% don't need this anymore as the patient master is loaded along with the</span>
+0062 <span class="comment">% clinical data above</span>
+0063 
+0064 <span class="comment">% get list of Project Breathe hospitals</span>
+0065 <span class="comment">%brhosp = getListOfBreatheHospitals();</span>
+0066 
+0067 <span class="comment">% create concatenated guidmap file over all hospital</span>
+0068 <span class="comment">%guidmap = [];</span>
+0069 <span class="comment">%for h = 1:size(brhosp, 1)</span>
+0070 <span class="comment">%</span>
+0071 <span class="comment">%    fprintf('Getting GUID mappings for %s\n', brhosp.Name{h});</span>
+0072 <span class="comment">%    [~, guidmapdate] = getLatestBreatheDatesForHosp(brhosp.Acronym{h});</span>
+0073 <span class="comment">%    [hospguidmap] = loadGUIDFileForHosp(study, brhosp(h, :), guidmapdate);</span>
+0074     
+0075 <span class="comment">%    guidmap = [guidmap; hospguidmap];</span>
+0076 <span class="comment">%end</span>
+0077 
+0078 measfileprefix = <span class="string">'Breathe_'</span>;
+0079 measdate       = <a href="getLatestBreatheMeasDate.html" class="code" title="function [measdate] = getLatestBreatheMeasDate()">getLatestBreatheMeasDate</a>();
+0080 measfilesuffix = <span class="string">'.csv'</span>;
+0081 basedir        = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0082 subfolder      = sprintf(<span class="string">'DataFiles/%s/MeasurementData'</span>, study);
+0083 
+0084 measfilelisting = dir(fullfile(basedir, subfolder, sprintf(<span class="string">'%s*%s%s'</span>, measfileprefix, measdate, measfilesuffix)));
+0085 MeasFiles = cell(size(measfilelisting,1),1);
+0086 <span class="keyword">for</span> a = 1:size(MeasFiles,1)
+0087     MeasFiles{a} = measfilelisting(a).name;
+0088 <span class="keyword">end</span>
+0089 
+0090 nmeasfile = size(MeasFiles,1);
+0091 fprintf(<span class="string">'Measurement files to ingest\n'</span>);
+0092 fprintf(<span class="string">'---------------------------\n'</span>);
+0093 <span class="keyword">for</span> i = 1:nmeasfile
+0094     fprintf(<span class="string">'%2d: %s\n'</span>, i, MeasFiles{i});
+0095 <span class="keyword">end</span>
+0096 fprintf(<span class="string">'\n'</span>);
+0097 fprintf(<span class="string">'---------------------------\n'</span>);
+0098 fprintf(<span class="string">'\n'</span>);
+0099 
+0100 <span class="keyword">for</span> i = 1:nmeasfile
+0101     tic
+0102     fprintf(<span class="string">'Processing %2d: %s\n'</span>, i, MeasFiles{i});
+0103     filetype = strrep(strrep(strrep(MeasFiles{i}, measfileprefix, <span class="string">''</span>), measfilesuffix, <span class="string">''</span>), sprintf(<span class="string">'_%s'</span>, measdate), <span class="string">''</span>);
+0104 
+0105     mfopts = detectImportOptions(fullfile(basedir, subfolder, MeasFiles{i}), <span class="string">'FileType'</span>, <span class="string">'Text'</span>, <span class="string">'Delimiter'</span>, <span class="string">','</span>);
+0106     mfopts.VariableTypes(:, ismember(mfopts.VariableNames, {<span class="string">'IsDeleted'</span>})) = {<span class="string">'logical'</span>};
+0107     mfopts.VariableTypes(:, ismember(mfopts.VariableNames, {<span class="string">'HasColdOrFlu'</span>})) = {<span class="string">'logical'</span>};
+0108     mfopts.VariableTypes(:, ismember(mfopts.VariableNames, {<span class="string">'HasHayFever'</span>})) = {<span class="string">'logical'</span>};
+0109 
+0110     measdata = readtable(fullfile(basedir, subfolder, MeasFiles{i}), mfopts);
+0111     norigrows = size(measdata, 1);
+0112     fprintf(<span class="string">'%d measurements\n'</span>, norigrows);
+0113     <span class="comment">%measdata = outerjoin(measdata, guidmap, 'LeftKeys', {'PartitionKey'}, 'RightKeys', {'PartitionKey'}, 'RightVariables', {'StudyNumber'});</span>
+0114     measdata = outerjoin(measdata, patientmaster, <span class="string">'LeftKeys'</span>, {<span class="string">'PartitionKey'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'PartitionKey'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'StudyNumber'</span>});
+0115     measdata = outerjoin(measdata, brPatient, <span class="string">'LeftKeys'</span>, {<span class="string">'StudyNumber'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'StudyNumber'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'ID'</span>, <span class="string">'StudyDate'</span>, <span class="string">'PatClinDate'</span>});
+0116     measdata.TimestampDt = datetime(measdata.Timestamp, <span class="string">'TimeZone'</span>,<span class="string">'UTC'</span>,<span class="string">'Format'</span>,<span class="string">'yyyy-MM-dd HH:mm:ss.SSSSSSS Z'</span>);
+0117     measdata.DateDt      = datetime(measdata.Date,    <span class="string">'TimeZone'</span>,<span class="string">'UTC'</span>,<span class="string">'Format'</span>,<span class="string">'yyyy-MM-dd HH:mm:ss.SSSSSSS Z'</span>);
+0118     measdata.TimestampDt.TimeZone = <span class="string">''</span>;
+0119     measdata.DateDt.TimeZone = <span class="string">''</span>;
+0120 
+0121     <span class="comment">% remove rows with no measurements (added from outer join above</span>
+0122     idx = ismember(measdata.PartitionKey, <span class="string">''</span>);
+0123     <span class="keyword">if</span> sum(idx) &gt; 0
+0124         fprintf(<span class="string">'*** Deleting %d guids with no measurements ***\n'</span>, sum(idx));
+0125         measdata(idx, :) = [];
+0126     <span class="keyword">end</span>
+0127     <span class="comment">% remove rows with unknown GUID</span>
+0128     idx = ismember(measdata.StudyNumber, <span class="string">''</span>);
+0129     <span class="keyword">if</span> sum(idx) &gt; 0
+0130         fprintf(<span class="string">'*** Deleting %d measures with unknown GUID ***\n'</span>, sum(idx));
+0131         measdata(idx, :) = [];
+0132     <span class="keyword">end</span>
+0133     <span class="comment">% remove rows with no corresponding clinical records</span>
+0134     idx = isnan(measdata.ID);
+0135     <span class="keyword">if</span> sum(idx) &gt; 0
+0136         fprintf(<span class="string">'*** Deleting %d measures with no corresponding clinical records ***\n'</span>, sum(idx));
+0137         measdata(idx, :) = [];
+0138     <span class="keyword">end</span>
+0139     <span class="comment">% remove records marked as deleted in the file</span>
+0140     idx = measdata.IsDeleted;
+0141     <span class="keyword">if</span> sum(idx) &gt; 0
+0142         fprintf(<span class="string">'*** Deleting %d measures marked as deleted ***\n'</span>, sum(idx));
+0143         measdata(idx, :) = [];
+0144     <span class="keyword">end</span>
+0145     <span class="comment">% remove records before study start date</span>
+0146     idx = measdata.DateDt &lt; measdata.StudyDate;
+0147     <span class="keyword">if</span> sum(idx) &gt; 0
+0148         fprintf(<span class="string">'*** Deleting %d measures before study start date ***\n'</span>, sum(idx));
+0149         measdata(idx, :) = [];
+0150     <span class="keyword">end</span>
+0151     <span class="comment">% remove records after last patient clinical update date</span>
+0152     idx = measdata.DateDt &gt; measdata.PatClinDate;
+0153     <span class="keyword">if</span> sum(idx) &gt; 0
+0154         fprintf(<span class="string">'*** Deleting %d measures after last clinical update by patient ***\n'</span>, sum(idx));
+0155         measdata(idx, :) = [];
+0156     <span class="keyword">end</span>
+0157     delzero = 1;
+0158     dontdelzero = 0;
+0159     <span class="keyword">switch</span> filetype
+0160         <span class="keyword">case</span> <span class="string">'Activity'</span>
+0161             recordingtype = <span class="string">'CalorieRecording'</span>;
+0162             [brphysdata, brphysdata_deleted] = <a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>(brphysdata, brphysdata_deleted, measdata, filetype, recordingtype, delzero);
+0163         <span class="keyword">case</span> <span class="string">'Coughing'</span>
+0164             recordingtype = <span class="string">'CoughRecording'</span>;
+0165             [brphysdata, brphysdata_deleted] = <a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>(brphysdata, brphysdata_deleted, measdata, filetype, recordingtype, delzero);
+0166         <span class="keyword">case</span> <span class="string">'HeartRate'</span>
+0167             recordingtype = <span class="string">'RestingHRRecording'</span>;
+0168             [brphysdata, brphysdata_deleted] = <a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>(brphysdata, brphysdata_deleted, measdata, filetype, recordingtype, delzero);
+0169         <span class="keyword">case</span> <span class="string">'Oximeter'</span>
+0170             recordingtype = <span class="string">'O2SaturationRecording'</span>;
+0171             [brphysdata, brphysdata_deleted] = <a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>(brphysdata, brphysdata_deleted, measdata, filetype, recordingtype, delzero);
+0172             recordingtype = <span class="string">'PulseRateRecording'</span>;
+0173             [brphysdata, brphysdata_deleted] = <a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>(brphysdata, brphysdata_deleted, measdata, filetype, recordingtype, delzero);
+0174         <span class="keyword">case</span> <span class="string">'Sleep'</span>
+0175             recordingtype = <span class="string">'MinsAsleepRecording'</span>;
+0176             [brphysdata, brphysdata_deleted] = <a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>(brphysdata, brphysdata_deleted, measdata, filetype, recordingtype, dontdelzero);
+0177             recordingtype = <span class="string">'MinsAwakeRecording'</span>;
+0178             [brphysdata, brphysdata_deleted] = <a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>(brphysdata, brphysdata_deleted, measdata, filetype, recordingtype, dontdelzero);
+0179         <span class="keyword">case</span> <span class="string">'Spirometer'</span>
+0180             recordingtype = <span class="string">'FEV1Recording'</span>;
+0181             [brphysdata, brphysdata_deleted] = <a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>(brphysdata, brphysdata_deleted, measdata, filetype, recordingtype, delzero);
+0182             [brphysdata] = <a href="addBreatheRowsForLungFcn.html" class="code" title="function [physdata] = addBreatheRowsForLungFcn(physdata, brPatient)">addBreatheRowsForLungFcn</a>(brphysdata, brPatient);
+0183             recordingtype = <span class="string">'FEF2575Recording'</span>;
+0184             [brphysdata, brphysdata_deleted] = <a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>(brphysdata, brphysdata_deleted, measdata, filetype, recordingtype, delzero);
+0185             recordingtype = <span class="string">'FEV075Recording'</span>;
+0186             [brphysdata, brphysdata_deleted] = <a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>(brphysdata, brphysdata_deleted, measdata, filetype, recordingtype, delzero);
+0187             recordingtype = <span class="string">'FEV1DivFEV6Recording'</span>;
+0188             [brphysdata, brphysdata_deleted] = <a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>(brphysdata, brphysdata_deleted, measdata, filetype, recordingtype, delzero);
+0189             recordingtype = <span class="string">'FEV6Recording'</span>;
+0190             [brphysdata, brphysdata_deleted] = <a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>(brphysdata, brphysdata_deleted, measdata, filetype, recordingtype, delzero);
+0191         <span class="keyword">case</span> <span class="string">'Temperature'</span>
+0192             recordingtype = <span class="string">'TemperatureRecording'</span>;
+0193             [brphysdata, brphysdata_deleted] = <a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>(brphysdata, brphysdata_deleted, measdata, filetype, recordingtype, delzero);
+0194         <span class="keyword">case</span> <span class="string">'Weight'</span>
+0195             recordingtype = <span class="string">'WeightRecording'</span>;
+0196             [brphysdata, brphysdata_deleted] = <a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>(brphysdata, brphysdata_deleted, measdata, filetype, recordingtype, delzero);
+0197         <span class="keyword">case</span> <span class="string">'Wellbeing'</span>
+0198             recordingtype = <span class="string">'WellnessRecording'</span>;
+0199             [brphysdata, brphysdata_deleted] = <a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>(brphysdata, brphysdata_deleted, measdata, filetype, recordingtype, delzero);
+0200             recordingtype = <span class="string">'HasColdOrFluRecording'</span>;
+0201             [brphysdata, brphysdata_deleted] = <a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>(brphysdata, brphysdata_deleted, measdata, filetype, recordingtype, dontdelzero);
+0202             recordingtype = <span class="string">'HasHayFeverRecording'</span>;
+0203             [brphysdata, brphysdata_deleted] = <a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>(brphysdata, brphysdata_deleted, measdata, filetype, recordingtype, dontdelzero);
+0204 
+0205         <span class="keyword">otherwise</span>
+0206             fprintf(<span class="string">'*** Unknown file type %s ***\n'</span>, filetype)
+0207     <span class="keyword">end</span>
+0208 
+0209     toc
+0210     fprintf(<span class="string">'\n'</span>);
+0211 <span class="keyword">end</span>
+0212 
+0213 brphysdata_original = brphysdata;
+0214 fprintf(<span class="string">'Breathe data has %d rows\n'</span>, size(brphysdata, 1));
+0215 fprintf(<span class="string">'\n'</span>);
+0216 
+0217 <span class="comment">% set study offset</span>
+0218 minmdate = min(brphysdata.Date_TimeRecorded);
+0219 broffset = datenum(datetime(year(minmdate), month(minmdate), day(minmdate)));
+0220 brphysdata.DateNum = ceil(datenum(datetime(brphysdata.Date_TimeRecorded)+seconds(1)) - broffset);
+0221 
+0222 <span class="comment">% calc and print overall data demographics before data anomaly fixes</span>
+0223 <a href="printDataDemographics.html" class="code" title="function printDataDemographics(physdata, smartcareID)">printDataDemographics</a>(brphysdata, 0);
+0224 fprintf(<span class="string">'\n'</span>);
+0225 
+0226 [brphysdata, brphysdata_deleted] = <a href="correctBreatheDataAnomalies.html" class="code" title="function [brphysdata, brphysdata_deleted] = correctBreatheDataAnomalies(brphysdata, brphysdata_deleted)">correctBreatheDataAnomalies</a>(brphysdata, brphysdata_deleted);
+0227 
+0228 <span class="comment">% sort measurement data</span>
+0229 brphysdata = sortrows(brphysdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>);
+0230 
+0231 <a href="printDataDemographics.html" class="code" title="function printDataDemographics(physdata, smartcareID)">printDataDemographics</a>(brphysdata, 0);
+0232 
+0233 <a href="plotMeasuresByHour.html" class="code" title="function plotMeasuresByHour(physdata, smartcareID, imagefilename, study)">plotMeasuresByHour</a>(brphysdata, 0, <span class="string">'BR - Measures By Hour Histograms'</span>, study);
+0234 
+0235 brphysdata_predupehandling = brphysdata;
+0236 
+0237 <span class="comment">% generate data demographics by patient</span>
+0238 <a href="generateDataDemographicsByPatientFn.html" class="code" title="function generateDataDemographicsByPatientFn(physdata, cdPatient, study)">generateDataDemographicsByPatientFn</a>(brphysdata, brPatient, study);
+0239 
+0240 <span class="comment">% handle duplicates</span>
+0241 doupdates = true;
+0242 detaillog = false;
+0243 brphysdata = <a href="handleBreatheDuplicateMeasures.html" class="code" title="function [physdata] = handleBreatheDuplicateMeasures(physdata, study, doupdates, detaillog)">handleBreatheDuplicateMeasures</a>(brphysdata, study, doupdates, detaillog);
+0244 
+0245 <span class="comment">% calc and print overall data demographics after data anomaly fixes</span>
+0246 <a href="printDataDemographics.html" class="code" title="function printDataDemographics(physdata, smartcareID)">printDataDemographics</a>(brphysdata, 0);
+0247 
+0248 <span class="comment">% populate ScaledDateNum with the days from first measurement (by patient)</span>
+0249 brphysdata = <a href="scaleDaysByPatient.html" class="code" title="function [physdata] = scaleDaysByPatient(physdata,doupdates)">scaleDaysByPatient</a>(brphysdata, doupdates);
+0250 
+0251 brphysdata_predateoutlierhandling = brphysdata;
+0252 
+0253 <span class="comment">% don't do this for project breathe</span>
+0254 <span class="comment">% analyse measurement date outliers and handle as appropriate</span>
+0255 <span class="comment">%brphysdata = analyseAndHandleDateOutliers(brphysdata, study, doupdates);</span>
+0256 
+0257 <a href="createMeasuresHeatmapWithStudyPeriod.html" class="code" title="function createMeasuresHeatmapWithStudyPeriod(physdata, offset, cdPatient, study)">createMeasuresHeatmapWithStudyPeriod</a>(brphysdata, broffset, brPatient, study);
+0258 
+0259 <span class="comment">% calc and print overall data demographics after data anomaly fixes</span>
+0260 <span class="comment">%printDataDemographics(brphysdata, 0);</span>
+0261 
+0262 <span class="comment">% generate data demographics by patient</span>
+0263 <a href="generateDataDemographicsByPatientFn.html" class="code" title="function generateDataDemographicsByPatientFn(physdata, cdPatient, study)">generateDataDemographicsByPatientFn</a>(brphysdata, brPatient, study);
+0264 
+0265 tic
+0266 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0267 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0268 outputfilename = <span class="string">'breathedata.mat'</span>;
+0269 fprintf(<span class="string">'Saving output variables to file %s\n'</span>, outputfilename);
+0270 save(fullfile(basedir, subfolder, outputfilename), <span class="string">'brphysdata'</span>, <span class="string">'broffset'</span>, <span class="string">'brphysdata_deleted'</span>, <span class="keyword">...</span>
+0271     <span class="string">'brphysdata_original'</span>, <span class="string">'brphysdata_predupehandling'</span>, <span class="string">'brphysdata_predateoutlierhandling'</span>);
+0272 
+0273 subfolder = <span class="string">'ExcelFiles'</span>;
+0274 delrowfilename = <span class="string">'BreatheDeletedMeasurementData.xlsx'</span>;
+0275 writetable(brphysdata_deleted(~ismember(brphysdata_deleted.Reason, {<span class="string">'NULL Measurement'</span>}),:), fullfile(basedir, subfolder, delrowfilename));
+0276 toc</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCVisualiseAlignmentDetailRecovery</title>
+  <meta name="keywords" content="amEMMCVisualiseAlignmentDetailRecovery">
+  <meta name="description" content="amEMMCVisualiseAlignmentDetail - wrapper around the">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="../index.html">recovery</a> &gt; <a href="index.html">updatedModel</a> &gt; amEMMCVisualiseAlignmentDetailRecovery.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../../index.html"><img alt="<" border="0" src="../../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery/updatedModel&nbsp;<img alt=">" border="0" src="../../../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCVisualiseAlignmentDetailRecovery
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>amEMMCVisualiseAlignmentDetail - wrapper around the</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>function [sorted_interventions, max_points] = amEMMCVisualiseAlignmentDetailRecovery(amIntrNormcube, amHeldBackcube, amInterventions, meancurvemean,meancurvecount, meancurvestd, overall_pdoffset, measures, offset, align_wind, nmeasures, ninterventions,run_type, ex_start, curveaveragingmethod, plotname, plotsubfolder, nlatentcurves) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCVisualiseAlignmentDetail - wrapper around the
+ amEMVisualiseAlignmentDetail to plot for each set of latent curves</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="amEMVisualiseAlignmentDetailRecovery.html" class="code" title="function [sorted_interventions, max_points] = amEMVisualiseAlignmentDetailRecovery(amIntrCube, amHeldBackcube, amInterventions,meancurvemean, meancurvecount, meancurvestd, overall_pdoffset, measures, offset, align_wind,nmeasures, ninterventions, run_type, ex_start, curveaveragingmethod, plotname, plotsubfolder)">amEMVisualiseAlignmentDetailRecovery</a>	amEMVisualiseAlignmentDetail - creates a plot of horizontal bars showing</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="../../../../Code/pdm/recovery/runAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist)">runAlignmentModelEMMCRecoveryFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [sorted_interventions, max_points] = amEMMCVisualiseAlignmentDetailRecovery(amIntrNormcube, amHeldBackcube, amInterventions, meancurvemean, </a><span class="keyword">...</span>
+0002     meancurvecount, meancurvestd, overall_pdoffset, measures, offset, align_wind, nmeasures, ninterventions, <span class="keyword">...</span>
+0003     run_type, ex_start, curveaveragingmethod, plotname, plotsubfolder, nlatentcurves)
+0004 
+0005 <span class="comment">% amEMMCVisualiseAlignmentDetail - wrapper around the</span>
+0006 <span class="comment">% amEMVisualiseAlignmentDetail to plot for each set of latent curves</span>
+0007 
+0008 max_points = zeros(nlatentcurves, align_wind + offset.span-1);
+0009 sorted_interventions = struct(<span class="string">'Curve'</span>, []);
+0010 
+0011 <span class="keyword">for</span> n = 1:nlatentcurves
+0012     tmp_meancurvemean    = reshape(meancurvemean(n, :, :),    [align_wind + offset.span-1, nmeasures]);
+0013     tmp_meancurvecount   = reshape(meancurvecount(n, :, :),   [align_wind + offset.span-1, nmeasures]);
+0014     tmp_meancurvestd     = reshape(meancurvestd(n, :, :),     [align_wind + offset.span-1, nmeasures]);
+0015     tmp_overall_pdoffset = reshape(overall_pdoffset(n, :, :), [ninterventions, offset.span]);
+0016     tmp_ninterventions   = sum(amInterventions.LatentCurve == n);
+0017     tmp_idx              = amInterventions.LatentCurve == n;
+0018     
+0019     tmp_plotname = sprintf(<span class="string">'%s C%d'</span>, plotname, n);
+0020     
+0021     <span class="keyword">if</span> tmp_ninterventions ~= 0 
+0022         [tmp_sorted_interventions, max_points(n, :)] = <a href="amEMVisualiseAlignmentDetailRecovery.html" class="code" title="function [sorted_interventions, max_points] = amEMVisualiseAlignmentDetailRecovery(amIntrCube, amHeldBackcube, amInterventions,meancurvemean, meancurvecount, meancurvestd, overall_pdoffset, measures, offset, align_wind,nmeasures, ninterventions, run_type, ex_start, curveaveragingmethod, plotname, plotsubfolder)">amEMVisualiseAlignmentDetailRecovery</a>(amIntrNormcube(tmp_idx, :, :), <span class="keyword">...</span><span class="comment"> </span>
+0023             amHeldBackcube(tmp_idx, :, :), amInterventions(tmp_idx, :), <span class="keyword">...</span>
+0024             tmp_meancurvemean, tmp_meancurvecount, tmp_meancurvestd, tmp_overall_pdoffset(tmp_idx,:), <span class="keyword">...</span>
+0025             measures, offset, align_wind, nmeasures, tmp_ninterventions, <span class="keyword">...</span>
+0026             run_type, ex_start(n), curveaveragingmethod, tmp_plotname, plotsubfolder);
+0027         
+0028         sorted_interventions(n).Curve = table2array(tmp_sorted_interventions);
+0029     <span class="keyword">end</span>
+0030     
+0031 <span class="keyword">end</span>
+0032 
+0033 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

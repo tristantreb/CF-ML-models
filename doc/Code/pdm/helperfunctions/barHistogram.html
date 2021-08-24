@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of barHistogram</title>
+  <meta name="keywords" content="barHistogram">
+  <meta name="description" content="bar plot with interventions grouped by duration">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">helperfunctions</a> &gt; barHistogram.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/helperfunctions&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>barHistogram
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>bar plot with interventions grouped by duration</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function barHistogram(data, plottitle, xtitle) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> bar plot with interventions grouped by duration
+
+ Input: vector that need groupby, title, xlabel, 
+ ------
+ Output: bar plot
+ -------</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/exploration/exploreInterventions.html" class="code" title="">exploreInterventions</a>	explores the list of interventions</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function barHistogram(data, plottitle, xtitle)</a>
+0002 <span class="comment">% bar plot with interventions grouped by duration</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Input: vector that need groupby, title, xlabel,</span>
+0005 <span class="comment">% ------</span>
+0006 <span class="comment">% Output: bar plot</span>
+0007 <span class="comment">% -------</span>
+0008 arguments
+0009     data (:,1) double
+0010     plottitle (1,1) string = &quot;Data distribution&quot;
+0011     xtitle (1,1) string = &quot;Data&quot;
+0012 <span class="keyword">end</span>
+0013 
+0014 Intr = table(data,<span class="string">'VariableNames'</span>,{<span class="string">'data'</span>});
+0015 Intr = groupcounts(Intr, <span class="string">'data'</span>);
+0016 bar(Intr.data, Intr.GroupCount)
+0017 grid(<span class="string">'on'</span>)
+0018 title(plottitle)
+0019 xlabel(xtitle)
+0020 ylabel(<span class="string">'Frequency'</span>)
+0021 <span class="comment">% automatic xticks increment selection</span>
+0022 xspan=max(Intr.data)-min(Intr.data);
+0023 <span class="keyword">if</span> xspan &lt;= 10
+0024     xticksincrement=1;
+0025 <span class="keyword">elseif</span> xspan &lt;= 20
+0026     xticksincrement=2;
+0027 <span class="keyword">else</span>
+0028     xticksincrement=5;
+0029 <span class="keyword">end</span>
+0030 xticks(min(Intr.data):xticksincrement:max(Intr.data))
+0031 <span class="comment">% automatic yticks increment selection</span>
+0032 <span class="keyword">if</span> max(Intr.GroupCount) &lt;= 10
+0033     yticksincrement=1;
+0034 <span class="keyword">elseif</span> max(Intr.GroupCount) &lt;= 20
+0035     yticksincrement=2;
+0036 <span class="keyword">elseif</span> max(Intr.GroupCount) &lt;= 50
+0037     yticksincrement=5;
+0038 <span class="keyword">else</span>
+0039     yticksincrement=10;
+0040 <span class="keyword">end</span>
+0041 yticks(0:yticksincrement:max(Intr.GroupCount)+yticksincrement)
+0042 <span class="keyword">end</span>
+0043</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of breatheAzureAccess</title>
+  <meta name="keywords" content="breatheAzureAccess">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; breatheAzureAccess.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>breatheAzureAccess
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; clc; close all;
+0002 
+0003 tic
+0004 
+0005 study = <span class="string">'BR'</span>;
+0006 
+0007 <span class="comment">%setenv MW_WASB_SAS_TOKEN '?st=2019-11-18T10%3A30%3A12Z&amp;se=2020-01-31T10%3A30%3A00Z&amp;sp=rl&amp;sv=2018-03-28&amp;sr=c&amp;sig=K2eIs8G3%2FCYtVlH0WoL2i0hbipfspb55XtY6NLEQNXA%3D';</span>
+0008 <span class="comment">%setenv MW_WASB_SAS_TOKEN '?st=2020-02-10T13%3A58%3A17Z&amp;se=2020-10-01T14%3A58%3A00Z&amp;sp=rl&amp;sv=2018-03-28&amp;sr=c&amp;sig=2rckL4bC5zqtSvtaYIaTsbkibfFN5gqAaqxWBAYPQdc%3D';</span>
+0009 <span class="comment">%setenv MW_WASB_SAS_TOKEN '?st=2020-11-05T16%3A58%3A03Z&amp;se=2021-06-30T16%3A58%3A00Z&amp;sp=rl&amp;sv=2018-03-28&amp;sr=c&amp;sig=MFVnZM9aJc5VqbCjL%2BmO8pjPqk%2BOq%2FWER0oZz5s5w%2Bg%3D';</span>
+0010 setenv MW_WASB_SAS_TOKEN <span class="string">'?sp=rl&amp;st=2021-07-26T08:23:06Z&amp;se=2021-08-27T08:23:00Z&amp;sv=2020-08-04&amp;sr=c&amp;sig=%2BHRBPUiTZaUkfkV4RPTrdzV4cBp8D3sBb4%2FejeP79Ms%3D'</span>;
+0011 
+0012 [basedir] = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0013 subfolder = sprintf(<span class="string">'DataFiles/%s/MeasurementData'</span>, study);
+0014 
+0015 mdir = <span class="string">'wasbs://avatardatadropprod@breatheprodstorageavatar.blob.core.windows.net/'</span>;
+0016 
+0017 folderstruct = dir(mdir);
+0018 diridx = [folderstruct.isdir];
+0019 folderstruct = folderstruct(diridx);
+0020 ndates = size(folderstruct, 1);
+0021 
+0022 fprintf(<span class="string">'List of available dates is :-\n'</span>);
+0023 <span class="keyword">for</span> i = 1:ndates
+0024     fprintf(<span class="string">'%3d: Date %s\n'</span>, i, folderstruct(i).name);
+0025 <span class="keyword">end</span>
+0026 
+0027 fprintf(<span class="string">'\n'</span>);
+0028 sdnum = input(<span class="string">'Choose date for measurement data ? '</span>, <span class="string">'s'</span>);
+0029 
+0030 dnum = str2double(sdnum);
+0031 
+0032 <span class="keyword">if</span> (isnan(dnum) || dnum &lt; 1 || dnum &gt; ndates)
+0033     fprintf(<span class="string">'Invalid choice\n'</span>);
+0034     dnum = -1;
+0035     <span class="keyword">return</span>;
+0036 <span class="keyword">end</span>
+0037 
+0038 measdate = folderstruct(dnum).name;
+0039 
+0040 fprintf(<span class="string">'Getting list of measurement files from Azure for date %s\n'</span>, measdate)
+0041 mdir = sprintf(<span class="string">'wasbs://avatardatadropprod@breatheprodstorageavatar.blob.core.windows.net/%s'</span>, measdate);
+0042 dirds = tabularTextDatastore(mdir, <span class="string">'Delimiter'</span>, <span class="string">','</span>);
+0043 filelist = dirds.Files;
+0044 nfiles = size(filelist, 1);
+0045 fprintf(<span class="string">'Total of %d files to download\n'</span>, nfiles);
+0046 
+0047 <span class="keyword">for</span> f = 1:nfiles
+0048     location = filelist(f);
+0049     fileds = tabularTextDatastore(location, <span class="string">'Delimiter'</span>, <span class="string">','</span>);
+0050     fileds.SelectedVariableNames = fileds.VariableNames;
+0051     fileds.SelectedFormats{4} = <span class="string">'%q'</span>;
+0052     
+0053     filename = erase(filelist{f}, sprintf(<span class="string">'%s/'</span>, mdir));
+0054     fprintf(<span class="string">'%d of %d: Downloading %28s....'</span>, f, nfiles, filename);
+0055     filename = sprintf(<span class="string">'%s.csv'</span>, filename);
+0056     fdata = readall(fileds);
+0057     fprintf(<span class="string">'%d Rows....'</span>, size(fdata, 1));
+0058     writetable(fdata, fullfile(basedir, subfolder, filename));
+0059     fprintf(<span class="string">'Saving csv file\n'</span>);
+0060 <span class="keyword">end</span>
+0061 
+0062 <span class="comment">%guidurl = 'https://onedrive.live.com/?authkey=%21Av%5FdzCbIxs8fdVk&amp;id=4DB1BBA0C3BC9D88%211189&amp;cid=4DB1BBA0C3BC9D88'</span>
+0063 <span class="comment">%https://onedrive.live.com/edit.aspx?cid=4db1bba0c3bc9d88&amp;page=view&amp;resid=4DB1BBA0C3BC9D88!1047&amp;parId=4DB1BBA0C3BC9D88!1189&amp;authkey=!Av_dzCbIxs8fdVk&amp;app=Excel</span>
+0064 <span class="comment">%guidurl = 'https://1drv.ms/x/s!BIidvMOgu7FNiBcNigvgSV6II244?e=aykJENjKjE6tPCUlhfS1iA&amp;at=9';</span>
+0065 <span class="comment">%guidurl = 'https://onedrive.live.com/view.aspx?resid=4DB1BBA0C3BC9D88!1047&amp;ithint=file%2cxlsx&amp;authkey=!Ag2KC-BJXogjbjg';</span>
+0066 <span class="comment">%options = weboptions('ContentType','text');</span>
+0067 <span class="comment">%guidmap = webread(guidurl, options);</span>
+0068 <span class="comment">%guidmap = readtable(guidurl);</span>
+0069 <span class="comment">%test = datastore(guidurl);</span>
+0070 <span class="comment">%urlwrite(guidurl,fullfile(basedir, subfolder, 'test.csv'));</span>
+0071 <span class="comment">%M=importdata(myFileName);</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

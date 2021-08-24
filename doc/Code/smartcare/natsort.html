@@ -1,0 +1,568 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of natsort</title>
+  <meta name="keywords" content="natsort">
+  <meta name="description" content="Natural-order / alphanumeric sort strings or character vectors or categorical.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; natsort.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>natsort
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Natural-order / alphanumeric sort strings or character vectors or categorical.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [Y,ndx,dbg] = natsort(X,rgx,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Natural-order / alphanumeric sort strings or character vectors or categorical.
+
+ (c) 2012-2021 Stephen Cobeldick
+
+ Sorts text by character code and by number value. By default matches
+ integer substrings and performs a case-insensitive ascending sort.
+ Options select other number formats, sort order, case sensitivity, etc.
+
+%% Example:
+ &gt;&gt; X = {'x2', 'x10', 'x1'};
+ &gt;&gt; sort(X) % wrong number order
+ ans =   'x1'  'x10'  'x2'
+ &gt;&gt; natsort(X)
+ ans =   'x1'  'x2'  'x10'
+
+%% Syntax:
+  Y = natsort(X)
+  Y = natsort(X,rgx)
+  Y = natsort(X,rgx,&lt;options&gt;)
+ [Y,ndx,dbg] = natsort(X,...)
+
+ To sort any file-names or folder-names use NATSORTFILES (File Exchange 47434)
+ To sort the rows of a string/cell array use NATSORTROWS (File Exchange 47433)
+
+% Number Substrings %%
+
+ By default consecutive digit characters are interpreted as an integer.
+ Specifying the optional regular expression pattern allows the numbers to
+ include a +/- sign, decimal digits, exponent E-notation, quantifiers,
+ or look-around matching. For information on defining regular expressions:
+ &lt;http://www.mathworks.com/help/matlab/matlab_prog/regular-expressions.html&gt;
+
+ The number substrings are parsed by SSCANF into numeric values, using
+ either the **default format '%f' or the user-supplied format specifier.
+
+ This table shows examples of some regular expression patterns for common
+ notations and ways of writing numbers, together with suitable SSCANF formats:
+
+ Regular       | Number Substring | Number Substring              | SSCANF
+ Expression:   | Match Examples:  | Match Description:            | Format Specifier:
+ ==============|==================|===============================|==================
+ **        \d+ | 0, 123, 4, 56789 | unsigned integer              | %f  %i  %u  %lu
+ --------------|------------------|-------------------------------|------------------
+      [-+]?\d+ | +1, 23, -45, 678 | integer with optional +/- sign| %f  %i  %d  %ld
+ --------------|------------------|-------------------------------|------------------
+     \d+\.?\d* | 012, 3.45, 678.9 | integer or decimal            | %f
+ (\d+|Inf|NaN) | 123, 4, NaN, Inf | integer, Inf, or NaN          | %f
+  \d+\.\d+E\d+ | 0.123e4, 5.67e08 | exponential notation          | %f
+ --------------|------------------|-------------------------------|------------------
+  0X[0-9A-F]+  | 0X0, 0X3E7, 0XFF | hexadecimal notation &amp; prefix | %x  %i
+    [0-9A-F]+  |   0,   3E7,   FF | hexadecimal notation          | %x
+ --------------|------------------|-------------------------------|------------------
+  0[0-7]+      | 012, 03456, 0700 | octal notation &amp; prefix       | %o  %i
+   [0-7]+      |  12,  3456,  700 | octal notation                | %o
+ --------------|------------------|-------------------------------|------------------
+  0B[01]+      | 0B1, 0B101, 0B10 | binary notation &amp; prefix      | %b   (not SSCANF)
+    [01]+      |   1,   101,   10 | binary notation               | %b   (not SSCANF)
+ --------------|------------------|-------------------------------|------------------
+
+% Debugging Output Array %%
+
+ The third output is a cell array &lt;dbg&gt;, for checking the numbers
+ matched by the regular expression &lt;rgx&gt; and converted to numeric
+ by the SSCANF format. The rows of &lt;dbg&gt; are linearly indexed from &lt;X&gt;.
+
+ &gt;&gt; [~,~,dbg] = natsort(X)
+ dbg =
+    'x'    [ 2]
+    'x'    [10]
+    'x'    [ 1]
+
+% Examples %%
+
+%% Multiple integers (e.g. release version numbers):
+ &gt;&gt; A = {'v10.6', 'v9.10', 'v9.5', 'v10.10', 'v9.10.20', 'v9.10.8'};
+ &gt;&gt; sort(A)
+ ans =   'v10.10'  'v10.6'  'v9.10'  'v9.10.20'  'v9.10.8'  'v9.5'
+ &gt;&gt; natsort(A)
+ ans =   'v9.5'  'v9.10'  'v9.10.8'  'v9.10.20'  'v10.6'  'v10.10'
+
+%% Integer, decimal, NaN, or Inf numbers, possibly with +/- signs:
+ &gt;&gt; B = {'test+NaN', 'test11.5', 'test-1.4', 'test', 'test-Inf', 'test+0.3'};
+ &gt;&gt; sort(B)
+ ans =   'test' 'test+0.3' 'test+NaN' 'test-1.4' 'test-Inf' 'test11.5'
+ &gt;&gt; natsort(B, '[-+]?(NaN|Inf|\d+\.?\d*)')
+ ans =   'test' 'test-Inf' 'test-1.4' 'test+0.3' 'test11.5' 'test+NaN'
+
+%% Integer or decimal numbers, possibly with an exponent:
+ &gt;&gt; C = {'0.56e007', '', '43E-2', '10000', '9.8'};
+ &gt;&gt; sort(C)
+ ans =   ''  '0.56e007'  '10000'  '43E-2'  '9.8'
+ &gt;&gt; natsort(C, '\d+\.?\d*(E[-+]?\d+)?')
+ ans =   ''  '43E-2'  '9.8'  '10000'  '0.56e007'
+
+%% Hexadecimal numbers (with '0X' prefix):
+ &gt;&gt; D = {'a0X7C4z', 'a0X5z', 'a0X18z', 'a0XFz'};
+ &gt;&gt; sort(D)
+ ans =   'a0X18z'  'a0X5z'  'a0X7C4z'  'a0XFz'
+ &gt;&gt; natsort(D, '0X[0-9A-F]+', '%i')
+ ans =   'a0X5z'  'a0XFz'  'a0X18z'  'a0X7C4z'
+
+%% Binary numbers:
+ &gt;&gt; E = {'a11111000100z', 'a101z', 'a000000000011000z', 'a1111z'};
+ &gt;&gt; sort(E)
+ ans =   'a000000000011000z'  'a101z'  'a11111000100z'  'a1111z'
+ &gt;&gt; natsort(E, '[01]+', '%b')
+ ans =   'a101z'  'a1111z'  'a000000000011000z'  'a11111000100z'
+
+%% Case sensitivity:
+ &gt;&gt; F = {'a2', 'A20', 'A1', 'a10', 'A2', 'a1'};
+ &gt;&gt; natsort(F, [], 'ignorecase') % default
+ ans =   'A1'  'a1'  'a2'  'A2'  'a10'  'A20'
+ &gt;&gt; natsort(F, [], 'matchcase')
+ ans =   'A1'  'A2'  'A20'  'a1'  'a2'  'a10'
+
+%% Sort order:
+ &gt;&gt; G = {'2', 'a', '', '3', 'B', '1'};
+ &gt;&gt; natsort(G, [], 'ascend') % default
+ ans =   ''   '1'  '2'  '3'  'a'  'B'
+ &gt;&gt; natsort(G, [], 'descend')
+ ans =   'B'  'a'  '3'  '2'  '1'  ''
+ &gt;&gt; natsort(G, [], 'num&lt;char') % default
+ ans =   ''   '1'  '2'  '3'  'a'  'B'
+ &gt;&gt; natsort(G, [], 'char&lt;num')
+ ans =   ''   'a'  'B'  '1'  '2'  '3'
+
+%% UINT64 numbers (with full precision):
+ &gt;&gt; natsort({'a18446744073709551615z', 'a18446744073709551614z'}, [], '%lu')
+ ans =       'a18446744073709551614z'  'a18446744073709551615z'
+
+% Input and Output Arguments %%
+
+%% Inputs (**=default):
+ X   = Array to be sorted into alphanumeric order. Can be a string
+       array, or a cell array of character row vectors, or a categorical
+       array, or any other array type which can be converted by CELLSTR.
+ rgx = Optional regular expression to match number substrings.
+     = [] uses the default regular expression '\d+'** to match integers.
+ &lt;options&gt; can be entered in any order, as many as required:
+     = Sort direction: 'descend'/'ascend'**
+     = NaN/number order: 'NaN&lt;num'/'num&lt;NaN'**
+     = Character/number order: 'char&lt;num'/'num&lt;char'**
+     = Character case handling: 'matchcase'/'ignorecase'**
+     = SSCANF conversion format: '%x', '%li', '%b', '%f'**, etc.
+
+%% Outputs:
+ Y   = Array X sorted into alphanumeric order.
+ ndx = NumericArray, such that Y = X(ndx). The same size as X.
+ dbg = CellArray of the parsed characters and number values.
+       Each row corresponds to one input element, linear-indexed from X.
+
+ See also SORT NATSORTFILES <a href="natsortrows.html" class="code" title="function [Y,ndx,dbg] = natsortrows(X,rgx,varargin)">NATSORTROWS</a> CELLSTR REGEXP IREGEXP SSCANF</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="addNewPatientsToMappingTable.html" class="code" title="function [redcapidmap] = addNewPatientsToMappingTable(redcapdata, redcapidmap)">addNewPatientsToMappingTable</a>	addNewPatientsToMappingTable - add records to the mapping table for new</li><li><a href="natsortrows.html" class="code" title="function [Y,ndx,dbg] = natsortrows(X,rgx,varargin)">natsortrows</a>	Natural-order / alphanumeric sort the rows of a cell array or string array.</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function nsChkRgx(rgx)</a></li><li><a href="#_sub2" class="code">function arr = ns1s2c(arr)</a></li><li><a href="#_sub3" class="code">function nsAssert(vin,vix,ids,txt)</a></li><li><a href="#_sub4" class="code">function grp = nsGroup(vec)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Y,ndx,dbg] = natsort(X,rgx,varargin)</a>
+0002 <span class="comment">% Natural-order / alphanumeric sort strings or character vectors or categorical.</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% (c) 2012-2021 Stephen Cobeldick</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Sorts text by character code and by number value. By default matches</span>
+0007 <span class="comment">% integer substrings and performs a case-insensitive ascending sort.</span>
+0008 <span class="comment">% Options select other number formats, sort order, case sensitivity, etc.</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%%% Example:</span>
+0011 <span class="comment">% &gt;&gt; X = {'x2', 'x10', 'x1'};</span>
+0012 <span class="comment">% &gt;&gt; sort(X) % wrong number order</span>
+0013 <span class="comment">% ans =   'x1'  'x10'  'x2'</span>
+0014 <span class="comment">% &gt;&gt; natsort(X)</span>
+0015 <span class="comment">% ans =   'x1'  'x2'  'x10'</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">%%% Syntax:</span>
+0018 <span class="comment">%  Y = natsort(X)</span>
+0019 <span class="comment">%  Y = natsort(X,rgx)</span>
+0020 <span class="comment">%  Y = natsort(X,rgx,&lt;options&gt;)</span>
+0021 <span class="comment">% [Y,ndx,dbg] = natsort(X,...)</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% To sort any file-names or folder-names use NATSORTFILES (File Exchange 47434)</span>
+0024 <span class="comment">% To sort the rows of a string/cell array use NATSORTROWS (File Exchange 47433)</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%% Number Substrings %%</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">% By default consecutive digit characters are interpreted as an integer.</span>
+0029 <span class="comment">% Specifying the optional regular expression pattern allows the numbers to</span>
+0030 <span class="comment">% include a +/- sign, decimal digits, exponent E-notation, quantifiers,</span>
+0031 <span class="comment">% or look-around matching. For information on defining regular expressions:</span>
+0032 <span class="comment">% &lt;http://www.mathworks.com/help/matlab/matlab_prog/regular-expressions.html&gt;</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">% The number substrings are parsed by SSCANF into numeric values, using</span>
+0035 <span class="comment">% either the **default format '%f' or the user-supplied format specifier.</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">% This table shows examples of some regular expression patterns for common</span>
+0038 <span class="comment">% notations and ways of writing numbers, together with suitable SSCANF formats:</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">% Regular       | Number Substring | Number Substring              | SSCANF</span>
+0041 <span class="comment">% Expression:   | Match Examples:  | Match Description:            | Format Specifier:</span>
+0042 <span class="comment">% ==============|==================|===============================|==================</span>
+0043 <span class="comment">% **        \d+ | 0, 123, 4, 56789 | unsigned integer              | %f  %i  %u  %lu</span>
+0044 <span class="comment">% --------------|------------------|-------------------------------|------------------</span>
+0045 <span class="comment">%      [-+]?\d+ | +1, 23, -45, 678 | integer with optional +/- sign| %f  %i  %d  %ld</span>
+0046 <span class="comment">% --------------|------------------|-------------------------------|------------------</span>
+0047 <span class="comment">%     \d+\.?\d* | 012, 3.45, 678.9 | integer or decimal            | %f</span>
+0048 <span class="comment">% (\d+|Inf|NaN) | 123, 4, NaN, Inf | integer, Inf, or NaN          | %f</span>
+0049 <span class="comment">%  \d+\.\d+E\d+ | 0.123e4, 5.67e08 | exponential notation          | %f</span>
+0050 <span class="comment">% --------------|------------------|-------------------------------|------------------</span>
+0051 <span class="comment">%  0X[0-9A-F]+  | 0X0, 0X3E7, 0XFF | hexadecimal notation &amp; prefix | %x  %i</span>
+0052 <span class="comment">%    [0-9A-F]+  |   0,   3E7,   FF | hexadecimal notation          | %x</span>
+0053 <span class="comment">% --------------|------------------|-------------------------------|------------------</span>
+0054 <span class="comment">%  0[0-7]+      | 012, 03456, 0700 | octal notation &amp; prefix       | %o  %i</span>
+0055 <span class="comment">%   [0-7]+      |  12,  3456,  700 | octal notation                | %o</span>
+0056 <span class="comment">% --------------|------------------|-------------------------------|------------------</span>
+0057 <span class="comment">%  0B[01]+      | 0B1, 0B101, 0B10 | binary notation &amp; prefix      | %b   (not SSCANF)</span>
+0058 <span class="comment">%    [01]+      |   1,   101,   10 | binary notation               | %b   (not SSCANF)</span>
+0059 <span class="comment">% --------------|------------------|-------------------------------|------------------</span>
+0060 <span class="comment">%</span>
+0061 <span class="comment">%% Debugging Output Array %%</span>
+0062 <span class="comment">%</span>
+0063 <span class="comment">% The third output is a cell array &lt;dbg&gt;, for checking the numbers</span>
+0064 <span class="comment">% matched by the regular expression &lt;rgx&gt; and converted to numeric</span>
+0065 <span class="comment">% by the SSCANF format. The rows of &lt;dbg&gt; are linearly indexed from &lt;X&gt;.</span>
+0066 <span class="comment">%</span>
+0067 <span class="comment">% &gt;&gt; [~,~,dbg] = natsort(X)</span>
+0068 <span class="comment">% dbg =</span>
+0069 <span class="comment">%    'x'    [ 2]</span>
+0070 <span class="comment">%    'x'    [10]</span>
+0071 <span class="comment">%    'x'    [ 1]</span>
+0072 <span class="comment">%</span>
+0073 <span class="comment">%% Examples %%</span>
+0074 <span class="comment">%</span>
+0075 <span class="comment">%%% Multiple integers (e.g. release version numbers):</span>
+0076 <span class="comment">% &gt;&gt; A = {'v10.6', 'v9.10', 'v9.5', 'v10.10', 'v9.10.20', 'v9.10.8'};</span>
+0077 <span class="comment">% &gt;&gt; sort(A)</span>
+0078 <span class="comment">% ans =   'v10.10'  'v10.6'  'v9.10'  'v9.10.20'  'v9.10.8'  'v9.5'</span>
+0079 <span class="comment">% &gt;&gt; natsort(A)</span>
+0080 <span class="comment">% ans =   'v9.5'  'v9.10'  'v9.10.8'  'v9.10.20'  'v10.6'  'v10.10'</span>
+0081 <span class="comment">%</span>
+0082 <span class="comment">%%% Integer, decimal, NaN, or Inf numbers, possibly with +/- signs:</span>
+0083 <span class="comment">% &gt;&gt; B = {'test+NaN', 'test11.5', 'test-1.4', 'test', 'test-Inf', 'test+0.3'};</span>
+0084 <span class="comment">% &gt;&gt; sort(B)</span>
+0085 <span class="comment">% ans =   'test' 'test+0.3' 'test+NaN' 'test-1.4' 'test-Inf' 'test11.5'</span>
+0086 <span class="comment">% &gt;&gt; natsort(B, '[-+]?(NaN|Inf|\d+\.?\d*)')</span>
+0087 <span class="comment">% ans =   'test' 'test-Inf' 'test-1.4' 'test+0.3' 'test11.5' 'test+NaN'</span>
+0088 <span class="comment">%</span>
+0089 <span class="comment">%%% Integer or decimal numbers, possibly with an exponent:</span>
+0090 <span class="comment">% &gt;&gt; C = {'0.56e007', '', '43E-2', '10000', '9.8'};</span>
+0091 <span class="comment">% &gt;&gt; sort(C)</span>
+0092 <span class="comment">% ans =   ''  '0.56e007'  '10000'  '43E-2'  '9.8'</span>
+0093 <span class="comment">% &gt;&gt; natsort(C, '\d+\.?\d*(E[-+]?\d+)?')</span>
+0094 <span class="comment">% ans =   ''  '43E-2'  '9.8'  '10000'  '0.56e007'</span>
+0095 <span class="comment">%</span>
+0096 <span class="comment">%%% Hexadecimal numbers (with '0X' prefix):</span>
+0097 <span class="comment">% &gt;&gt; D = {'a0X7C4z', 'a0X5z', 'a0X18z', 'a0XFz'};</span>
+0098 <span class="comment">% &gt;&gt; sort(D)</span>
+0099 <span class="comment">% ans =   'a0X18z'  'a0X5z'  'a0X7C4z'  'a0XFz'</span>
+0100 <span class="comment">% &gt;&gt; natsort(D, '0X[0-9A-F]+', '%i')</span>
+0101 <span class="comment">% ans =   'a0X5z'  'a0XFz'  'a0X18z'  'a0X7C4z'</span>
+0102 <span class="comment">%</span>
+0103 <span class="comment">%%% Binary numbers:</span>
+0104 <span class="comment">% &gt;&gt; E = {'a11111000100z', 'a101z', 'a000000000011000z', 'a1111z'};</span>
+0105 <span class="comment">% &gt;&gt; sort(E)</span>
+0106 <span class="comment">% ans =   'a000000000011000z'  'a101z'  'a11111000100z'  'a1111z'</span>
+0107 <span class="comment">% &gt;&gt; natsort(E, '[01]+', '%b')</span>
+0108 <span class="comment">% ans =   'a101z'  'a1111z'  'a000000000011000z'  'a11111000100z'</span>
+0109 <span class="comment">%</span>
+0110 <span class="comment">%%% Case sensitivity:</span>
+0111 <span class="comment">% &gt;&gt; F = {'a2', 'A20', 'A1', 'a10', 'A2', 'a1'};</span>
+0112 <span class="comment">% &gt;&gt; natsort(F, [], 'ignorecase') % default</span>
+0113 <span class="comment">% ans =   'A1'  'a1'  'a2'  'A2'  'a10'  'A20'</span>
+0114 <span class="comment">% &gt;&gt; natsort(F, [], 'matchcase')</span>
+0115 <span class="comment">% ans =   'A1'  'A2'  'A20'  'a1'  'a2'  'a10'</span>
+0116 <span class="comment">%</span>
+0117 <span class="comment">%%% Sort order:</span>
+0118 <span class="comment">% &gt;&gt; G = {'2', 'a', '', '3', 'B', '1'};</span>
+0119 <span class="comment">% &gt;&gt; natsort(G, [], 'ascend') % default</span>
+0120 <span class="comment">% ans =   ''   '1'  '2'  '3'  'a'  'B'</span>
+0121 <span class="comment">% &gt;&gt; natsort(G, [], 'descend')</span>
+0122 <span class="comment">% ans =   'B'  'a'  '3'  '2'  '1'  ''</span>
+0123 <span class="comment">% &gt;&gt; natsort(G, [], 'num&lt;char') % default</span>
+0124 <span class="comment">% ans =   ''   '1'  '2'  '3'  'a'  'B'</span>
+0125 <span class="comment">% &gt;&gt; natsort(G, [], 'char&lt;num')</span>
+0126 <span class="comment">% ans =   ''   'a'  'B'  '1'  '2'  '3'</span>
+0127 <span class="comment">%</span>
+0128 <span class="comment">%%% UINT64 numbers (with full precision):</span>
+0129 <span class="comment">% &gt;&gt; natsort({'a18446744073709551615z', 'a18446744073709551614z'}, [], '%lu')</span>
+0130 <span class="comment">% ans =       'a18446744073709551614z'  'a18446744073709551615z'</span>
+0131 <span class="comment">%</span>
+0132 <span class="comment">%% Input and Output Arguments %%</span>
+0133 <span class="comment">%</span>
+0134 <span class="comment">%%% Inputs (**=default):</span>
+0135 <span class="comment">% X   = Array to be sorted into alphanumeric order. Can be a string</span>
+0136 <span class="comment">%       array, or a cell array of character row vectors, or a categorical</span>
+0137 <span class="comment">%       array, or any other array type which can be converted by CELLSTR.</span>
+0138 <span class="comment">% rgx = Optional regular expression to match number substrings.</span>
+0139 <span class="comment">%     = [] uses the default regular expression '\d+'** to match integers.</span>
+0140 <span class="comment">% &lt;options&gt; can be entered in any order, as many as required:</span>
+0141 <span class="comment">%     = Sort direction: 'descend'/'ascend'**</span>
+0142 <span class="comment">%     = NaN/number order: 'NaN&lt;num'/'num&lt;NaN'**</span>
+0143 <span class="comment">%     = Character/number order: 'char&lt;num'/'num&lt;char'**</span>
+0144 <span class="comment">%     = Character case handling: 'matchcase'/'ignorecase'**</span>
+0145 <span class="comment">%     = SSCANF conversion format: '%x', '%li', '%b', '%f'**, etc.</span>
+0146 <span class="comment">%</span>
+0147 <span class="comment">%%% Outputs:</span>
+0148 <span class="comment">% Y   = Array X sorted into alphanumeric order.</span>
+0149 <span class="comment">% ndx = NumericArray, such that Y = X(ndx). The same size as X.</span>
+0150 <span class="comment">% dbg = CellArray of the parsed characters and number values.</span>
+0151 <span class="comment">%       Each row corresponds to one input element, linear-indexed from X.</span>
+0152 <span class="comment">%</span>
+0153 <span class="comment">% See also SORT NATSORTFILES NATSORTROWS CELLSTR REGEXP IREGEXP SSCANF</span>
+0154 
+0155 <span class="comment">%% Input Wrangling %%</span>
+0156 <span class="comment">%</span>
+0157 fun = @(c)cellfun(<span class="string">'isclass'</span>,c,<span class="string">'char'</span>) &amp; cellfun(<span class="string">'size'</span>,c,1)&lt;2 &amp; cellfun(<span class="string">'ndims'</span>,c)&lt;3;
+0158 <span class="comment">%</span>
+0159 <span class="keyword">if</span> iscell(X)
+0160     assert(all(fun(X(:))),<span class="keyword">...</span>
+0161         <span class="string">'SC:natsort:X:CellInvalidContent'</span>,<span class="keyword">...</span>
+0162         <span class="string">'First input &lt;X&gt; cell array must contain only character row vectors.'</span>)
+0163     Y = X(:);
+0164 <span class="keyword">elseif</span> ischar(X) <span class="comment">% Convert char matrix:</span>
+0165     Y = cellstr(X);
+0166 <span class="keyword">else</span> <span class="comment">% Convert string, categorical, datetime, etc.:</span>
+0167     Y = cellstr(X(:));
+0168 <span class="keyword">end</span>
+0169 <span class="comment">%</span>
+0170 <span class="keyword">if</span> nargin&lt;2 || isnumeric(rgx)&amp;&amp;isequal(rgx,[])
+0171     rgx = <span class="string">'\d+'</span>;
+0172 <span class="keyword">elseif</span> ischar(rgx)
+0173     assert(ndims(rgx)&lt;3 &amp;&amp; size(rgx,1)==1,<span class="keyword">...</span>
+0174         <span class="string">'SC:natsort:rgx:NotCharVector'</span>,<span class="keyword">...</span>
+0175         <span class="string">'Second input &lt;rgx&gt; character row vector must have size 1xN.'</span>) <span class="comment">%#ok&lt;ISMAT&gt;</span>
+0176     <a href="#_sub1" class="code" title="subfunction nsChkRgx(rgx)">nsChkRgx</a>(rgx)
+0177 <span class="keyword">else</span>
+0178     rgx = <a href="#_sub2" class="code" title="subfunction arr = ns1s2c(arr)">ns1s2c</a>(rgx);
+0179     assert(ischar(rgx),<span class="keyword">...</span>
+0180         <span class="string">'SC:natsort:rgx:InvalidType'</span>,<span class="keyword">...</span>
+0181         <span class="string">'Second input &lt;rgx&gt; must be a character row vector or a string scalar.'</span>)
+0182     <a href="#_sub1" class="code" title="subfunction nsChkRgx(rgx)">nsChkRgx</a>(rgx)
+0183 <span class="keyword">end</span>
+0184 <span class="comment">%</span>
+0185 varargin = cellfun(@<a href="#_sub2" class="code" title="subfunction arr = ns1s2c(arr)">ns1s2c</a>, varargin, <span class="string">'UniformOutput'</span>,false);
+0186 <span class="comment">%</span>
+0187 assert(all(fun(varargin)),<span class="keyword">...</span>
+0188     <span class="string">'SC:natsort:option:InvalidType'</span>,<span class="keyword">...</span>
+0189     <span class="string">'All optional arguments must be character row vectors or string scalars.'</span>)
+0190 <span class="comment">%</span>
+0191 <span class="comment">% Character case:</span>
+0192 ccm = strcmpi(varargin,<span class="string">'matchcase'</span>);
+0193 ccx = strcmpi(varargin,<span class="string">'ignorecase'</span>)|ccm;
+0194 <span class="comment">% Sort direction:</span>
+0195 sdd = strcmpi(varargin,<span class="string">'descend'</span>);
+0196 sdx = strcmpi(varargin,<span class="string">'ascend'</span>)|sdd;
+0197 <span class="comment">% Char/num order:</span>
+0198 orb = strcmpi(varargin,<span class="string">'char&lt;num'</span>);
+0199 orx = strcmpi(varargin,<span class="string">'num&lt;char'</span>)|orb;
+0200 <span class="comment">% NaN/num order:</span>
+0201 nab = strcmpi(varargin,<span class="string">'NaN&lt;num'</span>);
+0202 nax = strcmpi(varargin,<span class="string">'num&lt;NaN'</span>)|nab;
+0203 <span class="comment">% SSCANF format:</span>
+0204 sfx = ~cellfun(<span class="string">'isempty'</span>,regexp(varargin,<span class="string">'^%([bdiuoxfeg]|l[diuox])$'</span>));
+0205 <span class="comment">%</span>
+0206 <a href="#_sub3" class="code" title="subfunction nsAssert(vin,vix,ids,txt)">nsAssert</a>(varargin, ~(ccx|orx|nax|sdx|sfx))
+0207 <a href="#_sub3" class="code" title="subfunction nsAssert(vin,vix,ids,txt)">nsAssert</a>(varargin, ccx,  <span class="string">'CaseMatching'</span>, <span class="string">'case sensitivity'</span>)
+0208 <a href="#_sub3" class="code" title="subfunction nsAssert(vin,vix,ids,txt)">nsAssert</a>(varargin, orx,  <span class="string">'CharNumOrder'</span>, <span class="string">'char&lt;-&gt;num'</span>)
+0209 <a href="#_sub3" class="code" title="subfunction nsAssert(vin,vix,ids,txt)">nsAssert</a>(varargin, nax,   <span class="string">'NanNumOrder'</span>,  <span class="string">'NaN&lt;-&gt;num'</span>)
+0210 <a href="#_sub3" class="code" title="subfunction nsAssert(vin,vix,ids,txt)">nsAssert</a>(varargin, sdx, <span class="string">'SortDirection'</span>, <span class="string">'sort direction'</span>)
+0211 <a href="#_sub3" class="code" title="subfunction nsAssert(vin,vix,ids,txt)">nsAssert</a>(varargin, sfx,  <span class="string">'sscanfFormat'</span>, <span class="string">'SSCANF format'</span>)
+0212 <span class="comment">%</span>
+0213 <span class="comment">% SSCANF format:</span>
+0214 <span class="keyword">if</span> nnz(sfx)
+0215     fmt = varargin{sfx};
+0216 <span class="keyword">else</span>
+0217     fmt = <span class="string">'%f'</span>;
+0218 <span class="keyword">end</span>
+0219 <span class="comment">%</span>
+0220 <span class="comment">%% Identify and Convert Numbers %%</span>
+0221 <span class="comment">%</span>
+0222 [nbr,spl] = regexpi(Y(:),rgx, <span class="string">'match'</span>,<span class="string">'split'</span>, varargin{ccx});
+0223 <span class="comment">%</span>
+0224 <span class="keyword">if</span> numel(nbr)
+0225     tmp = [nbr{:}];
+0226     <span class="keyword">if</span> strcmp(fmt,<span class="string">'%b'</span>)
+0227         tmp = regexprep(tmp,<span class="string">'^0[Bb]'</span>,<span class="string">''</span>);
+0228         vec = cellfun(@(s)pow2(numel(s)-1:-1:0)*sscanf(s,<span class="string">'%1d'</span>),tmp);
+0229     <span class="keyword">else</span>
+0230         vec = sscanf(sprintf(<span class="string">' %s'</span>,tmp{:}),fmt);
+0231     <span class="keyword">end</span>
+0232     assert(numel(vec)==numel(tmp),<span class="keyword">...</span>
+0233         <span class="string">'SC:natsort:sscanf:TooManyValues'</span>,<span class="keyword">...</span>
+0234         <span class="string">'The %s format must return one value for each input number.'</span>,fmt)
+0235 <span class="keyword">else</span>
+0236     vec = [];
+0237 <span class="keyword">end</span>
+0238 <span class="comment">%</span>
+0239 <span class="comment">%% Allocate Data %%</span>
+0240 <span class="comment">%</span>
+0241 <span class="comment">% Determine lengths:</span>
+0242 nmx = numel(Y);
+0243 lnn = cellfun(<span class="string">'length'</span>,nbr);
+0244 lns = cellfun(<span class="string">'length'</span>,spl);
+0245 mxs = max(lns);
+0246 <span class="comment">%</span>
+0247 <span class="comment">% Allocate data:</span>
+0248 idn = logical(bsxfun(@le,1:mxs,lnn).'); <span class="comment">% TRANSPOSE bug loses type (R2013b)</span>
+0249 ids = logical(bsxfun(@le,1:mxs,lns).'); <span class="comment">% TRANSPOSE bug loses type (R2013b)</span>
+0250 arn = zeros(mxs,nmx,class(vec));
+0251 ars =  cell(mxs,nmx);
+0252 ars(:) = {<span class="string">''</span>};
+0253 ars(ids) = [spl{:}];
+0254 arn(idn) = vec;
+0255 <span class="comment">%</span>
+0256 <span class="comment">%% Debugging Array %%</span>
+0257 <span class="comment">%</span>
+0258 <span class="keyword">if</span> nargout&gt;2
+0259     mxw = 0;
+0260     <span class="keyword">for</span> k = 1:nmx
+0261         mxw = max(mxw,numel(nbr{k})+nnz(~cellfun(<span class="string">'isempty'</span>,spl{k})));
+0262     <span class="keyword">end</span>
+0263     dbg = cell(nmx,mxw);
+0264     <span class="keyword">for</span> k = 1:nmx
+0265         tmp = spl{k};
+0266         tmp(2,1:end-1) = num2cell(arn(idn(:,k),k));
+0267         tmp(cellfun(<span class="string">'isempty'</span>,tmp)) = [];
+0268         dbg(k,1:numel(tmp)) = tmp;
+0269     <span class="keyword">end</span>
+0270 <span class="keyword">end</span>
+0271 <span class="comment">%</span>
+0272 <span class="comment">%% Sort Columns %%</span>
+0273 <span class="comment">%</span>
+0274 <span class="keyword">if</span> ~any(ccm) <span class="comment">% ignorecase</span>
+0275     ars = lower(ars);
+0276 <span class="keyword">end</span>
+0277 <span class="comment">%</span>
+0278 <span class="keyword">if</span> any(orb) <span class="comment">% char&lt;num</span>
+0279     <span class="comment">% Determine max character code:</span>
+0280     mxc = <span class="string">'X'</span>;
+0281     tmp = warning(<span class="string">'off'</span>,<span class="string">'all'</span>);
+0282     mxc(1) = Inf;
+0283     warning(tmp)
+0284     mxc(mxc==0) = 255; <span class="comment">% Octave</span>
+0285     <span class="comment">% Append max character code to the split text:</span>
+0286     <span class="keyword">for</span> k = reshape(find(idn),1,[])
+0287         ars{k}(1,end+1) = mxc;
+0288     <span class="keyword">end</span>
+0289 <span class="keyword">end</span>
+0290 <span class="comment">%</span>
+0291 idn(isnan(arn)) = ~any(nab); <span class="comment">% NaN&lt;num</span>
+0292 <span class="comment">%</span>
+0293 <span class="keyword">if</span> any(sdd)
+0294     [~,ndx] = sort(<a href="#_sub4" class="code" title="subfunction grp = nsGroup(vec)">nsGroup</a>(ars(mxs,:)),<span class="string">'descend'</span>);
+0295     <span class="keyword">for</span> k = mxs-1:-1:1
+0296         [~,idx] = sort(arn(k,ndx),<span class="string">'descend'</span>);
+0297         ndx = ndx(idx);
+0298         [~,idx] = sort(idn(k,ndx),<span class="string">'descend'</span>);
+0299         ndx = ndx(idx);
+0300         [~,idx] = sort(<a href="#_sub4" class="code" title="subfunction grp = nsGroup(vec)">nsGroup</a>(ars(k,ndx)),<span class="string">'descend'</span>);
+0301         ndx = ndx(idx);
+0302     <span class="keyword">end</span>
+0303 <span class="keyword">else</span>
+0304     [~,ndx] = sort(ars(mxs,:)); <span class="comment">% ascend</span>
+0305     <span class="keyword">for</span> k = mxs-1:-1:1
+0306         [~,idx] = sort(arn(k,ndx),<span class="string">'ascend'</span>);
+0307         ndx = ndx(idx);
+0308         [~,idx] = sort(idn(k,ndx),<span class="string">'ascend'</span>);
+0309         ndx = ndx(idx);
+0310         [~,idx] = sort(ars(k,ndx)); <span class="comment">% ascend</span>
+0311         ndx = ndx(idx);
+0312     <span class="keyword">end</span>
+0313 <span class="keyword">end</span>
+0314 <span class="comment">%</span>
+0315 <span class="comment">%% Outputs %%</span>
+0316 <span class="comment">%</span>
+0317 <span class="keyword">if</span> ischar(X)
+0318     ndx = ndx(:);
+0319     Y = X(ndx,:);
+0320 <span class="keyword">else</span>
+0321     ndx = reshape(ndx,size(X));
+0322     Y = X(ndx);
+0323 <span class="keyword">end</span>
+0324 <span class="comment">%</span>
+0325 <span class="keyword">end</span>
+0326 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%natsort</span>
+0327 <a name="_sub1" href="#_subfunctions" class="code">function nsChkRgx(rgx)</a>
+0328 tmp = <span class="string">'^((match|ignore)case|(de|a)scend|(char|nan|num)[&lt;&gt;](char|nan|num)|%[a-z]+)$'</span>;
+0329 assert(isempty(regexpi(rgx,tmp,<span class="string">'once'</span>)),<span class="string">'SC:natsort:rgx:OptionMixUp'</span>,<span class="keyword">...</span>
+0330     [<span class="string">'Second input &lt;rgx&gt; must be a regular expression that matches numbers.'</span>,<span class="keyword">...</span>
+0331     <span class="string">'\nThe provided input &quot;%s&quot; is one of the optional arguments (inputs 3+).'</span>],rgx)
+0332 <span class="keyword">if</span> isempty(regexpi(<span class="string">'0'</span>,rgx,<span class="string">'once'</span>))
+0333     warning(<span class="string">'SC:natsort:rgx:SanityCheck'</span>,<span class="keyword">...</span>
+0334         [<span class="string">'Second input &lt;rgx&gt; must be a regular expression that matches numbers.'</span>,<span class="keyword">...</span>
+0335         <span class="string">'\nThe provided regular expression does not match the digit &quot;0&quot;, which\n'</span>,<span class="keyword">...</span>
+0336         <span class="string">'may be acceptable (e.g. if literals, quantifiers, or lookarounds are used).'</span><span class="keyword">...</span>
+0337         <span class="string">'\nThe provided regular expression: &quot;%s&quot;'</span>],rgx)
+0338 <span class="keyword">end</span>
+0339 <span class="keyword">end</span>
+0340 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%nsChkRgx</span>
+0341 <a name="_sub2" href="#_subfunctions" class="code">function arr = ns1s2c(arr)</a>
+0342 <span class="comment">% If scalar string then extract the character vector, otherwise data is unchanged.</span>
+0343 <span class="keyword">if</span> isa(arr,<span class="string">'string'</span>) &amp;&amp; isscalar(arr)
+0344     arr = arr{1};
+0345 <span class="keyword">end</span>
+0346 <span class="keyword">end</span>
+0347 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ns1s2c</span>
+0348 <a name="_sub3" href="#_subfunctions" class="code">function nsAssert(vin,vix,ids,txt)</a>
+0349 <span class="comment">% Throw an error if an option is overspecified or unsupported.</span>
+0350 tmp = sprintf(<span class="string">'The provided inputs:%s'</span>,sprintf(<span class="string">' &quot;%s&quot;'</span>,vin{vix}));
+0351 <span class="keyword">if</span> nargin&gt;2
+0352     assert(nnz(vix)&lt;2,<span class="keyword">...</span>
+0353         sprintf(<span class="string">'SC:natsort:option:%sOverspecified'</span>,ids),<span class="keyword">...</span>
+0354         <span class="string">'The %s option may only be specified once.\n%s'</span>,txt,tmp)
+0355 <span class="keyword">else</span>
+0356     assert(~any(vix),<span class="keyword">...</span>
+0357         <span class="string">'SC:natsort:option:InvalidOptions'</span>,<span class="keyword">...</span>
+0358         <span class="string">'Invalid options provided.\n%s'</span>,tmp)
+0359 <span class="keyword">end</span>
+0360 <span class="keyword">end</span>
+0361 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%nsAssert</span>
+0362 <a name="_sub4" href="#_subfunctions" class="code">function grp = nsGroup(vec)</a>
+0363 <span class="comment">% Groups in a cell array of char vectors, equivalent to [~,~,grp]=unique(vec);</span>
+0364 [vec,idx] = sort(vec);
+0365 grp = cumsum([true,~strcmp(vec(1:end-1),vec(2:end))]);
+0366 grp(idx) = grp;
+0367 <span class="keyword">end</span>
+0368 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%nsGroup</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotLabelledInterventions</title>
+  <meta name="keywords" content="plotLabelledInterventions">
+  <meta name="description" content="plotLabelledInterventions - plots all the labelled test data">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; plotLabelledInterventions.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>plotLabelledInterventions
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>plotLabelledInterventions - plots all the labelled test data</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function plotLabelledInterventions(amIntrDatacube, amInterventions, amLabelledInterventions,pdoffset, overall_pdoffset, measures, normmean, max_offset, align_wind, ex_start,study, nmeasures) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> plotLabelledInterventions - plots all the labelled test data</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="plotHorizontalLine.html" class="code" title="function [xl, yl] = plotHorizontalLine(ax, yval, xl, yl, colour, linestyle, linewidth)">plotHorizontalLine</a>	plotHotizontalLine - plots a horizontal line</li><li><a href="plotMeasurementData.html" class="code" title="function [xl, yl] = plotMeasurementData(ax, days, mdata, xl, yl, measure, colour, linestyle, linewidth, marker, markersize, markerec, markerfc)">plotMeasurementData</a>	plotMeasurementDataAndMean - plots the measurement data along with the mean and</li><li><a href="plotProbDistribution.html" class="code" title="function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc)">plotProbDistribution</a>	plotProbDistribution - plots a prob distribution</li><li><a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>	plotVerticalLine - plots a vertical line</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runModelUtilityFunctions.html" class="code" title="">runModelUtilityFunctions</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function plotLabelledInterventions(amIntrDatacube, amInterventions, amLabelledInterventions, </a><span class="keyword">...</span>
+0002     pdoffset, overall_pdoffset, measures, normmean, max_offset, align_wind, ex_start, <span class="keyword">...</span>
+0003     study, nmeasures)
+0004 
+0005 <span class="comment">% plotLabelledInterventions - plots all the labelled test data</span>
+0006 
+0007 plotsdown = 9;
+0008 plotsacross = 5;
+0009 mpos = [ 1 2 6 7 ; 3 4 8 9 ; 11 12 16 17 ; 13 14 18 19 ; 21 22 26 27 ; 23 24 28 29 ; 31 32 36 37 ; 33 34 38 39];
+0010 hpos = [ 5 ; 10 ; 15 ; 20 ; 25 ; 30 ; 35 ; 40 ; 45 ; 44 ; 43 ; 42 ; 41 ];
+0011 days = [-1 * (max_offset + align_wind - 1): -1];
+0012 xl  = zeros(nmeasures + 1, 2);
+0013 yl  = zeros(nmeasures + 1, 2);
+0014 xl2 = zeros(nmeasures + 1, 2);
+0015 yl2 = zeros(nmeasures + 1, 2);
+0016 
+0017 <span class="keyword">for</span> i = 1:size(amInterventions,1)
+0018     scid = amLabelledInterventions.SmartCareID(i);
+0019     fprintf(<span class="string">'Intervention %2d: ID %3d, Date %s, Data Window Completeness = %.2f%%\n'</span>, i, scid, <span class="keyword">...</span>
+0020         datestr(amLabelledInterventions.IVStartDate(i),29), amLabelledInterventions.DataWindowCompleteness(i));
+0021     name = sprintf(<span class="string">'%s_AM Labelled Test Data - Ex %d (ID %d Date %s)'</span>, study, i, scid, <span class="keyword">...</span>
+0022         datestr(amLabelledInterventions.IVStartDate(i),29));
+0023     
+0024     [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(name, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0025     
+0026     <span class="keyword">for</span> m = 1:nmeasures
+0027         <span class="keyword">if</span> all(isnan(amIntrDatacube(i, :, m)))
+0028             <span class="keyword">continue</span>;
+0029         <span class="keyword">end</span>
+0030         <span class="comment">% initialise plot areas</span>
+0031         xl(m,:) = [min(days) max(days)];
+0032         yl(m,:) = [min(amIntrDatacube(i, 1:max_offset + align_wind - 1, m) * 0.99) <span class="keyword">...</span>
+0033               max(amIntrDatacube(i, 1:max_offset + align_wind - 1, m) * 1.01)];
+0034                     
+0035         <span class="comment">% create subplot and plot required data arrays</span>
+0036         ax(m) = subplot(plotsdown, plotsacross, mpos(m,:), <span class="string">'Parent'</span>,p);
+0037         
+0038         [xl(m,:), yl(m,:)] = <a href="plotMeasurementData.html" class="code" title="function [xl, yl] = plotMeasurementData(ax, days, mdata, xl, yl, measure, colour, linestyle, linewidth, marker, markersize, markerec, markerfc)">plotMeasurementData</a>(ax(m), days, amIntrDatacube(i, :, m), xl(m,:), yl(m,:), measures(m,:), [0, 0.65, 1], <span class="string">'-'</span>, 1.0, <span class="string">'o'</span>, 2.0, <span class="string">'blue'</span>, <span class="string">'green'</span>);
+0039         <span class="keyword">if</span> measures.Mask(m) == 1
+0040             title(measures.DisplayName(m), <span class="string">'FontSize'</span>, 6, <span class="string">'BackgroundColor'</span>, <span class="string">'green'</span>);
+0041         <span class="keyword">else</span>
+0042             title(measures.DisplayName(m), <span class="string">'FontSize'</span>, 6);
+0043         <span class="keyword">end</span>
+0044         [xl(m,:), yl(m,:)] = <a href="plotHorizontalLine.html" class="code" title="function [xl, yl] = plotHorizontalLine(ax, yval, xl, yl, colour, linestyle, linewidth)">plotHorizontalLine</a>(ax(m), normmean(i, m), xl(m,:), yl(m,:), <span class="string">'blue'</span>, <span class="string">'--'</span>, 0.5); <span class="comment">% plot mean</span>
+0045         xlim(ax(m), xl(m, :));
+0046         
+0047         <span class="comment">%[xl(m,:), yl(m,:)] = plotExStart(ax(m), ex_start, amLabelledInterventions.LowerBound1(i) - ex_start, xl(m,:), yl(m,:),  'red', '-', 0.5);</span>
+0048         <span class="comment">%[xl(m,:), yl(m,:)] = plotExStart(ax(m), ex_start, amLabelledInterventions.UpperBound1(i) - ex_start, xl(m,:), yl(m,:),  'red', '-', 0.5);</span>
+0049         <span class="comment">%if amLabelledInterventions.LowerBound2(i) ~= 0</span>
+0050         <span class="comment">%    [xl(m,:), yl(m,:)] = plotExStart(ax(m), ex_start, amLabelledInterventions.LowerBound2(i) - ex_start, xl(m,:), yl(m,:),  'red', '-', 0.5);</span>
+0051         <span class="comment">%    [xl(m,:), yl(m,:)] = plotExStart(ax(m), ex_start, amLabelledInterventions.UpperBound2(i) - ex_start, xl(m,:), yl(m,:),  'red', '-', 0.5);</span>
+0052         <span class="comment">%end</span>
+0053         [xl(m,:), yl(m,:)] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax(m), amLabelledInterventions.LowerBound1(i), xl(m,:), yl(m,:),  <span class="string">'red'</span>, <span class="string">'-'</span>, 0.5);
+0054         [xl(m,:), yl(m,:)] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax(m), amLabelledInterventions.UpperBound1(i), xl(m,:), yl(m,:),  <span class="string">'red'</span>, <span class="string">'-'</span>, 0.5);
+0055         <span class="keyword">if</span> amLabelledInterventions.LowerBound2(i) ~= 0
+0056             [xl(m,:), yl(m,:)] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax(m), amLabelledInterventions.LowerBound2(i), xl(m,:), yl(m,:),  <span class="string">'red'</span>, <span class="string">'-'</span>, 0.5);
+0057             [xl(m,:), yl(m,:)] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax(m), amLabelledInterventions.UpperBound2(i), xl(m,:), yl(m,:),  <span class="string">'red'</span>, <span class="string">'-'</span>, 0.5);
+0058         <span class="keyword">end</span>
+0059         hold on;
+0060         fill(ax(m), [ amLabelledInterventions.LowerBound1(i) amLabelledInterventions.UpperBound1(i)    <span class="keyword">...</span>
+0061                       amLabelledInterventions.UpperBound1(i) amLabelledInterventions.LowerBound1(i) ], <span class="keyword">...</span>
+0062                       [yl(m,1) yl(m,1) yl(m,2) yl(m,2)], <span class="string">'red'</span>, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0063         <span class="keyword">if</span> amLabelledInterventions.LowerBound2(i) ~= 0        
+0064             fill(ax(m), [ amLabelledInterventions.LowerBound2(i) amLabelledInterventions.UpperBound2(i)    <span class="keyword">...</span>
+0065                           amLabelledInterventions.UpperBound2(i) amLabelledInterventions.LowerBound2(i) ], <span class="keyword">...</span>
+0066                           [yl(m,1) yl(m,1) yl(m,2) yl(m,2)], <span class="string">'red'</span>, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0067         <span class="keyword">end</span>        
+0068         hold off;
+0069             
+0070         xl2(m,:) = [0 max_offset-1];
+0071         yl2(m,:) = [0 0.25];
+0072         
+0073         xl2(m,:) = [0 max_offset-1];
+0074         yl2(m,:) = [0 0.25];
+0075                     
+0076         ax2(m) = subplot(plotsdown, plotsacross, hpos(m,:),<span class="string">'Parent'</span>,p); 
+0077                     
+0078         [xl2(m,:), yl2(m,:)] = <a href="plotProbDistribution.html" class="code" title="function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc)">plotProbDistribution</a>(ax2(m), max_offset, pdoffset(m, i,:), xl2(m,:), yl2(m,:), <span class="string">'o'</span>, 0.5, 2.0, <span class="string">'blue'</span>, <span class="string">'blue'</span>);
+0079                     
+0080         set(gca,<span class="string">'fontsize'</span>,6);
+0081         <span class="keyword">if</span> measures.Mask(m) == 1
+0082             title(sprintf(<span class="string">'%s'</span>, measures.DisplayName{m}), <span class="string">'BackgroundColor'</span>, <span class="string">'green'</span>);
+0083         <span class="keyword">else</span>
+0084             title(sprintf(<span class="string">'%s'</span>, measures.DisplayName{m}));
+0085         <span class="keyword">end</span>
+0086  
+0087         [xl2(m,:), yl2(m,:)] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax2(m), amLabelledInterventions.LowerBound1(i) - ex_start, xl2(m,:), yl2(m,:), <span class="string">'red'</span>, <span class="string">'-'</span>, 0.5);
+0088         [xl2(m,:), yl2(m,:)] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax2(m), amLabelledInterventions.UpperBound1(i) - ex_start, xl2(m,:), yl2(m,:), <span class="string">'red'</span>, <span class="string">'-'</span>, 0.5);
+0089         <span class="keyword">if</span> amLabelledInterventions.LowerBound2(i) ~= 0
+0090             [xl2(m,:), yl2(m,:)] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax2(m), amLabelledInterventions.LowerBound2(i) - ex_start, xl2(m,:), yl2(m,:), <span class="string">'red'</span>, <span class="string">'-'</span>, 0.5);
+0091             [xl2(m,:), yl2(m,:)] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax2(m), amLabelledInterventions.UpperBound2(i) - ex_start, xl2(m,:), yl2(m,:), <span class="string">'red'</span>, <span class="string">'-'</span>, 0.5); 
+0092         <span class="keyword">end</span>
+0093         
+0094         hold on;
+0095         fill(ax2(m), [ (amLabelledInterventions.LowerBound1(i) - ex_start) (amLabelledInterventions.UpperBound1(i) - ex_start)    <span class="keyword">...</span>
+0096                        (amLabelledInterventions.UpperBound1(i) - ex_start) (amLabelledInterventions.LowerBound1(i) - ex_start) ], <span class="keyword">...</span>
+0097                        [ yl2(m,1) yl2(m,1) yl2(m,2) yl2(m,2) ], <span class="string">'red'</span>, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0098         <span class="keyword">if</span> amLabelledInterventions.LowerBound2(i) ~= 0  
+0099             fill(ax2(m), [ (amLabelledInterventions.LowerBound2(i) - ex_start) (amLabelledInterventions.UpperBound2(i) - ex_start)    <span class="keyword">...</span>
+0100                            (amLabelledInterventions.UpperBound2(i) - ex_start) (amLabelledInterventions.LowerBound2(i) - ex_start) ], <span class="keyword">...</span>
+0101                            [ yl2(m,1) yl2(m,1) yl2(m,2) yl2(m,2) ], <span class="string">'red'</span>, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0102         <span class="keyword">end</span>
+0103         hold off
+0104     <span class="keyword">end</span>
+0105     
+0106     xl2(nmeasures+1,:) = [0 max_offset-1];
+0107     yl2(nmeasures+1,:) = [0 0.25];
+0108     
+0109     ax2(nmeasures+1) = subplot(plotsdown, plotsacross, hpos(nmeasures + 1,:),<span class="string">'Parent'</span>,p); 
+0110     
+0111     [xl2(nmeasures+1,:), yl2(nmeasures+1,:)] = <a href="plotProbDistribution.html" class="code" title="function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc)">plotProbDistribution</a>(ax2(nmeasures+1), max_offset, <span class="keyword">...</span>
+0112         overall_pdoffset(i,:), xl2(nmeasures+1,:), yl2(nmeasures+1,:), <span class="string">'o'</span>, 0.5, 2.0, <span class="string">'blue'</span>, <span class="string">'blue'</span>);
+0113     
+0114     set(gca,<span class="string">'fontsize'</span>,6);
+0115     title(sprintf(<span class="string">'%s'</span>, <span class="string">'Overall'</span>), <span class="string">'BackgroundColor'</span>, <span class="string">'green'</span>);
+0116     ax2(nmeasures+1).XGrid = <span class="string">'off'</span>;    
+0117     
+0118     [xl2(nmeasures+1,:), yl2(nmeasures+1,:)] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax2(nmeasures+1), amLabelledInterventions.LowerBound1(i) - ex_start, <span class="keyword">...</span>
+0119         xl2(nmeasures+1,:), yl2(nmeasures+1,:), <span class="string">'red'</span>, <span class="string">'-'</span>, 0.5);
+0120     [xl2(nmeasures+1,:), yl2(nmeasures+1,:)] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax2(nmeasures+1), amLabelledInterventions.UpperBound1(i) - ex_start, <span class="keyword">...</span>
+0121         xl2(nmeasures+1,:), yl2(nmeasures+1,:), <span class="string">'red'</span>, <span class="string">'-'</span>, 0.5);
+0122     <span class="keyword">if</span> amLabelledInterventions.LowerBound2(i) ~= 0
+0123         [xl2(nmeasures+1,:), yl2(nmeasures+1,:)] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax2(nmeasures+1), amLabelledInterventions.LowerBound2(i) - ex_start, <span class="keyword">...</span>
+0124             xl2(nmeasures+1,:), yl2(nmeasures+1,:), <span class="string">'red'</span>, <span class="string">'-'</span>, 0.5);
+0125         [xl2(nmeasures+1,:), yl2(nmeasures+1,:)] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax2(nmeasures+1), amLabelledInterventions.UpperBound2(i) - ex_start, <span class="keyword">...</span>
+0126             xl2(nmeasures+1,:), yl2(nmeasures+1,:), <span class="string">'red'</span>, <span class="string">'-'</span>, 0.5);
+0127     <span class="keyword">end</span>
+0128     
+0129     hold on;
+0130     fill(ax2(nmeasures+1), [ (amLabelledInterventions.LowerBound1(i) - ex_start) (amLabelledInterventions.UpperBound1(i) - ex_start)   <span class="keyword">...</span>
+0131                              (amLabelledInterventions.UpperBound1(i) - ex_start) (amLabelledInterventions.LowerBound1(i) - ex_start) ], <span class="keyword">...</span>
+0132                              [ yl2(nmeasures+1,1) yl2(nmeasures+1,1) yl2(nmeasures+1,2) yl2(nmeasures+1,2) ], <span class="keyword">...</span>
+0133                              <span class="string">'red'</span>, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0134     <span class="keyword">if</span> amLabelledInterventions.LowerBound2(i) ~= 0
+0135         fill(ax2(nmeasures+1), [ (amLabelledInterventions.LowerBound2(i) - ex_start) (amLabelledInterventions.UpperBound2(i) - ex_start)   <span class="keyword">...</span>
+0136                                  (amLabelledInterventions.UpperBound2(i) - ex_start) (amLabelledInterventions.LowerBound2(i) - ex_start) ], <span class="keyword">...</span>
+0137                                  [ yl2(nmeasures+1,1) yl2(nmeasures+1,1) yl2(nmeasures+1,2) yl2(nmeasures+1,2) ], <span class="keyword">...</span>
+0138                                  <span class="string">'red'</span>, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0139     <span class="keyword">end</span>
+0140     hold off
+0141         
+0142     set(gca,<span class="string">'fontsize'</span>,6);
+0143     title(sprintf(<span class="string">'%s'</span>, <span class="string">'Overall'</span>), <span class="string">'BackgroundColor'</span>, <span class="string">'green'</span>);
+0144     
+0145     plotsubfolder = <span class="string">'Plots'</span>;
+0146     <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, name, plotsubfolder);
+0147     close(f);
+0148 
+0149 <span class="keyword">end</span>
+0150</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

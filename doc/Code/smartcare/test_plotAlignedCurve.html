@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of test_plotAlignedCurve</title>
+  <meta name="keywords" content="test_plotAlignedCurve">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; test_plotAlignedCurve.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>test_plotAlignedCurve
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 
+0003 basedir = <span class="string">'./'</span>;
+0004 subfolder = <span class="string">'Plots'</span>;
+0005 
+0006 plotsacross = 3;
+0007 plotsdown = round((nmeasures + 1) / plotsacross);
+0008 plottitle = sprintf(<span class="string">'%sAlignment Model4 - %s - ErrFcn = %7.4f'</span>, study,run_type, qual);
+0009 
+0010 f = figure;
+0011 set(gcf, <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="string">'OuterPosition'</span>, [0.45, 0, 0.35, 0.92], <span class="string">'PaperOrientation'</span>, <span class="string">'portrait'</span>, <span class="string">'PaperUnits'</span>, <span class="string">'normalized'</span>,<span class="string">'PaperPosition'</span>,[0, 0, 1, 1], <span class="string">'PaperType'</span>, <span class="string">'a4'</span>);
+0012 p = uipanel(<span class="string">'Parent'</span>,f,<span class="string">'BorderType'</span>,<span class="string">'none'</span>); 
+0013 p.Title = plottitle;
+0014 p.TitlePosition = <span class="string">'centertop'</span>; 
+0015 p.FontSize = 16;
+0016 p.FontWeight = <span class="string">'bold'</span>;
+0017 
+0018 <span class="keyword">for</span> m = 1:nmeasures
+0019     xl = [((-1 * (max_offset + align_wind)) + 1 - 0.5), -0.5];
+0020     yl = [min(min(best_profile_pre(:,m)), min(best_meancurvemean(:,m))) max(max(best_profile_pre(:,m)), max(best_meancurvemean(:,m)))];
+0021     ax = subplot(plotsdown,plotsacross,m,<span class="string">'Parent'</span>,p);
+0022     
+0023     yyaxis left;
+0024     hold on;
+0025     line([-1 * (max_offset + align_wind - 1): -1], best_profile_pre(:,m)', <span class="string">'Color'</span>, <span class="string">'red'</span>,<span class="string">'LineStyle'</span>, <span class="string">'-'</span>);
+0026     line([-1 * (max_offset + align_wind - 1): -1], (best_profile_pre(:,m) + best_meancurvestd(:,m))', <span class="string">'Color'</span>, <span class="string">'red'</span>,<span class="string">'LineStyle'</span>, <span class="string">'--'</span>);
+0027     line([-1 * (max_offset + align_wind - 1): -1], (best_profile_pre(:,m) - best_meancurvestd(:,m))', <span class="string">'Color'</span>, <span class="string">'red'</span>,<span class="string">'LineStyle'</span>, <span class="string">'--'</span>);
+0028     line([-1 * (max_offset + align_wind - 1): -1], best_meancurvemean(:,m)', <span class="string">'Color'</span>, <span class="string">'blue'</span>,<span class="string">'LineStyle'</span>, <span class="string">':'</span>);
+0029     line([-1 * (max_offset + align_wind - 1): -1], smooth(best_meancurvemean(:,m), 5)', <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>);
+0030     
+0031     ax.XAxis.FontSize = 8;
+0032     xlabel(<span class="string">'Days prior to Intervention'</span>);
+0033     ax.YAxis(1).Color = <span class="string">'blue'</span>;
+0034     ax.YAxis(1).FontSize = 8;
+0035     ylabel(<span class="string">'Normalised Measure'</span>, <span class="string">'FontSize'</span>, 8);
+0036     xlim(xl);
+0037     ylim(yl);
+0038     
+0039     yyaxis right
+0040     ax.YAxis(2).Color = <span class="string">'black'</span>;
+0041     ax.YAxis(2).FontSize = 8;
+0042     ylabel(<span class="string">'Count of Data points'</span>);
+0043     bar([-1 * (max_offset + align_wind - 1): -1], best_meancurvecount(:,m)', 0.5, <span class="string">'FaceColor'</span>, <span class="string">'black'</span>, <span class="string">'FaceAlpha'</span>, 0.25, <span class="string">'LineWidth'</span>, 0.2);
+0044     ylim([0 max(best_meancurvecount(:,m) * 4)]);
+0045     <span class="keyword">if</span> measures.Mask(m) == 1
+0046         title(measures.DisplayName(m), <span class="string">'BackgroundColor'</span>, <span class="string">'g'</span>);
+0047     <span class="keyword">else</span>
+0048         title(measures.DisplayName(m));
+0049     <span class="keyword">end</span>
+0050     
+0051     hold off;
+0052     
+0053 <span class="keyword">end</span>
+0054 
+0055 subplot(plotsdown, plotsacross, nmeasures + 1, <span class="string">'Parent'</span>, p)
+0056 histogram(-1 * best_offsets)
+0057 xlim([(-1 * max_offset) + 0.5, 0.5]);
+0058 ylim([0 50]);
+0059 title(<span class="string">'Histogram of Alignment Offsets'</span>)</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

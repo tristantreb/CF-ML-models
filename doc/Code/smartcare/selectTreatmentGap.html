@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of selectTreatmentGap</title>
+  <meta name="keywords" content="selectTreatmentGap">
+  <meta name="description" content="selectTreatmentGap - enter the gap between the end of a treatment and the">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; selectTreatmentGap.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>selectTreatmentGap
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>selectTreatmentGap - enter the gap between the end of a treatment and the</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function treatgap = selectTreatmentGap() </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> selectTreatmentGap - enter the gap between the end of a treatment and the
+ start of the next. Used to define the list of interventions</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/recovery/checkBreatheTreatmentsVsSelectMeasuresPost.html" class="code" title="">checkBreatheTreatmentsVsSelectMeasuresPost</a>	creates list of oral & IV treatments for recovery study</li><li><a href="../../Code/pdm/recovery/createAlignmentModelInputsRecovery.html" class="code" title="">createAlignmentModelInputsRecovery</a>	creates the inputs for the model</li><li><a href="../../Code/pdm/recovery/findDataAnomaliesRecovery.html" class="code" title="">findDataAnomaliesRecovery</a>	highlight data anomalies to be optionnaly excluded prior to run the alignment model</li><li><a href="JosieQuery.html" class="code" title="">JosieQuery</a>	</li><li><a href="amEMMCSelectModelRunFromDir.html" class="code" title="function [modelrun, modelidx, ModelResultFiles] = amEMMCSelectModelRunFromDir(study, loadtype, lcmode, intrfilt, tgapmode, tstlabelmode)">amEMMCSelectModelRunFromDir</a>	amEMMCSelectModelRunFromDir- allows you to load the saved variables from a</li><li><a href="calcClinicalInfoForPaper.html" class="code" title="">calcClinicalInfoForPaper</a>	</li><li><a href="checkBreatheTreatmentsVsSelectMeasuresPrior.html" class="code" title="">checkBreatheTreatmentsVsSelectMeasuresPrior</a>	creates list of oral & IV treatments</li><li><a href="checkIVTreatmentsVsMeasuresPriorNew.html" class="code" title="">checkIVTreatmentsVsMeasuresPriorNew</a>	creates list of oral & IV treatments</li><li><a href="createAlignmentModelInputs.html" class="code" title="">createAlignmentModelInputs</a>	creates the inputs for the model</li><li><a href="findDataAnomalies.html" class="code" title="">findDataAnomalies</a>	highlight data anomalies to be optionnaly excluded prior to run the alignment model</li><li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li><li><a href="runPlotsForPaperEMMC.html" class="code" title="">runPlotsForPaperEMMC</a>	</li><li><a href="visualiseExacerbationTimeline.html" class="code" title="">visualiseExacerbationTimeline</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function treatgap = selectTreatmentGap()</a>
+0002 
+0003 <span class="comment">% selectTreatmentGap - enter the gap between the end of a treatment and the</span>
+0004 <span class="comment">% start of the next. Used to define the list of interventions</span>
+0005 
+0006 streatgap = input(<span class="string">'Enter gap in treatments (days) ? '</span>, <span class="string">'s'</span>);
+0007 treatgap = str2double(streatgap);
+0008 <span class="keyword">if</span> (isnan(treatgap) || treatgap &lt; 1 || treatgap &gt; 50)
+0009     fprintf(<span class="string">'Invalid choice - defaulting to 10\n'</span>);
+0010     treatgap = 10;
+0011 <span class="keyword">end</span>
+0012 
+0013 <span class="keyword">end</span>
+0014</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

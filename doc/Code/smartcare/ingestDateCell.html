@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ingestDateCell</title>
+  <meta name="keywords" content="ingestDateCell">
+  <meta name="description" content="ingestDateCell - ingest a date cell from a spreadsheet, handling various">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; ingestDateCell.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>ingestDateCell
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>ingestDateCell - ingest a date cell from a spreadsheet, handling various</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [outputdate, isValid] = ingestDateCell(inputcell, matlabexcelserialdatediff, row, notime) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> ingestDateCell - ingest a date cell from a spreadsheet, handling various
+ diffrent potential formats</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadClimbClinDataForPatient.html" class="code" title="function [cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits, cdPFT, cdMicrobiology, cdHghtWght, cdOthClinMeas] =loadClimbClinDataForPatient(cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits, cdPFT, cdMicrobiology,cdHghtWght, cdOthClinMeas, clABNameTable, patfile, basedir, subfolder, userid)">loadClimbClinDataForPatient</a>	loadClimbClinDataForPatient - populate the clinical data tables for a given</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [outputdate, isValid] = ingestDateCell(inputcell, matlabexcelserialdatediff, row, notime)</a>
+0002 
+0003 <span class="comment">% ingestDateCell - ingest a date cell from a spreadsheet, handling various</span>
+0004 <span class="comment">% diffrent potential formats</span>
+0005 
+0006 outputdate = datetime(0000, 01, 01);
+0007 isValid = true;
+0008 <span class="keyword">if</span> ismember(class(inputcell), <span class="string">'double'</span>)
+0009         <span class="keyword">if</span> ~isnan(inputcell)
+0010             <span class="keyword">if</span> inputcell ~= round(inputcell)
+0011                 fprintf(<span class="string">'%3d: **** Non-integer serial date %.2f ****\n'</span>, row, inputcell);
+0012             <span class="keyword">end</span>
+0013             <span class="comment">%fprintf('Original Date: %.2f Updated Date = %s\n', tmpcv.Date(i), datestr(cdcvrow.AttendanceDate, 29));</span>
+0014             outputdate = datetime(matlabexcelserialdatediff + inputcell, <span class="string">'ConvertFrom'</span>, <span class="string">'datenum'</span>);
+0015         <span class="keyword">else</span>
+0016             fprintf(<span class="string">'%3d: **** Skipping row with invalid date %d ****\n'</span>, row, inputcell);
+0017             isValid = false;
+0018         <span class="keyword">end</span>
+0019     <span class="keyword">elseif</span> ismember(class(inputcell), <span class="string">'datetime'</span>)
+0020         outputdate = dateshift(inputcell, <span class="string">'start'</span>, <span class="string">'day'</span>);
+0021     <span class="keyword">elseif</span> ismember(class(inputcell), <span class="string">'cell'</span>)
+0022         <span class="keyword">if</span> ~ismember(inputcell, <span class="string">''</span>)
+0023             <span class="keyword">if</span> strlength(inputcell{1}) == 10
+0024                 outputdate = datetime(inputcell, <span class="string">'InputFormat'</span>, <span class="string">'dd/MM/yyyy'</span>);
+0025             <span class="keyword">elseif</span> strlength(inputcell{1}) == 11
+0026                 outputdate = datetime(inputcell, <span class="string">'InputFormat'</span>, <span class="string">'dd-MMM-yyyy'</span>);
+0027             <span class="keyword">elseif</span> strlength(inputcell{1}) == 19
+0028                 outputdate = datetime(inputcell, <span class="string">'InputFormat'</span>, <span class="string">'dd/MM/yyyy HH:mm:ss'</span>);
+0029             <span class="keyword">elseif</span> strlength(inputcell{1}) == 20
+0030                 outputdate = datetime(inputcell, <span class="string">'InputFormat'</span>, <span class="string">'dd-MMM-yyyy HH:mm:ss'</span>);
+0031             <span class="keyword">else</span>
+0032                 fprintf(<span class="string">'%3d: **** Invalid date format %s ****\n'</span>, row, inputcell{1});
+0033                 isValid = false;
+0034             <span class="keyword">end</span>    
+0035         <span class="keyword">else</span>
+0036             fprintf(<span class="string">'%3d: **** Invalid date format %s ****\n'</span>, row, inputcell{1});
+0037             isValid = false;
+0038         <span class="keyword">end</span>
+0039     <span class="keyword">else</span>
+0040         fprintf(<span class="string">'%3d: **** Invalid date format ****\n'</span>, row);
+0041         isValid = false;
+0042 <span class="keyword">end</span>
+0043 
+0044 <span class="keyword">if</span> isValid &amp;&amp; notime &amp;&amp; ~isnat(outputdate)
+0045     <span class="comment">%fprintf('Orig Date %s ', datestr(outputdate, 29));</span>
+0046     outputdate = dateshift(outputdate, <span class="string">'start'</span>, <span class="string">'day'</span>);
+0047     <span class="comment">%fprintf('Rounded Date %s \n', datestr(outputdate, 29));</span>
+0048 <span class="keyword">end</span>
+0049     
+0050 <span class="keyword">end</span>
+0051</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

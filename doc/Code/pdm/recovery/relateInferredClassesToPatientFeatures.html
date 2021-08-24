@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of relateInferredClassesToPatientFeatures</title>
+  <meta name="keywords" content="relateInferredClassesToPatientFeatures">
+  <meta name="description" content="analyse the relation between patient characteristics and subset of interventions">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">recovery</a> &gt; relateInferredClassesToPatientFeatures.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>relateInferredClassesToPatientFeatures
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>analyse the relation between patient characteristics and subset of interventions</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> analyse the relation between patient characteristics and subset of interventions
+ 
+ Input: 
+ ------
+ - clinical measurements
+ - ivandmeasurestable (all interventions)
+ - predictive model inputs (damian)
+ 
+ Output: graphs and pvalues from adapted function amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery 
+ -------</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/recovery/updatedModel/amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery.html" class="code" title="function [wcxpvaltable] = amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery(amInterventions, pmPatients, pmPatientMeasStats, ivandmeasurestable,cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder, ninterventions, nlatentcurves, scenario, randomseed, study)">amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery</a>	amEMMCPlotVariablesVsLatentCurveSet - compact plots of various variables</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function tau = getTimeToResponse(recovery_start, amInterventions)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% analyse the relation between patient characteristics and subset of interventions</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% Input:</span>
+0004 <span class="comment">% ------</span>
+0005 <span class="comment">% - clinical measurements</span>
+0006 <span class="comment">% - ivandmeasurestable (all interventions)</span>
+0007 <span class="comment">% - predictive model inputs (damian)</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Output: graphs and pvalues from adapted function amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery</span>
+0010 <span class="comment">% -------</span>
+0011 
+0012 <a href="init.html" class="code" title="">init</a>;
+0013 
+0014 <span class="comment">% load files</span>
+0015 [~, clinicalmatfile, ~] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0016 
+0017 [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, ~, cdCRP, <span class="keyword">...</span>
+0018     cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact] <span class="keyword">...</span>
+0019             = <a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0020 
+0021 load(fullfile(basedir,subfolder,<span class="string">'BRivandmeasures_recovery_gap10.mat'</span>));
+0022 load(fullfile(basedir,subfolder,<span class="string">'BRpredictivemodelinputs.mat'</span>), <span class="string">'pmPatientMeasStats'</span>);
+0023 
+0024 <span class="comment">% load 1 model results file</span>
+0025 <span class="comment">% specify parameters to spot the right file in dir</span>
+0026 nl = 1; dw = 20; mm = 34; vm=0.4; rs=4;
+0027 <span class="comment">% load all files that are similar except their random seed</span>
+0028 dircontent = dir(fullfile(basedir, subfolder, sprintf(<span class="string">'*BRvEMMC_gp10_lm1_sig4_mu4_ca2_sm2_rm4_in1_im1_cm2_mm%i_od0_ou15_dw%i_nl%i_rs%i_ds1_ct5_sc22-V_vs1_vm%.1f*.mat'</span>,mm,dw, nl, rs, vm)));
+0029 
+0030 <span class="comment">%% option: merge two intervention sets (to compare results from runSpecificInterventions)</span>
+0031 
+0032 <span class="keyword">if</span> nl == 1
+0033     ModelResultsFile = dircontent(9).name;
+0034     load(fullfile(basedir, subfolder,ModelResultsFile),<span class="string">'amInterventions'</span>); 
+0035     amIntervention_fail = amInterventions;
+0036     amIntervention_fail.LatentCurve(:) = 2;
+0037     
+0038     ModelResultsFile = dircontent(10).name;
+0039     load(fullfile(basedir, subfolder,ModelResultsFile),<span class="string">'amInterventions'</span>, <span class="string">'measures'</span>, <span class="string">'scenario'</span>);
+0040     
+0041     amInterventions= [amInterventions; amIntervention_fail];
+0042     amInterventions = sortrows(amInterventions,<span class="string">'IVStartDate'</span>,<span class="string">'ascend'</span>);
+0043     amInterventions = sortrows(amInterventions,<span class="string">'SmartCareID'</span>,<span class="string">'ascend'</span>);
+0044     amInterventions.IntrNbr(:) = 1:size(amInterventions,1);
+0045     
+0046     nl=2;
+0047         
+0048 <span class="keyword">else</span>
+0049     ModelResultsFile = dircontent.name;
+0050     <span class="comment">% load file</span>
+0051     load(fullfile(basedir, subfolder,ModelResultsFile),<span class="string">'amInterventions'</span>, <span class="string">'measures'</span>, <span class="string">'scenario'</span>); 
+0052 <span class="keyword">end</span>
+0053 
+0054 <span class="comment">% other function inputs</span>
+0055 plotname = <span class="string">'Wilcoxon tests'</span>;
+0056 plotsubfolder = <span class="string">'PlotsRecovery/'</span>;
+0057 
+0058 <span class="comment">%% option: removing outliers interventions</span>
+0059 
+0060 outlier=0;
+0061 
+0062 patientsinit = unique(amInterventions.SmartCareID);
+0063 
+0064 <span class="comment">% remove outlying interventions</span>
+0065 <span class="keyword">if</span> outlier
+0066     outliers = [8 41 55 94 102 104];
+0067     amInterventions(ismember(amInterventions.IntrNbr,outliers),:) = [];
+0068     
+0069     patientsintr = unique(amInterventions.SmartCareID);
+0070     fprintf(<span class="string">'Removing %i outlier interventtions, %i out of %i patients remain\n'</span>, length(outliers), length(patientsintr), length(patientsinit));
+0071 <span class="keyword">end</span>
+0072 patientsintr = unique(amInterventions.SmartCareID);
+0073 ninterventions = size(amInterventions,1);
+0074 
+0075 
+0076 <span class="comment">%% manually setting recovery start and computing time to response</span>
+0077 
+0078 <span class="comment">% adding time to treatment response to amInterventions</span>
+0079 <span class="comment">%rs1</span>
+0080 recovery_start_C1 = 6; <span class="comment">% defined by expert judgement looking at typical profile</span>
+0081 recovery_start_C2 = 2;
+0082 <span class="comment">% %faillist</span>
+0083 recovery_start_C1 = 10; <span class="comment">% defined by expert judgement looking at typical profile</span>
+0084 recovery_start_C2 = 2;
+0085 
+0086 idxC1 = amInterventions.LatentCurve == 1;
+0087 idxC2 = not(idxC1);
+0088 amInterventions.TimeToResponse(idxC1) = <a href="#_sub1" class="code" title="subfunction tau = getTimeToResponse(recovery_start, amInterventions)">getTimeToResponse</a>(recovery_start_C1, amInterventions(idxC1,:));
+0089 amInterventions.TimeToResponse(idxC2) = <a href="#_sub1" class="code" title="subfunction tau = getTimeToResponse(recovery_start, amInterventions)">getTimeToResponse</a>(recovery_start_C2, amInterventions(idxC2,:));
+0090 
+0091 
+0092 <span class="comment">%%% run the function %%%</span>
+0093 
+0094 <span class="comment">% from pmPatients, uses only BMI, sex age, equivalent info in</span>
+0095 <span class="comment">% cdPatient</span>
+0096 
+0097 <span class="comment">% from pmpatientsmeasstats, uses only MeasureIndex, {'PatientNbr', 'Study',</span>
+0098 <span class="comment">% 'ID', 'RobustMax'} and this only for FEV1</span>
+0099 
+0100 <span class="comment">% check if all patients form pmpatientsmeasstats are also in</span>
+0101 <span class="comment">% aminterventions</span>
+0102 fprintf(sprintf(<span class="string">'%i patients from amInterventions not in pmPatientsMeasStats (should be 0)\n'</span>, sum(not(ismember(patientsintr, unique(pmPatientMeasStats.ID)))) ));
+0103 
+0104 wcxpvaltable = <a href="../../../Code/pdm/recovery/updatedModel/amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery.html" class="code" title="function [wcxpvaltable] = amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery(amInterventions, pmPatients, pmPatientMeasStats, ivandmeasurestable,cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder, ninterventions, nlatentcurves, scenario, randomseed, study)">amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery</a>(amInterventions, cdPatient, pmPatientMeasStats, <span class="keyword">...</span>
+0105     ivandmeasurestable,cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder,<span class="keyword">...</span>
+0106     ninterventions, nl, scenario, rs, study); 
+0107 
+0108 <span class="comment">%% functions</span>
+0109 <a name="_sub0" href="#_subfunctions" class="code">function tau = getTimeToResponse(recovery_start, amInterventions)</a>
+0110 
+0111 tau = zeros(size(amInterventions,1),1);
+0112 <span class="comment">% find idx where offset &lt; recovery start</span>
+0113 idxtoreplace = amInterventions.Offset &lt; recovery_start;
+0114 tau(idxtoreplace) = recovery_start - amInterventions.Offset(idxtoreplace);
+0115 
+0116 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

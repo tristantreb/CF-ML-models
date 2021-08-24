@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amPlotsAndSavePredictions</title>
+  <meta name="keywords" content="amPlotsAndSavePredictions">
+  <meta name="description" content="amPlotsAndSavePredictions - plots measures prior to">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amPlotsAndSavePredictions.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amPlotsAndSavePredictions
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amPlotsAndSavePredictions - plots measures prior to</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function amPlotsAndSavePredictions(amInterventions, amDatacube, measures, demographicstable, best_histogram, best_offsets, problower, probupper, ex_start, thisinter, nmeasures, max_offset, align_wind) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amPlotsAndSavePredictions - plots measures prior to
+ treatment with alignment model predictions, as well as the histograms
+ showing the objective function results by measure</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>	getColumnForMeasure - returns the column name from physdata for the</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModel.html" class="code" title="">runAlignmentModel</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function amPlotsAndSavePredictions(amInterventions, amDatacube, measures, demographicstable, best_histogram, best_offsets, problower, probupper, ex_start, thisinter, nmeasures, max_offset, align_wind)</a>
+0002 
+0003 <span class="comment">% amPlotsAndSavePredictions - plots measures prior to</span>
+0004 <span class="comment">% treatment with alignment model predictions, as well as the histograms</span>
+0005 <span class="comment">% showing the objective function results by measure</span>
+0006 
+0007 plotsdown = 8;
+0008 plotsacross = 5;
+0009 mpos = [ 1 2 6 7 ; 3 4 8 9 ; 11 12 16 17 ; 13 14 18 19 ; 21 22 26 27 ; 23 24 28 29 ; 31 32 36 37 ; 33 34 38 39];
+0010 hpos = [ 5 ; 10 ; 15 ; 20 ; 25 ; 30 ; 35 ; 40];
+0011 days = [-1 * (max_offset + align_wind): 0];
+0012 
+0013 scid = amInterventions.SmartCareID(thisinter);
+0014 start = amInterventions.IVScaledDateNum(thisinter);
+0015 name = sprintf(<span class="string">'Alignment Model Prediction - Exacerbation %d - ID %d Date %s'</span>, thisinter, scid, datestr(amInterventions.IVStartDate(thisinter),29));
+0016 f = figure(<span class="string">'Name'</span>, name);
+0017 set(gcf, <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="string">'OuterPosition'</span>, [0.45, 0, 0.35, 0.92], <span class="string">'PaperOrientation'</span>, <span class="string">'portrait'</span>, <span class="string">'PaperUnits'</span>, <span class="string">'normalized'</span>,<span class="string">'PaperPosition'</span>,[0, 0, 1, 1], <span class="string">'PaperType'</span>, <span class="string">'a4'</span>);
+0018 p = uipanel(<span class="string">'Parent'</span>,f,<span class="string">'BorderType'</span>,<span class="string">'none'</span>);
+0019 fprintf(<span class="string">'%s - Best Offset = %d\n'</span>, name, best_offsets(thisinter));
+0020 p.Title = name;
+0021 p.TitlePosition = <span class="string">'centertop'</span>;
+0022 p.FontSize = 12;
+0023 p.FontWeight = <span class="string">'bold'</span>; 
+0024 <span class="keyword">for</span> m = 1:nmeasures
+0025     current = NaN(1,max_offset + align_wind + 1);
+0026     <span class="keyword">for</span> j=0:max_offset + align_wind
+0027         <span class="keyword">if</span> start - j &gt; 0
+0028             current(max_offset + align_wind + 1 - j) = amDatacube(scid, start - j, m);    
+0029         <span class="keyword">end</span>
+0030     <span class="keyword">end</span>
+0031     <span class="keyword">if</span> all(isnan(current))
+0032         <span class="keyword">continue</span>;
+0033     <span class="keyword">end</span>
+0034     subplot(plotsdown, plotsacross, mpos(m,:), <span class="string">'Parent'</span>,p)   
+0035     plot(days, current, <span class="keyword">...</span>
+0036             <span class="string">'Color'</span>, [0, 0.65, 1], <span class="keyword">...</span>
+0037             <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0038             <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0039             <span class="string">'LineWidth'</span>,1, <span class="keyword">...</span>
+0040             <span class="string">'MarkerSize'</span>,3,<span class="keyword">...</span>
+0041             <span class="string">'MarkerEdgeColor'</span>,<span class="string">'b'</span>,<span class="keyword">...</span>
+0042             <span class="string">'MarkerFaceColor'</span>,<span class="string">'g'</span>);
+0043     set(gca,<span class="string">'fontsize'</span>,6);
+0044     xl = [min(days) max(days)];
+0045     xlim(xl);
+0046     column = <a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>(measures.Name{m});
+0047     ddcolumn = sprintf(<span class="string">'Fun_%s'</span>,column);
+0048     pmmid50mean = demographicstable{demographicstable.SmartCareID == scid &amp; ismember(demographicstable.RecordingType, measures.Name{m}),{ddcolumn}}(5);
+0049     pmmid50std  = demographicstable{demographicstable.SmartCareID == scid &amp; ismember(demographicstable.RecordingType, measures.Name{m}),{ddcolumn}}(6);
+0050     ydisplaymin = min(min(current) * 0.9, pmmid50mean * 0.9);
+0051     ydisplaymax = max(max(current) * 1.1, pmmid50mean * 1.1);
+0052     yl = [ydisplaymin ydisplaymax];
+0053     ylim(yl);
+0054     title(measures.DisplayName{m}, <span class="string">'FontSize'</span>, 8);
+0055     xlabel(<span class="string">'Days Prior'</span>, <span class="string">'FontSize'</span>, 6);
+0056     ylabel(<span class="string">'Measure'</span>, <span class="string">'FontSize'</span>, 6);
+0057     hold on
+0058     line( [ex_start + best_offsets(thisinter) ex_start + best_offsets(thisinter)] , yl, <span class="string">'Color'</span>, <span class="string">'red'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="string">'LineWidth'</span>, 1);
+0059     fill([(ex_start + problower(thisinter)) (ex_start + probupper(thisinter)) (ex_start + probupper(thisinter)) (ex_start + problower(thisinter))], <span class="keyword">...</span>
+0060             [ydisplaymin ydisplaymin ydisplaymax ydisplaymax], <span class="keyword">...</span>
+0061             <span class="string">'red'</span>, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0062     line( [ex_start ex_start], [yl(1), yl(1) + ((yl(2)-yl(1)) * 0.1)], <span class="string">'Color'</span>, <span class="string">'black'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="string">'LineWidth'</span>, 1);
+0063     line( [0 0] , yl, <span class="string">'Color'</span>, <span class="string">'magenta'</span>, <span class="string">'LineStyle'</span>,<span class="string">':'</span>, <span class="string">'LineWidth'</span>, 1);
+0064     line( xl,[pmmid50mean pmmid50mean], <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineStyle'</span>, <span class="string">'--'</span>, <span class="string">'LineWidth'</span>, 1);
+0065     line( xl, [pmmid50mean - pmmid50std pmmid50mean - pmmid50std] , <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="string">'LineWidth'</span>, 1)
+0066     line( xl, [pmmid50mean + pmmid50std pmmid50mean + pmmid50std] , <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="string">'LineWidth'</span>, 1)
+0067     hold off;
+0068 <span class="keyword">end</span>
+0069 
+0070 <span class="comment">%plot the histograms</span>
+0071 <span class="keyword">for</span> m=1:nmeasures
+0072     subplot(plotsdown, plotsacross, hpos(m,:),<span class="string">'Parent'</span>,p)    
+0073     scatter([0:max_offset-1],best_histogram(m,thisinter,:),<span class="string">'o'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'g'</span>);    
+0074     set(gca,<span class="string">'fontsize'</span>,6);
+0075     hold on;
+0076     line( [best_offsets(thisinter) best_offsets(thisinter)] , [0 1],<span class="string">'Color'</span>,<span class="string">'red'</span>, <span class="string">'LineStyle'</span>,<span class="string">':'</span>,<span class="string">'LineWidth'</span>,1);
+0077     fill([problower(thisinter) probupper(thisinter) probupper(thisinter) problower(thisinter)], <span class="keyword">...</span>
+0078             [0 0 1 1], <span class="keyword">...</span>
+0079             <span class="string">'red'</span>, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0080     title(measures.DisplayName(m));
+0081     xlim([0 max_offset-1]);
+0082     ylim([0 1]);
+0083     hold off;
+0084 <span class="keyword">end</span>
+0085 
+0086 basedir = <span class="string">'./'</span>;
+0087 subfolder = <span class="string">'Plots'</span>;
+0088 filename = [name <span class="string">'.png'</span>];
+0089 saveas(f,fullfile(basedir, subfolder, filename));
+0090 filename = [name <span class="string">'.svg'</span>];
+0091 saveas(f,fullfile(basedir, subfolder, filename));
+0092 close(f);
+0093 
+0094 <span class="keyword">end</span>
+0095</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

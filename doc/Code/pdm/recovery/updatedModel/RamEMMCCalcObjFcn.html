@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of RamEMMCCalcObjFcn</title>
+  <meta name="keywords" content="RamEMMCCalcObjFcn">
+  <meta name="description" content="amEMMCCalcObjFcn - calculates residual sum of squares distance for points in">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="../index.html">recovery</a> &gt; <a href="index.html">updatedModel</a> &gt; RamEMMCCalcObjFcn.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../../index.html"><img alt="<" border="0" src="../../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery/updatedModel&nbsp;<img alt=">" border="0" src="../../../../right.png"></a></td></tr></table>-->
+
+<h1>RamEMMCCalcObjFcn
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>amEMMCCalcObjFcn - calculates residual sum of squares distance for points in</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>function [dist, count, hstg, vshift, isOutlier] = RamEMMCCalcObjFcn(meancurvemean, meancurvestd, amIntrCube,amHeldBackcube, vshift, isOutlier, outprior, measuresmask, measuresrange, normstd, hstg, currinter,curroffsetidx, offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod, allowvshift, vshiftmax) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCCalcObjFcn - calculates residual sum of squares distance for points in
+ curve vs a given meancurve incorporating offset</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="RamEMMCBestFit.html" class="code" title="function [better_offset, better_curve, hstg, pdoffset, overall_hist, overall_pdoffset, vshift, isOutlier] = RamEMMCBestFit(meancurvemean, meancurvestd,amIntrCube, amHeldBackcube, measuresmask, measuresrange, normstd, hstg, pdoffset, overall_hist, overall_pdoffset, vshift,isOutlier, outprior, currinter, offset, align_wind, nmeasures, sigmamethod, smoothingmethod, runmode, nlatentcurves, allowvshift, vshiftmax)">RamEMMCBestFit</a>	amEMMCBestFit - calculates the offset and curve for an intervention by minimising the</li><li><a href="amEMMCAlignCurvesRecovery.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount, meancurvemean, meancurvestd, amInterventions,hstg, pdoffset, overall_hist, overall_pdoffset,animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset,vshift, isOutlier, pptsstruct, qual, iter, miniiter] =amEMMCAlignCurvesRecovery(meancurvesumsq, meancurvesum, meancurvecount, amIntrCube, amHeldBackcube,animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset,hstg, pdoffset, overall_hist, overall_pdoffset, vshift, isOutlier,amInterventions, outprior, measures, normstd, offset, align_wind,nmeasures, ninterventions, nlatentcurves, sigmamethod, smoothingmethod,runmode, countthreshold, aniterations, maxiterations, allowvshift, vshiftmax, miniiter, fnmodelrun)">amEMMCAlignCurvesRecovery</a>	amEMMCAlignCurves - function to align measurement curves prior to</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [dist, count, hstg, vshift, isOutlier] = RamEMMCCalcObjFcn(meancurvemean, meancurvestd, amIntrCube, </a><span class="keyword">...</span>
+0002     amHeldBackcube, vshift, isOutlier, outprior, measuresmask, measuresrange, normstd, hstg, currinter, <span class="keyword">...</span>
+0003     curroffsetidx, offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod, allowvshift, vshiftmax)
+0004 
+0005 <span class="comment">% amEMMCCalcObjFcn - calculates residual sum of squares distance for points in</span>
+0006 <span class="comment">% curve vs a given meancurve incorporating offset</span>
+0007 
+0008 dist = 0;
+0009 count = 0;
+0010 tempmean = zeros(align_wind + offset.span-1, nmeasures);
+0011 tempstd  = zeros(align_wind + offset.span-1, nmeasures);
+0012 offsetval = offset.down:offset.up;
+0013 curroffsetval = offsetval(curroffsetidx); <span class="comment">% convert offsetidx to offsetval</span>
+0014 
+0015 <span class="keyword">if</span> (update_histogram == 1)
+0016     <span class="keyword">for</span> m = 1:nmeasures
+0017         hstg(1, m, currinter, curroffsetidx) = 0;
+0018     <span class="keyword">end</span>
+0019 <span class="keyword">end</span>
+0020 
+0021 <span class="comment">% check right size</span>
+0022 <span class="keyword">for</span> m = 1:nmeasures
+0023     <span class="keyword">if</span> smoothingmethod == 2
+0024         tempmean(:,m) = smooth(meancurvemean(1, :, m),5);
+0025         tempstd(:,m) = smooth(meancurvestd(1, :, m),5);
+0026     <span class="keyword">else</span>
+0027         tempmean(:,m) = meancurvemean(1, :, m);
+0028         tempstd(:,m) = meancurvestd(1, :, m);
+0029     <span class="keyword">end</span>
+0030 <span class="keyword">end</span>
+0031 
+0032 <span class="comment">% partially vectorised implementation for improved performance</span>
+0033 <span class="keyword">for</span> m = 1:nmeasures
+0034     outdist = -log(outprior) + log(measuresrange(m));
+0035     actidx = ~isnan(amIntrCube(currinter, 1 : align_wind, m)) &amp; amHeldBackcube(currinter, 1 : align_wind, m) == 0;
+0036     offsettempmean = tempmean(abs(offset.down) + 1 + curroffsetval : abs(offset.down) + align_wind + curroffsetval, m);
+0037     intrdata       = amIntrCube(currinter, 1 : align_wind, m);
+0038     
+0039     <span class="keyword">if</span> allowvshift &amp;&amp; sum(actidx) ~= 0
+0040         vshift(1, currinter, m, curroffsetidx) = (sum(offsettempmean(actidx)) - sum(intrdata(actidx))) / sum(actidx);
+0041         <span class="keyword">if</span> vshift(1, currinter, m, curroffsetidx) &gt; vshiftmax
+0042             vshift(1, currinter, m, curroffsetidx) = vshiftmax;
+0043         <span class="keyword">elseif</span> vshift(1, currinter, m, curroffsetidx) &lt; -vshiftmax
+0044             vshift(1, currinter, m, curroffsetidx) = -vshiftmax;
+0045         <span class="keyword">end</span>
+0046     <span class="keyword">end</span>
+0047     
+0048     <span class="keyword">if</span> sigmamethod == 4
+0049         regdist = ((offsettempmean - intrdata' - vshift(1, currinter, m, curroffsetidx)) .^ 2) <span class="keyword">...</span>
+0050                     ./ (2 * (tempstd(abs(offset.down) + 1 + curroffsetval : abs(offset.down) + align_wind + curroffsetval, m) .^ 2)) <span class="keyword">...</span>
+0051                     + log(tempstd(abs(offset.down) + 1 + curroffsetval : abs(offset.down) + align_wind + curroffsetval, m)) <span class="keyword">...</span>
+0052                     + log((2 * pi) ^ 0.5) <span class="keyword">...</span>
+0053                     - log(1 - outprior);
+0054     <span class="keyword">else</span>
+0055         regdist = ( (offsettempmean - intrdata' - vshift(1, currinter, m, curroffsetidx)) .^ 2) <span class="keyword">...</span>
+0056                     / ( 2 * normstd(currinter, m) ) <span class="keyword">...</span>
+0057                     + log(normstd(currinter, m)) <span class="keyword">...</span>
+0058                     + log((2 * pi) ^ 0.5) <span class="keyword">...</span>
+0059                     - log(1 - outprior);
+0060     <span class="keyword">end</span>
+0061     
+0062 <span class="comment">%    % partially vectorised implementation for improved performance</span>
+0063 <span class="comment">% for m = 1:nmeasures</span>
+0064 <span class="comment">%     outdist = -log(outprior) + log(measuresrange(m));</span>
+0065 <span class="comment">%     actidx = ~isnan(amIntrCube(currinter, abs(offset.down) + 1 : abs(offset.down) + align_wind, m)) &amp; amHeldBackcube(currinter, abs(offset.down) + 1 : abs(offset.down) + align_wind, m) == 0;</span>
+0066 <span class="comment">%     offsettempmean = tempmean(abs(offset.down) + 1 + curroffsetval : abs(offset.down) + align_wind + curroffsetval, m);</span>
+0067 <span class="comment">%     intrdata       = amIntrCube(currinter, abs(offset.down) + 1 :  abs(offset.down) + align_wind, m);</span>
+0068 <span class="comment">%</span>
+0069 <span class="comment">%     if allowvshift &amp;&amp; sum(actidx) ~= 0</span>
+0070 <span class="comment">%         vshift(1, currinter, m, curroffsetidx) = (sum(offsettempmean(actidx)) - sum(intrdata(actidx))) / sum(actidx);</span>
+0071 <span class="comment">%         if vshift(1, currinter, m, curroffsetidx) &gt; vshiftmax</span>
+0072 <span class="comment">%             vshift(1, currinter, m, curroffsetidx) = vshiftmax;</span>
+0073 <span class="comment">%         elseif vshift(1, currinter, m, curroffsetidx) &lt; -vshiftmax</span>
+0074 <span class="comment">%             vshift(1, currinter, m, curroffsetidx) = -vshiftmax;</span>
+0075 <span class="comment">%         end</span>
+0076 <span class="comment">%     end</span>
+0077 <span class="comment">%</span>
+0078 <span class="comment">%     if sigmamethod == 4</span>
+0079 <span class="comment">%         regdist = ((offsettempmean - intrdata' - vshift(1, currinter, m, curroffsetidx)) .^ 2) ...</span>
+0080 <span class="comment">%                     ./ (2 * (tempstd(abs(offset.down) + 1 + curroffsetval : abs(offset.down) + align_wind + curroffsetval, m) .^ 2)) ...</span>
+0081 <span class="comment">%                     + log(tempstd(abs(offset.down) + 1 + curroffsetval : abs(offset.down) + align_wind + curroffsetval, m)) ...</span>
+0082 <span class="comment">%                     + log((2 * pi) ^ 0.5) ...</span>
+0083 <span class="comment">%                     - log(1 - outprior);</span>
+0084 <span class="comment">%     else</span>
+0085 <span class="comment">%         regdist = ( (offsettempmean - intrdata' - vshift(1, currinter, m, curroffsetidx)) .^ 2) ...</span>
+0086 <span class="comment">%                     / ( 2 * normstd(currinter, m) ) ...</span>
+0087 <span class="comment">%                     + log(normstd(currinter, m)) ...</span>
+0088 <span class="comment">%                     + log((2 * pi) ^ 0.5) ...</span>
+0089 <span class="comment">%                     - log(1 - outprior);</span>
+0090 <span class="comment">%     end</span>
+0091 
+0092     regdist = regdist(actidx);
+0093     outdist = outdist * ones(sum(actidx), 1);
+0094     ptidx = regdist &lt; outdist;
+0095     totdist = sum(regdist(ptidx)) + sum(outdist(~ptidx));
+0096 
+0097     <span class="keyword">if</span> measuresmask(m) == 1
+0098         dist = dist + totdist;
+0099         count = count + sum(actidx);
+0100     <span class="keyword">end</span>
+0101 
+0102     <span class="keyword">if</span> (update_histogram == 1)
+0103         hstg(1, m, currinter, curroffsetidx) = totdist;
+0104     <span class="keyword">end</span>
+0105 
+0106 <span class="keyword">end</span>
+0107 
+0108 <span class="comment">%fprintf('Intr %2d, Offset %2d: Dist: Old %8.4f, New %8.4f   Count: Old %3d New %3d\n', currinter, curroffset, dist, dist2, count, count2);</span>
+0109 
+0110 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

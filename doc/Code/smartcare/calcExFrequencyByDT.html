@@ -1,0 +1,235 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calcExFrequencyByDT</title>
+  <meta name="keywords" content="calcExFrequencyByDT">
+  <meta name="description" content="calcExFrequencyByDT - function to analyse the frequency of exacerbations">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; calcExFrequencyByDT.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>calcExFrequencyByDT
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>calcExFrequencyByDT - function to analyse the frequency of exacerbations</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [brDTExStats, sumtable, hospsumtable] = calcExFrequencyByDT(offset, ivandmeasurestable, cdPatient, cdDrugTherapy, amInterventions, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> calcExFrequencyByDT - function to analyse the frequency of exacerbations
+ (per patient year in the study) by type of drug therapy.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="harmoniseDrugTherapyName.html" class="code" title="function [harmname] = harmoniseDrugTherapyName(rawname)">harmoniseDrugTherapyName</a>	Utility function to harmonise from the various free-form versions to a</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>	savePlots - saves the figure to png and svp file types in the specified</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runPlotsForPaperEMMC.html" class="code" title="">runPlotsForPaperEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [brDTExStats, sumtable, hospsumtable] = calcExFrequencyByDT(offset, ivandmeasurestable, cdPatient, cdDrugTherapy, amInterventions, study)</a>
+0002 
+0003 <span class="comment">% calcExFrequencyByDT - function to analyse the frequency of exacerbations</span>
+0004 <span class="comment">% (per patient year in the study) by type of drug therapy.</span>
+0005 
+0006 tic
+0007 brDTExStats = table(<span class="string">'Size'</span>,[1 11], <span class="keyword">...</span>
+0008     <span class="string">'VariableTypes'</span>, {<span class="string">'double'</span>, <span class="string">'cell'</span>,     <span class="string">'cell'</span>,        <span class="string">'cell'</span>,   <span class="string">'datetime'</span>,  <span class="string">'double'</span>,  <span class="string">'datetime'</span>, <span class="string">'double'</span>, <span class="string">'double'</span>,  <span class="string">'double'</span>,  <span class="string">'double'</span>}, <span class="keyword">...</span>
+0009     <span class="string">'VariableNames'</span>, {<span class="string">'ID'</span>,     <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'DTType'</span>, <span class="string">'StartDate'</span>, <span class="string">'StartDn'</span>, <span class="string">'EndDate'</span>,  <span class="string">'EndDn'</span>,  <span class="string">'NbrDays'</span>, <span class="string">'NbrIntr'</span>, <span class="string">'NbrPredIntr'</span>});
+0010 
+0011 rowtoadd = brDTExStats;
+0012 brDTExStats(1, :) = [];
+0013 
+0014 <span class="keyword">for</span> p = 1:size(cdPatient, 1)
+0015     
+0016     scid      = cdPatient.ID(p);
+0017     pstartd   = cdPatient.StudyDate(p);
+0018     pendd     = cdPatient.PatClinDate(p);
+0019     
+0020     pdt       = cdDrugTherapy(cdDrugTherapy.ID == scid &amp; cdDrugTherapy.DrugTherapyStartDate &lt; pendd, :);
+0021     pallintr  = ivandmeasurestable(ivandmeasurestable.SmartCareID == scid, :);
+0022     ppredintr = amInterventions(amInterventions.SmartCareID == scid, :);
+0023 
+0024     rowtoadd.ID = scid;
+0025     rowtoadd.Hospital = cdPatient.Hospital(p);
+0026     rowtoadd.StudyNumber = cdPatient.StudyNumber(p);
+0027     fprintf(<span class="string">'Processing patient %d (%s/%s)\n'</span>, scid, cdPatient.Hospital{p}, cdPatient.StudyNumber{p});
+0028     
+0029     addnonerow = false;
+0030     currstartd = pstartd;
+0031     <span class="keyword">if</span> size(pdt, 1) == 0
+0032         <span class="comment">% patient has never taken modulator therapy - set the end of 'None'</span>
+0033         <span class="comment">% period to the end of their data collection period</span>
+0034         currendd = pendd;
+0035         addnonerow = true;
+0036     <span class="keyword">else</span>
+0037         <span class="comment">% patient has been on modulator therapy for at least some of the</span>
+0038         <span class="comment">% time</span>
+0039         <span class="keyword">if</span> pdt.DrugTherapyStartDate(1) &gt; pstartd
+0040             <span class="comment">% if they started mod therapy after the study start, add the info</span>
+0041             <span class="comment">% for the none period</span>
+0042             currendd = pdt.DrugTherapyStartDate(1) - days(1);
+0043             addnonerow = true;
+0044         <span class="keyword">else</span>
+0045             <span class="comment">% otherwise don't add a none period and set currend to study</span>
+0046             <span class="comment">% start as nothing should be added before the study start</span>
+0047             currendd = pstartd - days(1);
+0048         <span class="keyword">end</span>
+0049     <span class="keyword">end</span>
+0050     
+0051     <span class="keyword">if</span> addnonerow
+0052         rowtoadd.DTType      = <a href="harmoniseDrugTherapyName.html" class="code" title="function [harmname] = harmoniseDrugTherapyName(rawname)">harmoniseDrugTherapyName</a>(<span class="string">'None'</span>);
+0053         rowtoadd.StartDate   = currstartd;
+0054         rowtoadd.StartDn     = datenum(currstartd) - offset + 1;
+0055         rowtoadd.EndDate     = currendd;
+0056         rowtoadd.EndDn       = datenum(currendd) - offset + 1;
+0057         rowtoadd.NbrDays     = rowtoadd.EndDn - rowtoadd.StartDn + 1;
+0058         rowtoadd.NbrIntr     = sum(pallintr.IVDateNum  &gt;= rowtoadd.StartDn &amp; pallintr.IVDateNum  &lt; rowtoadd.EndDn);
+0059         rowtoadd.NbrPredIntr = sum(ppredintr.IVDateNum &gt;= rowtoadd.StartDn &amp; ppredintr.IVDateNum &lt; rowtoadd.EndDn);
+0060 
+0061         brDTExStats = [brDTExStats; rowtoadd];
+0062     <span class="keyword">end</span>
+0063 
+0064     <span class="keyword">for</span> dt = 1:size(pdt, 1)
+0065         
+0066         currstartd = currendd + days(1);
+0067         <span class="keyword">if</span> dt == size(pdt, 1)
+0068             currendd = pendd;
+0069         <span class="keyword">else</span>
+0070             currendd = pdt.DrugTherapyStartDate(dt + 1) - days(1);
+0071         <span class="keyword">end</span>
+0072         
+0073         rowtoadd.DTType      = <a href="harmoniseDrugTherapyName.html" class="code" title="function [harmname] = harmoniseDrugTherapyName(rawname)">harmoniseDrugTherapyName</a>(pdt.DrugTherapyType(dt));
+0074         rowtoadd.StartDate   = currstartd;
+0075         rowtoadd.StartDn     = datenum(currstartd) - offset + 1;
+0076         rowtoadd.EndDate     = currendd;
+0077         rowtoadd.EndDn       = datenum(currendd) - offset + 1;
+0078         rowtoadd.NbrDays     = rowtoadd.EndDn - rowtoadd.StartDn + 1;
+0079         rowtoadd.NbrIntr     = sum(pallintr.IVDateNum  &gt;= rowtoadd.StartDn &amp; pallintr.IVDateNum  &lt; rowtoadd.EndDn);
+0080         rowtoadd.NbrPredIntr = sum(ppredintr.IVDateNum &gt;= rowtoadd.StartDn &amp; ppredintr.IVDateNum &lt; rowtoadd.EndDn);
+0081         
+0082         brDTExStats = [brDTExStats; rowtoadd];
+0083     <span class="keyword">end</span>
+0084     
+0085     <span class="comment">% integrity check</span>
+0086     <span class="keyword">if</span> datenum(pendd) - datenum(pstartd) + 1 ~= sum(brDTExStats.NbrDays(brDTExStats.ID == scid))
+0087         fprintf(<span class="string">'**** Integrity Issue - Patient Study period = %d, Sum by drug therapy = %d ****\n'</span>, <span class="keyword">...</span>
+0088             datenum(pendd) - datenum(pstartd) + 1, sum(brDTExStats.NbrDays(brDTExStats.ID == scid)));
+0089     <span class="keyword">end</span>
+0090     
+0091     
+0092 <span class="keyword">end</span>
+0093 
+0094 sumtable = varfun(@sum, brDTExStats, <span class="string">'InputVariables'</span>, {<span class="string">'NbrDays'</span>, <span class="string">'NbrIntr'</span>}, <span class="string">'GroupingVariables'</span>, {<span class="string">'DTType'</span>});
+0095 sumtable.AnnualFreq = 365 * sumtable.sum_NbrIntr ./ sumtable.sum_NbrDays;
+0096 hospsumtable = varfun(@sum, brDTExStats, <span class="string">'InputVariables'</span>, {<span class="string">'NbrDays'</span>, <span class="string">'NbrIntr'</span>}, <span class="string">'GroupingVariables'</span>, {<span class="string">'Hospital'</span>, <span class="string">'DTType'</span>});
+0097 hospsumtable.AnnualFreq = 365 * hospsumtable.sum_NbrIntr ./ hospsumtable.sum_NbrDays;  
+0098 
+0099 daysthresh = 5000;
+0100 tempsumtable = sumtable(sumtable.sum_NbrDays &gt; daysthresh, :);
+0101 
+0102 plotsdown   = 1; 
+0103 plotsacross = 3;
+0104 thisplot = 1;
+0105 widthinch = 11;
+0106 heightinch = 5;
+0107 fontname = <span class="string">'Arial'</span>;
+0108 plottitle = sprintf(<span class="string">'%s - Drug Therapy Impact'</span>, study);
+0109 [f, p] = <a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(<span class="string">''</span>, widthinch, heightinch);
+0110 
+0111 ax = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>, p);
+0112 hold on;
+0113 b = bar(ax, tempsumtable.sum_NbrDays);
+0114 set(ax, <span class="string">'xticklabel'</span>, tempsumtable.DTType);
+0115 set(ax, <span class="string">'yticklabel'</span>, {<span class="string">'0'</span>, <span class="string">'10,000'</span>, <span class="string">'20,000'</span>, <span class="string">'30,000'</span>});
+0116 ax.XTick = [1, 2, 3];
+0117 ax.YTick = [0, 10000, 20000, 30000];
+0118 ylim(ax, [0, 30000]);
+0119 xtickangle(ax, 30);
+0120 b.FaceColor = <span class="string">'flat'</span>;
+0121 b.CData     = [0.0000, 0.4470, 0.7410; <span class="keyword">...</span>
+0122                0.8500, 0.3250, 0.0980; <span class="keyword">...</span>
+0123                0.9290, 0.6940, 0.1250];
+0124 ax.FontSize = 8;
+0125 ax.FontName = fontname;
+0126 xlabel(ax, <span class="string">'Drug Therapy'</span>, <span class="string">'FontSize'</span>, 10);
+0127 ylabel(ax, <span class="string">'Nbr Days in Study'</span>, <span class="string">'FontSize'</span>, 10);
+0128 title(ax, <span class="string">'Study Days by Drug Therapy'</span>, <span class="string">'FontSize'</span>, 10);
+0129 hold off;
+0130 
+0131 thisplot = thisplot + 1;
+0132 ax = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>, p);
+0133 hold on;
+0134 b = bar(ax, tempsumtable.sum_NbrIntr);
+0135 set(ax, <span class="string">'xticklabel'</span>, tempsumtable.DTType);
+0136 set(ax, <span class="string">'yticklabel'</span>, {<span class="string">'0'</span>, <span class="string">'50'</span>, <span class="string">'100'</span>, <span class="string">'150'</span>});
+0137 ax.XTick = [1, 2, 3];
+0138 ax.YTick = [0, 50, 100, 150];
+0139 ylim(ax, [0, 150]);
+0140 xtickangle(ax, 30);
+0141 b.FaceColor = <span class="string">'flat'</span>;
+0142 b.CData     = [0.0000, 0.4470, 0.7410; <span class="keyword">...</span>
+0143                0.8500, 0.3250, 0.0980; <span class="keyword">...</span>
+0144                0.9290, 0.6940, 0.1250];
+0145 ax.FontSize = 8;
+0146 ax.FontName = fontname;
+0147 xlabel(ax, <span class="string">'Drug Therapy'</span>, <span class="string">'FontSize'</span>, 10);
+0148 ylabel(ax, <span class="string">'Nbr Interventions'</span>, <span class="string">'FontSize'</span>, 10);
+0149 title(ax, <span class="string">'Interventions by Drug Therapy'</span>, <span class="string">'FontSize'</span>, 10);
+0150 hold off;
+0151 
+0152 thisplot = thisplot + 1;
+0153 ax = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>, p);
+0154 hold on;
+0155 b = bar(ax, tempsumtable.AnnualFreq);
+0156 set(ax, <span class="string">'xticklabel'</span>, tempsumtable.DTType);
+0157 set(ax, <span class="string">'yticklabel'</span>, {<span class="string">'0'</span>, <span class="string">'0.5'</span>, <span class="string">'1.0'</span>, <span class="string">'1.5'</span>, <span class="string">'2.0'</span>});
+0158 ax.XTick = [1, 2, 3];
+0159 ax.YTick = [0, 0.5, 1.0, 1.5, 2.0];
+0160 ylim(ax, [0, 2]);
+0161 xtickangle(ax, 30);
+0162 b.FaceColor = <span class="string">'flat'</span>;
+0163 b.CData     = [0.0000, 0.4470, 0.7410; <span class="keyword">...</span>
+0164                0.8500, 0.3250, 0.0980; <span class="keyword">...</span>
+0165                0.9290, 0.6940, 0.1250];
+0166 xtips = b.XEndPoints;
+0167 ytips = b.YEndPoints;
+0168 labels = string(round(b.YData, 2));
+0169 text(xtips, ytips, labels,<span class="string">'HorizontalAlignment'</span>,<span class="string">'center'</span>, <span class="keyword">...</span>
+0170     <span class="string">'VerticalAlignment'</span>,<span class="string">'bottom'</span>);
+0171 ax.FontSize = 8;
+0172 ax.FontName = fontname;
+0173 xlabel(ax, <span class="string">'Drug Therapy'</span>, <span class="string">'FontSize'</span>, 10);
+0174 ylabel(ax, <span class="string">'Annual Frequency'</span>, <span class="string">'FontSize'</span>, 10);
+0175 title(ax, <span class="string">'Annual Frequency by Drug Therapy'</span>, <span class="string">'FontSize'</span>, 10);
+0176 hold off;
+0177 toc
+0178 fprintf(<span class="string">'\n'</span>);
+0179 
+0180 <span class="comment">% save plot</span>
+0181 plotsubfolder = sprintf(<span class="string">'Plots/%s'</span>, study);
+0182 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0183 <a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, plottitle, plotsubfolder);
+0184 close(f);
+0185 
+0186 <span class="keyword">end</span>
+0187</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

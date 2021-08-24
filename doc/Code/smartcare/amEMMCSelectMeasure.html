@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCSelectMeasure</title>
+  <meta name="keywords" content="amEMMCSelectMeasure">
+  <meta name="description" content="amEMMCSelectMeasure - select a given measure">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCSelectMeasure.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCSelectMeasure
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCSelectMeasure - select a given measure</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [measure] = amEMMCSelectMeasure(measures, nmeasures) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCSelectMeasure - select a given measure</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [measure] = amEMMCSelectMeasure(measures, nmeasures)</a>
+0002 
+0003 <span class="comment">% amEMMCSelectMeasure - select a given measure</span>
+0004 
+0005 fprintf(<span class="string">'Available Measures\n'</span>);
+0006 fprintf(<span class="string">'------------------\n'</span>);
+0007 <span class="keyword">for</span> m = 1:nmeasures
+0008     fprintf(<span class="string">'%2d: %s\n'</span>, m, measures.DisplayName{m});
+0009 <span class="keyword">end</span>
+0010 fprintf(<span class="string">'\n'</span>);
+0011 
+0012 smeasure = input(sprintf(<span class="string">'Choose measure (1-%d) ? '</span>, nmeasures), <span class="string">'s'</span>);
+0013 
+0014 measure = str2double(smeasure);
+0015 
+0016 <span class="keyword">if</span> (isnan(measure) || measure &lt; 1 || measure &gt; nmeasures)
+0017     fprintf(<span class="string">'Invalid choice\n'</span>);
+0018     measure = 0;
+0019     <span class="keyword">return</span>;
+0020 <span class="keyword">end</span>
+0021 
+0022 <span class="keyword">end</span>
+0023</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

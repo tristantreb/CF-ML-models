@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calcExStartFromTestLabels</title>
+  <meta name="keywords" content="calcExStartFromTestLabels">
+  <meta name="description" content="calcExStartFromTestLabels - derives the ex_start date for a given">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; calcExStartFromTestLabels.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>calcExStartFromTestLabels
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>calcExStartFromTestLabels - derives the ex_start date for a given</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function ex_start = calcExStartFromTestLabels(amLabelledInterventions, amInterventions,overall_pdoffset, max_offset, plotsubfolder, modelrun, countthresh) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> calcExStartFromTestLabels - derives the ex_start date for a given
+ alignment model run from the test labels.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="calcVotesArray.html" class="code" title="function [truevotes, falsevotes] = calcVotesArray(amLabelledInterventions, amInterventions,overall_pdoffset, max_offset)">calcVotesArray</a>	calcVotesArray - calculates the true and false votes across the labelled test data</li><li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMMCCalcExStartsFromTestLabels.html" class="code" title="function ex_start = amEMMCCalcExStartsFromTestLabels(amLabelledInterventions, amInterventions, overall_pdoffset,max_offset, plotsubfolder, plotname, ninterventions, nlatentcurves)">amEMMCCalcExStartsFromTestLabels</a>	amEMMCCalcExStartsFromTestLabels - wrapper around</li><li><a href="runModelUtilityFunctions.html" class="code" title="">runModelUtilityFunctions</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function ex_start = calcExStartFromTestLabels(amLabelledInterventions, amInterventions, </a><span class="keyword">...</span>
+0002     overall_pdoffset, max_offset, plotsubfolder, modelrun, countthresh)
+0003 
+0004 <span class="comment">% calcExStartFromTestLabels - derives the ex_start date for a given</span>
+0005 <span class="comment">% alignment model run from the test labels.</span>
+0006 
+0007 plotsacross = 1;
+0008 plotsdown = 6;
+0009 <span class="comment">%countthresh = 5;</span>
+0010 
+0011 name1 = sprintf(<span class="string">'%s - Ex_Start from TestLabels'</span>, modelrun);
+0012 [f1, p1] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(name1, <span class="string">'Portrait'</span>, <span class="string">'A4'</span>);
+0013 <span class="comment">%ax1 = gobjects(plotsacross * plotsdown,1);</span>
+0014 
+0015 
+0016 [truevotes, falsevotes] = <a href="calcVotesArray.html" class="code" title="function [truevotes, falsevotes] = calcVotesArray(amLabelledInterventions, amInterventions,overall_pdoffset, max_offset)">calcVotesArray</a>(amLabelledInterventions, amInterventions, <span class="keyword">...</span>
+0017                                 overall_pdoffset, max_offset);
+0018                             
+0019 sumtrue = sum(truevotes);
+0020 sumfalse = sum(falsevotes);
+0021 sumtrue((sumtrue + sumfalse) &lt; countthresh) = 0;
+0022 <span class="comment">%countthresh = max(sumtrue) * 0.2;</span>
+0023 <span class="comment">%sumtrue(sumtrue &lt; countthresh) = 0;</span>
+0024 
+0025 days = (-1 * (size(truevotes,2)):-1);
+0026 thisplot = 1;
+0027 ax1(thisplot) = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>,p1);
+0028 b = bar(ax1(thisplot), days, sumtrue, 0.75, <span class="string">'FaceColor'</span>, <span class="string">'green'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'black'</span>);
+0029 title(sprintf(<span class="string">'ExStart true votes by day - All %d Examples'</span>, size(amInterventions, 1)));
+0030 
+0031 thisplot = thisplot + 1;
+0032 ax1(thisplot) = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>,p1);
+0033 b = bar(ax1(thisplot), days, sumfalse, 0.75, <span class="string">'FaceColor'</span>, <span class="string">'green'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'black'</span>);
+0034 title(sprintf(<span class="string">'ExStart false votes by day - All %d Examples'</span>, size(amInterventions, 1)));
+0035 
+0036 thisplot = thisplot + 1;
+0037 ax1(thisplot) = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>,p1);
+0038 b = bar(ax1(thisplot), days, sumtrue ./ (sumtrue + sumfalse), 0.75, <span class="string">'FaceColor'</span>, <span class="string">'blue'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'black'</span>);
+0039 title(sprintf(<span class="string">'ExStart true proportion votes by day - All %d Examples'</span>, size(amInterventions, 1)));
+0040 
+0041 
+0042 idx = amLabelledInterventions.IncludeInTestSet == <span class="string">'Y'</span>;
+0043 [truevotes, falsevotes] = <a href="calcVotesArray.html" class="code" title="function [truevotes, falsevotes] = calcVotesArray(amLabelledInterventions, amInterventions,overall_pdoffset, max_offset)">calcVotesArray</a>(amLabelledInterventions(idx, :), amInterventions(idx, :), <span class="keyword">...</span>
+0044                                 overall_pdoffset(idx, :), max_offset);
+0045 sumtrue = sum(truevotes);
+0046 sumfalse = sum(falsevotes);
+0047 sumtrue((sumtrue + sumfalse) &lt; countthresh) = 0;
+0048 <span class="comment">%countthresh = max(sumtrue) * 0.2;</span>
+0049 <span class="comment">%sumtrue(sumtrue &lt; countthresh) = 0;</span>
+0050                             
+0051 days = (-1 * (size(truevotes,2)):-1);
+0052 thisplot = thisplot + 1;
+0053 ax1(thisplot) = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>,p1);
+0054 b = bar(ax1(thisplot), days, sumtrue, 0.75, <span class="string">'FaceColor'</span>, <span class="string">'green'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'black'</span>);
+0055 title(sprintf(<span class="string">'ExStart true votes by day (%d Test Set examples)'</span>, size(amInterventions(idx,:),1)));                            
+0056 
+0057 thisplot = thisplot + 1;
+0058 ax1(thisplot) = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>,p1);
+0059 b = bar(ax1(thisplot), days, sumfalse, 0.75, <span class="string">'FaceColor'</span>, <span class="string">'green'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'black'</span>);
+0060 title(sprintf(<span class="string">'ExStart false votes by day (%d Test Set examples)'</span>, size(amInterventions(idx,:),1)));     
+0061 
+0062 thisplot = thisplot + 1;
+0063 ax1(thisplot) = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>,p1);
+0064 b = bar(ax1(thisplot), days, sumtrue ./ (sumtrue + sumfalse), 0.75, <span class="string">'FaceColor'</span>, <span class="string">'blue'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'black'</span>);
+0065 title(sprintf(<span class="string">'ExStart true proportion votes by day (%d Test Set examples)'</span>, size(amInterventions(idx,:),1)));     
+0066 
+0067 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0068 <span class="comment">%plotsubfolder = sprintf('Plots/%s', subfolder);</span>
+0069 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f1, name1, plotsubfolder);
+0070 close(f1);
+0071 
+0072 <span class="keyword">if</span> sum(sumtrue) == 0
+0073     ex_start = -1;
+0074 <span class="keyword">else</span>
+0075     [~, maxpt] = max(sumtrue ./ (sumtrue + sumfalse));
+0076     ex_start = -1 * (size(truevotes,2)) - 1 + maxpt;
+0077 <span class="keyword">end</span>
+0078 
+0079 <span class="keyword">end</span>
+0080</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

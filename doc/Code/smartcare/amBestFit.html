@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amBestFit</title>
+  <meta name="keywords" content="amBestFit">
+  <meta name="description" content="amBestFit - calculates the offset for an intervention by minimising the">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amBestFit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amBestFit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amBestFit - calculates the offset for an intervention by minimising the</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [better_offset, hstg, hstgc] = amBestFit(meancurvesum, meancurvecount, amNormcube, amInterventions, hstg, hstgc, currinter, max_offset, align_wind, nmeasures) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amBestFit - calculates the offset for an intervention by minimising the
+ objective function</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amCalcObjFcn.html" class="code" title="function [dist, hstg, hstgc] = amCalcObjFcn(meancurvesum, meancurvecount, amNormcube, amInterventions, hstg, hstgc, currinter, curroffset, max_offset, align_wind, nmeasures, updatehistogram)">amCalcObjFcn</a>	amCalcObjFcn - calculates residual sum of squares distance for points in</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amAlignCurves.html" class="code" title="function [offsets, profile_pre, profile_post, hstg, qual] = amAlignCurves(amNormcube, amInterventions, measures, max_offset, align_wind, nmeasures, ninterventions, run_type, detaillog)">amAlignCurves</a>	alignCurves = function to align measurement curves prior to intervention</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [better_offset, hstg, hstgc] = amBestFit(meancurvesum, meancurvecount, amNormcube, amInterventions, hstg, hstgc, currinter, max_offset, align_wind, nmeasures)</a>
+0002 
+0003 <span class="comment">% amBestFit - calculates the offset for an intervention by minimising the</span>
+0004 <span class="comment">% objective function</span>
+0005 
+0006 scid   = amInterventions.SmartCareID(currinter);
+0007 start = amInterventions.IVScaledDateNum(currinter);
+0008 
+0009 better_offset = 0;
+0010 mini = 1000000;
+0011 
+0012 <span class="keyword">for</span> i = 0:max_offset - 1
+0013     [currdist, hstg, hstgc] = <a href="amCalcObjFcn.html" class="code" title="function [dist, hstg, hstgc] = amCalcObjFcn(meancurvesum, meancurvecount, amNormcube, amInterventions, hstg, hstgc, currinter, curroffset, max_offset, align_wind, nmeasures, updatehistogram)">amCalcObjFcn</a>(meancurvesum, meancurvecount, amNormcube, amInterventions, hstg, hstgc, currinter, i, max_offset, align_wind, nmeasures, 1);
+0014     <span class="keyword">if</span> currdist &lt; mini
+0015         better_offset = i;
+0016         mini = currdist;
+0017     <span class="keyword">end</span>
+0018 <span class="keyword">end</span>
+0019     
+0020 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

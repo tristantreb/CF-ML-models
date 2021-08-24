@@ -1,0 +1,593 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of runModelUtilityFunctionsEMMC</title>
+  <meta name="keywords" content="runModelUtilityFunctionsEMMC">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; runModelUtilityFunctionsEMMC.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>runModelUtilityFunctionsEMMC
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMMCAnimatedAlignmentConcurrent.html" class="code" title="function [f, p, niterations] = amEMMCAnimatedAlignmentConcurrent(animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset,profile_pre, measures, max_offset, align_wind, nmeasures, ninterventions, nlatentcurves, runmode, basemoviefilename)">amEMMCAnimatedAlignmentConcurrent</a>	amEMMCAnimatedAlingmentConcurrent - function to display animated curve</li><li><a href="amEMMCAnimatedProbDistConcurrent.html" class="code" title="function [f, p, niterations] = amEMMCAnimatedProbDistConcurrent(animated_overall_pdoffset, max_offset,ninterventions, nlatentcurves, basemoviefilename)">amEMMCAnimatedProbDistConcurrent</a>	amEMMCAnimatedProbDistConcurrent - function to display animated</li><li><a href="amEMMCCalcExStartsFromTestLabels.html" class="code" title="function ex_start = amEMMCCalcExStartsFromTestLabels(amLabelledInterventions, amInterventions, overall_pdoffset,max_offset, plotsubfolder, plotname, ninterventions, nlatentcurves)">amEMMCCalcExStartsFromTestLabels</a>	amEMMCCalcExStartsFromTestLabels - wrapper around</li><li><a href="amEMMCCompareModelRunToTestData.html" class="code" title="function amEMMCCompareModelRunToTestData(amLabelledInterventions, amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset,hstg, overall_hist, meancurvemean, normmean, normstd, ex_start, nmeasures, ninterventions, nlatentcurves, max_offset,align_wind, sigmamethod, study, mversion, modelrun, modelidx, testsetmode)">amEMMCCompareModelRunToTestData</a>	amEMMCCompareModelRunToTestData - compares the output of a chosen model run to</li><li><a href="amEMMCCompareModelRuns.html" class="code" title="function amEMMCCompareModelRuns(modelrun1, modelidx1, modelrun2, modelidx2)">amEMMCCompareModelRuns</a>	</li><li><a href="amEMMCCompareModelRunsByLCSets.html" class="code" title="function amEMMCCompareModelRunsByLCSets(modelrun1, modelidx1, modelrun2, modelidx2)">amEMMCCompareModelRunsByLCSets</a>	amEMMCCompareModelRunsByLCSets - compares populations of latent curve</li><li><a href="amEMMCCompareMultipleModelRunToTestData.html" class="code" title="function [lcbymodelrun, offsetbymodelrun] = amEMMCCompareMultipleModelRunToTestData(amLabelledInterventions, modelrun, modelidx, models, plotmode, study)">amEMMCCompareMultipleModelRunToTestData</a>	amEMMCCompareMultipleModelRunToTestData - compares the output of multiple model runs to</li><li><a href="amEMMCCompareMultipleModelRunsByLCSets.html" class="code" title="function amEMMCCompareMultipleModelRunsByLCSets(modelrun, modelidx, models)">amEMMCCompareMultipleModelRunsByLCSets</a>	amEMMCCompareMultipleModelRunsByLCSets - compares the the latent curve set populations</li><li><a href="amEMMCCreateLabelledInterventions.html" class="code" title="function [amLabelledInterventions] = amEMMCCreateLabelledInterventions(amIntrDatacube, amLabelledInterventions,interfrom, interto, measures, normmean, max_offset, align_wind, study, nmeasures, labelmode, basetestlabelfilename)">amEMMCCreateLabelledInterventions</a>	amEMMCCreateLabelledInterventions - plots measurement data and asks for lower</li><li><a href="amEMMCPlotAlignedCurvesSideBySide.html" class="code" title="function amEMMCPlotAlignedCurvesSideBySide(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets, latentcurve,measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder, nlatentcurves, centerplots)">amEMMCPlotAlignedCurvesSideBySide</a>	amEMPlotAlignedCurvesSideBySide - for 2 or 3 sets of latent curves, plots</li><li><a href="amEMMCPlotAndSaveAlignedCurves.html" class="code" title="function amEMMCPlotAndSaveAlignedCurves(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets, latentcurves,measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder, nlatentcurves)">amEMMCPlotAndSaveAlignedCurves</a>	amEMMCPlotAndSaveAlignedCurves - wrapper around the</li><li><a href="amEMMCPlotHistOfTimeSinceLastExacerbation.html" class="code" title="function amEMMCPlotHistOfTimeSinceLastExacerbation(pmPatients, amInterventions, ivandmeasurestable,npatients, maxdays, plotname, plotsubfolder, nlatentcurves)">amEMMCPlotHistOfTimeSinceLastExacerbation</a>	amEMMCPlotHistogramTimeSinceLastExacerbation - function to plot</li><li><a href="amEMMCPlotHistogramOfVShifts.html" class="code" title="function amEMMCPlotHistogramOfVShifts(amInterventions, vshift, measures, nmeasures, ninterventions, nlatentcurves, plotname, plotsubfolder, vshiftmode, vshiftmax)">amEMMCPlotHistogramOfVShifts</a>	amEMMCPlotHistogramOfVShifts - plot a histogram of the vertical shifts</li><li><a href="amEMMCPlotInterventionsByLatentCurveSet.html" class="code" title="function amEMMCPlotInterventionsByLatentCurveSet(pmPatients, amInterventions,amInterventionsFull, npatients, maxdays, plotname, plotsubfolder, nlatentcurves, plotmode)">amEMMCPlotInterventionsByLatentCurveSet</a>	amEMMCPlotInterventionsByLatentCurveSet - plots interventions and</li><li><a href="amEMMCPlotLabelledInterventions.html" class="code" title="function amEMMCPlotLabelledInterventions(amIntrDatacube, amInterventions, amLabelledInterventions,measures, normmean, max_offset, align_wind, study, nmeasures)">amEMMCPlotLabelledInterventions</a>	amEMMCPlotLabelledInterventions - plots all the labelled test data</li><li><a href="amEMMCPlotProbsLCSet.html" class="code" title="function amEMMCPlotProbsLCSet(overall_pdoffset, amInterventions, min_offset, max_offset, plotname, plotsubfolder, ninterventions, nlatentcurves)">amEMMCPlotProbsLCSet</a>	amEMMCPlotProbsLCSet - plots the probabilities of respective LC set</li><li><a href="amEMMCPlotSingleMeasureByLCSet.html" class="code" title="function amEMMCPlotSingleMeasureByLCSet(amInterventions, amIntrDatacube, normmean, measure, measures,ex_start_array, max_offset, align_wind, plotname, plotsubfolder, nlatentcurves)">amEMMCPlotSingleMeasureByLCSet</a>	amEMMCPlotSingleMeasureByLCSet - plots a given measure prior to</li><li><a href="amEMMCPlotSuperimposedAlignedCurves.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurves(meancurvemean, meancurvecount, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study)">amEMMCPlotSuperimposedAlignedCurves</a>	amEMMCPlotSuperimposedAlignedCurves - wrapper around the</li><li><a href="amEMMCPlotSuperimposedMeasuresB4Intr.html" class="code" title="function amEMMCPlotSuperimposedMeasuresB4Intr(amIntrNormcube, amInterventions,measures, max_offset, align_wind, nmeasures, ninterventions, ex_start, plotsubfolder, shiftmode)">amEMMCPlotSuperimposedMeasuresB4Intr</a>	amEMMCPlotSuperimposedAlignedCurves - wrapper around the</li><li><a href="amEMMCPlotVariablesVsLatentCurveSet.html" class="code" title="function amEMMCPlotVariablesVsLatentCurveSet(amInterventions, pmPatients, pmPatientMeasStats, ivandmeasurestable,cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder, ninterventions, nlatentcurves, study)">amEMMCPlotVariablesVsLatentCurveSet</a>	amEMMCPlotVariablesVsLatentCurveSet - compact plots of various variables</li><li><a href="amEMMCPlotsAndSavePredictions.html" class="code" title="function amEMMCPlotsAndSavePredictions(amInterventions, amIntrcube, measures, pdoffset,overall_pdoffset, hstg, overall_hist, vshift, meancurvemean, normmean, normstd, isOutlier,ex_start_array, thisinter, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder, normmode)">amEMMCPlotsAndSavePredictions</a>	amEMMCPlotsAndSavePredictions - plots measures prior to</li><li><a href="amEMMCSelectMeasure.html" class="code" title="function [measure] = amEMMCSelectMeasure(measures, nmeasures)">amEMMCSelectMeasure</a>	amEMMCSelectMeasure - select a given measure</li><li><a href="amEMMCSelectModelRunFromDir.html" class="code" title="function [modelrun, modelidx, ModelResultFiles] = amEMMCSelectModelRunFromDir(study, loadtype, lcmode, intrfilt, tgapmode, tstlabelmode)">amEMMCSelectModelRunFromDir</a>	amEMMCSelectModelRunFromDir- allows you to load the saved variables from a</li><li><a href="amEMMCVisualiseAlignmentDetail.html" class="code" title="function [sorted_interventions, max_points] = amEMMCVisualiseAlignmentDetail(amIntrNormcube, amHeldBackcube, amInterventions, meancurvemean,meancurvecount, meancurvestd, overall_pdoffset, measures, min_offset, max_offset, align_wind, nmeasures, ninterventions,run_type, ex_start, curveaveragingmethod, plotname, plotsubfolder, nlatentcurves)">amEMMCVisualiseAlignmentDetail</a>	amEMMCVisualiseAlignmentDetail - wrapper around the</li><li><a href="amEMPlotAndSaveAlignedCurvesBasic.html" class="code" title="function amEMPlotAndSaveAlignedCurvesBasic(profile_pre, meancurvemean, offsets,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder)">amEMPlotAndSaveAlignedCurvesBasic</a>	amEMPlotAndSaveAlignedCurvesBasic - plots the curves pre and post alignment for</li><li><a href="animatedAlignmentSequential.html" class="code" title="function [f, p, niterations] = animatedAlignmentSequential(animatedmeancurvemean, profile_pre, measures, max_offset, align_wind, nmeasures, moviefilename)">animatedAlignmentSequential</a>	</li><li><a href="combineSplitClassResults.html" class="code" title="function [tmpInterventions, nlatentcurves] = combineSplitClassResults(study, modelrun, basedir, subfolder)">combineSplitClassResults</a>	combineSplitClassResults - combines the results of the forced split runs</li><li><a href="compareMultipleModelRunResults.html" class="code" title="function [modeliterations, modeloffsets] = compareMultipleModelRunResults(modelrun, modelidx, models, basedir, subfolder)">compareMultipleModelRunResults</a>	compareMultipleModelRunResults - compares the results of multiple model</li><li><a href="createInitialLabelledIntr.html" class="code" title="function [amLabelledInterventions] = createInitialLabelledIntr(amInterventions)">createInitialLabelledIntr</a>	createInitialLabelledIntr - creates an initial labelled intervention</li><li><a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="plotLCSetByHospital.html" class="code" title="function plotLCSetByHospital(tmpInterventions, plotname, plotsubfolder, tmpnlc)">plotLCSetByHospital</a>	plotLCSetByHospital - plots barcharts of Latent Curve set by hospital</li><li><a href="selectLabelMethodology.html" class="code" title="function [testlabelmthd, testlabeltxt] = selectLabelMethodology()">selectLabelMethodology</a>	selectLabelMethodology - enter the gap between the end of a treatment and the</li><li><a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>	selectTreatmentGap - enter the gap between the end of a treatment and the</li><li><a href="selectValFromRange.html" class="code" title="function [value] = selectValFromRange(questext, fromrange, torange)">selectValFromRange</a>	selectValFromRange - allows you to select a value from a range</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li><li><a href="updateListOfLabelledIntr.html" class="code" title="function [amlabintr] = updateListOfLabelledIntr(amintr, amlabintr)">updateListOfLabelledIntr</a>	updateListOfLabelledIntr - updates the labelled intr table based on an</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; close all; clc;
+0002 
+0003 <span class="comment">% other models to potentially add</span>
+0004 <span class="comment">% sig4 version (although zero offset start is infinity</span>
+0005 <span class="comment">% vEM with bet random start from 3 or 4</span>
+0006 
+0007 fprintf(<span class="string">'Run Model Utility Functions (handling multiple sets of latent curves\n'</span>);
+0008 fprintf(<span class="string">'\n'</span>);
+0009 fprintf(<span class="string">'Choose function to run\n'</span>);
+0010 fprintf(<span class="string">'----------------------\n'</span>);
+0011 fprintf(<span class="string">' 1: Run prediction plots\n'</span>);
+0012 fprintf(<span class="string">' 2: Run alignment animation (concurrent)\n'</span>);
+0013 fprintf(<span class="string">' 3: (*) Run alignment animation (sequential)\n'</span>);
+0014 fprintf(<span class="string">' 4: Run prod dist animation (concurrent)\n'</span>);
+0015 fprintf(<span class="string">' 5: (*) Extract and save prob distributions\n'</span>);
+0016 fprintf(<span class="string">' 6: Label exacerbation plots for test data\n'</span>);
+0017 fprintf(<span class="string">' 7: Compare results to another model run\n'</span>);
+0018 fprintf(<span class="string">' 8: Compare results to labelled test data and plot results\n'</span>);
+0019 fprintf(<span class="string">' 9: (*) &lt;placeholder for Dragos new option\n'</span>);
+0020 fprintf(<span class="string">'10: Compare results for multiple model runs to labelled test data\n'</span>);
+0021 fprintf(<span class="string">'11: (*) Compare results for multiple model runs\n'</span>);
+0022 fprintf(<span class="string">'12: (*) Plot simplified aligned curves\n'</span>);
+0023 fprintf(<span class="string">'13: Plot Test Labels\n'</span>);
+0024 fprintf(<span class="string">'14: Calc Ex Start from Test Labels\n'</span>);
+0025 fprintf(<span class="string">'15: Plot aligned curves\n'</span>);
+0026 fprintf(<span class="string">'16: Plot alignment detail\n'</span>);
+0027 fprintf(<span class="string">'17: Plot alignment curves side-by-side\n'</span>);
+0028 fprintf(<span class="string">'18: Plot alignment curves side-by-side with centering\n'</span>);
+0029 fprintf(<span class="string">'19: Plot variables vs latent curve assignment\n'</span>);
+0030 fprintf(<span class="string">'20: Plot interventions over time by latent curve set (scaled days)\n'</span>);
+0031 fprintf(<span class="string">'21: Load variables for a given model run\n'</span>);
+0032 fprintf(<span class="string">'22: Plot a measure for a set of examples\n'</span>);
+0033 fprintf(<span class="string">'23: Compare latent curve set populations for 2 model runs\n'</span>);
+0034 fprintf(<span class="string">'24: Plot superimposed alignment curves - mean shift - one per page\n'</span>);
+0035 fprintf(<span class="string">'25: Plot superimposed alignment curves - mean shift - all on one page\n'</span>);
+0036 fprintf(<span class="string">'26: Compare results for multiple model runs to labelled test data by latent curve set\n'</span>);
+0037 fprintf(<span class="string">'27: Run plots 18, 19, 20, 24, 25, 29, 30, 31, 32 in one go\n'</span>);
+0038 fprintf(<span class="string">'28: Compare latent curve set populations for multiple model runs\n'</span>);
+0039 fprintf(<span class="string">'29: Plot interventions over time by latent curve set (absolute days)\n'</span>);
+0040 fprintf(<span class="string">'30: Plot probilities of latent curve set assignment\n'</span>);
+0041 fprintf(<span class="string">'31: Plot superimposed alignment curves - max shift - one per page\n'</span>);
+0042 fprintf(<span class="string">'32: Plot superimposed alignment curves - max shift - all on one page\n'</span>);
+0043 fprintf(<span class="string">'33: Plot histogram of vertical shifts\n'</span>);
+0044 fprintf(<span class="string">'34: Run normalised prediction plots\n'</span>);
+0045 fprintf(<span class="string">'35: Plot superimposed alignment curves - exzero shift - one per page\n'</span>);
+0046 fprintf(<span class="string">'36: Plot superimposed alignment curves - exzero shift - all on one page\n'</span>);
+0047 fprintf(<span class="string">'37: Plot superimposed measures - mean shift - one intervention per page\n'</span>);
+0048 fprintf(<span class="string">'38: Plot superimposed measures - max shift - one intervention per page\n'</span>);
+0049 fprintf(<span class="string">'39: Plot superimposed measures - exzero shift - one intervention per page\n'</span>);
+0050 fprintf(<span class="string">'40: Plot superimposed alignment curves - 7d mean shift - one per page\n'</span>);
+0051 fprintf(<span class="string">'41: Plot superimposed alignment curves - 7d mean shift - all on one page\n'</span>);
+0052 fprintf(<span class="string">'42: Plot superimposed measures - 7d mean shift - one intervention per page\n'</span>);
+0053 fprintf(<span class="string">'43: Plot histogram of time since last exacerbation\n'</span>);
+0054 fprintf(<span class="string">'44: Plotting histogram of lc set by hospital\n'</span>);
+0055 
+0056 noptions = 44;
+0057 fprintf(<span class="string">'\n'</span>);
+0058 runfunction = <a href="selectValFromRange.html" class="code" title="function [value] = selectValFromRange(questext, fromrange, torange)">selectValFromRange</a>(<span class="string">'Choose function'</span>, 1, noptions);
+0059 fprintf(<span class="string">'\n'</span>);
+0060 
+0061 [~, studytmp, ~] = <a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
+0062 
+0063 <span class="keyword">if</span> ismember(runfunction, [10, 26])
+0064     [modelrun, modelidx, models] = <a href="amEMMCSelectModelRunFromDir.html" class="code" title="function [modelrun, modelidx, ModelResultFiles] = amEMMCSelectModelRunFromDir(study, loadtype, lcmode, intrfilt, tgapmode, tstlabelmode)">amEMMCSelectModelRunFromDir</a>(studytmp, <span class="string">''</span>, <span class="string">'LCSet'</span>, <span class="string">'IntrFilt'</span>, <span class="string">'TGap'</span>, <span class="string">'TstLbl'</span>);
+0065 <span class="keyword">elseif</span> ismember(runfunction, [28, 30])
+0066     [modelrun, modelidx, models] = <a href="amEMMCSelectModelRunFromDir.html" class="code" title="function [modelrun, modelidx, ModelResultFiles] = amEMMCSelectModelRunFromDir(study, loadtype, lcmode, intrfilt, tgapmode, tstlabelmode)">amEMMCSelectModelRunFromDir</a>(studytmp, <span class="string">''</span>, <span class="string">'LCSet'</span>, <span class="string">'IntrFilt'</span>, <span class="string">'TGap'</span>,       <span class="string">''</span>);
+0067 <span class="keyword">else</span>
+0068     [modelrun, modelidx, models] = <a href="amEMMCSelectModelRunFromDir.html" class="code" title="function [modelrun, modelidx, ModelResultFiles] = amEMMCSelectModelRunFromDir(study, loadtype, lcmode, intrfilt, tgapmode, tstlabelmode)">amEMMCSelectModelRunFromDir</a>(studytmp, <span class="string">''</span>,      <span class="string">''</span>, <span class="string">'IntrFilt'</span>, <span class="string">'TGap'</span>,       <span class="string">''</span>);
+0069 <span class="keyword">end</span>
+0070 
+0071 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0072 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0073 fprintf(<span class="string">'Loading output from model run\n'</span>);
+0074 load(fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>, modelrun)));
+0075 
+0076 predictivemodelinputsfile = sprintf(<span class="string">'%spredictivemodelinputs.mat'</span>, study);
+0077 ivandmeasuresfile = sprintf(<span class="string">'%sivandmeasures_gap%d.mat'</span>, study, treatgap);
+0078 
+0079 
+0080 <span class="comment">% default some variables for backward compatibility with prior versions</span>
+0081 <span class="keyword">if</span> ~exist(<span class="string">'animated_overall_pdoffset'</span>, <span class="string">'var'</span>)
+0082     animated_overall_pdoffset = 0;
+0083 <span class="keyword">end</span>
+0084 <span class="keyword">if</span> ~exist(<span class="string">'isOutlier'</span>, <span class="string">'var'</span>)
+0085     isOutlier = zeros(nlatentcurves, ninterventions, align_wind, nmeasures, max_offset);
+0086 <span class="keyword">end</span>
+0087 <span class="keyword">if</span> (~exist(<span class="string">'intrkeepidx'</span>,<span class="string">'var'</span>))
+0088     intrkeepidx = true(ninterventions, 1);
+0089 <span class="keyword">end</span>
+0090 <span class="keyword">if</span> (~exist(<span class="string">'vshift'</span>,<span class="string">'var'</span>))
+0091     vshift = zeros(nlatentcurves, ninterventions, nmeasures, max_offset);
+0092 <span class="keyword">end</span>
+0093     
+0094 <span class="keyword">if</span> runfunction == 1
+0095     tic
+0096     <span class="comment">%subfolder = 'Plots';</span>
+0097     fprintf(<span class="string">'Plotting prediction results\n'</span>);
+0098     normmode = 1; <span class="comment">% plot regular measurement data</span>
+0099     <span class="keyword">for</span> i=1:ninterventions
+0100         <a href="amEMMCPlotsAndSavePredictions.html" class="code" title="function amEMMCPlotsAndSavePredictions(amInterventions, amIntrcube, measures, pdoffset,overall_pdoffset, hstg, overall_hist, vshift, meancurvemean, normmean, normstd, isOutlier,ex_start_array, thisinter, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder, normmode)">amEMMCPlotsAndSavePredictions</a>(amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset, <span class="keyword">...</span>
+0101             hstg, overall_hist, vshift, meancurvemean, normmean, normstd, isOutlier, ex_start, i, nmeasures, <span class="keyword">...</span>
+0102             max_offset, align_wind, sigmamethod, plotname, plotsubfolder, normmode);
+0103     <span class="keyword">end</span>
+0104     toc
+0105     fprintf(<span class="string">'\n'</span>);
+0106 <span class="keyword">elseif</span> runfunction == 2
+0107     tic
+0108     subfolder = <span class="string">'AnimatedPlots'</span>;
+0109     fprintf(<span class="string">'Running concurrent alignment animation\n'</span>);
+0110     moviefilename = sprintf(<span class="string">'%s-ConcurrentAlignment'</span>, modelrun);
+0111     animatedlc = 0; <span class="comment">% just until i rerun the model to save this variable</span>
+0112     [f, p, niterations] = <a href="amEMMCAnimatedAlignmentConcurrent.html" class="code" title="function [f, p, niterations] = amEMMCAnimatedAlignmentConcurrent(animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset,profile_pre, measures, max_offset, align_wind, nmeasures, ninterventions, nlatentcurves, runmode, basemoviefilename)">amEMMCAnimatedAlignmentConcurrent</a>(animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset, <span class="keyword">...</span>
+0113         unaligned_profile, measures, max_offset, align_wind, nmeasures, ninterventions, nlatentcurves, runmode, fullfile(basedir, subfolder, moviefilename));
+0114     toc
+0115     fprintf(<span class="string">'\n'</span>);
+0116 <span class="keyword">elseif</span> runfunction == 3
+0117     tic
+0118     subfolder = <span class="string">'AnimatedPlots'</span>;
+0119     fprintf(<span class="string">'Running sequential alignment animation\n'</span>);
+0120     moviefilename = sprintf(<span class="string">'%s-SequentialAlignment'</span>, modelrun);
+0121     [f, p, niterations] = <a href="animatedAlignmentSequential.html" class="code" title="function [f, p, niterations] = animatedAlignmentSequential(animatedmeancurvemean, profile_pre, measures, max_offset, align_wind, nmeasures, moviefilename)">animatedAlignmentSequential</a>(animatedmeancurvemean, unaligned_profile, measures, max_offset, <span class="keyword">...</span>
+0122         align_wind, nmeasures, fullfile(basedir, subfolder, moviefilename));
+0123     toc
+0124     fprintf(<span class="string">'\n'</span>);
+0125 <span class="keyword">elseif</span> runfunction == 4
+0126     tic
+0127     fprintf(<span class="string">'Running concurrent prod distribution animation\n'</span>);
+0128     subfolder = <span class="string">'AnimatedPlots'</span>;
+0129     moviefilename = sprintf(<span class="string">'%s-ProbDistribution'</span>, modelrun);
+0130     [f, p, niterations] = <a href="amEMMCAnimatedProbDistConcurrent.html" class="code" title="function [f, p, niterations] = amEMMCAnimatedProbDistConcurrent(animated_overall_pdoffset, max_offset,ninterventions, nlatentcurves, basemoviefilename)">amEMMCAnimatedProbDistConcurrent</a>(animated_overall_pdoffset, max_offset, ninterventions, <span class="keyword">...</span>
+0131         nlatentcurves, fullfile(basedir, subfolder, moviefilename));
+0132     toc
+0133     fprintf(<span class="string">'\n'</span>);
+0134 <span class="keyword">elseif</span> runfunction == 5
+0135     tic
+0136     fprintf(<span class="string">'Saving prob distributions to a separate matlab file\n'</span>);
+0137     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0138     outputfilename = sprintf(<span class="string">'%s-PDs.mat'</span>, modelrun);
+0139     save(fullfile(basedir, subfolder, outputfilename), <span class="string">'initial_offsets'</span>, <span class="string">'offsets'</span>, <span class="string">'hstg'</span>, <span class="keyword">...</span>
+0140         <span class="string">'pdoffset'</span>, <span class="string">'overall_hist'</span>, <span class="string">'overall_pdoffset'</span>);
+0141 <span class="keyword">elseif</span> runfunction == 6
+0142     fprintf(<span class="string">'Labelling exacerbation start on measurement plots to create test data set\n'</span>);
+0143     treatgap = <a href="selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>();
+0144     [testlabelmthd, testlabeltxt] = <a href="selectLabelMethodology.html" class="code" title="function [testlabelmthd, testlabeltxt] = selectLabelMethodology()">selectLabelMethodology</a>();
+0145     
+0146     basetestlabelfilename = sprintf(<span class="string">'%s_LabelledInterventions_gap%d%s'</span>, study, treatgap, testlabeltxt);
+0147     
+0148     fprintf(<span class="string">'1: Run from scratch\n'</span>);
+0149     fprintf(<span class="string">'2: Continue from partway through\n'</span>);
+0150     fprintf(<span class="string">'3: Update a single intervention\n'</span>);
+0151     fprintf(<span class="string">'4: Run for additional examples\n'</span>);
+0152 
+0153     labelmode = <a href="selectValFromRange.html" class="code" title="function [value] = selectValFromRange(questext, fromrange, torange)">selectValFromRange</a>(<span class="string">'Select mode to run'</span>, 1, 4);
+0154 
+0155     <span class="keyword">if</span> labelmode == 1
+0156         <span class="keyword">if</span> ~exist(fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>, basetestlabelfilename)), <span class="string">'file'</span>)
+0157             fprintf(<span class="string">'Creating new labelled test data file\n'</span>);
+0158             [amLabelledInterventions] = <a href="createInitialLabelledIntr.html" class="code" title="function [amLabelledInterventions] = createInitialLabelledIntr(amInterventions)">createInitialLabelledIntr</a>(amInterventions);
+0159             interfrom = 1;
+0160             interto = ninterventions;
+0161         <span class="keyword">else</span>
+0162             fprintf(<span class="string">'Labelled test file %s already exists\n'</span>, sprintf(<span class="string">'%s.mat'</span>, basetestlabelfilename));
+0163             <span class="keyword">return</span>;
+0164         <span class="keyword">end</span>
+0165     <span class="keyword">elseif</span> labelmode == 2
+0166         fprintf(<span class="string">'Loading latest labelled test data file %s\n'</span>, basetestlabelfilename);
+0167         load(fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>, basetestlabelfilename)));
+0168         interfrom = <a href="selectValFromRange.html" class="code" title="function [value] = selectValFromRange(questext, fromrange, torange)">selectValFromRange</a>(<span class="string">'Enter intervention to restart from'</span>, 2, ninterventions);
+0169         interto   = ninterventions;
+0170     <span class="keyword">elseif</span> labelmode == 3
+0171         fprintf(<span class="string">'Loading latest labelled test data file %s\n'</span>, basetestlabelfilename);
+0172         load(fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>, basetestlabelfilename)));
+0173         interfrom = <a href="selectValFromRange.html" class="code" title="function [value] = selectValFromRange(questext, fromrange, torange)">selectValFromRange</a>(<span class="string">'Enter intervention to update'</span>, 1, ninterventions);
+0174         interto = interfrom;
+0175     <span class="keyword">elseif</span> labelmode == 4
+0176         fprintf(<span class="string">'Loading latest labelled test data file %s\n'</span>, basetestlabelfilename);
+0177         load(fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>, basetestlabelfilename)));
+0178         [amLabelledInterventions] = <a href="updateListOfLabelledIntr.html" class="code" title="function [amlabintr] = updateListOfLabelledIntr(amintr, amlabintr)">updateListOfLabelledIntr</a>(amInterventions, amLabelledInterventions);
+0179         interfrom = 1;
+0180         interto = ninterventions;
+0181     <span class="keyword">end</span>
+0182 
+0183     [amLabelledInterventions] = <a href="amEMMCCreateLabelledInterventions.html" class="code" title="function [amLabelledInterventions] = amEMMCCreateLabelledInterventions(amIntrDatacube, amLabelledInterventions,interfrom, interto, measures, normmean, max_offset, align_wind, study, nmeasures, labelmode, basetestlabelfilename)">amEMMCCreateLabelledInterventions</a>(amIntrDatacube, amLabelledInterventions, <span class="keyword">...</span>
+0184         interfrom, interto, measures, normmean, max_offset, align_wind, study, nmeasures, labelmode, basetestlabelfilename);
+0185 
+0186 <span class="keyword">elseif</span> runfunction == 7
+0187     fprintf(<span class="string">'Comparing results to another model run\n'</span>);
+0188     fprintf(<span class="string">'\n'</span>);
+0189     fprintf(<span class="string">'Select second model to compare\n'</span>);
+0190     fprintf(<span class="string">'\n'</span>);
+0191     [modelrun2, modelidx2] = <a href="amEMMCSelectModelRunFromDir.html" class="code" title="function [modelrun, modelidx, ModelResultFiles] = amEMMCSelectModelRunFromDir(study, loadtype, lcmode, intrfilt, tgapmode, tstlabelmode)">amEMMCSelectModelRunFromDir</a>(studytmp, <span class="string">''</span>, <span class="string">''</span>, <span class="string">'IntrFilt'</span>, <span class="string">'TGap'</span>, <span class="string">''</span>);
+0192     <a href="amEMMCCompareModelRuns.html" class="code" title="function amEMMCCompareModelRuns(modelrun1, modelidx1, modelrun2, modelidx2)">amEMMCCompareModelRuns</a>(modelrun, modelidx, modelrun2, modelidx2);
+0193 <span class="keyword">elseif</span> runfunction == 8
+0194     fprintf(<span class="string">'Comparing results to the labelled test data\n'</span>);
+0195     fprintf(<span class="string">'\n'</span>);
+0196     fprintf(<span class="string">'1: Test set only\n'</span>);
+0197     fprintf(<span class="string">'2: All Interventions\n'</span>);
+0198 
+0199     testsetmode = <a href="selectValFromRange.html" class="code" title="function [value] = selectValFromRange(questext, fromrange, torange)">selectValFromRange</a>(<span class="string">'Select mode to run'</span>, 1, 2);
+0200     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0201     load(fullfile(basedir, subfolder, labelledinterventionsfile));
+0202     <a href="amEMMCCompareModelRunToTestData.html" class="code" title="function amEMMCCompareModelRunToTestData(amLabelledInterventions, amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset,hstg, overall_hist, meancurvemean, normmean, normstd, ex_start, nmeasures, ninterventions, nlatentcurves, max_offset,align_wind, sigmamethod, study, mversion, modelrun, modelidx, testsetmode)">amEMMCCompareModelRunToTestData</a>(amLabelledInterventions(intrkeepidx, :), amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset, hstg, overall_hist, <span class="keyword">...</span>
+0203         meancurvemean, normmean, normstd, ex_start, nmeasures, ninterventions, nlatentcurves, max_offset, align_wind, sigmamethod, study, mversion, modelrun, modelidx, testsetmode);
+0204 <span class="keyword">elseif</span> runfunction == 9
+0205     fprintf(<span class="string">'&lt;placeholder for Dragos new option&gt;\n'</span>);
+0206 <span class="keyword">elseif</span> runfunction == 10
+0207     fprintf(<span class="string">'Comparing results of multiple model runs to the labelled test data\n'</span>);
+0208     fprintf(<span class="string">'\n'</span>);
+0209     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0210     load(fullfile(basedir, subfolder, labelledinterventionsfile));
+0211     plotmode = <span class="string">'Overall'</span>; 
+0212     [lcbymodelrun, offsetbymodelrun] = <a href="amEMMCCompareMultipleModelRunToTestData.html" class="code" title="function [lcbymodelrun, offsetbymodelrun] = amEMMCCompareMultipleModelRunToTestData(amLabelledInterventions, modelrun, modelidx, models, plotmode, study)">amEMMCCompareMultipleModelRunToTestData</a>(amLabelledInterventions(intrkeepidx, :), modelrun, modelidx, models, plotmode, study);
+0213 <span class="keyword">elseif</span> runfunction == 11
+0214     fprintf(<span class="string">'Comparing results of multiple model runs\n'</span>);
+0215     fprintf(<span class="string">'\n'</span>);
+0216     [modeliterations, modeloffsets] = <a href="compareMultipleModelRunResults.html" class="code" title="function [modeliterations, modeloffsets] = compareMultipleModelRunResults(modelrun, modelidx, models, basedir, subfolder)">compareMultipleModelRunResults</a>(modelrun, modelidx, models, basedir, subfolder);
+0217 <span class="keyword">elseif</span> runfunction == 12
+0218     fprintf(<span class="string">'Plotting simplified aligned curves\n'</span>);
+0219     fprintf(<span class="string">'\n'</span>);
+0220     run_type = <span class="string">'Best Alignment'</span>;
+0221     <a href="amEMPlotAndSaveAlignedCurvesBasic.html" class="code" title="function amEMPlotAndSaveAlignedCurvesBasic(profile_pre, meancurvemean, offsets,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder)">amEMPlotAndSaveAlignedCurvesBasic</a>(unaligned_profile, meancurvemean, offsets, <span class="keyword">...</span>
+0222         measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder);
+0223 <span class="keyword">elseif</span> runfunction == 13
+0224     fprintf(<span class="string">'Loading latest labelled test data file\n'</span>);
+0225     load(fullfile(basedir, subfolder, labelledinterventionsfile));
+0226     fprintf(<span class="string">'Plotting labelled test data\n'</span>);
+0227     fprintf(<span class="string">'\n'</span>);
+0228     <a href="amEMMCPlotLabelledInterventions.html" class="code" title="function amEMMCPlotLabelledInterventions(amIntrDatacube, amInterventions, amLabelledInterventions,measures, normmean, max_offset, align_wind, study, nmeasures)">amEMMCPlotLabelledInterventions</a>(amIntrDatacube, amInterventions, amLabelledInterventions, <span class="keyword">...</span>
+0229         measures, normmean, max_offset, align_wind, study, nmeasures)  
+0230 <span class="keyword">elseif</span> runfunction == 14
+0231     fprintf(<span class="string">'Loading latest labelled test data file\n'</span>);
+0232     load(fullfile(basedir, subfolder, labelledinterventionsfile));
+0233     fprintf(<span class="string">'Calculating Ex_Start from Test Labels and Offsets\n'</span>);
+0234     fprintf(<span class="string">'\n'</span>);
+0235     derived_ex_start = <a href="amEMMCCalcExStartsFromTestLabels.html" class="code" title="function ex_start = amEMMCCalcExStartsFromTestLabels(amLabelledInterventions, amInterventions, overall_pdoffset,max_offset, plotsubfolder, plotname, ninterventions, nlatentcurves)">amEMMCCalcExStartsFromTestLabels</a>(amLabelledInterventions(intrkeepidx, :), amInterventions, <span class="keyword">...</span>
+0236         overall_pdoffset, max_offset, sprintf(<span class="string">'Plots/%s'</span>, modelrun), modelrun, ninterventions, nlatentcurves);
+0237 <span class="keyword">elseif</span> runfunction == 15
+0238     run_type = <span class="string">'Best Alignment'</span>;
+0239     fprintf(<span class="string">'Plotting aligned curves \n'</span>);
+0240     <a href="amEMMCPlotAndSaveAlignedCurves.html" class="code" title="function amEMMCPlotAndSaveAlignedCurves(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets, latentcurves,measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder, nlatentcurves)">amEMMCPlotAndSaveAlignedCurves</a>(unaligned_profile, meancurvemean, meancurvecount, meancurvestd, <span class="keyword">...</span>
+0241         amInterventions.Offset, amInterventions.LatentCurve, <span class="keyword">...</span>
+0242         measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder, nlatentcurves);
+0243 <span class="keyword">elseif</span> runfunction == 16
+0244     run_type = <span class="string">'Best Alignment'</span>;
+0245     fprintf(<span class="string">'Plotting alignment detail\n'</span>);
+0246     [sorted_interventions, max_points] = <a href="amEMMCVisualiseAlignmentDetail.html" class="code" title="function [sorted_interventions, max_points] = amEMMCVisualiseAlignmentDetail(amIntrNormcube, amHeldBackcube, amInterventions, meancurvemean,meancurvecount, meancurvestd, overall_pdoffset, measures, min_offset, max_offset, align_wind, nmeasures, ninterventions,run_type, ex_start, curveaveragingmethod, plotname, plotsubfolder, nlatentcurves)">amEMMCVisualiseAlignmentDetail</a>(amIntrNormcube, amHeldBackcube, amInterventions, meancurvemean, <span class="keyword">...</span>
+0247         meancurvecount, meancurvestd, overall_pdoffset, measures, min_offset, max_offset, align_wind, nmeasures, ninterventions, <span class="keyword">...</span>
+0248         run_type, ex_start, curveaveragingmethod, plotname, plotsubfolder, nlatentcurves);
+0249 <span class="keyword">elseif</span> runfunction == 17
+0250     run_type = <span class="string">'Best Alignment'</span>;
+0251     fprintf(<span class="string">'Plotting alignment curves side-by-side\n'</span>);
+0252     centerplots = false;
+0253     <a href="amEMMCPlotAlignedCurvesSideBySide.html" class="code" title="function amEMMCPlotAlignedCurvesSideBySide(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets, latentcurve,measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder, nlatentcurves, centerplots)">amEMMCPlotAlignedCurvesSideBySide</a>(unaligned_profile, meancurvemean, meancurvecount, meancurvestd, amInterventions.Offset, amInterventions.LatentCurve, <span class="keyword">...</span>
+0254         measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder, nlatentcurves, centerplots);
+0255 <span class="keyword">elseif</span> runfunction == 18
+0256     run_type = <span class="string">'Best Alignment'</span>;
+0257     fprintf(<span class="string">'Plotting alignment curves side-by-side with centering\n'</span>);
+0258     centerplots = true;
+0259     <a href="amEMMCPlotAlignedCurvesSideBySide.html" class="code" title="function amEMMCPlotAlignedCurvesSideBySide(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets, latentcurve,measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder, nlatentcurves, centerplots)">amEMMCPlotAlignedCurvesSideBySide</a>(unaligned_profile, meancurvemean, meancurvecount, meancurvestd, amInterventions.Offset, amInterventions.LatentCurve, <span class="keyword">...</span>
+0260         measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder, nlatentcurves, centerplots);
+0261 <span class="keyword">elseif</span> runfunction == 19
+0262     fprintf(<span class="string">'Loading Predictive Model Patient Measures Stats\n'</span>);
+0263     basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0264     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0265     load(fullfile(basedir, subfolder, predictivemodelinputsfile), <span class="string">'pmPatients'</span>, <span class="string">'pmPatientMeasStats'</span>);
+0266     fprintf(<span class="string">'Loading Treatment and Measures Prior info\n'</span>);
+0267     basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0268     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0269     fprintf(<span class="string">'Loading clinical microbiology, antibiotic, admissions, and CRP data\n'</span>);
+0270     load(fullfile(basedir, subfolder, ivandmeasuresfile), <span class="string">'ivandmeasurestable'</span>);
+0271     [~, clinicalmatfile, ~] = <a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0272     [~, ~, cdMicrobiology, cdAntibiotics, cdAdmissions, ~, cdCRP, ~, ~, ~, ~] = <a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0273     fprintf(<span class="string">'Plotting Variables vs latent curve allocation\n'</span>);
+0274     <a href="amEMMCPlotVariablesVsLatentCurveSet.html" class="code" title="function amEMMCPlotVariablesVsLatentCurveSet(amInterventions, pmPatients, pmPatientMeasStats, ivandmeasurestable,cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder, ninterventions, nlatentcurves, study)">amEMMCPlotVariablesVsLatentCurveSet</a>(amInterventions, pmPatients, pmPatientMeasStats, ivandmeasurestable, <span class="keyword">...</span>
+0275         cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder, ninterventions, nlatentcurves, study);
+0276 <span class="keyword">elseif</span> runfunction == 20
+0277     fprintf(<span class="string">'Loading Predictive Model Patient info\n'</span>);
+0278     basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0279     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0280     sprintf(<span class="string">'%s_LabelledInterventions.mat'</span>, study);
+0281     load(fullfile(basedir, subfolder, predictivemodelinputsfile), <span class="string">'pmPatients'</span>, <span class="string">'npatients'</span>, <span class="string">'maxdays'</span>);
+0282     fprintf(<span class="string">'Loading unfiltered interventions\n'</span>);
+0283     amInterventionsKeep = amInterventions;
+0284     sprintf(amRunParameters.modelinputsmatfile{1}, study, treatgap)
+0285     load(fullfile(basedir, subfolder, modelinputsmatfile), <span class="string">'amInterventions'</span>);
+0286     amInterventionsFull = amInterventions;
+0287     amInterventions = amInterventionsKeep;
+0288     fprintf(<span class="string">'Plotting interventions over time by latent curve set\n'</span>);
+0289     plotmode = 1; <span class="comment">% plot using scaled dates</span>
+0290     <a href="amEMMCPlotInterventionsByLatentCurveSet.html" class="code" title="function amEMMCPlotInterventionsByLatentCurveSet(pmPatients, amInterventions,amInterventionsFull, npatients, maxdays, plotname, plotsubfolder, nlatentcurves, plotmode)">amEMMCPlotInterventionsByLatentCurveSet</a>(pmPatients, amInterventions, amInterventionsFull, npatients, maxdays, plotname, plotsubfolder, nlatentcurves, plotmode);
+0291 <span class="keyword">elseif</span> runfunction == 21
+0292     fprintf(<span class="string">'Done\n'</span>);
+0293 <span class="keyword">elseif</span> runfunction == 22
+0294     measure = <a href="amEMMCSelectMeasure.html" class="code" title="function [measure] = amEMMCSelectMeasure(measures, nmeasures)">amEMMCSelectMeasure</a>(measures, nmeasures);
+0295     <a href="amEMMCPlotSingleMeasureByLCSet.html" class="code" title="function amEMMCPlotSingleMeasureByLCSet(amInterventions, amIntrDatacube, normmean, measure, measures,ex_start_array, max_offset, align_wind, plotname, plotsubfolder, nlatentcurves)">amEMMCPlotSingleMeasureByLCSet</a>(amInterventions, amIntrDatacube, normmean, measure, measures, <span class="keyword">...</span>
+0296             ex_start, max_offset, align_wind, plotname, plotsubfolder, nlatentcurves);
+0297 <span class="keyword">elseif</span> runfunction == 23
+0298     fprintf(<span class="string">'Comparing latent curve set population to another model run\n'</span>);
+0299     fprintf(<span class="string">'\n'</span>);
+0300     fprintf(<span class="string">'Select second model to compare\n'</span>);
+0301     fprintf(<span class="string">'\n'</span>);
+0302     [modelrun2, modelidx2] = <a href="amEMMCSelectModelRunFromDir.html" class="code" title="function [modelrun, modelidx, ModelResultFiles] = amEMMCSelectModelRunFromDir(study, loadtype, lcmode, intrfilt, tgapmode, tstlabelmode)">amEMMCSelectModelRunFromDir</a>(studytmp, <span class="string">''</span>, <span class="string">''</span>, <span class="string">'IntrFilt'</span>, <span class="string">'TGap'</span>, <span class="string">''</span>);
+0303     <a href="amEMMCCompareModelRunsByLCSets.html" class="code" title="function amEMMCCompareModelRunsByLCSets(modelrun1, modelidx1, modelrun2, modelidx2)">amEMMCCompareModelRunsByLCSets</a>(modelrun, modelidx, modelrun2, modelidx2);
+0304 <span class="keyword">elseif</span> runfunction == 24
+0305     run_type = <span class="string">'Best Alignment'</span>;
+0306     fprintf(<span class="string">'Plotting superimposed alignment curves - mean shift - one per page\n'</span>);
+0307     compactplot = false;
+0308     shiftmode = 1; <span class="comment">% shift by mean to left of ex_start</span>
+0309     <a href="amEMMCPlotSuperimposedAlignedCurves.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurves(meancurvemean, meancurvecount, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study)">amEMMCPlotSuperimposedAlignedCurves</a>(meancurvemean, meancurvecount, amInterventions, <span class="keyword">...</span>
+0310         measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study);
+0311 <span class="keyword">elseif</span> runfunction == 25
+0312     run_type = <span class="string">'Best Alignment'</span>;
+0313     fprintf(<span class="string">'Plotting superimposed alignment curves - mean shift - all on one page\n'</span>);
+0314     compactplot = true;
+0315     shiftmode = 1; <span class="comment">% shift by mean to left of ex_start</span>
+0316     <a href="amEMMCPlotSuperimposedAlignedCurves.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurves(meancurvemean, meancurvecount, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study)">amEMMCPlotSuperimposedAlignedCurves</a>(meancurvemean, meancurvecount, amInterventions, <span class="keyword">...</span>
+0317         measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study);
+0318 <span class="keyword">elseif</span> runfunction == 26
+0319     fprintf(<span class="string">'Comparing results of multiple model runs to the labelled test data by latent curve set\n'</span>);
+0320     fprintf(<span class="string">'\n'</span>);
+0321     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0322     load(fullfile(basedir, subfolder, labelledinterventionsfile));
+0323     plotmode = <span class="string">'ByLCSet'</span>; 
+0324     <a href="amEMMCCompareMultipleModelRunToTestData.html" class="code" title="function [lcbymodelrun, offsetbymodelrun] = amEMMCCompareMultipleModelRunToTestData(amLabelledInterventions, modelrun, modelidx, models, plotmode, study)">amEMMCCompareMultipleModelRunToTestData</a>(amLabelledInterventions(intrkeepidx, :), modelrun, modelidx, models, plotmode);
+0325 <span class="keyword">elseif</span> runfunction == 27
+0326     <span class="comment">% run plot 18</span>
+0327     run_type = <span class="string">'Best Alignment'</span>;
+0328     fprintf(<span class="string">'Plotting alignment curves side-by-side with centering\n'</span>);
+0329     centerplots = true;
+0330     <a href="amEMMCPlotAlignedCurvesSideBySide.html" class="code" title="function amEMMCPlotAlignedCurvesSideBySide(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets, latentcurve,measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder, nlatentcurves, centerplots)">amEMMCPlotAlignedCurvesSideBySide</a>(unaligned_profile, meancurvemean, meancurvecount, meancurvestd, amInterventions.Offset, amInterventions.LatentCurve, <span class="keyword">...</span>
+0331         measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder, nlatentcurves, centerplots);
+0332     <span class="comment">% run plot 19</span>
+0333     fprintf(<span class="string">'Loading Predictive Model Patient Measures Stats\n'</span>);
+0334     basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0335     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0336     load(fullfile(basedir, subfolder, predictivemodelinputsfile), <span class="string">'pmPatients'</span>, <span class="string">'pmPatientMeasStats'</span>);
+0337     fprintf(<span class="string">'Loading Treatment and Measures Prior info\n'</span>);
+0338     basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0339     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0340     load(fullfile(basedir, subfolder, ivandmeasuresfile), <span class="string">'ivandmeasurestable'</span>);
+0341     <span class="keyword">if</span> ismember(study, <span class="string">'SC'</span>)
+0342         clinicalmatfile   = <span class="string">'clinicaldata.mat'</span>;
+0343         microbiologytable = <span class="string">'cdMicrobiology'</span>;
+0344         abtable           = <span class="string">'cdAntibiotics'</span>;
+0345         admtable          = <span class="string">'cdAdmissions'</span>;
+0346         crptable          = <span class="string">'cdCRP'</span>;
+0347     <span class="keyword">elseif</span> ismember(study, <span class="string">'TM'</span>)
+0348         clinicalmatfile   = <span class="string">'telemedclinicaldata.mat'</span>;
+0349         microbiologytable = <span class="string">'tmMicrobiology'</span>;
+0350         abtable           = <span class="string">'tmAntibiotics'</span>;
+0351         admtable          = <span class="string">'tmAdmissions'</span>;
+0352         crptable          = <span class="string">'tmCRP'</span>;
+0353     <span class="keyword">else</span>
+0354         fprintf(<span class="string">'Invalid study\n'</span>);
+0355         <span class="keyword">return</span>;
+0356     <span class="keyword">end</span>
+0357     fprintf(<span class="string">'Loading clinical microbiology and CRP data\n'</span>);
+0358     load(fullfile(basedir, subfolder, clinicalmatfile), microbiologytable, abtable, admtable, crptable);
+0359     <span class="keyword">if</span> ismember(study, <span class="string">'TM'</span>)
+0360         cdMicrobiology = tmMicrobiology;
+0361         cdAntibiotics  = tmAntibiotics;
+0362         cdAdmissions   = tmAdmissions;
+0363         cdCRP          = tmCRP;
+0364     <span class="keyword">end</span>
+0365     fprintf(<span class="string">'Plotting Variables vs latent curve allocation\n'</span>);
+0366     <a href="amEMMCPlotVariablesVsLatentCurveSet.html" class="code" title="function amEMMCPlotVariablesVsLatentCurveSet(amInterventions, pmPatients, pmPatientMeasStats, ivandmeasurestable,cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder, ninterventions, nlatentcurves, study)">amEMMCPlotVariablesVsLatentCurveSet</a>(amInterventions, pmPatients, pmPatientMeasStats, ivandmeasurestable, <span class="keyword">...</span>
+0367         cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder, ninterventions, nlatentcurves);
+0368     <span class="comment">% run plot 20</span>
+0369     fprintf(<span class="string">'Loading Predictive Model Patient info\n'</span>);
+0370     basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0371     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0372     load(fullfile(basedir, subfolder, predictivemodelinputsfile), <span class="string">'pmPatients'</span>, <span class="string">'npatients'</span>, <span class="string">'maxdays'</span>);
+0373     fprintf(<span class="string">'Loading unfiltered interventions\n'</span>);
+0374     amInterventionsKeep = amInterventions;
+0375     load(fullfile(basedir, subfolder, modelinputsmatfile), <span class="string">'amInterventions'</span>);
+0376     amInterventionsFull = amInterventions;
+0377     amInterventions = amInterventionsKeep;
+0378     fprintf(<span class="string">'Plotting interventions over time by latent curve set\n'</span>);
+0379     plotmode = 1; <span class="comment">% plot using scaled dates</span>
+0380     <a href="amEMMCPlotInterventionsByLatentCurveSet.html" class="code" title="function amEMMCPlotInterventionsByLatentCurveSet(pmPatients, amInterventions,amInterventionsFull, npatients, maxdays, plotname, plotsubfolder, nlatentcurves, plotmode)">amEMMCPlotInterventionsByLatentCurveSet</a>(pmPatients, amInterventions, amInterventionsFull, npatients, maxdays, plotname, plotsubfolder, nlatentcurves, plotmode);
+0381     <span class="comment">% run plot 24</span>
+0382     run_type = <span class="string">'Best Alignment'</span>;
+0383     fprintf(<span class="string">'Plotting superimposed alignment curves - mean shift - one per page\n'</span>);
+0384     compactplot = false;
+0385     shiftmode = 1; <span class="comment">% shift by mean to left of ex_start</span>
+0386     <a href="amEMMCPlotSuperimposedAlignedCurves.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurves(meancurvemean, meancurvecount, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study)">amEMMCPlotSuperimposedAlignedCurves</a>(meancurvemean, meancurvecount, amInterventions, <span class="keyword">...</span>
+0387         measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study);
+0388     <span class="comment">% run plot 25</span>
+0389     run_type = <span class="string">'Best Alignment'</span>;
+0390     fprintf(<span class="string">'Plotting superimposed alignment curves - mean shift - all on one page\n'</span>);
+0391     compactplot = true;
+0392     shiftmode = 1; <span class="comment">% shift by mean to left of ex_start</span>
+0393     <a href="amEMMCPlotSuperimposedAlignedCurves.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurves(meancurvemean, meancurvecount, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study)">amEMMCPlotSuperimposedAlignedCurves</a>(meancurvemean, meancurvecount, amInterventions, <span class="keyword">...</span>
+0394         measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study);
+0395     <span class="comment">% run plot 29</span>
+0396     fprintf(<span class="string">'Loading Predictive Model Patient info\n'</span>);
+0397     basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0398     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0399     sprintf(<span class="string">'%s_LabelledInterventions.mat'</span>, study);
+0400     load(fullfile(basedir, subfolder, predictivemodelinputsfile), <span class="string">'pmPatients'</span>, <span class="string">'npatients'</span>, <span class="string">'maxdays'</span>);
+0401     fprintf(<span class="string">'Loading unfiltered interventions\n'</span>);
+0402     amInterventionsKeep = amInterventions;
+0403     load(fullfile(basedir, subfolder, modelinputsmatfile), <span class="string">'amInterventions'</span>);
+0404     amInterventionsFull = amInterventions;
+0405     amInterventions = amInterventionsKeep;
+0406     fprintf(<span class="string">'Plotting interventions over time by latent curve set\n'</span>);
+0407     plotmode = 2; <span class="comment">% plot using scaled dates</span>
+0408     <a href="amEMMCPlotInterventionsByLatentCurveSet.html" class="code" title="function amEMMCPlotInterventionsByLatentCurveSet(pmPatients, amInterventions,amInterventionsFull, npatients, maxdays, plotname, plotsubfolder, nlatentcurves, plotmode)">amEMMCPlotInterventionsByLatentCurveSet</a>(pmPatients, amInterventions, amInterventionsFull, npatients, maxdays, plotname, plotsubfolder, nlatentcurves, plotmode);
+0409     <span class="comment">%run plot 30</span>
+0410     fprintf(<span class="string">'Plotting probilities of latent curve set assignment\n'</span>);
+0411     <a href="amEMMCPlotProbsLCSet.html" class="code" title="function amEMMCPlotProbsLCSet(overall_pdoffset, amInterventions, min_offset, max_offset, plotname, plotsubfolder, ninterventions, nlatentcurves)">amEMMCPlotProbsLCSet</a>(overall_pdoffset, amInterventions, min_offset, max_offset, plotname, plotsubfolder, ninterventions, nlatentcurves);
+0412     <span class="comment">% run plot 31</span>
+0413     run_type = <span class="string">'Best Alignment'</span>;
+0414     fprintf(<span class="string">'Plotting superimposed alignment curves - max shift - one per page\n'</span>);
+0415     compactplot = false;
+0416     shiftmode = 2; <span class="comment">% shift by max to left of ex_start</span>
+0417     <a href="amEMMCPlotSuperimposedAlignedCurves.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurves(meancurvemean, meancurvecount, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study)">amEMMCPlotSuperimposedAlignedCurves</a>(meancurvemean, meancurvecount, amInterventions, <span class="keyword">...</span>
+0418         measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode);
+0419     <span class="comment">% run plot 32</span>
+0420     run_type = <span class="string">'Best Alignment'</span>;
+0421     fprintf(<span class="string">'Plotting superimposed alignment curves - max shift - all on one page\n'</span>);
+0422     compactplot = true;
+0423     shiftmode = 2; <span class="comment">% shift by max to left of ex_start</span>
+0424     <a href="amEMMCPlotSuperimposedAlignedCurves.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurves(meancurvemean, meancurvecount, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study)">amEMMCPlotSuperimposedAlignedCurves</a>(meancurvemean, meancurvecount, amInterventions, <span class="keyword">...</span>
+0425         measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode);
+0426     
+0427 <span class="keyword">elseif</span> runfunction == 28
+0428     fprintf(<span class="string">'Comparing latent curve set population to multiple model runs\n'</span>);
+0429     <a href="amEMMCCompareMultipleModelRunsByLCSets.html" class="code" title="function amEMMCCompareMultipleModelRunsByLCSets(modelrun, modelidx, models)">amEMMCCompareMultipleModelRunsByLCSets</a>(modelrun, modelidx, models);
+0430 <span class="keyword">elseif</span> runfunction == 29
+0431     fprintf(<span class="string">'Loading Predictive Model Patient info\n'</span>);
+0432     basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0433     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0434     sprintf(<span class="string">'%s_LabelledInterventions.mat'</span>, study);
+0435     load(fullfile(basedir, subfolder, predictivemodelinputsfile), <span class="string">'pmPatients'</span>, <span class="string">'npatients'</span>, <span class="string">'maxdays'</span>);
+0436     fprintf(<span class="string">'Loading unfiltered interventions\n'</span>);
+0437     amInterventionsKeep = amInterventions;
+0438     load(fullfile(basedir, subfolder, modelinputsmatfile), <span class="string">'amInterventions'</span>);
+0439     amInterventionsFull = amInterventions;
+0440     amInterventions = amInterventionsKeep;
+0441     fprintf(<span class="string">'Plotting interventions over time by latent curve set\n'</span>);
+0442     plotmode = 2; <span class="comment">% plot using scaled dates</span>
+0443     <a href="amEMMCPlotInterventionsByLatentCurveSet.html" class="code" title="function amEMMCPlotInterventionsByLatentCurveSet(pmPatients, amInterventions,amInterventionsFull, npatients, maxdays, plotname, plotsubfolder, nlatentcurves, plotmode)">amEMMCPlotInterventionsByLatentCurveSet</a>(pmPatients, amInterventions, amInterventionsFull, npatients, maxdays, plotname, plotsubfolder, nlatentcurves, plotmode);
+0444 <span class="keyword">elseif</span> runfunction == 30
+0445     fprintf(<span class="string">'Plotting probilities of latent curve set assignment\n'</span>);
+0446     <a href="amEMMCPlotProbsLCSet.html" class="code" title="function amEMMCPlotProbsLCSet(overall_pdoffset, amInterventions, min_offset, max_offset, plotname, plotsubfolder, ninterventions, nlatentcurves)">amEMMCPlotProbsLCSet</a>(overall_pdoffset, amInterventions, min_offset, max_offset, plotname, plotsubfolder, ninterventions, nlatentcurves);
+0447 <span class="keyword">elseif</span> runfunction == 31
+0448     run_type = <span class="string">'Best Alignment'</span>;
+0449     fprintf(<span class="string">'Plotting superimposed alignment curves - max shift - one per page\n'</span>);
+0450     compactplot = false;
+0451     shiftmode = 2; <span class="comment">% shift by max to left of ex_start</span>
+0452     <a href="amEMMCPlotSuperimposedAlignedCurves.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurves(meancurvemean, meancurvecount, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study)">amEMMCPlotSuperimposedAlignedCurves</a>(meancurvemean, meancurvecount, amInterventions, <span class="keyword">...</span>
+0453         measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study);
+0454 <span class="keyword">elseif</span> runfunction == 32
+0455     run_type = <span class="string">'Best Alignment'</span>;
+0456     fprintf(<span class="string">'Plotting superimposed alignment curves - max shift - all on one page\n'</span>);
+0457     compactplot = true;
+0458     shiftmode = 2; <span class="comment">% shift by max to left of ex_start</span>
+0459     <a href="amEMMCPlotSuperimposedAlignedCurves.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurves(meancurvemean, meancurvecount, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study)">amEMMCPlotSuperimposedAlignedCurves</a>(meancurvemean, meancurvecount, amInterventions, <span class="keyword">...</span>
+0460         measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study);
+0461 <span class="keyword">elseif</span> runfunction == 33
+0462     fprintf(<span class="string">'Plotting histogram of vertical shifts\n'</span>);
+0463     <a href="amEMMCPlotHistogramOfVShifts.html" class="code" title="function amEMMCPlotHistogramOfVShifts(amInterventions, vshift, measures, nmeasures, ninterventions, nlatentcurves, plotname, plotsubfolder, vshiftmode, vshiftmax)">amEMMCPlotHistogramOfVShifts</a>(amInterventions, vshift, measures, nmeasures, ninterventions, nlatentcurves, plotname, plotsubfolder, vshiftmode, vshiftmax);
+0464 <span class="keyword">elseif</span> runfunction == 34
+0465     tic
+0466     fprintf(<span class="string">'Plotting normalised prediction results\n'</span>);
+0467     normmode = 2; <span class="comment">% plot normalised measurement data</span>
+0468     <span class="keyword">for</span> i=1:ninterventions
+0469         <a href="amEMMCPlotsAndSavePredictions.html" class="code" title="function amEMMCPlotsAndSavePredictions(amInterventions, amIntrcube, measures, pdoffset,overall_pdoffset, hstg, overall_hist, vshift, meancurvemean, normmean, normstd, isOutlier,ex_start_array, thisinter, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder, normmode)">amEMMCPlotsAndSavePredictions</a>(amInterventions, amIntrNormcube, measures, pdoffset, overall_pdoffset, <span class="keyword">...</span>
+0470             hstg, overall_hist, vshift, meancurvemean, normmean, normstd, isOutlier, ex_start, i, nmeasures, <span class="keyword">...</span>
+0471             max_offset, align_wind, sigmamethod, plotname, plotsubfolder, normmode);
+0472     <span class="keyword">end</span>
+0473     toc
+0474     fprintf(<span class="string">'\n'</span>);
+0475 <span class="keyword">elseif</span> runfunction == 35
+0476     run_type = <span class="string">'Best Alignment'</span>;
+0477     fprintf(<span class="string">'Plotting superimposed alignment curves - exzero shift - one per page\n'</span>);
+0478     compactplot = false;
+0479     shiftmode = 3; <span class="comment">% shift to be zero at ex_start</span>
+0480     <a href="amEMMCPlotSuperimposedAlignedCurves.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurves(meancurvemean, meancurvecount, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study)">amEMMCPlotSuperimposedAlignedCurves</a>(meancurvemean, meancurvecount, amInterventions, <span class="keyword">...</span>
+0481         measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study);
+0482 <span class="keyword">elseif</span> runfunction == 36
+0483     run_type = <span class="string">'Best Alignment'</span>;
+0484     fprintf(<span class="string">'Plotting superimposed alignment curves - exzero shift - all on one page\n'</span>);
+0485     compactplot = true;
+0486     shiftmode = 3; <span class="comment">% shift to be zero at ex_start</span>
+0487     <a href="amEMMCPlotSuperimposedAlignedCurves.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurves(meancurvemean, meancurvecount, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study)">amEMMCPlotSuperimposedAlignedCurves</a>(meancurvemean, meancurvecount, amInterventions, <span class="keyword">...</span>
+0488         measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study);
+0489 <span class="keyword">elseif</span> runfunction == 37
+0490     fprintf(<span class="string">'Plotting superimposed measures - mean shift - one intervention per page\n'</span>);
+0491     shiftmode = 1; <span class="comment">% shift by mean to left of ex_start</span>
+0492     <a href="amEMMCPlotSuperimposedMeasuresB4Intr.html" class="code" title="function amEMMCPlotSuperimposedMeasuresB4Intr(amIntrNormcube, amInterventions,measures, max_offset, align_wind, nmeasures, ninterventions, ex_start, plotsubfolder, shiftmode)">amEMMCPlotSuperimposedMeasuresB4Intr</a>(amIntrNormcube, amInterventions, <span class="keyword">...</span>
+0493         measures, max_offset, align_wind, nmeasures, ninterventions, ex_start, plotsubfolder, shiftmode);
+0494 <span class="keyword">elseif</span> runfunction == 38
+0495     fprintf(<span class="string">'Plotting superimposed measures - max shift - one intervention per page\n'</span>);
+0496     shiftmode = 2; <span class="comment">% shift by max to left of ex_start</span>
+0497     <a href="amEMMCPlotSuperimposedMeasuresB4Intr.html" class="code" title="function amEMMCPlotSuperimposedMeasuresB4Intr(amIntrNormcube, amInterventions,measures, max_offset, align_wind, nmeasures, ninterventions, ex_start, plotsubfolder, shiftmode)">amEMMCPlotSuperimposedMeasuresB4Intr</a>(amIntrNormcube, amInterventions, <span class="keyword">...</span>
+0498         measures, max_offset, align_wind, nmeasures, ninterventions, ex_start, plotsubfolder, shiftmode);
+0499 <span class="keyword">elseif</span> runfunction == 39
+0500     fprintf(<span class="string">'Plotting superimposed measures - exzero shift - one intervention per page\n'</span>);
+0501     shiftmode = 3; <span class="comment">% shift to be zero at ex_start</span>
+0502     <a href="amEMMCPlotSuperimposedMeasuresB4Intr.html" class="code" title="function amEMMCPlotSuperimposedMeasuresB4Intr(amIntrNormcube, amInterventions,measures, max_offset, align_wind, nmeasures, ninterventions, ex_start, plotsubfolder, shiftmode)">amEMMCPlotSuperimposedMeasuresB4Intr</a>(amIntrNormcube, amInterventions, <span class="keyword">...</span>
+0503         measures, max_offset, align_wind, nmeasures, ninterventions, ex_start, plotsubfolder, shiftmode);
+0504 <span class="keyword">elseif</span> runfunction == 40
+0505     run_type = <span class="string">'Best Alignment'</span>;
+0506     fprintf(<span class="string">'Plotting superimposed alignment curves - mean shift - one per page\n'</span>);
+0507     compactplot = false;
+0508     shiftmode = 4; <span class="comment">% shift by 7d mean to left of ex_start</span>
+0509     <a href="amEMMCPlotSuperimposedAlignedCurves.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurves(meancurvemean, meancurvecount, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study)">amEMMCPlotSuperimposedAlignedCurves</a>(meancurvemean, meancurvecount, amInterventions, <span class="keyword">...</span>
+0510         measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study);
+0511 <span class="keyword">elseif</span> runfunction == 41
+0512     run_type = <span class="string">'Best Alignment'</span>;
+0513     fprintf(<span class="string">'Plotting superimposed alignment curves - mean shift - all on one page\n'</span>);
+0514     compactplot = true;
+0515     shiftmode = 4; <span class="comment">% shift by 7d mean to left of ex_start</span>
+0516     <a href="amEMMCPlotSuperimposedAlignedCurves.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurves(meancurvemean, meancurvecount, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study)">amEMMCPlotSuperimposedAlignedCurves</a>(meancurvemean, meancurvecount, amInterventions, <span class="keyword">...</span>
+0517         measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study);
+0518 <span class="keyword">elseif</span> runfunction == 42
+0519     fprintf(<span class="string">'Plotting superimposed measures - 5d mean shift - one intervention per page\n'</span>);
+0520     shiftmode = 4; <span class="comment">% shift by 7d mean to left of ex_start</span>
+0521     <a href="amEMMCPlotSuperimposedMeasuresB4Intr.html" class="code" title="function amEMMCPlotSuperimposedMeasuresB4Intr(amIntrNormcube, amInterventions,measures, max_offset, align_wind, nmeasures, ninterventions, ex_start, plotsubfolder, shiftmode)">amEMMCPlotSuperimposedMeasuresB4Intr</a>(amIntrNormcube, amInterventions, <span class="keyword">...</span>
+0522         measures, max_offset, align_wind, nmeasures, ninterventions, ex_start, plotsubfolder, shiftmode);
+0523 <span class="keyword">elseif</span> runfunction == 43
+0524     fprintf(<span class="string">'Plotting histogram of time since last exacerbation\n'</span>);
+0525     fprintf(<span class="string">'Loading Predictive Model Patient Measures Stats\n'</span>);
+0526     load(fullfile(basedir, subfolder, predictivemodelinputsfile), <span class="string">'pmPatients'</span>, <span class="string">'pmPatientMeasStats'</span>, <span class="string">'npatients'</span>, <span class="string">'maxdays'</span>);
+0527     fprintf(<span class="string">'Loading Treatment and Measures Prior info\n'</span>);
+0528     load(fullfile(basedir, subfolder, ivandmeasuresfile), <span class="string">'ivandmeasurestable'</span>);
+0529     <a href="amEMMCPlotHistOfTimeSinceLastExacerbation.html" class="code" title="function amEMMCPlotHistOfTimeSinceLastExacerbation(pmPatients, amInterventions, ivandmeasurestable,npatients, maxdays, plotname, plotsubfolder, nlatentcurves)">amEMMCPlotHistOfTimeSinceLastExacerbation</a>(pmPatients, amInterventions, ivandmeasurestable, <span class="keyword">...</span>
+0530         npatients, maxdays, plotname, plotsubfolder, nlatentcurves);
+0531 <span class="keyword">elseif</span> runfunction == 44
+0532     fprintf(<span class="string">'Plotting histogram of lc set by hospital\n'</span>);
+0533     <span class="keyword">if</span> contains(modelrun, {<span class="string">'Age'</span>, <span class="string">'Gender'</span>})
+0534         <span class="comment">% call function to combine both files</span>
+0535         [tmpInterventions, tmpnlc] = <a href="combineSplitClassResults.html" class="code" title="function [tmpInterventions, nlatentcurves] = combineSplitClassResults(study, modelrun, basedir, subfolder)">combineSplitClassResults</a>(study, modelrun, basedir, subfolder);
+0536     <span class="keyword">else</span>
+0537         tmpInterventions = amInterventions;
+0538         tmpnlc           = nlatentcurves;
+0539     <span class="keyword">end</span>
+0540     <a href="plotLCSetByHospital.html" class="code" title="function plotLCSetByHospital(tmpInterventions, plotname, plotsubfolder, tmpnlc)">plotLCSetByHospital</a>(tmpInterventions, plotname, plotsubfolder, tmpnlc);
+0541 <span class="keyword">else</span>
+0542     fprintf(<span class="string">'Should not get here....\n'</span>);
+0543 <span class="keyword">end</span>
+0544     
+0545 
+0546</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

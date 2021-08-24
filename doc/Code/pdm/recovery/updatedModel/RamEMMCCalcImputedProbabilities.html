@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of RamEMMCCalcImputedProbabilities</title>
+  <meta name="keywords" content="RamEMMCCalcImputedProbabilities">
+  <meta name="description" content="getImputedProbabilities - gets the probabilities for the set of held back">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="../index.html">recovery</a> &gt; <a href="index.html">updatedModel</a> &gt; RamEMMCCalcImputedProbabilities.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../../index.html"><img alt="<" border="0" src="../../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery/updatedModel&nbsp;<img alt=">" border="0" src="../../../../right.png"></a></td></tr></table>-->
+
+<h1>RamEMMCCalcImputedProbabilities
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>getImputedProbabilities - gets the probabilities for the set of held back</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>function [amImputedCube, imputedscore] = RamEMMCCalcImputedProbabilities(amIntrCube, amHeldBackcube,meancurvemean, meancurvestd, normstd, overall_pdoffset, offset, align_wind, nmeasures,ninterventions,sigmamethod, smoothingmethod, imputationmode, latentcurve, nlatentcurves) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> getImputedProbabilities - gets the probabilities for the set of held back
+ points and also returns the cumulative normalised distance from the
+ objective function for these points</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="../../../../Code/smartcare/calcRegDist.html" class="code" title="function [dist] = calcRegDist(lcpointmean, lcpointstd, pmstd, datapoint, sigmamethod)">calcRegDist</a>	calcRegDist - convenience function to calculate the sum of squares</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="../../../../Code/pdm/recovery/runAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist)">runAlignmentModelEMMCRecoveryFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="../../../../Code/pdm/recovery/runFastAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runFastAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist, nameaddendum)">runFastAlignmentModelEMMCRecoveryFcn</a>	fast version with 1 plot (typical profile) + alignment result matfile</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [amImputedCube, imputedscore] = RamEMMCCalcImputedProbabilities(amIntrCube, amHeldBackcube, </a><span class="keyword">...</span>
+0002         meancurvemean, meancurvestd, normstd, overall_pdoffset, offset, align_wind, nmeasures, <span class="keyword">...</span>
+0003         ninterventions,sigmamethod, smoothingmethod, imputationmode, latentcurve, nlatentcurves)
+0004 
+0005 
+0006 <span class="comment">% getImputedProbabilities - gets the probabilities for the set of held back</span>
+0007 <span class="comment">% points and also returns the cumulative normalised distance from the</span>
+0008 <span class="comment">% objective function for these points</span>
+0009 
+0010 tempmean = zeros(nlatentcurves, align_wind + offset.span-1, nmeasures);
+0011 tempstd  = zeros(nlatentcurves, align_wind + offset.span-1, nmeasures);
+0012 amImputedCube = zeros(ninterventions, align_wind + offset.span-1, nmeasures);
+0013 
+0014 <span class="keyword">for</span> n = 1:nlatentcurves
+0015     <span class="keyword">for</span> m = 1:nmeasures
+0016         <span class="keyword">if</span> smoothingmethod == 2
+0017             tempmean(n, :, m) = smooth(meancurvemean(n, :, m), 5);
+0018             tempstd(n, :, m)  = smooth(meancurvestd(n, :, m), 5);
+0019         <span class="keyword">else</span>
+0020             tempmean(n, :, m) = meancurvemean(n, :, m);
+0021             tempstd(n, :, m)  = meancurvestd(n, :, m);
+0022         <span class="keyword">end</span>
+0023     <span class="keyword">end</span>
+0024 <span class="keyword">end</span>
+0025 
+0026 imputedscore = 0;
+0027 
+0028 <span class="comment">% not updated because used imputationmode 1</span>
+0029 <span class="keyword">if</span> imputationmode == 2
+0030     <span class="keyword">for</span> n = 1:ninterventions
+0031         lc = latentcurve(n);
+0032         <span class="keyword">for</span> i = 1:align_wind
+0033             <span class="keyword">for</span> m = 1:nmeasures
+0034                 <span class="keyword">for</span> offset = 0:max_offset - 1
+0035                     <span class="keyword">if</span> (~isnan(amIntrCube(n, max_offset + align_wind - i, m)) &amp;&amp; amHeldBackcube(n, max_offset + align_wind - i, m) == 1)
+0036                         thisdist = <a href="../../../../Code/smartcare/calcRegDist.html" class="code" title="function [dist] = calcRegDist(lcpointmean, lcpointstd, pmstd, datapoint, sigmamethod)">calcRegDist</a>(tempmean(lc, max_offset + align_wind - i - offset, m), <span class="keyword">...</span>
+0037                                                tempstd(lc, max_offset + align_wind - i - offset, m), <span class="keyword">...</span>
+0038                                                normstd(n, m), <span class="keyword">...</span>
+0039                                                amIntrCube(n, max_offset + align_wind - i, m), <span class="keyword">...</span>
+0040                                                sigmamethod);
+0041                         amImputedCube(n, max_offset + align_wind - i, m) = <span class="keyword">...</span>
+0042                             amImputedCube(n, max_offset + align_wind - i, m) + (exp(-thisdist) * overall_pdoffset(lc, n, offset + 1));
+0043                     <span class="keyword">end</span>
+0044                 <span class="keyword">end</span>
+0045                 <span class="keyword">if</span> amHeldBackcube(n, max_offset + align_wind - i, m) == 1
+0046                     imputedscore = imputedscore + log(amImputedCube(n, max_offset + align_wind - i, m));
+0047                     fprintf(<span class="string">'Intervention %2d, Latent Curve %d, day %2d, measure %d, score is %.2f\n'</span>, n, lc, <span class="keyword">...</span>
+0048                         max_offset + align_wind - i, m, log(amImputedCube(n, max_offset + align_wind - i, m))); 
+0049                 <span class="keyword">end</span>
+0050             <span class="keyword">end</span>
+0051         <span class="keyword">end</span>
+0052     <span class="keyword">end</span>
+0053 <span class="keyword">end</span>
+0054 
+0055 fprintf(<span class="string">'\n'</span>);
+0056 fprintf(<span class="string">'Total held back points: %.6f\n'</span>, sum(sum(sum(amHeldBackcube))));
+0057 fprintf(<span class="string">'Total imputed score   : %.6f\n'</span>, imputedscore);
+0058 fprintf(<span class="string">'Scaled imputed score  : %.6f\n'</span>, imputedscore/sum(sum(sum(amHeldBackcube))));
+0059 fprintf(<span class="string">'\n'</span>);
+0060 
+0061 <span class="keyword">end</span>
+0062</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

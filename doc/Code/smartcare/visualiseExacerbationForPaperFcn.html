@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of visualiseExacerbationForPaperFcn</title>
+  <meta name="keywords" content="visualiseExacerbationForPaperFcn">
+  <meta name="description" content="visualiseExacerbationForPaperFcn - plots measures around an exacerbation">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; visualiseExacerbationForPaperFcn.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>visualiseExacerbationForPaperFcn
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>visualiseExacerbationForPaperFcn - plots measures around an exacerbation</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function visualiseExacerbationForPaperFcn(amDatacube, amInterventions, measures, nmeasures, npatients, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> visualiseExacerbationForPaperFcn - plots measures around an exacerbation
+ time</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="getColourForMeasure.html" class="code" title="function [smcolour, rwcolour] = getColourForMeasure(displaymeasure)">getColourForMeasure</a>	getColorForMeasure - returns the RGB value of the colour for a given</li><li><a href="getUnitsForMeasure.html" class="code" title="function [units] = getUnitsForMeasure(displaymeasure)">getUnitsForMeasure</a>	getUnitsForMeasure - returns the units for a given measure</li><li><a href="plotFillArea.html" class="code" title="function plotFillArea(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillArea</a>	plotFillArea - plots a shaded area on the graph (eg for confidence bounds</li><li><a href="plotFillAreaForPaper.html" class="code" title="function plotFillAreaForPaper(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillAreaForPaper</a>	plotFillAreaForPaper - plots a shaded area on the graph</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li><li><a href="setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>	setMinYDisplayRangeForMeasure - sets the minimum range for Y axis for</li><li><a href="setTicks.html" class="code" title="function [ticks] = setTicks(minval, maxval, nticks)">setTicks</a>	setTicks - create an array of ticks for a plot axis</li><li><a href="setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>	setYDisplayRange - function to scale y axis of plots appropriately</li><li><a href="xb25mean.html" class="code" title="function y = xb25mean(x)">xb25mean</a>	xb25mean - returns the mean of the data points excluding the bottom 25% in x (sorted by</li><li><a href="xb25std.html" class="code" title="function y = xb25std(x)">xb25std</a>	xb25std - returns the std of the data points excluding the bottom 25% in x (sorted by</li><li><a href="xu25mean.html" class="code" title="function y = xu25mean(x)">xu25mean</a>	xu25mean - returns the mean of the data points excluding the upper 25% in x (sorted by</li><li><a href="xu25std.html" class="code" title="function y = xu25std(x)">xu25std</a>	xu25std - returns the std of the data points excluding the upper 25% in x (sorted by</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function visualiseExacerbationForPaperFcn(amDatacube, amInterventions, measures, nmeasures, npatients, study)</a>
+0002 
+0003 <span class="comment">% visualiseExacerbationForPaperFcn - plots measures around an exacerbation</span>
+0004 <span class="comment">% time</span>
+0005 
+0006 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0007 subfolder = sprintf(<span class="string">'Plots/%s'</span>, study);
+0008 <span class="keyword">if</span> ~exist(strcat(basedir, subfolder), <span class="string">'dir'</span>)
+0009     mkdir(strcat(basedir, subfolder));
+0010 <span class="keyword">end</span>
+0011 
+0012 measpghght = 2.75;
+0013 measpgwdth = 6;
+0014 
+0015 plotsacross = 2;
+0016 plotsdown = 2;
+0017 nrows = 2;
+0018 fontsize = 10;
+0019 ylabelposmult = 1.25;
+0020 
+0021 imagefilename = sprintf(<span class="string">'%s - Early and Late Exacerbation Examples'</span>, study);
+0022 [f, p] = <a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(<span class="string">''</span>, measpgwdth,  measpghght);
+0023 
+0024 row = 1;
+0025 subsetintr = [1, 6];
+0026 subsetmeasures = {<span class="string">'Cough'</span>, <span class="string">'Wellness'</span>};
+0027 
+0028 intridx = ismember(1:size(amInterventions, 1), subsetintr);
+0029 measidx = ismember(measures.DisplayName, subsetmeasures);
+0030 scids   = amInterventions.SmartCareID(intridx);
+0031 scididx = ismember(1:npatients, scids);
+0032 
+0033 miny = min(min(min(amDatacube(scididx, :, measidx), [], 1, <span class="string">'omitnan'</span>), [], 2, <span class="string">'omitnan'</span>), [], 3, <span class="string">'omitnan'</span>);
+0034 maxy = max(max(max(amDatacube(scididx, :, measidx), [], 1, <span class="string">'omitnan'</span>), [], 2, <span class="string">'omitnan'</span>), [], 3, <span class="string">'omitnan'</span>);
+0035 
+0036 <span class="keyword">for</span> intr= size(amInterventions, 1):-1:1
+0037     <span class="keyword">if</span> ismember(intr, subsetintr) 
+0038         tic
+0039         scid         = amInterventions.SmartCareID(intr);
+0040         hospital     = amInterventions.Hospital{intr};
+0041         trstartdn    = amInterventions.IVScaledDateNum(intr);
+0042         trstopdn     = amInterventions.IVScaledStopDateNum(intr);
+0043         daysfrom     = max(1, trstartdn - 40);
+0044         daysto       = trstartdn + 15;
+0045         dispdaysfrom = daysfrom - trstartdn;
+0046         dispdaysto   = daysto - trstartdn;
+0047         xl           = [dispdaysfrom, dispdaysto];
+0048         
+0049             
+0050         fprintf(<span class="string">'Visualising measures for exacerbation %d, patient %d, hospital %s, date %s\n'</span>, intr, scid, hospital, datestr(amInterventions.IVStartDate(intr), 29));
+0051         
+0052         measure = 1;
+0053         <span class="keyword">for</span> m = 1:nmeasures
+0054             <span class="keyword">if</span> ismember(measures.DisplayName{m}, subsetmeasures)
+0055                 allpatdata = amDatacube(scid, :, m);
+0056                 measdata = amDatacube(scid, daysfrom:daysto, m);
+0057                 rangelimit = <a href="setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>(measures.Name{m});
+0058                 <span class="keyword">if</span> sum(~isnan(measdata)) &gt; 0
+0059                     yl = <a href="setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>(miny, maxy, rangelimit);
+0060                 <span class="keyword">else</span>
+0061                     yl = [0, rangelimit];
+0062                 <span class="keyword">end</span>
+0063                 <span class="keyword">if</span> measure == 1
+0064                     labeloffset = 21;
+0065                     <span class="keyword">if</span> row == 1
+0066                         patienttext = <span class="string">'Patient A:   '</span>;
+0067                     <span class="keyword">elseif</span> row == 2
+0068                         patienttext = <span class="string">'Patient B:   '</span>;
+0069                     <span class="keyword">elseif</span> row == 3
+0070                         patienttext = <span class="string">'Patient C:   '</span>;
+0071                     <span class="keyword">else</span>
+0072                         fprintf(<span class="string">'***** too many rows ****\n'</span>);
+0073                         <span class="keyword">return</span>;
+0074                     <span class="keyword">end</span>
+0075                 <span class="keyword">else</span>
+0076                     patienttext = <span class="string">''</span>;
+0077                     labeloffset = 0;
+0078                 <span class="keyword">end</span>
+0079                 
+0080                 ax = subplot(plotsdown, plotsacross, measure + ((row - 1) * plotsacross), <span class="string">'Parent'</span>, p);
+0081                 tablemeasure   = measures.Name{m};
+0082                 displaymeasure = measures.DisplayName{m};
+0083                 units          = <a href="getUnitsForMeasure.html" class="code" title="function [units] = getUnitsForMeasure(displaymeasure)">getUnitsForMeasure</a>(displaymeasure);
+0084                 [smcolour, rwcolour] = <a href="getColourForMeasure.html" class="code" title="function [smcolour, rwcolour] = getColourForMeasure(displaymeasure)">getColourForMeasure</a>(displaymeasure);
+0085                 ylabeltext = sprintf(<span class="string">'%s%s (%s)'</span>, patienttext, displaymeasure, units);
+0086                 ylabel(ylabeltext, <span class="string">'Position'</span>,[dispdaysfrom - labeloffset, yl(1) + ((yl(2) - yl(1)) * ylabelposmult)], <span class="string">'VerticalAlignment'</span>, <span class="string">'top'</span>, <span class="string">'HorizontalAlignment'</span>, <span class="string">'left'</span>, <span class="string">'Rotation'</span>, 0);
+0087                 ax.FontSize = fontsize;
+0088                 yticks = <a href="setTicks.html" class="code" title="function [ticks] = setTicks(minval, maxval, nticks)">setTicks</a>(yl(1), yl(2), 3);
+0089                 ax.YTick = yticks;
+0090                 ax.TickDir = <span class="string">'out'</span>;
+0091                 <span class="keyword">if</span> row == nrows
+0092                     xlabel(ax, <span class="string">'Days prior to treatment'</span>);
+0093                 <span class="keyword">else</span>
+0094                     ax.XTickLabel = <span class="string">''</span>;
+0095                     ax.XColor = <span class="string">'white'</span>;
+0096                 <span class="keyword">end</span>
+0097                 xlim(xl);
+0098                 ylim(yl);
+0099                 
+0100                 <span class="keyword">if</span> sum(~isnan(measdata)) &gt; 0
+0101                     actx = find(~isnan(measdata));
+0102                     acty = measdata(~isnan(measdata));
+0103                     fullx = (1:size(measdata, 2));
+0104                     fully = interp1(actx, acty, fullx, <span class="string">'linear'</span>);
+0105                     hold on;
+0106                     plot(ax, dispdaysfrom:dispdaysto, fully, <span class="keyword">...</span>
+0107                         <span class="string">'Color'</span>, rwcolour, <span class="keyword">...</span>
+0108                         <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0109                         <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0110                         <span class="string">'LineWidth'</span>,1, <span class="keyword">...</span>
+0111                         <span class="string">'MarkerSize'</span>,2, <span class="keyword">...</span>
+0112                         <span class="string">'MarkerEdgeColor'</span>, rwcolour, <span class="keyword">...</span>
+0113                         <span class="string">'MarkerFaceColor'</span>, rwcolour);
+0114 
+0115                     plot(ax, dispdaysfrom:dispdaysto, movmean(fully, 4, <span class="string">'omitnan'</span>), <span class="keyword">...</span>
+0116                         <span class="string">'Color'</span>, smcolour, <span class="keyword">...</span>
+0117                         <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0118                         <span class="string">'Marker'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0119                         <span class="string">'LineWidth'</span>, 2);
+0120 
+0121                     <a href="plotFillAreaForPaper.html" class="code" title="function plotFillAreaForPaper(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillAreaForPaper</a>(ax, 0, min(dispdaysto, trstopdn), <span class="keyword">...</span>
+0122                         yl(1), yl(2), <span class="string">'red'</span>, <span class="string">'0.1'</span>, <span class="string">'none'</span>);
+0123                     
+0124                     <span class="comment">% use exclude upper quartile mean/std for pulse rate,</span>
+0125                     <span class="comment">% otherwise use exclude bottom quartile mean/std</span>
+0126                     <span class="keyword">if</span> ismember(displaymeasure, {<span class="string">'PulseRate'</span>})
+0127                         mmean = <a href="xu25mean.html" class="code" title="function y = xu25mean(x)">xu25mean</a>(allpatdata(~isnan(allpatdata)));
+0128                         mstd  = <a href="xu25std.html" class="code" title="function y = xu25std(x)">xu25std</a>(allpatdata(~isnan(allpatdata)));
+0129                     <span class="keyword">else</span>
+0130                         mmean = <a href="xb25mean.html" class="code" title="function y = xb25mean(x)">xb25mean</a>(allpatdata(~isnan(allpatdata)));
+0131                         mstd  = <a href="xb25std.html" class="code" title="function y = xb25std(x)">xb25std</a>(allpatdata(~isnan(allpatdata)));
+0132                     <span class="keyword">end</span>
+0133                     <a href="plotFillArea.html" class="code" title="function plotFillArea(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillArea</a>(ax, xl(1), xl(2), <span class="keyword">...</span>
+0134                         mmean - (0.5 * mstd), mmean + (0.5 * mstd), [0.4, 0.4, 0.4], <span class="string">'0.2'</span>, <span class="string">'none'</span>);
+0135                     line(xl, [mmean mmean] , <span class="string">'Color'</span>, [0.6, 0.6, 0.6], <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, .5)
+0136                     hold off;
+0137                 <span class="keyword">end</span>
+0138                 measure = measure + 1;
+0139             <span class="keyword">end</span>
+0140         <span class="keyword">end</span>
+0141         row = row + 1;
+0142     <span class="keyword">end</span>
+0143 <span class="keyword">end</span>
+0144 
+0145 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, imagefilename, subfolder);
+0146 <a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, imagefilename, subfolder);
+0147 close(f);
+0148 
+0149     
+0150 <span class="keyword">end</span>
+0151 
+0152</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

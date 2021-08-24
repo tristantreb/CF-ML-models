@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMPreprocessMeasures</title>
+  <meta name="keywords" content="amEMPreprocessMeasures">
+  <meta name="description" content="amEMPreprocessMeasures - various bits of pre-processing to measures table">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMPreprocessMeasures.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMPreprocessMeasures
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMPreprocessMeasures - various bits of pre-processing to measures table</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [amDatacube, measures, nmeasures] = amEMPreprocessMeasures(amDatacube, amInterventions, measures, demographicstable, measuresmask, align_wind, npatients, ndays, ninterventions) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMPreprocessMeasures - various bits of pre-processing to measures table
+ and associated measurement data</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getMeasureOverallMinMax.html" class="code" title="function [measuremin, measuremax] = getMeasureOverallMinMax(demographicstable, measure)">getMeasureOverallMinMax</a>	getMeasureMinMax - returns the min and max value for a measure across all</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModelEM.html" class="code" title="">runAlignmentModelEM</a>	</li><li><a href="runAlignmentModelEMFcn.html" class="code" title="function runAlignmentModelEMFcn(amRunParameters)">runAlignmentModelEMFcn</a>	function to run the alignment model (EM version) given a set of run</li><li><a href="runAlignmentModelEMFcnFEV1Split.html" class="code" title="function runAlignmentModelEMFcnFEV1Split(amRunParameters)">runAlignmentModelEMFcnFEV1Split</a>	function to run the alignment model (EM version) given a set of run</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [amDatacube, measures, nmeasures] = amEMPreprocessMeasures(amDatacube, amInterventions, measures, demographicstable, measuresmask, align_wind, npatients, ndays, ninterventions)</a>
+0002 
+0003 <span class="comment">% amEMPreprocessMeasures - various bits of pre-processing to measures table</span>
+0004 <span class="comment">% and associated measurement data</span>
+0005 
+0006 <span class="comment">% remove temperature readings as insufficient datapoints for a number of</span>
+0007 <span class="comment">% the interventions</span>
+0008 idx = ismember(measures.DisplayName, {<span class="string">'Temperature'</span>});
+0009 amDatacube(:,:,measures.Index(idx)) = [];
+0010 measures(idx,:) = [];
+0011 nmeasures = size(measures,1);
+0012 measures.Index = [1:nmeasures]';
+0013 
+0014 <span class="comment">% set the measures mask depending on option chosen</span>
+0015 <span class="keyword">if</span> measuresmask == 1
+0016     <span class="comment">%measures.Mask(:) = 1;</span>
+0017     idx = ~ismember(measures.DisplayName, {<span class="string">'Activity'</span>});
+0018     measures.Mask(idx) = 1;
+0019 <span class="keyword">elseif</span> measuresmask == 2
+0020     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'LungFunction'</span>, <span class="string">'Wellness'</span>});
+0021     measures.Mask(idx) = 1;
+0022 <span class="keyword">elseif</span> measuresmask == 3
+0023     idx = ~ismember(measures.DisplayName, {<span class="string">'Activity'</span>, <span class="string">'LungFunction'</span>});
+0024     measures.Mask(idx) = 1;
+0025 <span class="keyword">else</span>
+0026     <span class="comment">% shouldn't ever get here - but default to just cough if it ever</span>
+0027     <span class="comment">% happens</span>
+0028     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>});
+0029 <span class="keyword">end</span>
+0030 
+0031 <span class="comment">% calculate the overall &amp; alignment window std for each measure and store in measures</span>
+0032 <span class="comment">% table. Also the overall min, max and range values by measure (across all</span>
+0033 <span class="comment">% patients and days)</span>
+0034 
+0035 <span class="keyword">for</span> m = 1:nmeasures
+0036     <span class="comment">%tempdata = zeros(ninterventions * align_wind, 1);</span>
+0037     tempdata = 0;
+0038     <span class="keyword">for</span> i = 1:ninterventions
+0039         scid   = amInterventions.SmartCareID(i);
+0040         start = amInterventions.IVScaledDateNum(i);
+0041         periodstart = start - align_wind;
+0042         <span class="keyword">if</span> periodstart &lt; 1
+0043             periodstart = 1;
+0044         <span class="keyword">end</span>
+0045         tempdata = [tempdata; reshape(amDatacube(scid, periodstart:(start - 1), m), start - periodstart, 1)];  
+0046         <span class="comment">%tempdata( ((i-1) * align_wind) + 1 : (i * align_wind) ) = reshape(amDatacube(scid, (start - align_wind):(start - 1), m), align_wind, 1);</span>
+0047     <span class="keyword">end</span>
+0048     tempdata(1) = [];
+0049     
+0050     measures.AlignWindStd(m) = std(tempdata(~isnan(tempdata)));
+0051     tempdata = reshape(amDatacube(:, :, m), npatients * ndays, 1);
+0052     measures.OverallStd(m) = std(tempdata(~isnan(tempdata)));
+0053     [measures.OverallMin(m), measures.OverallMax(m)] = <a href="getMeasureOverallMinMax.html" class="code" title="function [measuremin, measuremax] = getMeasureOverallMinMax(demographicstable, measure)">getMeasureOverallMinMax</a>(demographicstable, measures.Name{m});
+0054     measures.OverallRange(m) = measures.OverallMax(m) - measures.OverallMin(m);
+0055 <span class="keyword">end</span>
+0056 
+0057 <span class="keyword">end</span>
+0058</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

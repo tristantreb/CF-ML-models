@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cleanDrugTherapyNamings</title>
+  <meta name="keywords" content="cleanDrugTherapyNamings">
+  <meta name="description" content="useful only for pre-REDCAP update datasets">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">helperfunctions</a> &gt; cleanDrugTherapyNamings.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/helperfunctions&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>cleanDrugTherapyNamings
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>useful only for pre-REDCAP update datasets</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function out = cleanDrugTherapyNamings(str_array) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> useful only for pre-REDCAP update datasets
+ inputs: array, output: array with cleaned drugtherapy names</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/exploration/patientCommitment.html" class="code" title="">patientCommitment</a>	Insights about the amount of FEV1 recordings per patient across the study</li><li><a href="../../../Code/pdm/exploration/plotPatientProfiles.html" class="code" title="">plotPatientProfiles</a>	plot a profile of each measures for each patient over the whole enrolment period</li><li><a href="../../../Code/smartcare/visualisePatientSummary.html" class="code" title="">visualisePatientSummary</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% useful only for pre-REDCAP update datasets</span>
+0002 <span class="comment">% inputs: array, output: array with cleaned drugtherapy names</span>
+0003 
+0004 <a name="_sub0" href="#_subfunctions" class="code">function out = cleanDrugTherapyNamings(str_array)</a>
+0005 
+0006     fprintf(<span class="string">'Clean drug therapy namings.\nInitial drug therapy list:\n'</span>)
+0007     disp(categorical(unique(str_array)));
+0008     out = replace(str_array,[&quot;symkevi&quot;,&quot;Symkevi Modulator&quot;],&quot;Symkevi&quot;);
+0009     out = replace(out,[&quot;Modulator VX-445,tezacaftor,ivacaftor&quot;<span class="keyword">...</span>
+0010         ,&quot;Kaftrio + Kalydeco&quot;,&quot;VX115 Study Trikafta open label&quot;,<span class="keyword">...</span>
+0011         &quot;triple therapy open label trial&quot;,&quot;Trikafta + Kalydeco&quot;, <span class="keyword">...</span>
+0012         &quot;Triple therapy&quot;,&quot;Kaftrio&quot;,&quot;kaftrio&quot;,&quot;Trikaftor&quot;,&quot;Trikafta&quot;, <span class="keyword">...</span>
+0013         ],&quot;Triple Therapy&quot;);
+0014     out = replace(out,&quot;ivacaftor&quot;,&quot;Ivacaftor&quot;);
+0015     fprintf(<span class="string">'Cleaned drug therapy list:\n'</span>)
+0016     Drug_therapy = categorical(unique(out)); Count = countcats(categorical(out));
+0017     disp(table(Drug_therapy,Count))
+0018 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getmeasuresforpatient</title>
+  <meta name="keywords" content="getmeasuresforpatient">
+  <meta name="description" content="clear; clc; close;">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; getmeasuresforpatient.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>getmeasuresforpatient
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>clear; clc; close;</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">clear; clc; close;</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%clear; clc; close;</span>
+0002 
+0003 scmatlab = <span class="string">'smartcaredata.mat'</span>;
+0004 load(scmatlab);
+0005 
+0006 scid = 236;
+0007 measure = <span class="string">'WeightRecording'</span>;
+0008 
+0009 idx1 = find(ismember(physdata.RecordingType, measure));
+0010 idx2 = find(physdata.SmartCareID==scid);
+0011 idx = intersect(idx1,idx2);
+0012 temp = sortrows(physdata(idx,:), {<span class="string">'DateNum'</span>}, <span class="string">'ascend'</span>);
+0013 <span class="keyword">switch</span> measure
+0014     <span class="keyword">case</span> <span class="string">'ActivityRecording'</span>
+0015             columns = {<span class="string">'SmartCareID'</span>,<span class="string">'UserName'</span>,<span class="string">'RecordingType'</span>,<span class="string">'Date_TimeRecorded'</span>,<span class="string">'Activity_Steps'</span>};
+0016     <span class="keyword">case</span> {<span class="string">'CoughRecording'</span>,<span class="string">'SleepActivityRecording'</span>,<span class="string">'WellnessRecording'</span>}
+0017             columns = {<span class="string">'SmartCareID'</span>,<span class="string">'UserName'</span>,<span class="string">'RecordingType'</span>,<span class="string">'Date_TimeRecorded'</span>,<span class="string">'Rating'</span>};
+0018     <span class="keyword">case</span> <span class="string">'LungFunctionRecording'</span>
+0019             columns = {<span class="string">'SmartCareID'</span>,<span class="string">'UserName'</span>,<span class="string">'RecordingType'</span>,<span class="string">'Date_TimeRecorded'</span>,<span class="string">'FEV1'</span>,<span class="string">'PredictedFEV'</span>,<span class="string">'FEV1_'</span>};
+0020     <span class="keyword">case</span> <span class="string">'O2SaturationRecording'</span>
+0021             columns = {<span class="string">'SmartCareID'</span>,<span class="string">'UserName'</span>,<span class="string">'RecordingType'</span>,<span class="string">'Date_TimeRecorded'</span>,<span class="string">'O2Saturation'</span>};
+0022     <span class="keyword">case</span> <span class="string">'PulseRateRecording'</span>
+0023             columns = {<span class="string">'SmartCareID'</span>,<span class="string">'UserName'</span>,<span class="string">'RecordingType'</span>,<span class="string">'Date_TimeRecorded'</span>,<span class="string">'Pulse_BPM_'</span>};
+0024     <span class="keyword">case</span> <span class="string">'SputumSampleRecording'</span>
+0025             columns = {<span class="string">'SmartCareID'</span>,<span class="string">'UserName'</span>,<span class="string">'RecordingType'</span>,<span class="string">'Date_TimeRecorded'</span>,<span class="string">'SputumSampleTaken'</span>};
+0026     <span class="keyword">case</span> <span class="string">'TemperatureRecording'</span>
+0027             columns = {<span class="string">'SmartCareID'</span>,<span class="string">'UserName'</span>,<span class="string">'RecordingType'</span>,<span class="string">'Date_TimeRecorded'</span>,<span class="string">'Temp_degC_'</span>};
+0028     <span class="keyword">case</span> <span class="string">'WeightRecording'</span>
+0029             columns = {<span class="string">'SmartCareID'</span>,<span class="string">'UserName'</span>,<span class="string">'RecordingType'</span>,<span class="string">'Date_TimeRecorded'</span>,<span class="string">'WeightInKg'</span>};
+0030     <span class="keyword">otherwise</span>
+0031             columns = {<span class="string">'SmartCareID'</span>,<span class="string">'UserName'</span>,<span class="string">'RecordingType'</span>,<span class="string">'Date_TimeRecorded'</span>};
+0032 <span class="keyword">end</span>
+0033 
+0034 temp(:,columns)</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

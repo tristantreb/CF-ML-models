@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadclinicaldata</title>
+  <meta name="keywords" content="loadclinicaldata">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadclinicaldata.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadclinicaldata
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="fixCDAdmissionsData.html" class="code" title="function [cdAdmissionsOut] = fixCDAdmissionsData(cdAdmissions)">fixCDAdmissionsData</a>	fixAdmissionsData - fix data anomalies in Clinical Admissions data</li><li><a href="fixCDAntibioticsData.html" class="code" title="function [cdAntibioticsOut] = fixCDAntibioticsData(cdAntibiotics)">fixCDAntibioticsData</a>	fixAntibioticData - fix data anomalies in Clinical Antibiotics data</li><li><a href="fixCDCRPData.html" class="code" title="function [cdCRPOut] = fixCDCRPData(cdCRP)">fixCDCRPData</a>	fixCDCRPData - fix anomalies in CRP data</li><li><a href="fixCDPFTData.html" class="code" title="function [cdPFTOut] = fixCDPFTData(cdPFT, cdPatient)">fixCDPFTData</a>	fixCDPFTData - fix anomalies in PFT data</li><li><a href="fixCDPatientData.html" class="code" title="function [cdPatientOut] = fixCDPatientData(cdPatient)">fixCDPatientData</a>	fixCDPatientData - fix anomalies in Patient data</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; clc; close all;
+0002 
+0003 basedir = <span class="string">'./'</span>;
+0004 subfolder = <span class="string">'DataFiles'</span>;
+0005 clinicaldatafile = <span class="string">'clinicaldata.xlsx'</span>;
+0006 cdpatientsheet = <span class="string">'Patients'</span>;
+0007 cdmicrosheet = <span class="string">'Microbiolgy'</span>;
+0008 cdcvsheet = <span class="string">'Clinic Visits'</span>;
+0009 cdpftsheet = &quot;PFT's&quot;;
+0010 cdadmisssheet = <span class="string">'Admissions'</span>;
+0011 cdantibsheet = <span class="string">'Antibiotics'</span>;
+0012 cdcrpsheet = <span class="string">'CRP Levels'</span>;
+0013 endofstudyfile = <span class="string">'EOS Data_ALL.xlsx'</span>;
+0014 
+0015 tic
+0016 <span class="comment">% load relevant clinical data</span>
+0017 fprintf(<span class="string">'Loading relevant clinical data\n'</span>);
+0018 cdPatient = readtable(fullfile(basedir, subfolder, clinicaldatafile), <span class="string">'Sheet'</span>, cdpatientsheet);
+0019 cdPatient = sortrows(cdPatient, {<span class="string">'ID'</span>}, <span class="string">'ascend'</span>);
+0020 fprintf(<span class="string">'Patient data has %d rows\n'</span>,size(cdPatient,1));
+0021 cdMicrobiology = readtable(fullfile(basedir, subfolder, clinicaldatafile), <span class="string">'Sheet'</span>, cdmicrosheet);
+0022 cdMicrobiology = sortrows(cdMicrobiology, {<span class="string">'ID'</span>, <span class="string">'DateMicrobiology'</span>}, <span class="string">'ascend'</span>);
+0023 fprintf(<span class="string">'Microbiology data has %d rows\n'</span>,size(cdMicrobiology,1));
+0024 cdClinicVisits = readtable(fullfile(basedir, subfolder, clinicaldatafile), <span class="string">'Sheet'</span>, cdcvsheet);
+0025 cdClinicVisits = sortrows(cdClinicVisits, {<span class="string">'ID'</span>, <span class="string">'AttendanceDate'</span>}, <span class="string">'ascend'</span>);
+0026 fprintf(<span class="string">'Clinic Visits data has %d rows\n'</span>,size(cdClinicVisits,1));
+0027 cdPFT = readtable(fullfile(basedir, subfolder, clinicaldatafile), <span class="string">'Sheet'</span>, cdpftsheet);
+0028 cdPFT = sortrows(cdPFT, {<span class="string">'ID'</span>, <span class="string">'LungFunctionDate'</span>}, <span class="string">'ascend'</span>);
+0029 fprintf(<span class="string">'PFT data has %d rows\n'</span>,size(cdPFT,1));
+0030 cdAdmissions = readtable(fullfile(basedir, subfolder, clinicaldatafile), <span class="string">'Sheet'</span>, cdadmisssheet);
+0031 cdAdmissions = sortrows(cdAdmissions, {<span class="string">'ID'</span>, <span class="string">'Admitted'</span>}, <span class="string">'ascend'</span>);
+0032 fprintf(<span class="string">'Admissions data has %d rows\n'</span>,size(cdAdmissions,1));
+0033 cdAntibiotics = readtable(fullfile(basedir, subfolder, clinicaldatafile), <span class="string">'Sheet'</span>, cdantibsheet);
+0034 cdAntibiotics = sortrows(cdAntibiotics, {<span class="string">'ID'</span>, <span class="string">'StartDate'</span>}, <span class="string">'ascend'</span>);
+0035 fprintf(<span class="string">'Antibiotics data has %d rows\n'</span>,size(cdAntibiotics,1));
+0036 cdCRP = readtable(fullfile(basedir, subfolder, clinicaldatafile), <span class="string">'Sheet'</span>, cdcrpsheet);
+0037 cdCRP = sortrows(cdCRP, {<span class="string">'ID'</span>, <span class="string">'CRPDate'</span>}, <span class="string">'ascend'</span>);
+0038 fprintf(<span class="string">'CRP data has %d rows\n'</span>,size(cdCRP,1));
+0039 cdEndStudy = readtable(fullfile(basedir, subfolder, endofstudyfile));
+0040 cdEndStudy = sortrows(cdEndStudy, {<span class="string">'ID'</span>}, <span class="string">'ascend'</span>);
+0041 fprintf(<span class="string">'End of Study data has %d rows\n'</span>,size(cdEndStudy,1));
+0042 toc
+0043 fprintf(<span class="string">'\n'</span>);
+0044 
+0045 <span class="comment">% correct Patient data anomalies</span>
+0046 cdPatient = <a href="fixCDPatientData.html" class="code" title="function [cdPatientOut] = fixCDPatientData(cdPatient)">fixCDPatientData</a>(cdPatient);
+0047 
+0048 <span class="comment">% no issues with microbiology data</span>
+0049 
+0050 <span class="comment">% no issues with clinic visits data</span>
+0051 
+0052 <span class="comment">% correct PFT data anomalies</span>
+0053 cdPFT = <a href="fixCDPFTData.html" class="code" title="function [cdPFTOut] = fixCDPFTData(cdPFT, cdPatient)">fixCDPFTData</a>(cdPFT, cdPatient);
+0054 
+0055 <span class="comment">% correct Antibiotics data anomalies</span>
+0056 cdAntibiotics = <a href="fixCDAntibioticsData.html" class="code" title="function [cdAntibioticsOut] = fixCDAntibioticsData(cdAntibiotics)">fixCDAntibioticsData</a>(cdAntibiotics);
+0057 
+0058 <span class="comment">% correct Admissions data anomalies</span>
+0059 cdAdmissions = <a href="fixCDAdmissionsData.html" class="code" title="function [cdAdmissionsOut] = fixCDAdmissionsData(cdAdmissions)">fixCDAdmissionsData</a>(cdAdmissions);
+0060 
+0061 <span class="comment">% correct CRP data anomalies</span>
+0062 cdCRP = <a href="fixCDCRPData.html" class="code" title="function [cdCRPOut] = fixCDCRPData(cdCRP)">fixCDCRPData</a>(cdCRP);
+0063 
+0064 <span class="comment">% no issues with end of study data</span>
+0065 
+0066 tic
+0067 fprintf(<span class="string">'\n'</span>);
+0068 
+0069 basedir = <span class="string">'./'</span>;
+0070 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0071 outputfilename = <span class="string">'clinicaldata_old.mat'</span>;
+0072 fprintf(<span class="string">'Saving output variables to file %s\n'</span>, outputfilename);
+0073 save(fullfile(basedir, subfolder,outputfilename), <span class="string">'cdPatient'</span>, <span class="string">'cdMicrobiology'</span>, <span class="string">'cdClinicVisits'</span>, <span class="string">'cdPFT'</span>, <span class="string">'cdAdmissions'</span>, <span class="string">'cdAntibiotics'</span>, <span class="string">'cdCRP'</span>, <span class="string">'cdEndStudy'</span>);
+0074 toc</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

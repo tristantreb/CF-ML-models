@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of generateDataDemographicsByPatient</title>
+  <meta name="keywords" content="generateDataDemographicsByPatient">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; generateDataDemographicsByPatient.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>generateDataDemographicsByPatient
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="mid50max.html" class="code" title="function y = mid50max(x)">mid50max</a>	mid50std - returns the std of the mid 50% data points in x (sorted by</li><li><a href="mid50mean.html" class="code" title="function y = mid50mean(x)">mid50mean</a>	mid50mean - returns the mean of the mid 50% data points in x (sorted by</li><li><a href="mid50min.html" class="code" title="function y = mid50min(x)">mid50min</a>	mid50std - returns the std of the mid 50% data points in x (sorted by</li><li><a href="mid50std.html" class="code" title="function y = mid50std(x)">mid50std</a>	mid50std - returns the std of the mid 50% data points in x (sorted by</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clc; clear; close;
+0002 
+0003 tic
+0004 basedir = <span class="string">'./'</span>;
+0005 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0006 clinicalmatfile = <span class="string">'clinicaldata.mat'</span>;
+0007 scmatfile = <span class="string">'smartcaredata.mat'</span>;
+0008 
+0009 fprintf(<span class="string">'Loading Clinical data\n'</span>);
+0010 load(fullfile(basedir, subfolder, clinicalmatfile));
+0011 fprintf(<span class="string">'Loading SmartCare measurement data\n'</span>);
+0012 load(fullfile(basedir, subfolder, scmatfile));
+0013 toc
+0014 fprintf(<span class="string">'\n'</span>);
+0015 
+0016 tic
+0017 cdPatient = sortrows(cdPatient, {<span class="string">'ID'</span>}, <span class="string">'ascend'</span>);
+0018 <span class="comment">%physdata = sortrows(physdata_predupehandling, {'SmartCareID', 'RecordingType', 'DateNum'}, 'ascend');</span>
+0019 
+0020 fprintf(<span class="string">'Calculating data demographics by patient\n'</span>);
+0021 tempdata = physdata;
+0022 tempdata(:,{<span class="string">'UserName'</span>, <span class="string">'ScaledDateNum'</span>, <span class="string">'DateNum'</span>, <span class="string">'Date_TimeRecorded'</span>, <span class="string">'FEV1'</span>, <span class="string">'PredictedFEV'</span>, <span class="string">'ScalingRatio'</span>, <span class="string">'CalcFEV1SetAs'</span>}) = [];
+0023 
+0024 demofunc = @(x)[mean(x)  std(x)  min(x)  max(x) <a href="mid50mean.html" class="code" title="function y = mid50mean(x)">mid50mean</a>(x) <a href="mid50std.html" class="code" title="function y = mid50std(x)">mid50std</a>(x) <a href="mid50min.html" class="code" title="function y = mid50min(x)">mid50min</a>(x) <a href="mid50max.html" class="code" title="function y = mid50max(x)">mid50max</a>(x)];
+0025 demographicstable = varfun(demofunc, tempdata, <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>});
+0026 
+0027 <span class="comment">% example of how to access max FEV1_ for a given row</span>
+0028 <span class="comment">% demographicstable(3,:).Fun_FEV1_(4)</span>
+0029 
+0030 measurecounttable = demographicstable(:, {<span class="string">'SmartCareID'</span>,<span class="string">'RecordingType'</span>, <span class="string">'GroupCount'</span>});
+0031 
+0032 demographicstable = sortrows(demographicstable, {<span class="string">'RecordingType'</span>,<span class="string">'SmartCareID'</span>});
+0033 toc
+0034 fprintf(<span class="string">'\n'</span>);
+0035 
+0036 outputfilename = sprintf(<span class="string">'datademographicsbypatient-%s.mat'</span>,datestr(clock(),30));
+0037 
+0038 tic
+0039 timenow = datestr(clock(),30);
+0040 
+0041 basedir = <span class="string">'./'</span>;
+0042 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0043 outputfilename = sprintf(<span class="string">'datademographicsbypatient-%s.mat'</span>,timenow);
+0044 fprintf(<span class="string">'Saving output variables to matlab file %s\n'</span>, outputfilename);
+0045 
+0046 save(fullfile(basedir, subfolder, outputfilename), <span class="string">'measurecounttable'</span>, <span class="string">'demographicstable'</span>);
+0047 
+0048 basedir = <span class="string">'./'</span>;
+0049 subfolder = <span class="string">'ExcelFiles'</span>;
+0050 outputfilename = sprintf(<span class="string">'DataDemographicsByPatient-%s.xlsx'</span>,timenow);
+0051 fprintf(<span class="string">'Saving results to excel file %s\n'</span>, outputfilename);
+0052 writetable(measurecounttable, fullfile(basedir, subfolder, outputfilename), <span class="string">'Sheet'</span>, <span class="string">'MeasureCountByPatient'</span>);
+0053 writetable(demographicstable, fullfile(basedir, subfolder, outputfilename), <span class="string">'Sheet'</span>, <span class="string">'DataDemographicsByPatient'</span>);
+0054 toc</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

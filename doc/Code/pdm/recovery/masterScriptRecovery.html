@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of masterScriptRecovery</title>
+  <meta name="keywords" content="masterScriptRecovery">
+  <meta name="description" content="master script to run an alignment model for recovery (post redcap migration)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">recovery</a> &gt; masterScriptRecovery.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>masterScriptRecovery
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>master script to run an alignment model for recovery (post redcap migration)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> master script to run an alignment model for recovery (post redcap migration)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% master script to run an alignment model for recovery (post redcap migration)</span>
+0002 
+0003 <span class="comment">% Documentation Standard</span>
+0004 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0005 <span class="comment">% &quot;Purpose (1 line)&quot;</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% &quot;Description&quot;</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Input:</span>
+0010 <span class="comment">% ------</span>
+0011 <span class="comment">% &quot;var                  var definition (if not self-explicit)&quot;</span>
+0012 <span class="comment">% &quot;filename             what it contains (if not self-explicit)&quot;</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% Output:</span>
+0015 <span class="comment">% -------</span>
+0016 <span class="comment">% &quot;variables, files, plots in the same way as input&quot;</span>
+0017 
+0018 <span class="comment">% CREATE DOCUMENTATION</span>
+0019 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%</span>
+0020 <span class="comment">% Add m2html to path</span>
+0021 <span class="comment">% addpath /Users/tristan.trebaol/Documents/PDM/Project/m2html/</span>
+0022 <span class="comment">% run the following line, 'mfiles' should note be set to &quot;./&quot;, else it</span>
+0023 <span class="comment">% raises a display issue</span>
+0024 <span class="comment">%m2html('mfiles','Code/','htmldir','Documentation','recursive','on', 'global','on');</span>
+0025 
+0026 <span class="comment">% MASTER FILE TO RUN AN RECOVERY MODEL</span>
+0027 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0028 
+0029 <a href="init.html" class="code" title="">init</a>;
+0030 <span class="comment">% check source code root directory -&gt; setBaseDir</span>
+0031 
+0032 <span class="comment">% CLINICAL, ID and StudyNumber (gmail)</span>
+0033 <span class="comment">% now automaticaly loads most recent file</span>
+0034 <span class="comment">% check folder MatlabSavedVariables exists</span>
+0035 <span class="comment">%loadbreatheclinicalREDCapdata;</span>
+0036 
+0037 <span class="comment">% MAGIC BULLET, guid (Globally Unique Identifier)</span>
+0038 <span class="comment">% loads raw data</span>
+0039 <span class="comment">%breatheAzureAccess;</span>
+0040 
+0041 <span class="comment">%check date input -&gt; getLatestBreatheMeasDate</span>
+0042 <span class="comment">%loadbreathemeasurementdata; %datademographics</span>
+0043 
+0044 <span class="comment">% creates treatment lists - merge concurrent treatments</span>
+0045 <span class="comment">%checkBreatheTreatmentsVsSelectMeasuresPost;</span>
+0046 <span class="comment">%gap in treatments</span>
+0047 
+0048 <span class="comment">% confront clinical vs home measures</span>
+0049 <span class="comment">% weight</span>
+0050 <span class="comment">%checkBreatheClinicalVsHomeWeightMeasures;</span>
+0051 <span class="comment">% fev1</span>
+0052 <span class="comment">%checkBreatheClinicalVsHomeFEV1Measures;</span>
+0053 
+0054 <span class="comment">%createAlignmentModelInputsRecovery;</span>
+0055 <span class="comment">% study number</span>
+0056 <span class="comment">% gap in treatments</span>
+0057 
+0058 <span class="comment">%findDataAnomaliesRecovery;</span>
+0059 <span class="comment">% study number</span>
+0060 <span class="comment">% gap in treatments</span>
+0061 
+0062 <span class="comment">% missing files</span>
+0063 <span class="comment">% BR_LabelledInterventions_gap10consensus.mat - given</span>
+0064 <span class="comment">% BRelectivetreatments_gap10.xlsx - given</span>
+0065 <span class="comment">%runAlignmentModelEMMCScriptRecovery;</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

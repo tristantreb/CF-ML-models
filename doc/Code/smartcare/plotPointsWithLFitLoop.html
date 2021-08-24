@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotPointsWithLFitLoop</title>
+  <meta name="keywords" content="plotPointsWithLFitLoop">
+  <meta name="description" content="plotPointsWithLFitLoop loops over all relevant patients and produces">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; plotPointsWithLFitLoop.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>plotPointsWithLFitLoop
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>plotPointsWithLFitLoop loops over all relevant patients and produces</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [brIntChkptPat, brIntChkptSum] = plotPointsWithLFitLoop(brIntChkptPat, brIntChkptSum,mdata1, mdata2, excldata, study, meastype, bestwind, gradtype, comptype, period1, period2, twindow, type, cutoffd, plotsubfolder, offset) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> plotPointsWithLFitLoop loops over all relevant patients and produces
+ plots of best fit for different measures</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="plotPointsWithLFit.html" class="code" title="function [grad, studydateval] = plotPointsWithLFit(mtable, extbl, ax, yl, p, scid, fromd, tod,exclwind, periodtype, meastype, bestwind, gradtype, twindow, offset)">plotPointsWithLFit</a>	plotPointsWithLFit - plots a set of points and dates along with linear</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createBreatheInterimCheckpointStats.html" class="code" title="">createBreatheInterimCheckpointStats</a>	</li><li><a href="createBreathePrePostStats.html" class="code" title="">createBreathePrePostStats</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [brIntChkptPat, brIntChkptSum] = plotPointsWithLFitLoop(brIntChkptPat, brIntChkptSum, </a><span class="keyword">...</span>
+0002     mdata1, mdata2, excldata, study, meastype, bestwind, gradtype, comptype, period1, period2, twindow, type, cutoffd, plotsubfolder, offset)
+0003 
+0004 <span class="comment">% plotPointsWithLFitLoop loops over all relevant patients and produces</span>
+0005 <span class="comment">% plots of best fit for different measures</span>
+0006 
+0007 exclwind = 20;
+0008 pghght = 11;
+0009 pgwdth = 8.5;
+0010 plotsacross = 2;
+0011 plotsdown = 6;
+0012 page = 1;
+0013 npat = size(brIntChkptPat, 1);
+0014 npages = ceil(npat/plotsdown);
+0015 
+0016 
+0017 basename = sprintf(<span class="string">'%s %s %s %s %s vs %s'</span>, study, meastype, gradtype, comptype, period1, period2);
+0018 name = sprintf(<span class="string">'%s - P%dof%d'</span>, basename, page, npages);
+0019 fprintf(<span class="string">'1) %s\n'</span>, basename);
+0020 [fig, pan] = <a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(name, pgwdth, pghght);
+0021 colname1 = sprintf(<span class="string">'%s%s%s%s'</span>, meastype, gradtype, comptype, period1);
+0022 colname2 = sprintf(<span class="string">'%s%s%s%s'</span>, meastype, gradtype, comptype, period2);
+0023 brIntChkptPat{:, {colname1}} = 0.0;
+0024 brIntChkptPat{:, {colname2}} = 0.0;
+0025 
+0026 <span class="keyword">if</span> ismember(comptype, {<span class="string">'CvH'</span>})
+0027     colname3 = sprintf(<span class="string">'%s%s%s%s'</span>, meastype, gradtype, comptype, <span class="string">'StudyDateVal'</span>);
+0028     brIntChkptPat{:, {colname3}} = 0.0;
+0029 <span class="keyword">end</span>
+0030 
+0031 thisplot = 1;
+0032 <span class="keyword">for</span> p = 1:npat
+0033 
+0034     scid    = brIntChkptPat.ID(p);
+0035     studyd  = brIntChkptPat.StudyDate(p);
+0036     fromd = brIntChkptPat.StudyDate(p) - calmonths(twindow);
+0037     tod   = brIntChkptPat.StudyDate(p) + calmonths(twindow);
+0038     <span class="keyword">if</span> tod &gt; cutoffd
+0039         tod = cutoffd;
+0040     <span class="keyword">end</span>
+0041     
+0042     fprintf(<span class="string">'%2d: ID %d, Study Date %11s '</span>, p, scid, datestr(studyd, 1));
+0043     
+0044     <span class="comment">% get antibiotic courses to exclude data points during (and 20 days</span>
+0045     <span class="comment">% prior).</span>
+0046     pexcldata = excldata(excldata.ID == scid, :);
+0047     
+0048     <span class="comment">% FEV1 comparison - pre study vs during study</span>
+0049     pmdata1 = mdata1(mdata1.ID == scid, :);
+0050     pmdata2 = mdata2(mdata2.ID == scid, :);
+0051     
+0052     <span class="keyword">if</span> size(pmdata1, 1) == 0
+0053         yl = [0.99 * min(pmdata2.Amount), 1.01 * max(pmdata2.Amount)];
+0054     <span class="keyword">elseif</span> size(pmdata2, 1) == 0
+0055         yl = [0.99 * min(pmdata1.Amount), 1.01 * max(pmdata1.Amount)];
+0056     <span class="keyword">else</span>
+0057         yl = [0.99 * min(min(pmdata1.Amount), min(pmdata2.Amount)), 1.01 * max(max(pmdata1.Amount), max(pmdata2.Amount))];
+0058     <span class="keyword">end</span>
+0059     
+0060     fprintf(<span class="string">': %s '</span>, period1);
+0061     ax = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>, pan);
+0062     brIntChkptPat{p, {colname1}} = <a href="plotPointsWithLFit.html" class="code" title="function [grad, studydateval] = plotPointsWithLFit(mtable, extbl, ax, yl, p, scid, fromd, tod,exclwind, periodtype, meastype, bestwind, gradtype, twindow, offset)">plotPointsWithLFit</a>(pmdata1, pexcldata, ax, yl, p, scid, fromd, studyd, <span class="keyword">...</span>
+0063         exclwind, period1, meastype, bestwind, gradtype, twindow, offset);
+0064      
+0065     thisplot = thisplot + 1;
+0066     
+0067     fprintf(<span class="string">': %s\n'</span>, period2);
+0068     ax = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>, pan);
+0069     [brIntChkptPat{p, {colname2}}, studydateval] = <a href="plotPointsWithLFit.html" class="code" title="function [grad, studydateval] = plotPointsWithLFit(mtable, extbl, ax, yl, p, scid, fromd, tod,exclwind, periodtype, meastype, bestwind, gradtype, twindow, offset)">plotPointsWithLFit</a>(pmdata2, pexcldata, ax, yl, p, scid, studyd,   tod, <span class="keyword">...</span>
+0070         exclwind, period2, meastype, bestwind, gradtype, twindow, offset);
+0071     <span class="keyword">if</span> ismember(comptype, {<span class="string">'CvH'</span>})
+0072         brIntChkptPat{p, {colname3}} = studydateval;
+0073     <span class="keyword">end</span>
+0074     
+0075     thisplot = thisplot + 1;
+0076     <span class="keyword">if</span> thisplot &gt; plotsacross * plotsdown
+0077         <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(fig, name, plotsubfolder);
+0078         close(fig);
+0079         thisplot = 1;
+0080         page = page + 1;
+0081         name = sprintf(<span class="string">'%s - P%dof%d'</span>, basename, page, npages);
+0082         [fig, pan] = <a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(<span class="string">''</span>, pgwdth, pghght);
+0083     <span class="keyword">end</span>
+0084 <span class="keyword">end</span>
+0085 
+0086 <span class="keyword">if</span> exist(<span class="string">'fig'</span>, <span class="string">'var'</span>)
+0087     <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(fig, name, plotsubfolder);
+0088     close(fig);
+0089 <span class="keyword">end</span>
+0090 
+0091 <span class="comment">% exclude those patients without enough measurements in either period</span>
+0092 exidx = brIntChkptPat{:, {colname1}} == 0 | brIntChkptPat{:, {colname2}} == 0;
+0093 [~, pval] = ttest(brIntChkptPat{~exidx, {colname1}}, brIntChkptPat{~exidx, {colname2}});
+0094 brIntChkptSum.DataType(type)       = {sprintf(<span class="string">'%s%s%s T-Test'</span>, meastype, gradtype, comptype)};
+0095 brIntChkptSum.n(type)              = sum(~exidx);
+0096 brIntChkptSum.Period1Mean(type)    = mean(brIntChkptPat{~exidx, {colname1}});
+0097 brIntChkptSum.Period2Mean(type)    = mean(brIntChkptPat{~exidx, {colname2}});
+0098 brIntChkptSum.Period1StdErr(type)  = std(brIntChkptPat{~exidx, {colname1}}) / (sum(~exidx) ^ 0.5);
+0099 brIntChkptSum.Period2StdErr(type)  = std(brIntChkptPat{~exidx, {colname2}}) / (sum(~exidx) ^ 0.5);
+0100 brIntChkptSum.pVal(type)           = pval;
+0101 
+0102 <span class="keyword">end</span>
+0103</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

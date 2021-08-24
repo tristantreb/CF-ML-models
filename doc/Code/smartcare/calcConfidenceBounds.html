@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calcConfidenceBounds</title>
+  <meta name="keywords" content="calcConfidenceBounds">
+  <meta name="description" content="calcConfidenceBounds - calculates the lower and upper confidence bounds">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; calcConfidenceBounds.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>calcConfidenceBounds
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>calcConfidenceBounds - calculates the lower and upper confidence bounds</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [amInterventions] = calcConfidenceBounds(overall_pdoffset, amInterventions, offsets, min_offset, max_offset, ninterventions, confidencethreshold, confidencemode) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> calcConfidenceBounds - calculates the lower and upper confidence bounds
+ around the predicted offset</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModelEM.html" class="code" title="">runAlignmentModelEM</a>	</li><li><a href="runAlignmentModelEMFcn.html" class="code" title="function runAlignmentModelEMFcn(amRunParameters)">runAlignmentModelEMFcn</a>	function to run the alignment model (EM version) given a set of run</li><li><a href="runAlignmentModelEMFcnFEV1Split.html" class="code" title="function runAlignmentModelEMFcnFEV1Split(amRunParameters)">runAlignmentModelEMFcnFEV1Split</a>	function to run the alignment model (EM version) given a set of run</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [amInterventions] = calcConfidenceBounds(overall_pdoffset, amInterventions, offsets, min_offset, max_offset, ninterventions, confidencethreshold, confidencemode)</a>
+0002 
+0003 <span class="comment">% calcConfidenceBounds - calculates the lower and upper confidence bounds</span>
+0004 <span class="comment">% around the predicted offset</span>
+0005 
+0006 <span class="comment">% note - maximum probability mode only works for prob distributions with a</span>
+0007 <span class="comment">% max of two peaks.</span>
+0008 
+0009 intrcount = array2table([1:ninterventions]');
+0010 intrcount.Properties.VariableNames{1} = <span class="string">'IntrNbr'</span>;
+0011 amInterventions = [intrcount, amInterventions];
+0012 amInterventions.Offset = offsets;
+0013 amInterventions.LowerBound1(:) = offsets;
+0014 amInterventions.UpperBound1(:) = offsets;
+0015 amInterventions.LowerBound2(:) = -1;
+0016 amInterventions.UpperBound2(:) = -1;
+0017 amInterventions.ConfidenceProb(:) = 0;
+0018 
+0019 <span class="keyword">for</span> i = 1:ninterventions
+0020     <span class="comment">% Contiguous mode: populate the confidence bounds until they contain</span>
+0021     <span class="comment">% at least the probability defined by the confidence threshold. Start</span>
+0022     <span class="comment">% with the most likely day and increment by one day at a time (either</span>
+0023     <span class="comment">% moving left or right to the next most likely</span>
+0024     <span class="keyword">if</span> confidencemode == 1
+0025         cumprob = sum(overall_pdoffset(i, (amInterventions.LowerBound1(i) + 1):(amInterventions.UpperBound1(i) + 1)));
+0026         leftshift1 = 0;
+0027         rightshift1 = 0;
+0028         <span class="keyword">while</span> cumprob &lt; confidencethreshold
+0029             <span class="comment">% get probabilities for adjacent points on either side</span>
+0030             <span class="keyword">if</span> amInterventions.LowerBound1(i) &gt; min_offset
+0031                 nextleftprob1 = overall_pdoffset(i, (amInterventions.LowerBound1(i) + 1) - 1);
+0032             <span class="keyword">else</span>
+0033                 nextleftprob1 = 0;
+0034             <span class="keyword">end</span>
+0035             <span class="keyword">if</span> amInterventions.UpperBound1(i) &lt; max_offset - 1
+0036                 nextrightprob1 = overall_pdoffset(i, (amInterventions.UpperBound1(i) + 1) + 1);
+0037             <span class="keyword">else</span>
+0038                 nextrightprob1 = 0;
+0039             <span class="keyword">end</span>
+0040             <span class="keyword">if</span> nextleftprob1 &gt; nextrightprob1
+0041                 leftshift1 = leftshift1 + 1;
+0042                 amInterventions.LowerBound1(i) = amInterventions.Offset(i) - leftshift1;
+0043             <span class="keyword">else</span>
+0044                 rightshift1 = rightshift1 + 1;
+0045                 amInterventions.UpperBound1(i) = amInterventions.Offset(i) + rightshift1;
+0046             <span class="keyword">end</span>
+0047             cumprob = sum(overall_pdoffset(i, amInterventions.LowerBound1(i) + 1:amInterventions.UpperBound1(i) + 1));
+0048             <span class="comment">%fprintf('Intervention %2d, Offset = %2d, Lower = %2d, Upper = %2d, leftshift %d, rightshift %d, cumprob %.4f\n', i, amOffsetTable.Offset(i), ...</span>
+0049             <span class="comment">%    amOffsetTable.LowerBound1(i), amOffsetTable.UpperBound1(i), leftshift, rightshift, cumprob);</span>
+0050         <span class="keyword">end</span>
+0051     
+0052         <span class="comment">% set the final lower and upper bounds and the probability this covers</span>
+0053         amInterventions.LowerBound1(i) = amInterventions.Offset(i) - leftshift1;
+0054         amInterventions.UpperBound1(i) = amInterventions.Offset(i) + rightshift1;
+0055         amInterventions.ConfidenceProb(i) = cumprob;
+0056         fprintf(<span class="string">'Intervention %2d, Offset = %2d, Lower = %2d, Upper = %2d, leftshift %d, rightshift %d, cumprob %.4f\n'</span>, <span class="keyword">...</span>
+0057             i, amInterventions.Offset(i), amInterventions.LowerBound1(i), amInterventions.UpperBound1(i), <span class="keyword">...</span>
+0058             leftshift1, rightshift1, cumprob);
+0059     
+0060     <span class="keyword">elseif</span> confidencemode == 2
+0061         <span class="comment">% Maximum mode: select days in order of most likely days</span>
+0062         [sortedprob, sortedidx] = sort(overall_pdoffset(i, (min_offset + 1):max_offset),<span class="string">'descend'</span>);
+0063         cumprob = 0;
+0064         n = 0;
+0065         <span class="keyword">while</span> cumprob &lt; confidencethreshold
+0066             n = n + 1;
+0067             cumprob = cumprob + sortedprob(n);
+0068         <span class="keyword">end</span>
+0069         confidencedays = sort(sortedidx(1:n),<span class="string">'ascend'</span>);
+0070         amInterventions.LowerBound1(i) = confidencedays(1) - 1;
+0071         <span class="keyword">if</span> size(confidencedays,2) &gt; 1
+0072             <span class="keyword">for</span> a = 2:size(confidencedays,2)
+0073                 <span class="keyword">if</span> (confidencedays(a) == confidencedays(a - 1) + 1)
+0074                     <span class="keyword">continue</span>;
+0075                 <span class="keyword">else</span>
+0076                     amInterventions.UpperBound1(i) = confidencedays(a-1) - 1;
+0077                     amInterventions.LowerBound2(i) = confidencedays(a) - 1;
+0078                 <span class="keyword">end</span>
+0079             <span class="keyword">end</span>
+0080         <span class="keyword">else</span>
+0081             a = 1;
+0082         <span class="keyword">end</span>
+0083         <span class="keyword">if</span> amInterventions.LowerBound2(i) == -1
+0084             amInterventions.UpperBound1(i) = confidencedays(a) - 1;
+0085         <span class="keyword">else</span>
+0086             amInterventions.UpperBound2(i) = confidencedays(a) - 1;
+0087         <span class="keyword">end</span>
+0088         amInterventions.ConfidenceProb(i) = cumprob;
+0089         fprintf(<span class="string">'Intervention %2d, Offset = %2d, Lower1 = %2d, Upper1 = %2d, Lower2 = %2d, Upper2 = %2d, cumprob %.4f\n'</span>, <span class="keyword">...</span>
+0090             i, amInterventions.Offset(i), amInterventions.LowerBound1(i), amInterventions.UpperBound1(i), <span class="keyword">...</span>
+0091             amInterventions.LowerBound2(i), amInterventions.UpperBound2(i), cumprob);
+0092     <span class="keyword">else</span>
+0093         fprintf(<span class="string">'Invalid Confidence mode\n'</span>);
+0094     <span class="keyword">end</span>
+0095 
+0096 <span class="keyword">end</span>
+0097 
+0098 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

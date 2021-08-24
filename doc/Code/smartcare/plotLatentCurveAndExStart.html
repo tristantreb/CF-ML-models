@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotLatentCurveAndExStart</title>
+  <meta name="keywords" content="plotLatentCurveAndExStart">
+  <meta name="description" content="plotLatentCurveAndExStart - plots the latent curve along with the">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; plotLatentCurveAndExStart.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>plotLatentCurveAndExStart
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>plotLatentCurveAndExStart - plots the latent curve along with the</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [xl, yl] = plotLatentCurveAndExStart(ax, days, meancurve, xl, yl, nmean, ex_start, offset, colour) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> plotLatentCurveAndExStart - plots the latent curve along with the
+ predicted exacerbation start</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [xl, yl] = plotLatentCurveAndExStart(ax, days, meancurve, xl, yl, nmean, ex_start, offset, colour)</a>
+0002 
+0003 <span class="comment">% plotLatentCurveAndExStart - plots the latent curve along with the</span>
+0004 <span class="comment">% predicted exacerbation start</span>
+0005 
+0006 <span class="comment">% plot mean curve (actual in dotted line, smoothed in solid line)</span>
+0007 line(ax, days, meancurve + nmean, <span class="keyword">...</span>
+0008     <span class="string">'Color'</span>, colour, <span class="keyword">...</span>
+0009     <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="keyword">...</span>
+0010     <span class="string">'LineWidth'</span>, 1);
+0011 line(ax, days, smooth(meancurve + nmean, 5), <span class="keyword">...</span>
+0012     <span class="string">'Color'</span>, colour, <span class="keyword">...</span>
+0013     <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0014     <span class="string">'LineWidth'</span>, 1);
+0015 xl = [min(min(days), xl(1)) max(max(days), xl(2))];
+0016 xlim(xl);
+0017 yl = [min(min((meancurve + nmean) * 0.99), yl(1)) max(max((meancurve + nmean) * 1.01), yl(2))];
+0018 ylim(yl);
+0019 
+0020 <span class="comment">% plot vertical line for predicted exacerbation start</span>
+0021 line(ax, [ex_start + offset ex_start + offset] , yl, <span class="keyword">...</span>
+0022     <span class="string">'Color'</span>, colour, <span class="keyword">...</span>
+0023     <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0024     <span class="string">'LineWidth'</span>, 0.5);
+0025 xl = [min(min(ex_start + offset), xl(1)) max(max(ex_start + offset), xl(2))];
+0026 xlim(xl);
+0027 
+0028 <span class="comment">% plot short vertical line for average exacerbation start indicator</span>
+0029 line(ax, [ex_start ex_start], [yl(1), yl(1) + ((yl(2)-yl(1)) * 0.1)], <span class="keyword">...</span>
+0030     <span class="string">'Color'</span>, colour, <span class="keyword">...</span>
+0031     <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="keyword">...</span>
+0032     <span class="string">'LineWidth'</span>, 0.5);
+0033 xl = [min(min(ex_start), xl(1)) max(max(ex_start), xl(2))];
+0034 xlim(xl);
+0035 
+0036 <span class="keyword">end</span>
+0037</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

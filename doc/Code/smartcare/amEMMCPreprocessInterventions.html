@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCPreprocessInterventions</title>
+  <meta name="keywords" content="amEMMCPreprocessInterventions">
+  <meta name="description" content="1) for each intervention, calculate data window completeness (without the interpolated measurements)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCPreprocessInterventions.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCPreprocessInterventions
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>1) for each intervention, calculate data window completeness (without the interpolated measurements)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [amInterventions, amIntrDatacube, ninterventions, intrkeepidx] = amEMMCPreprocessInterventions(amInterventions,amIntrDatacube, amElectiveTreatments, measures, nmeasures, max_offset, align_wind, ninterventions,  intrmode, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> 1) for each intervention, calculate data window completeness (without the interpolated measurements) 
+ -&gt; data window completeness = 100 * #actual_points / #max_points
+ 2) optionnally remove sequential interventions if intrmode == 2</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/recovery/createIntrNormDataCube.html" class="code" title="function createIntrNormDataCube(amRunParameters)">createIntrNormDataCube</a>	create the array with the normalised data for each intervention</li><li><a href="../../Code/pdm/recovery/runAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist)">runAlignmentModelEMMCRecoveryFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="../../Code/pdm/recovery/runFastAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runFastAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist, nameaddendum)">runFastAlignmentModelEMMCRecoveryFcn</a>	fast version with 1 plot (typical profile) + alignment result matfile</li><li><a href="runAlignmentModelEMMCFcn.html" class="code" title="function runAlignmentModelEMMCFcn(amRunParameters)">runAlignmentModelEMMCFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="runAlignmentModelEMMCFcnSplit.html" class="code" title="function runAlignmentModelEMMCFcnSplit(amRunParameters)">runAlignmentModelEMMCFcnSplit</a>	function to run the alignment model (EM version) given a set of run</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [amInterventions, amIntrDatacube, ninterventions, intrkeepidx] = amEMMCPreprocessInterventions(amInterventions, </a><span class="keyword">...</span>
+0002     amIntrDatacube, amElectiveTreatments, measures, nmeasures, max_offset, align_wind, ninterventions,  intrmode, study)
+0003 
+0004 <span class="comment">% 1) for each intervention, calculate data window completeness (without the interpolated measurements)</span>
+0005 <span class="comment">% -&gt; data window completeness = 100 * #actual_points / #max_points</span>
+0006 <span class="comment">% 2) optionnally remove sequential interventions if intrmode == 2</span>
+0007 
+0008 meanwindow = 10;
+0009 
+0010 <span class="keyword">if</span> ismember(study, {<span class="string">'SC'</span>, <span class="string">'TM'</span>})
+0011     compthresh = 35;
+0012 <span class="keyword">elseif</span> ismember(study, {<span class="string">'CL'</span>})
+0013     compthresh = 33;
+0014 <span class="keyword">else</span>
+0015     compthresh = 35;
+0016 <span class="keyword">end</span>
+0017 
+0018 <span class="comment">% add columns for Data Window Completeness</span>
+0019 <span class="keyword">for</span> i = 1:ninterventions
+0020     actualpoints = 0;
+0021     maxpoints = 0;
+0022     <span class="keyword">for</span> m = 1:nmeasures
+0023         <span class="comment">% exclude interpolated measures from calculation of data window</span>
+0024         <span class="comment">% completeness</span>
+0025         <span class="keyword">if</span> ~startsWith(measures.DisplayName(m), <span class="string">'Interp'</span>)
+0026             actualpoints = actualpoints + sum(~isnan(amIntrDatacube(i, max_offset:max_offset+align_wind-1, m)));
+0027             maxpoints = maxpoints + align_wind;
+0028         <span class="keyword">end</span>
+0029     <span class="keyword">end</span>
+0030     amInterventions.DataWindowCompleteness(i) = 100 * actualpoints/maxpoints;
+0031     <span class="comment">%if i &gt;= 2</span>
+0032     <span class="comment">%    if (amInterventions.SmartCareID(i) == amInterventions.SmartCareID(i-1) ...</span>
+0033     <span class="comment">%            &amp;&amp; amInterventions.IVDateNum(i) - amInterventions.IVStopDateNum(i-1) &lt; (align_wind + meanwindow))</span>
+0034     <span class="comment">%        amInterventions.SequentialIntervention(i) = 'Y';</span>
+0035     <span class="comment">%    end</span>
+0036     <span class="comment">%end</span>
+0037 <span class="keyword">end</span>
+0038 
+0039 amInterventions = outerjoin(amInterventions, amElectiveTreatments, <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'Hospital'</span>, <span class="string">'IVScaledDateNum'</span>}, <span class="keyword">...</span>
+0040     <span class="string">'RightKeys'</span>, {<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'IVScaledDateNum'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'ElectiveTreatment'</span>}, <span class="string">'Type'</span>, <span class="string">'left'</span>);
+0041 <span class="comment">% delete dummy row</span>
+0042 <span class="comment">%amInterventions(isnan(amInterventions.SmartCareID), :) = [];</span>
+0043 
+0044 <span class="comment">% remove any interventions where insufficient data in the data window</span>
+0045 <span class="comment">% don't do this for project breathe</span>
+0046 <span class="keyword">if</span> ~ismember(study, {<span class="string">'BR'</span>})
+0047     idx = find(amInterventions.DataWindowCompleteness &lt; compthresh);
+0048     amInterventions(idx,:) = [];
+0049     amIntrDatacube(idx,:,:) = [];
+0050     ninterventions = size(amInterventions,1);
+0051 <span class="keyword">end</span>
+0052 
+0053 <span class="keyword">if</span> intrmode == 1
+0054     intrkeepidx = true(size(amInterventions, 1),1);
+0055 <span class="keyword">elseif</span> intrmode == 2
+0056     intrkeepidx = amInterventions.SequentialIntervention ~= <span class="string">'Y'</span>;
+0057     amInterventions(~intrkeepidx,:) = [];
+0058     amIntrDatacube(~intrkeepidx,:,:) = [];
+0059     ninterventions = size(amInterventions,1);
+0060 <span class="keyword">else</span>
+0061     fprintf(<span class="string">'**** Unknown intrmode ****\n'</span>);
+0062 <span class="keyword">end</span>
+0063     
+0064 <span class="keyword">end</span>
+0065</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

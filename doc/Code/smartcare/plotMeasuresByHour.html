@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotMeasuresByHour</title>
+  <meta name="keywords" content="plotMeasuresByHour">
+  <meta name="description" content="plotMeasuresByHour - for each measure, plot a histogram of number of">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; plotMeasuresByHour.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>plotMeasuresByHour
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>plotMeasuresByHour - for each measure, plot a histogram of number of</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function plotMeasuresByHour(physdata, smartcareID, imagefilename, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> plotMeasuresByHour - for each measure, plot a histogram of number of 
+ measures by hour recorded. For all data (if smartcareid = 0) or for a given
+ patient (if smartcareid ~= 0)
+ Use this to inform whether to adjust date offset</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadbreathedata.html" class="code" title="">loadbreathedata</a>	1st Breathe data processing step and analysis from raw measurements</li><li><a href="loadbreathemeasurementdata.html" class="code" title="">loadbreathemeasurementdata</a>	1st Breathe data processing step and analysis from raw measurements</li><li><a href="loadclimbdata.html" class="code" title="">loadclimbdata</a>	</li><li><a href="loadsmartcaredata.html" class="code" title="">loadsmartcaredata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function plotMeasuresByHour(physdata, smartcareID, imagefilename, study)</a>
+0002 
+0003 <span class="comment">% plotMeasuresByHour - for each measure, plot a histogram of number of</span>
+0004 <span class="comment">% measures by hour recorded. For all data (if smartcareid = 0) or for a given</span>
+0005 <span class="comment">% patient (if smartcareid ~= 0)</span>
+0006 <span class="comment">% Use this to inform whether to adjust date offset</span>
+0007 
+0008 <span class="keyword">if</span> smartcareID ~= 0
+0009     imagefilename = sprintf(<span class="string">'%s - ID %d'</span>, imagefilename, smartcareID);
+0010 <span class="keyword">end</span>
+0011 
+0012 <span class="comment">% index or rows for smartcare id (all or single patient)</span>
+0013 <span class="keyword">if</span> (smartcareID == 0)
+0014     idxs = physdata.SmartCareID &gt;= 0;
+0015 <span class="keyword">else</span>
+0016     idxs = physdata.SmartCareID == smartcareID;
+0017 <span class="keyword">end</span>
+0018 
+0019 tic
+0020 fprintf(<span class="string">'Plot number of measures recorded by hour for each measure\n'</span>);
+0021 fprintf(<span class="string">'---------------------------------------------------------\n'</span>);
+0022 
+0023 [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(<span class="string">'Histograms of Measures by Hour'</span>, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0024         
+0025 measures = unique(physdata.RecordingType);
+0026 nmeasures = size(measures, 1);
+0027 <span class="keyword">if</span> nmeasures &gt; 12
+0028     plotsacross = 4;
+0029 <span class="keyword">else</span>
+0030     plotsacross = 3;
+0031 <span class="keyword">end</span>
+0032 plotsdown = ceil(nmeasures/plotsacross);
+0033 
+0034 <span class="keyword">for</span> i = 1:nmeasures
+0035     m = measures{i};
+0036     idxm = ismember(physdata.RecordingType, m);
+0037     idx = idxs &amp; idxm;
+0038     ax = subplot(plotsdown, plotsacross, i, <span class="string">'Parent'</span>, p);
+0039     <span class="comment">%histogram(hour(datetime(physdata.Date_TimeRecorded(idx))));</span>
+0040     histogram(ax, hour(physdata.Date_TimeRecorded(idx)));
+0041     t = title(ax, m, <span class="string">'FontSize'</span>, 6);
+0042 <span class="keyword">end</span>
+0043 
+0044 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0045 subfolder = sprintf(<span class="string">'Plots/%s'</span>, study);
+0046 <span class="keyword">if</span> ~exist(strcat(basedir, subfolder), <span class="string">'dir'</span>)
+0047     mkdir(strcat(basedir, subfolder));
+0048 <span class="keyword">end</span>
+0049 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, imagefilename, subfolder);
+0050 close(f);
+0051 
+0052 toc
+0053 fprintf(<span class="string">'\n'</span>);</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

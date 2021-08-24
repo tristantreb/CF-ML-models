@@ -1,0 +1,447 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadBreatheClinDataForPatient</title>
+  <meta name="keywords" content="loadBreatheClinDataForPatient">
+  <meta name="description" content="loadBreatheClinDataForPatient - ingests the clinical data for a given">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadBreatheClinDataForPatient.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadBreatheClinDataForPatient
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>loadBreatheClinDataForPatient - ingests the clinical data for a given</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [brPatient, brDrugTherapy, brAdmissions, brAntibiotics, brClinicVisits, brOtherVisits,brUnplannedContact, brCRP, brPFT, brMicrobiology, brHghtWght, brEndStudy]= loadBreatheClinDataForPatient(brPatient, brDrugTherapy, brAdmissions, brAntibiotics,brClinicVisits, brOtherVisits, brUnplannedContact, brCRP, brPFT, brMicrobiology,brHghtWght, brEndStudy, patfile, patientmaster, basedir, subfolder) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> loadBreatheClinDataForPatient - ingests the clinical data for a given
+ patient</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="calcPredictedFEV1.html" class="code" title="function [predfev1] = calcPredictedFEV1(age, height, sex)">calcPredictedFEV1</a>	calcPredictedFEV1 - returns the predicted fev1 from age (yrs), height (m)</li><li><a href="createBreatheClinicalTables.html" class="code" title="function [brPatient, brDrugTherapy, brAdmissions, brAntibiotics, brClinicVisits, brOtherVisits, brUnplannedContact,brCRP, brPFT, brMicrobiology, brHghtWght, brEndStudy] = createBreatheClinicalTables(nrows)">createBreatheClinicalTables</a>	createBreatheClinicalTables - creates all the clinical</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadbreatheclinicaldatanew.html" class="code" title="">loadbreatheclinicaldatanew</a>	loads Breathe clinical data for each patient</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [brPatient, brDrugTherapy, brAdmissions, brAntibiotics, brClinicVisits, brOtherVisits, </a><span class="keyword">...</span>
+0002             brUnplannedContact, brCRP, brPFT, brMicrobiology, brHghtWght, brEndStudy] <span class="keyword">...</span>
+0003             = loadBreatheClinDataForPatient(brPatient, brDrugTherapy, brAdmissions, brAntibiotics, <span class="keyword">...</span>
+0004                 brClinicVisits, brOtherVisits, brUnplannedContact, brCRP, brPFT, brMicrobiology, <span class="keyword">...</span>
+0005                 brHghtWght, brEndStudy, patfile, patientmaster, basedir, subfolder)
+0006                 
+0007 <span class="comment">% loadBreatheClinDataForPatient - ingests the clinical data for a given</span>
+0008 <span class="comment">% patient</span>
+0009 
+0010 tmpstring = strrep(patfile, <span class="string">'.xlsx'</span>, <span class="string">''</span>);
+0011 tmplen    = strlength(tmpstring);
+0012 
+0013 patclindate = datetime(extractAfter(tmpstring, tmplen-8), <span class="string">'InputFormat'</span>, <span class="string">'yyyyMMdd'</span>);
+0014 
+0015 [brpatrow, brdrugtherrow, bradmrow, brabrow, brcvrow, brovrow, brucrow, <span class="keyword">...</span>
+0016     brcrprow, brpftrow, brmicrorow, brhwrow, ~] = <a href="createBreatheClinicalTables.html" class="code" title="function [brPatient, brDrugTherapy, brAdmissions, brAntibiotics, brClinicVisits, brOtherVisits, brUnplannedContact,brCRP, brPFT, brMicrobiology, brHghtWght, brEndStudy] = createBreatheClinicalTables(nrows)">createBreatheClinicalTables</a>(1);
+0017 
+0018 <span class="comment">% patient sheet</span>
+0019 opts = detectImportOptions(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, <span class="string">'Patient'</span>);
+0020 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'StudyID'</span>}))     = {<span class="string">'char'</span>};
+0021 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'StudyDate'</span>}))   = {<span class="string">'datetime'</span>};
+0022 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'Prior6Mnth'</span>}))  = {<span class="string">'datetime'</span>};
+0023 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'Post6Mnth'</span>}))   = {<span class="string">'datetime'</span>};
+0024 <span class="comment">%opts.VariableTypes(:, ismember(opts.VariableNames, {'PatClinDate'})) = {'datetime'};</span>
+0025 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'DOB'</span>}))         = {<span class="string">'datetime'</span>};
+0026 opts = setvaropts(opts,{<span class="string">'StudyDate'</span>},<span class="string">'InputFormat'</span>,<span class="string">'MM/dd/yyyy'</span>);
+0027 opts = setvaropts(opts,{<span class="string">'Prior6Mnth'</span>},<span class="string">'InputFormat'</span>,<span class="string">'MM/dd/yyyy'</span>);
+0028 opts = setvaropts(opts,{<span class="string">'Post6Mnth'</span>},<span class="string">'InputFormat'</span>,<span class="string">'MM/dd/yyyy'</span>);
+0029 <span class="comment">%opts = setvaropts(opts,{'PatClinDate'},'InputFormat','MM/dd/yyyy');</span>
+0030 opts = setvaropts(opts,{<span class="string">'DOB'</span>},<span class="string">'InputFormat'</span>,<span class="string">'MM/dd/yyyy'</span>);
+0031 patientdata = readtable(fullfile(basedir, subfolder, patfile), opts, <span class="string">'Sheet'</span>, <span class="string">'Patient'</span>);
+0032 npatrows = size(patientdata, 1); <span class="comment">% NB should always be 1 as sheets are per patient</span>
+0033 
+0034 <span class="comment">%if npatrows ~= 1</span>
+0035 <span class="comment">%    fprintf('**** More than one patient in this single patient file ****\n');</span>
+0036 <span class="comment">%    return;</span>
+0037 <span class="comment">%end</span>
+0038 <span class="comment">%if ismember(patientdata.ID(1), '')</span>
+0039 <span class="comment">%    fprintf('**** Blank patient id in this file ****\n');</span>
+0040 <span class="comment">%    return;</span>
+0041 <span class="comment">%end</span>
+0042 i = 1;
+0043 <span class="comment">%scid                          = patientdata.ID(i);</span>
+0044 hospital                      = patientdata.Hospital(i);
+0045 
+0046 <span class="comment">% add consistency check for study number and study email</span>
+0047 <span class="comment">% needed due to either old papworth s/s formats or an incorrect decision to update study number)</span>
+0048 studynbr                      = lower(patientdata.StudyNumber(i));
+0049 <span class="keyword">if</span> ~ismember(patientdata.StudyNumber(i), patientdata.StudyEmail(i))
+0050     fprintf(<span class="string">'**** Study Number is inconsistent with Study Email - using Study Email instead\n'</span>);
+0051     studynbr                  = lower(patientdata.StudyEmail(i));
+0052 <span class="keyword">end</span>
+0053 
+0054 scid = patientmaster.ID(ismember(patientmaster.StudyNumber, studynbr));
+0055 <span class="keyword">if</span> isnan(scid)
+0056     fprintf(<span class="string">'**** Blank patient id in this file ****\n'</span>);
+0057     <span class="keyword">return</span>;
+0058 <span class="keyword">end</span>
+0059 
+0060 fprintf(<span class="string">'Patient data - ID = %d, hospital = %3s, study number = %s\n'</span>, scid, hospital{1}, studynbr{1});
+0061 
+0062 brpatrow.ID                   = scid;
+0063 brpatrow.Hospital             = hospital;
+0064 brpatrow.StudyNumber          = studynbr;
+0065 brpatrow.StudyDate            = patientdata.StudyDate(i);
+0066 <span class="keyword">if</span> isnat(brpatrow.StudyDate)
+0067     fprintf(<span class="string">'**** Blank study date in this file ****\n'</span>);
+0068     <span class="keyword">return</span>;
+0069 <span class="keyword">end</span>
+0070 brpatrow.Prior6Mnth           = brpatrow.StudyDate - calmonths(6);
+0071 brpatrow.Post6Mnth            = brpatrow.StudyDate + calmonths(6);
+0072 brpatrow.PatClinDate          = patclindate;
+0073 
+0074 <span class="comment">% temporarily comment out this check until papworth spreadsheet format can</span>
+0075 <span class="comment">% be brought up to date</span>
+0076 <span class="comment">%if patclindate ~= patientdata.PatClinDate(i)</span>
+0077 <span class="comment">%    fprintf ('**** Inconsistency between patient clinical update date in filename and patient tab ****\n');</span>
+0078 <span class="comment">%end</span>
+0079 
+0080 brpatrow.DOB                  = patientdata.DOB(i);
+0081 brpatrow.Age                  = patientdata.Age(i);
+0082 gender = patientdata.Sex{i};
+0083 <span class="keyword">if</span> size(gender, 2) == 0
+0084     fprintf(<span class="string">'Blank Gender %s\n'</span>, gender);
+0085     <span class="keyword">return</span>
+0086 <span class="keyword">end</span> 
+0087 <span class="keyword">if</span> gender(1) == <span class="string">'M'</span> || gender(1) == <span class="string">'m'</span>
+0088     brpatrow.Sex = {<span class="string">'Male'</span>};
+0089 <span class="keyword">elseif</span> gender(1) == <span class="string">'F'</span> || gender(1) == <span class="string">'f'</span>
+0090     brpatrow.Sex = {<span class="string">'Female'</span>};
+0091 <span class="keyword">else</span>
+0092     fprintf(<span class="string">'Unknown Gender %s\n'</span>, gender);
+0093     <span class="keyword">return</span>
+0094 <span class="keyword">end</span>
+0095 brpatrow.Height               = patientdata.Height(i);
+0096 brpatrow.Weight               = patientdata.Weight(i);
+0097 brpatrow.PredictedFEV1        = patientdata.PredictedFEV1(i);
+0098 brpatrow.FEV1SetAs            = round(patientdata.PredictedFEV1(i), 1);
+0099 brpatrow.StudyEmail           = patientdata.StudyEmail(i);
+0100 brpatrow.CFGene1              = patientdata.CFGene1(i);
+0101 brpatrow.CFGene2              = patientdata.CFGene2(i);
+0102 brpatrow.GeneralComments      = patientdata.GeneralComments(i);
+0103 
+0104 brpatrow.CalcAge                  = floor(years(brpatrow.StudyDate - brpatrow.DOB));
+0105 brpatrow.CalcAgeExact             = years(brpatrow.StudyDate - brpatrow.DOB);
+0106 brpatrow.CalcPredictedFEV1        = <a href="calcPredictedFEV1.html" class="code" title="function [predfev1] = calcPredictedFEV1(age, height, sex)">calcPredictedFEV1</a>(brpatrow.CalcAge, brpatrow.Height, brpatrow.Sex);
+0107 brpatrow.CalcPredictedFEV1OrigAge = <a href="calcPredictedFEV1.html" class="code" title="function [predfev1] = calcPredictedFEV1(age, height, sex)">calcPredictedFEV1</a>(brpatrow.Age, brpatrow.Height, brpatrow.Sex);
+0108 brpatrow.CalcFEV1SetAs            = round(<a href="calcPredictedFEV1.html" class="code" title="function [predfev1] = calcPredictedFEV1(age, height, sex)">calcPredictedFEV1</a>(brpatrow.CalcAge, brpatrow.Height, brpatrow.Sex), 1);
+0109 brpatrow.CalcFEV1SetAsOrigAge     = round(<a href="calcPredictedFEV1.html" class="code" title="function [predfev1] = calcPredictedFEV1(age, height, sex)">calcPredictedFEV1</a>(brpatrow.Age, brpatrow.Height, brpatrow.Sex), 1);
+0110 
+0111 brPatient = [brPatient; brpatrow];
+0112 
+0113 <span class="keyword">if</span> ~ismember(brpatrow.StudyNumber, brpatrow.StudyEmail)
+0114     fprintf(<span class="string">'**** Study Number is inconsistent with Study Email ****\n'</span>);
+0115 <span class="keyword">end</span>
+0116 
+0117 <span class="comment">% temporary logic in case any spreadsheets in old format are to be</span>
+0118 <span class="comment">% processed</span>
+0119 <span class="keyword">if</span> ismember(hospital, <span class="string">'XXX'</span>)
+0120     fprintf(<span class="string">'Drug Therapy       '</span>);
+0121 
+0122     ndrthrows = 0;
+0123     <span class="keyword">for</span> i = 1:npatrows
+0124         <span class="keyword">if</span> size(patientdata.DrugTherapyType{i}, 2) &gt; 1
+0125             brdrugtherrow.ID                   = scid;
+0126             brdrugtherrow.Hospital             = hospital;
+0127             brdrugtherrow.StudyNumber          = studynbr;
+0128             brdrugtherrow.DrugTherapyStartDate = patientdata.DrugTherapyStartDate(i);
+0129             brdrugtherrow.DrugTherapyType      = patientdata.DrugTherapyType(i);
+0130             brdrugtherrow.DrugTherapyComment   = patientdata.DrugTherapyComment(i);
+0131 
+0132            brDrugTherapy = [brDrugTherapy; brdrugtherrow];
+0133             ndrthrows = ndrthrows + 1;
+0134         <span class="keyword">end</span>
+0135     <span class="keyword">end</span>
+0136     fprintf(<span class="string">'%2d rows\n'</span>, ndrthrows);
+0137 
+0138 <span class="keyword">else</span>
+0139     <span class="comment">% replace with this code after all clinical spreadsheets have been</span>
+0140     <span class="comment">% recreated.</span>
+0141     <span class="comment">% and all the comments fields in each table lower down</span>
+0142 
+0143     <span class="comment">% drug therapy data</span>
+0144     fprintf(<span class="string">'Drug Therapy       '</span>);
+0145     opts = detectImportOptions(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, <span class="string">'DrugTherapy'</span>);
+0146     opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'DrugTherapyStartDate'</span>})) = {<span class="string">'datetime'</span>};
+0147     opts.DataRange = <span class="string">'A2'</span>;
+0148     drthdata = readtable(fullfile(basedir, subfolder, patfile), opts, <span class="string">'Sheet'</span>, <span class="string">'DrugTherapy'</span>);
+0149     ndrth = size(drthdata, 1);
+0150     fprintf(<span class="string">'%2d rows\n'</span>, ndrth);
+0151     <span class="keyword">for</span> i = 1:ndrth
+0152         brdrugtherrow.ID                    = scid;
+0153         brdrugtherrow.Hospital              = hospital;
+0154         brdrugtherrow.StudyNumber           = studynbr;
+0155         brdrugtherrow.DrugTherapyStartDate  = drthdata.DrugTherapyStartDate(i);
+0156         brdrugtherrow.DrugTherapyType       = drthdata.DrugTherapyType(i);
+0157         brdrugtherrow.DrugTherapyComment    = drthdata.DrugTherapyComment(i);
+0158 
+0159         brDrugTherapy = [brDrugTherapy; brdrugtherrow];
+0160     <span class="keyword">end</span>
+0161 <span class="keyword">end</span>
+0162 
+0163 <span class="comment">% admission data</span>
+0164 fprintf(<span class="string">'Admissions         '</span>);
+0165 opts = detectImportOptions(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, <span class="string">'Admissions'</span>);
+0166 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'Admitted'</span>}))         = {<span class="string">'datetime'</span>};
+0167 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'Discharge'</span>}))         = {<span class="string">'datetime'</span>};
+0168 opts = setvaropts(opts,{<span class="string">'Admitted'</span>},<span class="string">'InputFormat'</span>,<span class="string">'MM/dd/yyyy'</span>);
+0169 opts = setvaropts(opts,{<span class="string">'Discharge'</span>},<span class="string">'InputFormat'</span>,<span class="string">'MM/dd/yyyy'</span>);
+0170 opts.DataRange = <span class="string">'A2'</span>;
+0171 admdata = readtable(fullfile(basedir, subfolder, patfile), opts, <span class="string">'Sheet'</span>, <span class="string">'Admissions'</span>);
+0172 nadm = size(admdata, 1);
+0173 fprintf(<span class="string">'%2d rows\n'</span>, nadm);
+0174 <span class="keyword">for</span> i = 1:nadm
+0175     bradmrow.ID          = scid;
+0176     bradmrow.Hospital    = hospital;
+0177     bradmrow.StudyNumber = studynbr;
+0178     bradmrow.Admitted    = admdata.Admitted(i);
+0179     bradmrow.Discharge   = admdata.Discharge(i);
+0180     bradmrow.Comments    = admdata.Comments(i);
+0181 
+0182     brAdmissions = [brAdmissions; bradmrow];
+0183 <span class="keyword">end</span>
+0184 
+0185 <span class="comment">% antibiotic data</span>
+0186 fprintf(<span class="string">'Antibiotics        '</span>);
+0187 opts = detectImportOptions(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, <span class="string">'Antibiotics'</span>);
+0188 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'StartDate'</span>}))         = {<span class="string">'datetime'</span>};
+0189 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'StopDate'</span>}))         = {<span class="string">'datetime'</span>};
+0190 opts = setvaropts(opts,{<span class="string">'StartDate'</span>},<span class="string">'InputFormat'</span>,<span class="string">'MM/dd/yyyy'</span>);
+0191 opts = setvaropts(opts,{<span class="string">'StopDate'</span>},<span class="string">'InputFormat'</span>,<span class="string">'MM/dd/yyyy'</span>);
+0192 opts.DataRange = <span class="string">'A2'</span>;
+0193 abdata = readtable(fullfile(basedir, subfolder, patfile), opts, <span class="string">'Sheet'</span>, <span class="string">'Antibiotics'</span>);
+0194 nab = size(abdata, 1);
+0195 fprintf(<span class="string">'%2d rows\n'</span>, nab);
+0196 <span class="keyword">for</span> i = 1:nab
+0197     brabrow.ID          = scid;
+0198     brabrow.Hospital    = hospital;
+0199     brabrow.StudyNumber = studynbr;
+0200     <span class="keyword">if</span> size(abdata.AntibioticName{i}, 2) == 0
+0201         fprintf(<span class="string">'**** skipping blank row in s/s ****\n'</span>);
+0202         <span class="keyword">continue</span>;
+0203     <span class="keyword">end</span>
+0204     brabrow.AntibioticName = abdata.AntibioticName(i);
+0205     route = abdata.Route{i};
+0206     <span class="keyword">if</span> route(1) == <span class="string">'O'</span> || route(1) == <span class="string">'o'</span> || route(1) == <span class="string">'P'</span> || route(1) == <span class="string">'p'</span>
+0207         brabrow.Route = {<span class="string">'Oral'</span>};
+0208     <span class="keyword">elseif</span> route(1) == <span class="string">'I'</span> || route(1) == <span class="string">'i'</span>
+0209         brabrow.Route = {<span class="string">'IV'</span>};
+0210     <span class="keyword">else</span>
+0211         fprintf(<span class="string">'**** Unknown Route %s ****\n'</span>, route);
+0212         <span class="keyword">continue</span>;
+0213     <span class="keyword">end</span>
+0214     <span class="keyword">if</span> size(abdata.HomeIV_s{i}, 1) == 0
+0215         <span class="keyword">if</span> ismember(brabrow.Route, <span class="string">'Oral'</span>)
+0216             brabrow.HomeIV_s = <span class="string">'No'</span>;
+0217         <span class="keyword">elseif</span> ismember(brabrow.Route, <span class="string">'IV'</span>)
+0218             fprintf(<span class="string">'Row %d (spreadsheet row %d): IV Treatment with blank Home IV field\n'</span>, i, i + 2);
+0219         <span class="keyword">end</span>
+0220     <span class="keyword">else</span>
+0221         homeiv = abdata.HomeIV_s{i};
+0222         brabrow.HomeIV_s       = abdata.HomeIV_s(i);
+0223         <span class="keyword">if</span> homeiv(1) == <span class="string">'N'</span> || homeiv(1) == <span class="string">'n'</span>
+0224             brabrow.HomeIV_s = {<span class="string">'No'</span>};
+0225         <span class="keyword">elseif</span> homeiv(1) == <span class="string">'Y'</span> || homeiv(1) == <span class="string">'y'</span>
+0226             brabrow.HomeIV_s = {<span class="string">'Yes'</span>};
+0227         <span class="keyword">else</span>
+0228             fprintf(<span class="string">'Unknown Home IVs %s\n'</span>, homeiv);
+0229         <span class="keyword">end</span>
+0230     <span class="keyword">end</span>
+0231     brabrow.StartDate      = abdata.StartDate(i);
+0232     brabrow.StopDate       = abdata.StopDate(i);
+0233     brabrow.Comments       = abdata.Comments(i);
+0234 
+0235     brAntibiotics = [brAntibiotics; brabrow];
+0236 <span class="keyword">end</span>
+0237 
+0238 <span class="comment">% microbiology data</span>
+0239 fprintf(<span class="string">'Microbiology       '</span>);
+0240 opts = detectImportOptions(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, <span class="string">'Microbiology'</span>);
+0241 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'DateMicrobiology'</span>}))         = {<span class="string">'datetime'</span>};
+0242 opts = setvaropts(opts,{<span class="string">'DateMicrobiology'</span>},<span class="string">'InputFormat'</span>,<span class="string">'MM/dd/yyyy'</span>);
+0243 opts.DataRange = <span class="string">'A2'</span>;
+0244 microdata = readtable(fullfile(basedir, subfolder, patfile), opts, <span class="string">'Sheet'</span>, <span class="string">'Microbiology'</span>);
+0245 nmicro = size(microdata, 1);
+0246 fprintf(<span class="string">'%2d rows\n'</span>, nmicro);
+0247 <span class="keyword">for</span> i = 1:nmicro
+0248     brmicrorow.ID               = scid;
+0249     brmicrorow.Hospital         = hospital;
+0250     brmicrorow.StudyNumber      = studynbr;
+0251     brmicrorow.Microbiology     = microdata.Microbiology(i);
+0252     brmicrorow.DateMicrobiology = microdata.DateMicrobiology(i);
+0253     brmicrorow.NameIfOther      = microdata.NameIfOther(i);
+0254     brmicrorow.Comments         = microdata.Comments(i);
+0255 
+0256     brMicrobiology = [brMicrobiology; brmicrorow];
+0257 <span class="keyword">end</span>
+0258 
+0259 fprintf(<span class="string">'Clinic visits      '</span>);
+0260 opts = detectImportOptions(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, <span class="string">'ClinicVisits'</span>);
+0261 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'AttendanceDate'</span>}))         = {<span class="string">'datetime'</span>};
+0262 opts = setvaropts(opts,{<span class="string">'AttendanceDate'</span>},<span class="string">'InputFormat'</span>,<span class="string">'MM/dd/yyyy'</span>);
+0263 opts.DataRange = <span class="string">'A2'</span>;
+0264 cvdata = readtable(fullfile(basedir, subfolder, patfile), opts, <span class="string">'Sheet'</span>, <span class="string">'ClinicVisits'</span>);
+0265 ncv = size(cvdata, 1);
+0266 fprintf(<span class="string">'%2d rows\n'</span>, ncv);
+0267 <span class="keyword">for</span> i = 1:ncv
+0268     brcvrow.ID               = scid;
+0269     brcvrow.Hospital         = hospital;
+0270     brcvrow.StudyNumber      = studynbr;
+0271     brcvrow.AttendanceDate   = cvdata.AttendanceDate(i);
+0272     brcvrow.Location         = cvdata.Location(i);
+0273     brcvrow.Comments         = cvdata.Comments(i);
+0274 
+0275     brClinicVisits = [brClinicVisits; brcvrow];
+0276 <span class="keyword">end</span> 
+0277 
+0278 fprintf(<span class="string">'Other visits       '</span>);
+0279 opts = detectImportOptions(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, <span class="string">'OtherVisits'</span>);
+0280 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'AttendanceDate'</span>})) = {<span class="string">'datetime'</span>};
+0281 opts = setvaropts(opts,{<span class="string">'AttendanceDate'</span>},<span class="string">'InputFormat'</span>,<span class="string">'MM/dd/yyyy'</span>);
+0282 opts.DataRange = <span class="string">'A2'</span>;
+0283 ovdata = readtable(fullfile(basedir, subfolder, patfile), opts, <span class="string">'Sheet'</span>, <span class="string">'OtherVisits'</span>);
+0284 nov = size(ovdata, 1);
+0285 fprintf(<span class="string">'%2d rows\n'</span>, nov);
+0286 <span class="keyword">for</span> i = 1:nov
+0287     brovrow.ID               = scid;
+0288     brovrow.Hospital         = hospital;
+0289     brovrow.StudyNumber      = studynbr;
+0290     brovrow.AttendanceDate   = ovdata.AttendanceDate(i);
+0291     brovrow.VisitType        = ovdata.VisitType(i);
+0292     brovrow.Comments         = ovdata.Comments(i);
+0293 
+0294     brOtherVisits = [brOtherVisits; brovrow];
+0295 <span class="keyword">end</span>
+0296 
+0297 fprintf(<span class="string">'Unplanned contacts '</span>);
+0298 opts = detectImportOptions(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, <span class="string">'UnplannedContacts'</span>);
+0299 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'ContactDate'</span>})) = {<span class="string">'datetime'</span>};
+0300 opts = setvaropts(opts,{<span class="string">'ContactDate'</span>},<span class="string">'InputFormat'</span>,<span class="string">'MM/dd/yyyy'</span>);
+0301 opts.DataRange = <span class="string">'A2'</span>;
+0302 ucdata = readtable(fullfile(basedir, subfolder, patfile), opts, <span class="string">'Sheet'</span>, <span class="string">'UnplannedContacts'</span>);
+0303 nuc = size(ucdata, 1);
+0304 fprintf(<span class="string">'%2d rows\n'</span>, nuc);
+0305 <span class="keyword">for</span> i = 1:nuc
+0306     brucrow.ID               = scid;
+0307     brucrow.Hospital         = hospital;
+0308     brucrow.StudyNumber      = studynbr;
+0309     brucrow.ContactDate      = ucdata.ContactDate(i);
+0310     brucrow.TypeOfContact    = ucdata.TypeOfContact(i);
+0311     brucrow.Comments         = ucdata.Comments(i);
+0312 
+0313     brUnplannedContact = [brUnplannedContact; brucrow];
+0314 <span class="keyword">end</span>
+0315 
+0316 fprintf(<span class="string">'PFTs               '</span>);
+0317 opts = detectImportOptions(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, <span class="string">'PFTs'</span>);
+0318 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'LungFunctionDate'</span>})) = {<span class="string">'datetime'</span>};
+0319 opts = setvaropts(opts,{<span class="string">'LungFunctionDate'</span>},<span class="string">'InputFormat'</span>,<span class="string">'MM/dd/yyyy'</span>);
+0320 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'FEV1'</span>})) = {<span class="string">'double'</span>};
+0321 opts.DataRange = <span class="string">'A2'</span>;
+0322 pftdata = readtable(fullfile(basedir, subfolder, patfile), opts, <span class="string">'Sheet'</span>, <span class="string">'PFTs'</span>);
+0323 npft = size(pftdata, 1);
+0324 fprintf(<span class="string">'%2d rows\n'</span>, npft);
+0325 <span class="keyword">for</span> i = 1:npft
+0326     brpftrow.ID                 = scid;
+0327     brpftrow.Hospital           = hospital;
+0328     brpftrow.StudyNumber        = studynbr;
+0329     brpftrow.LungFunctionDate   = pftdata.LungFunctionDate(i);
+0330     brpftrow.FEV1               = pftdata.FEV1(i);
+0331     brpftrow.Units              = {<span class="string">'L'</span>};
+0332     fev1setas                   = brPatient.FEV1SetAs(1);
+0333     calcfev1setas               = brPatient.CalcFEV1SetAs(1);
+0334     brpftrow.FEV1_              = 100 * brpftrow.FEV1 / fev1setas;
+0335     brpftrow.CalcFEV1_          = 100 * brpftrow.FEV1 / calcfev1setas;
+0336     brpftrow.Comments           = pftdata.Comments(i);
+0337 
+0338     brPFT = [brPFT; brpftrow];
+0339 <span class="keyword">end</span>
+0340 
+0341 fprintf(<span class="string">'CRPs               '</span>);
+0342 opts = detectImportOptions(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, <span class="string">'CRPs'</span>);
+0343 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'Level'</span>})) = {<span class="string">'char'</span>};
+0344 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'CRPDate'</span>})) = {<span class="string">'datetime'</span>};
+0345 opts = setvaropts(opts,{<span class="string">'CRPDate'</span>},<span class="string">'InputFormat'</span>,<span class="string">'MM/dd/yyyy'</span>);
+0346 opts.DataRange = <span class="string">'A2'</span>;
+0347 crpdata = readtable(fullfile(basedir, subfolder, patfile), opts, <span class="string">'Sheet'</span>, <span class="string">'CRPs'</span>);
+0348 ncrp = size(crpdata, 1);
+0349 fprintf(<span class="string">'%2d rows\n'</span>, ncrp);
+0350 <span class="keyword">for</span> i = 1:ncrp
+0351     <span class="keyword">if</span> size(crpdata.Level{i}, 2) &gt; 0
+0352         brcrprow.ID                 = scid;
+0353         brcrprow.Hospital           = hospital;
+0354         brcrprow.StudyNumber        = studynbr;
+0355         brcrprow.CRPDate            = crpdata.CRPDate(i);
+0356         brcrprow.Level              = crpdata.Level(i);
+0357         brcrprow.NumericLevel       = str2double(regexprep(brcrprow.Level{1}, <span class="string">'[&lt;&gt;]'</span>,<span class="string">''</span>));
+0358         brcrprow.Units              = {<span class="string">'mg/L'</span>};
+0359         brcrprow.PatientAntibiotics = crpdata.PatientAntibiotics(i);
+0360         brcrprow.Comments           = crpdata.Comments(i);
+0361         
+0362         brCRP = [brCRP; brcrprow];
+0363     <span class="keyword">else</span>
+0364         fprintf(<span class="string">'*** blank CRP entry ***\n'</span>);
+0365     <span class="keyword">end</span>
+0366 <span class="keyword">end</span>
+0367 
+0368 fprintf(<span class="string">'HeightWeight       '</span>);
+0369 opts = detectImportOptions(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, <span class="string">'HeightWeight'</span>);
+0370 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'MeasDate'</span>})) = {<span class="string">'datetime'</span>};
+0371 opts = setvaropts(opts,{<span class="string">'MeasDate'</span>},<span class="string">'InputFormat'</span>,<span class="string">'MM/dd/yyyy'</span>);
+0372 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'Height'</span>}))   = {<span class="string">'double'</span>};
+0373 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'H_ZScore'</span>})) = {<span class="string">'double'</span>};
+0374 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'Weight'</span>}))   = {<span class="string">'double'</span>};
+0375 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'W_ZScore'</span>})) = {<span class="string">'double'</span>};
+0376 opts.VariableTypes(:, ismember(opts.VariableNames, {<span class="string">'BMI'</span>}))       = {<span class="string">'double'</span>};
+0377 opts.DataRange = <span class="string">'A2'</span>;
+0378 hwdata = readtable(fullfile(basedir, subfolder, patfile), opts, <span class="string">'Sheet'</span>, <span class="string">'HeightWeight'</span>);
+0379 nhw = size(hwdata, 1);
+0380 fprintf(<span class="string">'%2d rows\n'</span>, nhw);
+0381 <span class="keyword">for</span> i = 1:nhw
+0382     brhwrow.ID                 = scid;
+0383     brhwrow.Hospital           = hospital;
+0384     brhwrow.StudyNumber        = studynbr;
+0385     brhwrow.MeasDate           = hwdata.MeasDate(i);
+0386     brhwrow.Height             = hwdata.Height(i);
+0387     brhwrow.H_ZScore           = hwdata.H_ZScore(i);
+0388     brhwrow.Weight             = hwdata.Weight(i);
+0389     brhwrow.W_ZScore           = hwdata.W_ZScore(i);
+0390     brhwrow.BMI                = hwdata.BMI(i);
+0391     brhwrow.Comments           = hwdata.Comments(i);
+0392     
+0393     brHghtWght = [brHghtWght; brhwrow];
+0394 <span class="keyword">end</span>
+0395 
+0396 fprintf(<span class="string">'\n'</span>);
+0397 
+0398 <span class="keyword">end</span>
+0399</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

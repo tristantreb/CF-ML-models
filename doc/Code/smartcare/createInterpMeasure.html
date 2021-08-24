@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createInterpMeasure</title>
+  <meta name="keywords" content="createInterpMeasure">
+  <meta name="description" content="createInterpMeasure - function to add a new measure of interpolated">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createInterpMeasure.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createInterpMeasure
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>createInterpMeasure - function to add a new measure of interpolated</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [clphysdata] = createInterpMeasure(clphysdata, rectype, detaillog) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> createInterpMeasure - function to add a new measure of interpolated
+ measures, but only interpolating points within a defined date gap
+ &lt; rename to be generic and edit code to use getColumnForMeasure, then run
+ twice for both FEV1 and Weight from loadclimbdata&gt;</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>	getColumnForMeasure - returns the column name from physdata for the</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadclimbdata.html" class="code" title="">loadclimbdata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [clphysdata] = createInterpMeasure(clphysdata, rectype, detaillog)</a>
+0002 
+0003 <span class="comment">% createInterpMeasure - function to add a new measure of interpolated</span>
+0004 <span class="comment">% measures, but only interpolating points within a defined date gap</span>
+0005 <span class="comment">% &lt; rename to be generic and edit code to use getColumnForMeasure, then run</span>
+0006 <span class="comment">% twice for both FEV1 and Weight from loadclimbdata&gt;</span>
+0007 
+0008 <span class="comment">% max gap to interpolate fev1 recordings between</span>
+0009 maxgap = 4;
+0010 newrectype = sprintf(<span class="string">'Interp%s'</span>, rectype);
+0011 outputcolname = <a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>(rectype);
+0012 
+0013 fprintf(<span class="string">'Creating interpolated %s with a max gap of %d days\n'</span>, rectype, maxgap);
+0014 
+0015 tic
+0016 clphysdata = sortrows(clphysdata, {<span class="string">'RecordingType'</span>, <span class="string">'SmartCareID'</span>, <span class="string">'DateNum'</span>}, <span class="string">'ascend'</span>);
+0017 
+0018 origmidx  = ismember(clphysdata.RecordingType, {rectype});
+0019 mphysdata = clphysdata(origmidx, :);
+0020 mphysdata.RecordingType(:) = {newrectype};
+0021 
+0022 patlist = unique(mphysdata.SmartCareID);
+0023 
+0024 <span class="keyword">for</span> p = 1:size(patlist)
+0025     scid = patlist(p);
+0026     
+0027     pmdata = mphysdata(mphysdata.SmartCareID == scid, :);
+0028     i = 1;
+0029     addrows = pmdata(i, :);
+0030     <span class="keyword">if</span> detaillog
+0031         fprintf(<span class="string">'Patient %3d: Adding actual row (ScaledDateNum %3d, DateNum %3d, Date %19s %s %.2f\n'</span>, scid, pmdata.ScaledDateNum(i), <span class="keyword">...</span>
+0032                         pmdata.DateNum(i), datestr(pmdata.Date_TimeRecorded(i), 31), outputcolname, pmdata{i, {outputcolname}});
+0033     <span class="keyword">end</span>
+0034     rowtoadd = addrows;
+0035     
+0036     <span class="keyword">for</span> i = 2:size(pmdata, 1)
+0037         <span class="keyword">if</span> pmdata.DateNum(i) - pmdata.DateNum(i - 1) &lt;= maxgap
+0038             range   = pmdata.DateNum(i) - pmdata.DateNum(i - 1);
+0039             fromval = pmdata{i - 1, {outputcolname}};
+0040             toval   = pmdata{i, {outputcolname}};
+0041             diff    = toval - fromval;
+0042             <span class="keyword">for</span> d = 1:(range - 1) 
+0043                 rowtoadd.ScaledDateNum       = pmdata.ScaledDateNum(i - 1) + d;
+0044                 rowtoadd.DateNum             = pmdata.DateNum(i - 1) + d;
+0045                 rowtoadd.Date_TimeRecorded   = pmdata.Date_TimeRecorded(i - 1) + days(d);
+0046                 rowtoadd{1, {outputcolname}} = fromval + (diff * d / range);
+0047                 <span class="keyword">if</span> detaillog
+0048                     fprintf(<span class="string">'Patient %3d: Interpolating row (ScaledDateNum %3d, DateNum %3d, Date %19s %s %.3f\n'</span>, scid, rowtoadd.ScaledDateNum, <span class="keyword">...</span>
+0049                                     rowtoadd.DateNum, datestr(rowtoadd.Date_TimeRecorded, 31), outputcolname, rowtoadd{1, {outputcolname}});
+0050                 <span class="keyword">end</span>
+0051                 addrows = [addrows; rowtoadd];
+0052             <span class="keyword">end</span>
+0053         <span class="keyword">end</span>
+0054         rowtoadd = pmdata(i, :);
+0055         <span class="keyword">if</span> detaillog
+0056             fprintf(<span class="string">'Patient %3d: Adding actual row (ScaledDateNum %3d, DateNum %3d, Date %19s %s %.2f\n'</span>, scid, pmdata.ScaledDateNum(i), <span class="keyword">...</span>
+0057                             pmdata.DateNum(i), datestr(pmdata.Date_TimeRecorded(i), 31), outputcolname, pmdata{i, {outputcolname}});
+0058         <span class="keyword">end</span>
+0059         addrows = [addrows; rowtoadd];
+0060     <span class="keyword">end</span>
+0061     clphysdata = [clphysdata; addrows];
+0062     <span class="keyword">if</span> detaillog
+0063         fprintf(<span class="string">'\n'</span>);
+0064     <span class="keyword">end</span>
+0065 <span class="keyword">end</span>
+0066 
+0067 clphysdata = sortrows(clphysdata, {<span class="string">'SmartCareID'</span>, <span class="string">'DateNum'</span>, <span class="string">'RecordingType'</span>}, <span class="string">'ascend'</span>);
+0068 toc
+0069 fprintf(<span class="string">'\n'</span>);
+0070 
+0071 <span class="keyword">end</span>
+0072</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of checkEMLatentCurves</title>
+  <meta name="keywords" content="checkEMLatentCurves">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; checkEMLatentCurves.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>checkEMLatentCurves
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMAddToMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = amEMAddToMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, currinter, min_offset, max_offset, align_wind, nmeasures)">amEMAddToMean</a>	amEMAddToMean - add an underlying curve to the mean curve (sumsq, sum and count)</li><li><a href="amEMCalcObjFcn.html" class="code" title="function [dist, count, hstg, isOutlier] = amEMCalcObjFcn(meancurvemean, meancurvestd, amIntrCube,amHeldBackcube, isOutlier, outprior, measuresmask, measuresrange, normstd, hstg, currinter,curroffset, max_offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod)">amEMCalcObjFcn</a>	amEMCalcObjFcn - calculates residual sum of squares distance for points in</li><li><a href="amEMRemoveFromMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = amEMRemoveFromMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, currinter, min_offset, max_offset, align_wind, nmeasures)">amEMRemoveFromMean</a>	amEMRemoveFromMean - remove an underlying curve from the meancurve (sumsq, sum and count)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 amIntrCube = amIntrNormcube;
+0003 temp_qual = 0;
+0004 
+0005 temp_meancurvedata  = meancurvedata;
+0006 temp_meancurvesum   = meancurvesum;
+0007 temp_meancurvecount = meancurvecount;
+0008 temp_meancurvemean  = meancurvemean;
+0009 temp_meancurvestd   = meancurvestd;
+0010 
+0011 temp_meancurvedata2  = meancurvedata;
+0012 temp_meancurvesum2   = meancurvesum;
+0013 temp_meancurvecount2 = meancurvecount;
+0014 temp_meancurvemean2  = meancurvemean;
+0015 temp_meancurvestd2   = meancurvestd;
+0016 
+0017 <span class="keyword">for</span> i=1:ninterventions
+0018     [temp_meancurvedata, temp_meancurvesum, temp_meancurvecount, temp_meancurvemean, temp_meancurvestd] = <a href="amEMRemoveFromMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = amEMRemoveFromMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, currinter, min_offset, max_offset, align_wind, nmeasures)">amEMRemoveFromMean</a>(temp_meancurvedata, temp_meancurvesum, <span class="keyword">...</span>
+0019         temp_meancurvecount, temp_meancurvemean, temp_meancurvestd, overall_pdoffset, amIntrCube, amInterventions.Offset(i), i, <span class="keyword">...</span>
+0020         max_offset, align_wind, nmeasures);
+0021     
+0022     temp_qual = temp_qual + <a href="amEMCalcObjFcn.html" class="code" title="function [dist, count, hstg, isOutlier] = amEMCalcObjFcn(meancurvemean, meancurvestd, amIntrCube,amHeldBackcube, isOutlier, outprior, measuresmask, measuresrange, normstd, hstg, currinter,curroffset, max_offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod)">amEMCalcObjFcn</a>(temp_meancurvemean, temp_meancurvestd, amIntrCube, measures.Mask, normstd, <span class="keyword">...</span>
+0023         hstg, i, amInterventions.Offset(i), max_offset, align_wind, nmeasures, 0, sigmamethod, smoothingmethod);
+0024     
+0025     fprintf(<span class="string">'Intervention %d, qual = %.4f\n'</span>, i, temp_qual);
+0026     
+0027     [temp_meancurvedata, temp_meancurvesum, temp_meancurvecount, temp_meancurvemean, temp_meancurvestd] = <a href="amEMAddToMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = amEMAddToMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, currinter, min_offset, max_offset, align_wind, nmeasures)">amEMAddToMean</a>(temp_meancurvedata, temp_meancurvesum, <span class="keyword">...</span>
+0028         temp_meancurvecount, temp_meancurvemean, temp_meancurvestd, overall_pdoffset, amIntrCube, amInterventions.Offset(i), i, <span class="keyword">...</span>
+0029         max_offset, align_wind, nmeasures);
+0030 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

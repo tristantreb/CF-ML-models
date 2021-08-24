@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of correctClimbDataAnomalies</title>
+  <meta name="keywords" content="correctClimbDataAnomalies">
+  <meta name="description" content="correctClimbDataAnomalies - looks at various outliers in the measures">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; correctClimbDataAnomalies.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>correctClimbDataAnomalies
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>correctClimbDataAnomalies - looks at various outliers in the measures</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [physdata, physdata_deleted] = correctClimbDataAnomalies(physdata, physdata_deleted) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> correctClimbDataAnomalies - looks at various outliers in the measures
+ and corrects as appropriate.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>	appendDeletedRows - appends a set of deleted measurement rows to the</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadclimbdata.html" class="code" title="">loadclimbdata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [physdata, physdata_deleted] = correctClimbDataAnomalies(physdata, physdata_deleted)</a>
+0002 
+0003 <span class="comment">% correctClimbDataAnomalies - looks at various outliers in the measures</span>
+0004 <span class="comment">% and corrects as appropriate.</span>
+0005 
+0006 tic
+0007 <span class="comment">% handle anomalies in the data</span>
+0008 fprintf(<span class="string">'Correcting anomalies in the data\n'</span>);
+0009 fprintf(<span class="string">'--------------------------------\n'</span>);
+0010 
+0011 <span class="comment">% Activity Reading - &gt; 30,000 steps</span>
+0012 idx1 = ismember(physdata.RecordingType, <span class="string">'ActivityRecording'</span>);
+0013 idx2 = physdata.Activity_Steps &gt; 30000;
+0014 idx  = idx1 &amp; idx2;
+0015 fprintf(<span class="string">'Removing %4d Activity measurements &gt; 30,000\n'</span>, sum(idx));
+0016 physdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(physdata(idx, :), physdata_deleted, {<span class="string">'Anomalous Value'</span>});
+0017 physdata(idx, :) = [];
+0018 
+0019 <span class="comment">% Lung Function - FEV1 &lt; 0.25l or &gt; 4l</span>
+0020 idx1 = ismember(physdata.RecordingType, <span class="string">'FEV1Recording'</span>);
+0021 idx2 = physdata.FEV &lt; 0.25 | physdata.FEV &gt; 4;
+0022 idx  = idx1 &amp; idx2;
+0023 fprintf(<span class="string">'Removing %4d Lung Function measurements &lt; 0.25l or &gt; 4.0l\n'</span>, sum(idx));
+0024 physdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(physdata(idx, :), physdata_deleted, {<span class="string">'Anomalous Value'</span>});
+0025 physdata(idx, :) = [];
+0026 
+0027 <span class="comment">% O2 Saturation - remove bogus 127 values</span>
+0028 idx1 = ismember(physdata.RecordingType, <span class="string">'O2SaturationRecording'</span>);
+0029 idx2 = physdata.O2Saturation == 127;
+0030 idx  = idx1 &amp; idx2;
+0031 fprintf(<span class="string">'Removing %4d O2 Saturation measurements = 127\n'</span>, sum(idx));
+0032 physdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(physdata(idx, :), physdata_deleted, {<span class="string">'Anomalous Value'</span>});
+0033 physdata(idx, :) = [];
+0034 
+0035 <span class="comment">% O2 Saturation &lt; 70% or &gt; 100%</span>
+0036 idx1 = ismember(physdata.RecordingType, <span class="string">'O2SaturationRecording'</span>);
+0037 idx2 = physdata.O2Saturation &lt; 70 | physdata.O2Saturation &gt; 100;
+0038 idx  = idx1 &amp; idx2;
+0039 fprintf(<span class="string">'Removing %4d O2 Saturation measurements &lt; 70%% or &gt; 100%%\n'</span>, sum(idx));
+0040 physdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(physdata(idx, :), physdata_deleted, {<span class="string">'Anomalous Value'</span>});
+0041 physdata(idx, :) = [];
+0042 
+0043 <span class="comment">% Pulse Rate (BPM) - remove bogus 511 values</span>
+0044 idx1 = ismember(physdata.RecordingType, <span class="string">'PulseRateRecording'</span>);
+0045 idx2 = physdata.Pulse_BPM_ == 511;
+0046 idx  = idx1 &amp; idx2;
+0047 fprintf(<span class="string">'Removing %4d Pulse Rate measurements = 511\n'</span>, sum(idx));
+0048 physdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(physdata(idx, :), physdata_deleted, {<span class="string">'Anomalous Value'</span>});
+0049 physdata(idx, :) = [];
+0050 
+0051 <span class="comment">% Pulse Rate (BPM) &lt; 50 or &gt; 200</span>
+0052 idx1 = ismember(physdata.RecordingType, <span class="string">'PulseRateRecording'</span>);
+0053 idx2 = physdata.Pulse_BPM_ &lt; 50 | physdata.Pulse_BPM_ &gt; 200;
+0054 idx  = idx1 &amp; idx2;
+0055 fprintf(<span class="string">'Removing %4d Pulse Rate measurements &lt; 50 or &gt; 200\n'</span>, sum(idx));
+0056 physdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(physdata(idx, :), physdata_deleted, {<span class="string">'Anomalous Value'</span>});
+0057 physdata(idx, :) = [];
+0058 
+0059 <span class="comment">% Respiratory Rate (Breaths per Min) &lt; 10 or &gt; 100</span>
+0060 idx1 = ismember(physdata.RecordingType, <span class="string">'RespiratoryRateRecording'</span>);
+0061 idx2 = physdata.BreathsPerMin &lt; 10 | physdata.BreathsPerMin &gt; 100;
+0062 idx  = idx1 &amp; idx2;
+0063 fprintf(<span class="string">'Removing %4d Respiratory Rate measurements &lt; 10 or &gt; 100\n'</span>, sum(idx));
+0064 physdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(physdata(idx, :), physdata_deleted, {<span class="string">'Anomalous Value'</span>});
+0065 physdata(idx, :) = [];
+0066 
+0067 <span class="comment">% Sleep Disturbances &gt; 35</span>
+0068 idx1 = ismember(physdata.RecordingType, <span class="string">'SleepDisturbanceRecording'</span>);
+0069 idx2 = physdata.NumSleepDisturb &gt; 35;
+0070 idx  = idx1 &amp; idx2;
+0071 fprintf(<span class="string">'Removing %4d Sleep Disturbance measurements &gt; 35\n'</span>, sum(idx));
+0072 physdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(physdata(idx, :), physdata_deleted, {<span class="string">'Anomalous Value'</span>});
+0073 physdata(idx, :) = [];
+0074 
+0075 <span class="comment">% Temperature Recording - fix deg C measurements factor of 10 too small</span>
+0076 idx1 = ismember(physdata.RecordingType, <span class="string">'TemperatureRecording'</span>);
+0077 idx2 = physdata.Temp_degC_ &gt; 3.0 &amp; physdata.Temp_degC_ &lt; 4.5;
+0078 idx  = idx1 &amp; idx2;
+0079 fprintf(<span class="string">'Scaling %2d degC Temperature measurements up by factor of 10\n'</span>, sum(idx));
+0080 physdata.Temp_degC_(idx) = physdata.Temp_degC_(idx) * 10;
+0081 
+0082 <span class="comment">% Temperature Recording - fix deg F measurements factor of 10 too large</span>
+0083 idx1 = ismember(physdata.RecordingType, <span class="string">'TemperatureRecording'</span>);
+0084 idx2 = physdata.Temp_degC_ &gt; 950 &amp; physdata.Temp_degC_ &lt; 1020;
+0085 idx  = idx1 &amp; idx2;
+0086 fprintf(<span class="string">'Scaling %2d degF Temperature measurements down by factor of 10\n'</span>, sum(idx));
+0087 physdata.Temp_degC_(idx) = physdata.Temp_degC_(idx) / 10;
+0088 
+0089 <span class="comment">% Temperature Recording - fix deg C measurements factor of 10 too large</span>
+0090 idx1 = ismember(physdata.RecordingType, <span class="string">'TemperatureRecording'</span>);
+0091 idx2 = physdata.Temp_degC_ &gt; 300 &amp; physdata.Temp_degC_ &lt; 450;
+0092 idx  = idx1 &amp; idx2;
+0093 fprintf(<span class="string">'Scaling %2d degC Temperature measurements down by factor of 10\n'</span>, sum(idx));
+0094 physdata.Temp_degC_(idx) = physdata.Temp_degC_(idx) / 10;
+0095 
+0096 <span class="comment">% Temperature Recording - convert readings taken in degF to degC</span>
+0097 idx1 = ismember(physdata.RecordingType, <span class="string">'TemperatureRecording'</span>);
+0098 idx2 = physdata.Temp_degC_ &gt; 95 &amp; physdata.Temp_degC_ &lt; 102;
+0099 idx  = idx1 &amp; idx2;
+0100 fprintf(<span class="string">'Converting %2d Temperature measurements in degF to degC\n'</span>, sum(idx));
+0101 physdata.Temp_degC_(idx) = (physdata.Temp_degC_(idx) - 32) / 1.8;
+0102 
+0103 <span class="comment">% Temperature Recording &lt; 30 or &gt; 45</span>
+0104 idx1 = ismember(physdata.RecordingType, <span class="string">'TemperatureRecording'</span>);
+0105 idx2 = physdata.Temp_degC_ &lt; 30 | physdata.Temp_degC_ &gt; 45;
+0106 idx  = idx1 &amp; idx2;
+0107 fprintf(<span class="string">'Removing %4d Temperature measurements &lt; 30 or &gt; 45\n'</span>, sum(idx));
+0108 physdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(physdata(idx, :), physdata_deleted, {<span class="string">'Anomalous Value'</span>});
+0109 physdata(idx, :) = [];
+0110 
+0111 <span class="comment">% Weight &lt; 10 or &gt; 100</span>
+0112 idx1 = ismember(physdata.RecordingType, <span class="string">'WeightRecording'</span>);
+0113 idx2 = physdata.WeightInKg &lt; 9 | physdata.WeightInKg &gt; 80;
+0114 idx  = idx1 &amp; idx2;
+0115 fprintf(<span class="string">'Removing %4d Weight measurements &lt; 9 or &gt; 80\n'</span>, sum(idx));
+0116 physdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(physdata(idx, :), physdata_deleted, {<span class="string">'Anomalous Value'</span>});
+0117 physdata(idx, :) = [];
+0118 
+0119 fprintf(<span class="string">'Climb data now has %d rows\n'</span>, size(physdata,1));
+0120 toc
+0121 fprintf(<span class="string">'\n'</span>);
+0122 
+0123 <span class="keyword">end</span>
+0124</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

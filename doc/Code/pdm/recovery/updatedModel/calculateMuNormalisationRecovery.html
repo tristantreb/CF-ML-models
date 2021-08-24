@@ -1,0 +1,202 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calculateMuNormalisationRecovery</title>
+  <meta name="keywords" content="calculateMuNormalisationRecovery">
+  <meta name="description" content="populates an array of ninterventions by nmeasures with the additive">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="../index.html">recovery</a> &gt; <a href="index.html">updatedModel</a> &gt; calculateMuNormalisationRecovery.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../../index.html"><img alt="<" border="0" src="../../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery/updatedModel&nbsp;<img alt=">" border="0" src="../../../../right.png"></a></td></tr></table>-->
+
+<h1>calculateMuNormalisationRecovery
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>populates an array of ninterventions by nmeasures with the additive</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>function [normmean] = calculateMuNormalisationRecovery(amDatacube, amInterventions, measures, demographicstable,dataoutliers, ninterventions, nmeasures, mumethod, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> populates an array of ninterventions by nmeasures with the additive 
+ normalisation (mu) values
+ 
+ Output:
+ -------
+ normmean            vector with choosen reference mean for each intervention 
+ *muNorm.mat         normmean exported</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="../../../../Code/smartcare/getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>	getColumnForMeasure - returns the column name from physdata for the</li><li><a href="../../../../Code/smartcare/getExNormMeasures.html" class="code" title="function [exnormmeasarray] = getExNormMeasures(study)">getExNormMeasures</a>	getExNormMeasures - returns an array of measure display names that need</li><li><a href="../../../../Code/smartcare/getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>	getInvertedMeasures - returns an array of measure display names that need</li><li><a href="../../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="../../../../Code/pdm/recovery/createIntrNormDataCube.html" class="code" title="function createIntrNormDataCube(amRunParameters)">createIntrNormDataCube</a>	create the array with the normalised data for each intervention</li><li><a href="../../../../Code/pdm/recovery/runAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist)">runAlignmentModelEMMCRecoveryFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="../../../../Code/pdm/recovery/runFastAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runFastAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist, nameaddendum)">runFastAlignmentModelEMMCRecoveryFcn</a>	fast version with 1 plot (typical profile) + alignment result matfile</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [normmean] = calculateMuNormalisationRecovery(amDatacube, amInterventions, measures, demographicstable, </a><span class="keyword">...</span>
+0002     dataoutliers, ninterventions, nmeasures, mumethod, study)
+0003 
+0004 <span class="comment">% populates an array of ninterventions by nmeasures with the additive</span>
+0005 <span class="comment">% normalisation (mu) values</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Output:</span>
+0008 <span class="comment">% -------</span>
+0009 <span class="comment">% normmean            vector with choosen reference mean for each intervention</span>
+0010 <span class="comment">% *muNorm.mat         normmean exported</span>
+0011 
+0012 invmeasarray = <a href="../../../../Code/smartcare/getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>(study);
+0013 exnormmeas   = <a href="../../../../Code/smartcare/getExNormMeasures.html" class="code" title="function [exnormmeasarray] = getExNormMeasures(study)">getExNormMeasures</a>(study);
+0014 
+0015 normmean = zeros(ninterventions, nmeasures);
+0016 <span class="keyword">for</span> i = 1:ninterventions
+0017 
+0018     apewindow = 25; <span class="comment">% input from Damian's study</span>
+0019     <span class="keyword">if</span> mumethod == 1
+0020         meanwindow = 8;
+0021     <span class="keyword">elseif</span> mumethod == 2
+0022         meanwindow = 20;        
+0023     <span class="keyword">else</span>
+0024         meanwindow = 10;
+0025     <span class="keyword">end</span>
+0026     scid   = amInterventions.SmartCareID(i);
+0027     start = amInterventions.IVScaledDateNum(i);
+0028 
+0029     <span class="comment">% case 1: no data 35 days before treatment</span>
+0030     <span class="comment">% case 2: stable mean [-35; -25] days from treatment is during a</span>
+0031     <span class="comment">% previous exacerbation from the same patient or even before it</span>
+0032     <span class="keyword">if</span> i-1 &gt; 0 &amp;&amp; amInterventions.SmartCareID(i-1) == scid
+0033         previous_stop = amInterventions.IVScaledStopDateNum(i-1);
+0034     <span class="keyword">else</span>
+0035         previous_stop = 0; <span class="comment">% same as case 1</span>
+0036     <span class="keyword">end</span>
+0037     
+0038     <span class="comment">% decision for both: take patient interquartile mean</span>
+0039     <span class="keyword">if</span> (start - apewindow - meanwindow) &lt;= 0 
+0040         meanwindow = 1; apewindow = 0; 
+0041         fprintf(<span class="string">'No data 35 days before treatment - using inter-quartile mean for all measures of intervention %i\n'</span>, i)
+0042     <span class="keyword">end</span>
+0043      <span class="keyword">if</span> (start - apewindow - meanwindow) &lt; previous_stop
+0044         meanwindow = 1; apewindow = 0; 
+0045         fprintf(<span class="string">'Mean window perturbed by previous patient intervention - using inter-quartile mean for all measures of intervention %i\n'</span>, i)
+0046     <span class="keyword">end</span>
+0047     <span class="keyword">for</span> m = 1:nmeasures
+0048         <span class="keyword">if</span> ~ismember(measures.DisplayName(m), exnormmeas)
+0049             <span class="comment">% this code block is for measures that should be normalised</span>
+0050             meanwindowdata = amDatacube(scid, (start - apewindow - meanwindow): (start - apewindow - 1), m);
+0051             <span class="comment">% remove data outliers for mumethod 4 or 5</span>
+0052             <span class="keyword">if</span> mumethod == 4 || mumethod == 5
+0053                 tmpdataoutliers = dataoutliers(dataoutliers.NStdDevOutlier==5 &amp; dataoutliers.SmartCareID == scid &amp; dataoutliers.MeasureID == m,:);
+0054                 ndel = 0;
+0055                 <span class="keyword">for</span> d = 1:size(tmpdataoutliers,1)
+0056                     <span class="keyword">if</span> (start - meanwindow) &lt;= tmpdataoutliers.Day(d) &amp;&amp; (start - 1) &gt;= tmpdataoutliers.Day(d)
+0057                         fprintf(<span class="string">'For Intervention %d, excluding Data outlier (ID %d, Measure %d, Day %d) from meanwindow\n'</span>, i, scid, m, tmpdataoutliers.Day(d));
+0058                         meanwindowdata(tmpdataoutliers.Day(d) - (start - meanwindow) + 1 - ndel) = [];
+0059                         ndel = ndel + 1;
+0060                     <span class="keyword">end</span>
+0061                 <span class="keyword">end</span>
+0062             <span class="keyword">end</span>
+0063             <span class="keyword">if</span> ~ismember(measures.DisplayName(m), invmeasarray)
+0064                 meanwindowdata = sort(meanwindowdata(~isnan(meanwindowdata)), <span class="string">'ascend'</span>);
+0065             <span class="keyword">else</span>
+0066                 meanwindowdata = sort(meanwindowdata(~isnan(meanwindowdata)), <span class="string">'descend'</span>);
+0067             <span class="keyword">end</span>
+0068             <span class="keyword">if</span> size(meanwindowdata,2) &gt;= 5
+0069                 <span class="keyword">if</span> mumethod == 1
+0070                     <span class="comment">% take mean of mean window (8 days prior to data window -</span>
+0071                     <span class="comment">% as long as there are 3 or more data points in the window</span>
+0072                     normmean(i, m) = mean(meanwindowdata);
+0073                 <span class="keyword">elseif</span> mumethod == 2
+0074                     <span class="comment">% upper quartile mean of mean window method</span>
+0075                     percentile75 = round(size(meanwindowdata,2) * .75) + 1;
+0076                     normmean(i, m) = mean(meanwindowdata(percentile75:end));
+0077                 <span class="keyword">else</span>
+0078                     <span class="comment">% exclude bottom quartile from mean methods (3, 4, 5)</span>
+0079                     percentile25 = round(size(meanwindowdata,2) * .25) + 1;
+0080                     normmean(i, m) = mean(meanwindowdata(percentile25:end));
+0081                     fprintf(<span class="string">'Exclude bottom quartile\n'</span>);
+0082                 <span class="keyword">end</span>
+0083                 <span class="comment">% for mumethod 5, if the interventions is sequential, take the</span>
+0084                 <span class="comment">% max of mean calculated above and the overall upper 50% mean</span>
+0085                 <span class="comment">% over all patient/measurement data</span>
+0086                 <span class="keyword">if</span> mumethod == 5
+0087                     <span class="keyword">if</span> (amInterventions.SequentialIntervention(i) == <span class="string">'Y'</span>)
+0088                         <span class="keyword">if</span> ~ismember(measures.DisplayName(m), invmeasarray)
+0089                             alldata = sort(amDatacube(scid, ~isnan(amDatacube(scid, :, m)), m),<span class="string">'ascend'</span>);
+0090                             percentile50 = round(size(alldata,2) * .5) + 1;
+0091                             upper50mean = mean(alldata(percentile50:end));
+0092                             <span class="keyword">if</span> upper50mean &gt; normmean(i,m)
+0093                                 fprintf(<span class="string">'Sequential intervention, and using upper 50%% mean instead for intervention %d, measure %d\n'</span>, i, m);
+0094                             <span class="keyword">end</span>
+0095                             normmean(i,m) = max(upper50mean, normmean(i,m));
+0096                         <span class="keyword">else</span>
+0097                             alldata = sort(amDatacube(scid, ~isnan(amDatacube(scid, :, m)), m),<span class="string">'descend'</span>);
+0098                             percentile50 = round(size(alldata,2) * .5) + 1;
+0099                             upper50mean = mean(alldata(percentile50:end));
+0100                             <span class="keyword">if</span> upper50mean &lt; normmean(i,m)
+0101                                 fprintf(<span class="string">'Sequential intervention, and using upper 50%% mean instead for intervention %d, measure %d\n'</span>, i, m);
+0102                             <span class="keyword">end</span>
+0103                             normmean(i,m) = min(upper50mean, normmean(i,m));
+0104                         <span class="keyword">end</span> 
+0105                     <span class="keyword">end</span>
+0106                 <span class="keyword">end</span>
+0107             <span class="keyword">else</span>
+0108                 <span class="comment">% if not enough data points in the mean window, use the</span>
+0109                 <span class="comment">% patients inter-quartile mean</span>
+0110                 <span class="keyword">if</span> size(find(demographicstable.SmartCareID(demographicstable.SmartCareID == scid &amp; ismember(demographicstable.RecordingType, measures.Name{m}))),1) &gt; 0
+0111                     <span class="comment">% for mumethod 5, use the upper 50 percent mean over all</span>
+0112                     <span class="comment">% patient/measurement data</span>
+0113                     <span class="keyword">if</span> mumethod == 5
+0114                         fprintf(<span class="string">'Using upper 50%% mean for intervention %d, measure %d\n'</span>, i, m);
+0115                         <span class="keyword">if</span> ~ismember(measures.DisplayName(m), invmeasarray)
+0116                             alldata = sort(amDatacube(scid, ~isnan(amDatacube(scid, :, m)), m),<span class="string">'ascend'</span>);
+0117                         <span class="keyword">else</span>
+0118                             alldata = sort(amDatacube(scid, ~isnan(amDatacube(scid, :, m)), m),<span class="string">'descend'</span>);
+0119                         <span class="keyword">end</span>
+0120                         percentile50 = round(size(alldata,2) * .5) + 1;
+0121                         normmean(i,m) = mean(alldata(percentile50:end));
+0122                     <span class="comment">% else use inter quartile mean over all patient/measurement</span>
+0123                     <span class="comment">% data</span>
+0124                     <span class="keyword">else</span>
+0125                         fprintf(<span class="string">'Using inter-quartile mean for intervention %d, measure %d\n'</span>, i, m);
+0126                         column = <a href="../../../../Code/smartcare/getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>(measures.Name{m});
+0127                         ddcolumn = sprintf(<span class="string">'Fun_%s'</span>,column);
+0128                         normmean(i, m) = demographicstable{demographicstable.SmartCareID == scid &amp; ismember(demographicstable.RecordingType, measures.Name{m}),{ddcolumn}}(5);
+0129                     <span class="keyword">end</span>
+0130                 <span class="keyword">else</span>
+0131                     fprintf(<span class="string">'No measures for intervention %d, measure %d\n'</span>, i, m);
+0132                     normmean(i,m) = 0;
+0133                 <span class="keyword">end</span>
+0134             <span class="keyword">end</span>
+0135         <span class="keyword">else</span>
+0136             <span class="comment">% for measures excluded from normalisation, set to zero mean</span>
+0137             normmean(i,m) = 0;
+0138         <span class="keyword">end</span>
+0139     <span class="keyword">end</span>
+0140 <span class="keyword">end</span>
+0141 basedir = <a href="../../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0142 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0143 outputfilename = sprintf(<span class="string">'%smuNorm.mat'</span>, study);
+0144 <span class="comment">% fprintf('Saving Mean for Mu Normalisation to file %s\n', outputfilename);</span>
+0145 <span class="comment">% fprintf('\n');</span>
+0146 save(fullfile(basedir, subfolder, outputfilename), <span class="string">'normmean'</span>);
+0147 
+0148 <span class="keyword">end</span>
+0149</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

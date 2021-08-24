@@ -1,0 +1,225 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of analyseStableMeanOptions</title>
+  <meta name="keywords" content="analyseStableMeanOptions">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; analyseStableMeanOptions.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>analyseStableMeanOptions
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>	getColumnForMeasure - returns the column name from physdata for the</li><li><a href="mid50mean.html" class="code" title="function y = mid50mean(x)">mid50mean</a>	mid50mean - returns the mean of the mid 50% data points in x (sorted by</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; close all; clc;
+0002 
+0003 defaultmessage = {<span class="string">' '</span> ; <span class="string">'DEFAULT'</span> ; <span class="string">'NO DATA'</span>};
+0004 fprintf(<span class="string">'Comparing stable mean methods\n'</span>);
+0005 fprintf(<span class="string">'\n'</span>);
+0006 
+0007 studynbr = input(<span class="string">'Enter Study to run for (1 = SmartCare, 2 = TeleMed): '</span>);
+0008 fprintf(<span class="string">'\n'</span>);
+0009 
+0010 <span class="keyword">if</span> studynbr == 1
+0011     study = <span class="string">'SC'</span>;
+0012     modelinputsmatfile = <span class="string">'SCalignmentmodelinputs.mat'</span>;
+0013     datademographicsfile = <span class="string">'SCdatademographicsbypatient.mat'</span>;
+0014     dataoutliersfile = <span class="string">'SCdataoutliers.mat'</span>;
+0015 <span class="keyword">elseif</span> studynbr == 2
+0016     study = <span class="string">'TM'</span>;
+0017     modelinputsmatfile = <span class="string">'TMalignmentmodelinputs.mat'</span>;
+0018     datademographicsfile = <span class="string">'TMdatademographicsbypatient.mat'</span>;
+0019     dataoutliersfile = <span class="string">'TMdataoutliers.mat'</span>;
+0020 <span class="keyword">else</span>
+0021     fprintf(<span class="string">'Invalid choice\n'</span>);
+0022     <span class="keyword">return</span>;
+0023 <span class="keyword">end</span>
+0024 
+0025 tic
+0026 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0027 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0028 fprintf(<span class="string">'Loading alignment model Inputs data\n'</span>);
+0029 load(fullfile(basedir, subfolder, modelinputsmatfile));
+0030 fprintf(<span class="string">'Loading datademographics by patient\n'</span>);
+0031 load(fullfile(basedir, subfolder, datademographicsfile));
+0032 fprintf(<span class="string">'Loading data outliers\n'</span>);
+0033 load(fullfile(basedir, subfolder, dataoutliersfile));
+0034 toc
+0035 
+0036 tic
+0037 fprintf(<span class="string">'Preparing input data\n'</span>);
+0038 
+0039 max_offset = 25; <span class="comment">% should not be greater than ex_start (set lower down) as this implies intervention before exacerbation !</span>
+0040 align_wind = 25;
+0041 
+0042 <span class="comment">% remove any interventions where the start is less than the alignment</span>
+0043 <span class="comment">% window</span>
+0044 amInterventions(amInterventions.IVScaledDateNum &lt;= align_wind,:) = [];
+0045 ninterventions = size(amInterventions,1);
+0046 
+0047 <span class="comment">% remove temperature readings as insufficient datapoints for a number of</span>
+0048 <span class="comment">% the interventions</span>
+0049 idx = ismember(measures.DisplayName, {<span class="string">'Temperature'</span>});
+0050 amDatacube(:,:,measures.Index(idx)) = [];
+0051 measures(idx,:) = [];
+0052 nmeasures = size(measures,1);
+0053 measures.Index = (1:nmeasures)';
+0054 
+0055 <span class="comment">% create cube for data window data by intervention (for each measure)</span>
+0056 amIntrDatacube = NaN(ninterventions, max_offset + align_wind - 1, nmeasures);
+0057 <span class="keyword">for</span> i = 1:ninterventions
+0058     scid   = amInterventions.SmartCareID(i);
+0059     start = amInterventions.IVScaledDateNum(i);
+0060     
+0061     icperiodend = align_wind + max_offset -1;
+0062     dcperiodend = start - 1;
+0063     
+0064     icperiodstart = 1;
+0065     dcperiodstart = start - (align_wind + max_offset - 1);
+0066     
+0067     <span class="keyword">if</span> dcperiodstart &lt;= 0
+0068         icperiodstart = icperiodstart - dcperiodstart + 1;
+0069         dcperiodstart = 1;
+0070     <span class="keyword">end</span>
+0071     
+0072     <span class="keyword">for</span> m = 1:nmeasures
+0073         amIntrDatacube(i, (icperiodstart:icperiodend), m) = amDatacube(scid, dcperiodstart:dcperiodend, m);
+0074     <span class="keyword">end</span>
+0075 <span class="keyword">end</span>
+0076 
+0077 <span class="comment">% calculate additive normalisation (mu) based on methodology</span>
+0078 nmethods = 6;
+0079 allnormmean = zeros(ninterventions, nmeasures, nmethods);
+0080 defaultmean = zeros(ninterventions, nmeasures, nmethods);
+0081 pdefaultcount = 0;
+0082 nodatacount = 0;
+0083 
+0084 fprintf(<span class="string">'\n'</span>);
+0085 
+0086 
+0087 <span class="keyword">for</span> i = 1:ninterventions
+0088     
+0089     scid   = amInterventions.SmartCareID(i);
+0090     start = amInterventions.IVScaledDateNum(i);
+0091     
+0092     fprintf(<span class="string">'Interventiond %2d (patient %3d, start %3d)\n'</span>, i, scid, start);
+0093     fprintf(<span class="string">'-----------------------------------------\n'</span>);
+0094             
+0095     <span class="keyword">for</span> m = 1:nmeasures
+0096         <span class="keyword">for</span> mumethod = 1:nmethods
+0097             <span class="keyword">if</span> mumethod == 1
+0098                 meanwindow = 8;
+0099             <span class="keyword">elseif</span> mumethod == 2
+0100                 meanwindow = 20;        
+0101             <span class="keyword">else</span>
+0102                 meanwindow = 10;
+0103             <span class="keyword">end</span>
+0104             <span class="keyword">if</span> (start - align_wind - meanwindow) &lt;= 0
+0105                 meanwindow = start - align_wind - 1;
+0106             <span class="keyword">end</span>
+0107             meanwindowdata = amDatacube(scid, (start - align_wind - meanwindow): (start - 1 - align_wind), m);
+0108             <span class="keyword">if</span> mumethod == 4
+0109                 tmpdataoutliers =  dataoutliers(dataoutliers.NStdDevOutlier==5 &amp; dataoutliers.SmartCareID == scid &amp; dataoutliers.MeasureID == m,:);
+0110                 <span class="keyword">for</span> d = 1:size(tmpdataoutliers,1)
+0111                     <span class="keyword">if</span> (start - align_wind - meanwindow) &lt;= tmpdataoutliers.Day(d) &amp;&amp; (start - 1 - align_wind) &gt;= tmpdataoutliers.Day(d)
+0112                         fprintf(<span class="string">'For Invervention %d, excluding Data outlier (ID %d, Measure %d, Day %d) from meanwindow\n'</span>, i, scid, m, tmpdataoutliers.Day(d));
+0113                         meanwindowdata(tmpdataoutliers.Day(d) - (start - align_wind - meanwindow) + 1) = [];
+0114                     <span class="keyword">end</span>
+0115                 <span class="keyword">end</span>
+0116             <span class="keyword">end</span>
+0117             <span class="keyword">if</span> mumethod == 5
+0118                 alldata = sort(amDatacube(scid, ~isnan(amDatacube(scid, :, m)), m),<span class="string">'ascend'</span>);
+0119                 percentile50 = round(size(alldata,2) * .5) + 1;
+0120                 upper50mean = mean(alldata(percentile50:end));
+0121                 meanwindowdata(1:meanwindow) = upper50mean;
+0122             <span class="keyword">end</span>
+0123             <span class="keyword">if</span> mumethod == 6
+0124                 alldata = sort(amDatacube(scid, ~isnan(amDatacube(scid, :, m)), m),<span class="string">'ascend'</span>);
+0125                 percentile25 = round(size(alldata,2) * .25) + 1;
+0126                 percentile75 = round(size(alldata,2) * .75);
+0127                 <a href="mid50mean.html" class="code" title="function y = mid50mean(x)">mid50mean</a> = mean(alldata(percentile25:percentile75));
+0128                 meanwindowdata(1:meanwindow) = <a href="mid50mean.html" class="code" title="function y = mid50mean(x)">mid50mean</a>;
+0129             <span class="keyword">end</span> 
+0130             meanwindowdata = sort(meanwindowdata(~isnan(meanwindowdata)), <span class="string">'ascend'</span>);
+0131             <span class="keyword">if</span> size(meanwindowdata,2) &gt;= 3
+0132                 <span class="keyword">if</span> mumethod == 1 || mumethod == 5 || mumethod == 6
+0133                     <span class="comment">% take mean of mean window (8 days prior to data window -</span>
+0134                     <span class="comment">% as long as there are 3 or more data points in the window</span>
+0135                     allnormmean(i, m, mumethod) = mean(meanwindowdata(1:end));
+0136                 <span class="keyword">elseif</span> mumethod == 2
+0137                     <span class="comment">% upper quartile mean of mean window method</span>
+0138                     percentile75 = round(size(meanwindowdata,2) * .75) + 1;
+0139                     allnormmean(i, m, mumethod) = mean(meanwindowdata(percentile75:end));
+0140                 <span class="keyword">elseif</span> mumethod == 3
+0141                     <span class="comment">% exclude bottom quartile from mean method</span>
+0142                     percentile25 = round(size(meanwindowdata,2) * .25) + 1;
+0143                     allnormmean(i, m, mumethod) = mean(meanwindowdata(percentile25:end));
+0144                 <span class="keyword">else</span>
+0145                     <span class="comment">% exclude bottom quartile from mean method</span>
+0146                     <span class="comment">% and data outliers</span>
+0147                     percentile25 = round(size(meanwindowdata,2) * .25) + 1;
+0148                     allnormmean(i, m, mumethod) = mean(meanwindowdata(percentile25:end));
+0149                 <span class="keyword">end</span>          
+0150             <span class="keyword">else</span>
+0151                 <span class="comment">% if not enough data points in the mean window, use the</span>
+0152                 <span class="comment">% patients inter-quartile mean</span>
+0153                 <span class="keyword">if</span> size(find(demographicstable.SmartCareID(demographicstable.SmartCareID == scid &amp; ismember(demographicstable.RecordingType, measures.Name{m}))),1) &gt; 0
+0154                     <span class="comment">%fprintf('Using inter-quartile mean for intervention %d, measure %d\n', i, m);</span>
+0155                     column = <a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>(measures.Name{m});
+0156                     ddcolumn = sprintf(<span class="string">'Fun_%s'</span>,column);
+0157                     allnormmean(i, m, mumethod) = demographicstable{demographicstable.SmartCareID == scid &amp; ismember(demographicstable.RecordingType, measures.Name{m}),{ddcolumn}}(5);
+0158                     defaultmean(i, m, mumethod) = 1;
+0159                     pdefaultcount = pdefaultcount + 1;
+0160                 <span class="keyword">else</span>
+0161                     <span class="comment">%fprintf('No measures for intervention %d, measure %d\n', i, m);</span>
+0162                     allnormmean(i,m, mumethod) = 0;
+0163                     defaultmean(i, m, mumethod) = 2;
+0164                     nodatacount = nodatacount + 1;
+0165                 <span class="keyword">end</span>
+0166             <span class="keyword">end</span>
+0167             fprintf(<span class="string">'Measure %d %15s, mumethod %d window size %2d, mean %8.2f %s\n'</span>, <span class="keyword">...</span>
+0168                 m, measures.DisplayName{m}, mumethod, size(meanwindowdata,2), allnormmean(i, m, mumethod), <span class="keyword">...</span>
+0169                 defaultmessage{defaultmean(i, m, mumethod) + 1});
+0170         <span class="keyword">end</span>
+0171         fprintf(<span class="string">'\n'</span>);
+0172     <span class="keyword">end</span>
+0173 <span class="keyword">end</span>
+0174 
+0175 fprintf(<span class="string">'\n'</span>);
+0176 fprintf(<span class="string">'Patient/measure default count %d\n'</span>, pdefaultcount);
+0177 fprintf(<span class="string">'No data count %d\n'</span>, nodatacount);
+0178 fprintf(<span class="string">'\n'</span>);</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

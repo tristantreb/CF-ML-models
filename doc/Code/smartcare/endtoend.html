@@ -1,0 +1,302 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of endtoend</title>
+  <meta name="keywords" content="endtoend">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; endtoend.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>endtoend
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 physdata = readtable(<span class="string">'mydata.csv'</span>);
+0002 patientid = readtable(<span class="string">'patientid.xlsx'</span>);
+0003 physdata = sortrows(physdata,<span class="string">'UserName'</span>,<span class="string">'ascend'</span>);
+0004 number = zeros(129841,1);
+0005 number = array2table(number);
+0006 physdata = [number physdata];
+0007 [a b] = size(physdata);
+0008 
+0009 <span class="comment">% manually changed Study_IDs since there was inconsistency</span>
+0010 <span class="keyword">for</span> i=1:a
+0011     <span class="keyword">if</span> isequal(physdata{i,<span class="string">'UserName'</span>},cellstr(<span class="string">'FPH0011'</span>))
+0012         physdata{i,<span class="string">'UserName'</span>} = cellstr(<span class="string">'FPH011'</span>);
+0013     <span class="keyword">end</span>
+0014 <span class="keyword">end</span>
+0015 
+0016 <span class="comment">%make a table of dummies to be removed</span>
+0017 
+0018 
+0019 dummies = {<span class="string">'EmemTest'</span>, <span class="string">'PapBen'</span> ,<span class="string">'PapworthSummer'</span> ,<span class="string">'Ryan007'</span>, <span class="string">'Texas'</span>, <span class="string">'010wessex'</span>, <span class="string">'davetest'</span>, <span class="string">'scguest'</span>};
+0020 
+0021 remove=zeros(a,1);
+0022 <span class="keyword">for</span> i=a:-1:1
+0023     ok = 0;
+0024     <span class="keyword">for</span> j=1:8
+0025         <span class="keyword">if</span> isequal(physdata{i,<span class="string">'UserName'</span>},dummies(j))
+0026             ok = 1;
+0027         <span class="keyword">end</span>
+0028     <span class="keyword">end</span>
+0029     <span class="keyword">if</span> ok == 1
+0030         physdata(i,:) = [];
+0031     <span class="keyword">end</span>
+0032 <span class="keyword">end</span>
+0033 <span class="comment">%dummies removed.</span>
+0034 [a b] = size(physdata); <span class="comment">% new size = 129603</span>
+0035 
+0036 <span class="comment">%matching further IDs of BRISTOL3, BRISTOL10 and leeds01253</span>
+0037 patientid = sortrows(patientid,<span class="string">'Study_ID'</span>,<span class="string">'ascend'</span>);
+0038 patientid.Patient_ID{3} = <span class="string">'-TKpptiCA5cASNKU0VSmx4'</span>;
+0039 patientid.Patient_ID{10} = <span class="string">'-Cujq-NEcld_Keu_W1-Nw5'</span>;
+0040 patientid.Patient_ID{107} = <span class="string">'-Q0Wf614z94DSTy6nXjyw7'</span>;
+0041 
+0042 <span class="comment">%sort both files by the ID</span>
+0043 patientid = sortrows(patientid,<span class="string">'Patient_ID'</span>,<span class="string">'ascend'</span>);
+0044 physdata = sortrows(physdata,<span class="string">'UserID'</span>,<span class="string">'ascend'</span>);
+0045 
+0046 
+0047 
+0048 
+0049 pnt = 1;
+0050 <span class="keyword">for</span> i=1:a-1
+0051     <span class="keyword">if</span> isequal(physdata.UserName(i),patientid.Study_ID(pnt))
+0052         physdata.number(i) = patientid.Var3(pnt);
+0053     <span class="keyword">end</span>
+0054     <span class="keyword">if</span> isequal(physdata.UserName(i+1),patientid.Study_ID(pnt))
+0055         i=i;
+0056     <span class="keyword">else</span>
+0057        pnt = pnt + 1 ;
+0058        <span class="keyword">if</span> pnt == 146
+0059             <span class="keyword">break</span>;
+0060        <span class="keyword">end</span>
+0061     <span class="keyword">end</span>
+0062 <span class="keyword">end</span>
+0063 physdata.number(129603) = 205;
+0064 
+0065 
+0066 <span class="comment">% verify everyone got a number</span>
+0067 <span class="keyword">for</span> i=1:a
+0068     <span class="keyword">if</span> physdata.number(i) == 0
+0069         disp(i);
+0070         <span class="keyword">break</span>;
+0071     <span class="keyword">end</span>
+0072 <span class="keyword">end</span>
+0073 <span class="comment">%everyone has their StudyNumber</span>
+0074 
+0075 <span class="comment">% adding time</span>
+0076 day = zeros(a,1);
+0077 day = table(day); 
+0078 physdata = [ day physdata ];
+0079 
+0080 offset  = datetime(2015,8,5,0,0,0); <span class="comment">% time offset</span>
+0081 offset  = datenum(offset);
+0082 <span class="keyword">for</span> i=1:a
+0083     physdata.day(i) = datenum(datetime(physdata.Date_TimeRecorded(i)))-offset;
+0084     physdata.day(i) = ceil(physdata.day(i));
+0085 <span class="keyword">end</span>
+0086 
+0087 <span class="comment">%taking empty measurements into zeros</span>
+0088 <span class="keyword">for</span> i=1:a
+0089     <span class="keyword">if</span> isequal(physdata.RecordingType(i), cellstr(<span class="string">'ActivityRecording'</span>))
+0090         <span class="keyword">if</span> isnan(physdata.Activity_Steps(i))
+0091             physdata.Activity_Steps(i) = 0;
+0092         <span class="keyword">end</span>
+0093     <span class="keyword">elseif</span> isequal(physdata.RecordingType(i), cellstr(<span class="string">'CoughRecording'</span>))
+0094         <span class="keyword">if</span> isnan(physdata.Rating(i))
+0095             physdata.Rating(i) = 0;
+0096         <span class="keyword">end</span>
+0097     <span class="keyword">elseif</span> isequal(physdata.RecordingType(i), cellstr(<span class="string">'WellnessRecording'</span>))
+0098         <span class="keyword">if</span> isnan(physdata.Rating(i))
+0099             physdata.Rating(i) = 0;
+0100         <span class="keyword">end</span>
+0101     <span class="keyword">end</span>
+0102 <span class="keyword">end</span>
+0103 <span class="comment">% empty measurements resolved.</span>
+0104 
+0105 
+0106 <span class="comment">%removing excess of information</span>
+0107 physdata1 = physdata; <span class="comment">% saving a copy just in case</span>
+0108 physdata(:,<span class="string">'UserID'</span>) = [];
+0109 physdata(:,<span class="string">'FEV1'</span>) = [];
+0110 physdata(:,<span class="string">'FEV10'</span>) = [];
+0111 physdata(:,<span class="string">'PredictedFEV'</span>) = [];
+0112 physdata(:,<span class="string">'WeightInKg'</span>) = [];
+0113 physdata(:,<span class="string">'Calories'</span>) = [];
+0114 physdata(:,<span class="string">'Temp_degC_'</span>) = [];
+0115 physdata(:,<span class="string">'SputumSampleTaken_'</span>) = [];
+0116 physdata(:,<span class="string">'Activity_Points'</span>) = [];
+0117 
+0118 <span class="comment">%going after duplicates</span>
+0119 <span class="comment">% DUPLICATES, SCALE THE DAYS, GO 3D, LUNG FUNCTION THRESHOLD</span>
+0120 <span class="comment">% SPECIAL CARE FOR ACTIVITY DUPLICATES</span>
+0121 
+0122 
+0123 
+0124 [a b] = size(physdata) ; 
+0125 del = zeros(1,a);
+0126 
+0127 
+0128 physdata = sortrows(physdata,[2 4 1]);
+0129 <span class="comment">%lungfunction duplicates</span>
+0130 i = 1;
+0131 <span class="keyword">while</span> i &lt;= a-1
+0132     pnt = 1;
+0133     <span class="keyword">while</span> isequal(physdata.day(i),physdata.day(i+pnt)) &amp; isequal(physdata.number(i),physdata.number(i+pnt)) &amp; isequal(physdata.RecordingType(i),physdata.RecordingType(i+pnt)) &amp; isequal(physdata.RecordingType(i),cellstr(<span class="string">'LungFunctionRecording'</span>))
+0134             physdata.FEV1_(i) = physdata.FEV1_(i)+physdata.FEV1_(i+pnt);
+0135             del(i+pnt) = 1;
+0136             pnt = pnt+1;
+0137     <span class="keyword">end</span>
+0138     physdata.FEV1_(i) = physdata.FEV1_(i) / pnt;
+0139     i=i+pnt;
+0140 <span class="keyword">end</span>
+0141 
+0142 <span class="comment">%cough and wellness duplicates</span>
+0143 i=1;
+0144 <span class="keyword">while</span> i &lt;= a-1
+0145     pnt = 1;
+0146     <span class="keyword">while</span> isequal(physdata.day(i),physdata.day(i+pnt)) &amp; isequal(physdata.number(i),physdata.number(i+pnt)) &amp; isequal(physdata.RecordingType(i),physdata.RecordingType(i+pnt)) &amp; ( isequal(physdata.RecordingType(i),cellstr(<span class="string">'CoughRecording'</span>))| isequal(physdata.RecordingType(i),cellstr(<span class="string">'WellnessRecording'</span>)))
+0147             physdata.Rating(i) = physdata.Rating(i)+physdata.Rating(i+pnt);
+0148             del(i+pnt) = 1;
+0149             pnt = pnt+1;
+0150     <span class="keyword">end</span>
+0151     physdata.Rating(i) = physdata.Rating(i) / pnt;
+0152     i=i+pnt;
+0153 <span class="keyword">end</span>
+0154 
+0155 <span class="comment">%02Saturation</span>
+0156 i=1;
+0157 <span class="keyword">while</span> i &lt;= a-1
+0158     pnt = 1;
+0159     <span class="keyword">while</span> isequal(physdata.day(i),physdata.day(i+pnt)) &amp; isequal(physdata.number(i),physdata.number(i+pnt)) &amp; isequal(physdata.RecordingType(i),physdata.RecordingType(i+pnt))  &amp; isequal(physdata.RecordingType(i),cellstr(<span class="string">'O2SaturationRecording'</span>))
+0160             physdata.O2Saturation(i) = physdata.O2Saturation(i)+physdata.O2Saturation(i+pnt);
+0161             del(i+pnt) = 1;
+0162             pnt = pnt+1;
+0163     <span class="keyword">end</span>
+0164     physdata.O2Saturation(i) = physdata.O2Saturation(i) / pnt;
+0165     i=i+pnt;
+0166 <span class="keyword">end</span>
+0167 
+0168 <span class="comment">%Pulse</span>
+0169 i=1;
+0170 <span class="keyword">while</span> i &lt;= a-1
+0171     pnt = 1;
+0172     <span class="keyword">while</span> isequal(physdata.day(i),physdata.day(i+pnt)) &amp; isequal(physdata.number(i),physdata.number(i+pnt)) &amp; isequal(physdata.RecordingType(i),physdata.RecordingType(i+pnt))  &amp; isequal(physdata.RecordingType(i),cellstr(<span class="string">'PulseRateRecording'</span>))
+0173             physdata.Pulse_BPM_(i) = physdata.Pulse_BPM_(i)+physdata.Pulse_BPM_(i+pnt);
+0174             del(i+pnt) = 1;
+0175             pnt = pnt+1;
+0176     <span class="keyword">end</span>
+0177     physdata.Pulse_BPM_(i) = physdata.Pulse_BPM_(i) / pnt;
+0178     i=i+pnt;
+0179 <span class="keyword">end</span>
+0180 
+0181 
+0182 <span class="keyword">for</span> i=a:-1:1
+0183     <span class="keyword">if</span> del(i) == 1
+0184         physdata(i,:) = [];
+0185     <span class="keyword">end</span>
+0186 <span class="keyword">end</span>
+0187 
+0188 <span class="comment">% all duplicates -Activity resolved</span>
+0189 [a b] = size(physdata) ; 
+0190 
+0191 <span class="comment">%classify different Activity duplicates</span>
+0192 
+0193 <span class="keyword">for</span> i=1:a
+0194     <span class="keyword">if</span>  isequal(physdata.RecordingType(i),cellstr(<span class="string">'ActivityRecording'</span>))
+0195         x = hour(datetime(physdata.Date_TimeRecorded(i)));
+0196         <span class="keyword">if</span> x &lt; 6
+0197              physdata.day(i) = physdata.day(i)-1;
+0198         <span class="keyword">end</span>
+0199     <span class="keyword">end</span>
+0200 <span class="keyword">end</span> <span class="comment">% fixing times of Activity Recordings</span>
+0201 
+0202 
+0203 physdata = sortrows(physdata,<span class="string">'FEV1_'</span>,<span class="string">'ascend'</span>);
+0204 physdata(13297:13331,:) = []; <span class="comment">% deleted everything bigger than 155 percent</span>
+0205 physdata2 = physdata ; <span class="comment">% making another save</span>
+0206 
+0207 physdata = sortrows(physdata,[2 4 1 5]);
+0208 i = 1;
+0209 cnt = 1;
+0210 
+0211 <span class="comment">%delete any measures with duplicate entries on a day</span>
+0212 physdata = sortrows(physdata,[4 2 1]);
+0213 del = zeros(1,a);
+0214 <span class="keyword">for</span> i=1:a-1
+0215     pnt = 1;
+0216     <span class="keyword">if</span> isequal(physdata.day(i),physdata.day(i+pnt)) &amp; isequal(physdata.number(i),physdata.number(i+pnt)) &amp; isequal(physdata.RecordingType(i),physdata.RecordingType(i+pnt)) &amp; isequal(physdata.RecordingType(i),cellstr(<span class="string">'ActivityRecording'</span>))
+0217             del(i) = 1 ;
+0218             del(i+1) = 1;
+0219     <span class="keyword">end</span>
+0220 <span class="keyword">end</span>
+0221 <span class="keyword">for</span> i=1:a
+0222     <span class="keyword">if</span> del(i) == 1
+0223         physdata(i,:) = [];
+0224     <span class="keyword">end</span>
+0225 <span class="keyword">end</span>
+0226 
+0227 <span class="comment">%looking at Activity upload times</span>
+0228 [a b] = size(physdata);
+0229 gram = zeros(1,14369);
+0230 <span class="keyword">for</span> i=1:14369
+0231         x = hour(datetime(physdata.Date_TimeRecorded(i)));
+0232         gram(i) = x ;
+0233 <span class="keyword">end</span>
+0234 histogram(gram);
+0235 
+0236 <span class="comment">%scale the days accordingly</span>
+0237 physdata = sortrows(physdata,[2 1]);
+0238 dayscale = zeros(1,300);
+0239 <span class="keyword">for</span> i=1:300
+0240     dayscale(i) = 1000;
+0241 <span class="keyword">end</span>
+0242 
+0243 
+0244 <span class="keyword">for</span> i=1:a
+0245     day = physdata1.day(i);
+0246     num = physdata1.number(i);
+0247     <span class="keyword">if</span> day &lt; dayscale(num)
+0248         dayscale(num) = day;
+0249     <span class="keyword">end</span>
+0250 <span class="keyword">end</span>
+0251 <span class="keyword">for</span> i=1:a
+0252     physdata.day(i) = physdata.day(i) - dayscale(physdata.number(i))+1;
+0253 <span class="keyword">end</span>
+0254 <span class="comment">%the work ends here;</span>
+0255</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

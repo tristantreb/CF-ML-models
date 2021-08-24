@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getColourForMeasure</title>
+  <meta name="keywords" content="getColourForMeasure">
+  <meta name="description" content="getColorForMeasure - returns the RGB value of the colour for a given">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; getColourForMeasure.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>getColourForMeasure
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>getColorForMeasure - returns the RGB value of the colour for a given</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [smcolour, rwcolour] = getColourForMeasure(displaymeasure) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> getColorForMeasure - returns the RGB value of the colour for a given
+ measure (to ensure consistent across plots</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/recovery/updatedModel/amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery(meancurvemean, meancurvecount, amIntrNormcube, amInterventions, normmean, normstd,measures, offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery</a>	amEMMCPlotSuperimposedAlignedCurves3 - wrapper around the</li><li><a href="amEMMCPlotSuperimposedAlignedCurvesForPaper2.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper2(meancurvemean, meancurvecount, amIntrNormcube, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper2</a>	amEMMCPlotSuperimposedAlignedCurves2 - wrapper around the</li><li><a href="amEMMCPlotSuperimposedAlignedCurvesForPaper3.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper3(meancurvemean, meancurvecount, amIntrNormcube, amInterventions, normmean, normstd,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper3</a>	amEMMCPlotSuperimposedAlignedCurves3 - wrapper around the</li><li><a href="plotSuperimposedAlignedCurvesForPaper.html" class="code" title="function plotSuperimposedAlignedCurvesForPaper(ax, meancurvemean, xl, yl,tmpmeasures, tmpnmeasures, min_offset, max_offset, align_wind, ex_start, study)">plotSuperimposedAlignedCurvesForPaper</a>	plotSuperimposedAlignedCurves - plots the aligned curves for each of the</li><li><a href="plotSuperimposedMeasuresB4IntrForPaper.html" class="code" title="function plotSuperimposedMeasuresB4IntrForPaper(ax, amnormcubesingleintr, amnormcubesingleintrsmth, xl, yl,tmpmeasures, tmpnmeasures, max_offset, align_wind, offset, ex_start, study)">plotSuperimposedMeasuresB4IntrForPaper</a>	plotSuperimposedMeasuresB4Intr - plots the measures for the period prior</li><li><a href="visualiseExacerbationForPaperFcn.html" class="code" title="function visualiseExacerbationForPaperFcn(amDatacube, amInterventions, measures, nmeasures, npatients, study)">visualiseExacerbationForPaperFcn</a>	visualiseExacerbationForPaperFcn - plots measures around an exacerbation</li><li><a href="visualiseExacerbationForPaperFcn2.html" class="code" title="function visualiseExacerbationForPaperFcn2(amDatacube, amInterventions, measures, nmeasures, npatients, study)">visualiseExacerbationForPaperFcn2</a>	visualiseExacerbationForPaperFcn - plots measures around an exacerbation</li><li><a href="visualiseExacerbationForPaperFcn3.html" class="code" title="function visualiseExacerbationForPaperFcn3(amDatacube, amInterventions, measures, nmeasures, npatients, study)">visualiseExacerbationForPaperFcn3</a>	visualiseExacerbationForPaperFcn3 - plots measures around an exacerbation</li><li><a href="visualiseMeasuresForPaperFcn.html" class="code" title="function visualiseMeasuresForPaperFcn(physdata, offset, cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits,cdCRP, cdPFT, cdNewMeds, measures, nmeasures, study)">visualiseMeasuresForPaperFcn</a>	visualiseMeasuresForPaperFcn - plots clinical and home measures</li><li><a href="visualiseMeasuresForPaperFcn2.html" class="code" title="function visualiseMeasuresForPaperFcn2(physdata, offset, amDatacube, cdPatient, cdAntibiotics,cdCRP, cdPFT, cdNewMeds, measures, nmeasures, ndays, study)">visualiseMeasuresForPaperFcn2</a>	visualiseMeasuresForPaperFcn2 - plots clinical and home measures</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [smcolour, rwcolour] = getColourForMeasure(displaymeasure)</a>
+0002 
+0003 <span class="comment">% getColorForMeasure - returns the RGB value of the colour for a given</span>
+0004 <span class="comment">% measure (to ensure consistent across plots</span>
+0005 
+0006 colours = lines(7);
+0007 
+0008 <span class="keyword">if</span> ismember(displaymeasure, {<span class="string">'Clinical CRP'</span>})
+0009     rwcolour = [0.000, 0.650, 1.000];
+0010     smcolour = [0.000, 0.650, 1.000];
+0011 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'Clinical FEV1'</span>})
+0012     rwcolour = [0.000, 0.650, 1.000];
+0013     smcolour = [0.000, 0.650, 1.000];
+0014 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'Activity'</span>, <span class="string">'Calorie'</span>})
+0015     rwcolour = [0.935, 0.378, 0.484];
+0016     smcolour = [0.635, 0.078, 0.184];
+0017 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'Appetite'</span>})
+0018     rwcolour = [0.820, 0.410, 0.117];
+0019     smcolour = [0.720, 0.310, 0.059];
+0020 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'Cough'</span>})
+0021     rwcolour = [0.000, 0.647, 0.941];
+0022     smcolour = [0.000, 0.447, 0.741];
+0023 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'LungFunction'</span>, <span class="string">'FEV1'</span>})
+0024     rwcolour = [0.95 , 0.525, 0.298];
+0025     smcolour = [0.85 , 0.325, 0.098];
+0026 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'O2Saturation'</span>})
+0027     rwcolour = [0.989, 0.894, 0.425];
+0028     smcolour = [0.929, 0.794, 0.325];
+0029 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'PulseRate'</span>})
+0030     rwcolour = [0.794, 0.484, 0.856];
+0031     smcolour = [0.494, 0.184, 0.556];
+0032 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'SleepActivity'</span>, <span class="string">'MinsAsleep'</span>})
+0033     rwcolour = [0.666, 0.874, 0.388];
+0034     smcolour = [0.466, 0.674, 0.188];
+0035 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'SputumVolume'</span>, <span class="string">'RestingHR'</span>})
+0036     rwcolour = [0.867, 0.719, 0.523];
+0037     smcolour = [0.767, 0.619, 0.423];
+0038 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'Temperature'</span>})
+0039     rwcolour = [0.900, 0.200, 0.600];
+0040     smcolour = [0.777, 0.082, 0.420];
+0041 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'Tiredness'</span>})
+0042     rwcolour = [1.000, 0.644, 0.000];
+0043     smcolour = [1.000, 0.547, 0.000];
+0044 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'Weight'</span>})
+0045     rwcolour = [0.700, 0.000, 0.000];
+0046     smcolour = [0.300, 0.000, 0.000];
+0047 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'Wellness'</span>})
+0048     rwcolour = [0.401, 0.845, 0.933];
+0049     smcolour = [0.301, 0.745, 0.933];
+0050 <span class="keyword">else</span>
+0051     fprintf(<span class="string">'**** Unknown Measure ****\n'</span>);
+0052     rwcolour = [0.8, 0.8, 0.8];
+0053     smcolour = [0.8, 0.8, 0.8];
+0054 <span class="keyword">end</span>
+0055 
+0056 <span class="keyword">end</span>
+0057</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

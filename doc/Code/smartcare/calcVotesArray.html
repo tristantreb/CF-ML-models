@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calcVotesArray</title>
+  <meta name="keywords" content="calcVotesArray">
+  <meta name="description" content="calcVotesArray - calculates the true and false votes across the labelled test data">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; calcVotesArray.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>calcVotesArray
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>calcVotesArray - calculates the true and false votes across the labelled test data</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [truevotes, falsevotes] = calcVotesArray(amLabelledInterventions, amInterventions,overall_pdoffset, max_offset) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> calcVotesArray - calculates the true and false votes across the labelled test data</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="calcExStartFromTestLabels.html" class="code" title="function ex_start = calcExStartFromTestLabels(amLabelledInterventions, amInterventions,overall_pdoffset, max_offset, plotsubfolder, modelrun, countthresh)">calcExStartFromTestLabels</a>	calcExStartFromTestLabels - derives the ex_start date for a given</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [truevotes, falsevotes] = calcVotesArray(amLabelledInterventions, amInterventions, </a><span class="keyword">...</span>
+0002     overall_pdoffset, max_offset)
+0003 
+0004 <span class="comment">% calcVotesArray - calculates the true and false votes across the labelled test data</span>
+0005 
+0006 maxub= max(max(amLabelledInterventions.UpperBound1), max(amLabelledInterventions.UpperBound2(amLabelledInterventions.UpperBound2~=0)));
+0007 minlb= min(min(amLabelledInterventions.LowerBound1), min(amLabelledInterventions.LowerBound2(amLabelledInterventions.LowerBound2~=0)));
+0008 labelrange = maxub - minlb + 1;
+0009 
+0010 arrayrange = max_offset - 1 + (-1 * minlb);
+0011 
+0012 truevotes  = zeros(size(amInterventions, 1), arrayrange);
+0013 falsevotes = zeros(size(amInterventions, 1), arrayrange);
+0014 
+0015 <span class="keyword">for</span> i = 1:size(amInterventions, 1)
+0016     votesrow = zeros(1, labelrange);
+0017     lrow = amLabelledInterventions(i, :);
+0018     pdoffset = overall_pdoffset(i,:);
+0019     <span class="comment">%offset = amInterventions.Offset(i);</span>
+0020     <span class="comment">% Lower and Upper Bounds are currently stored relative treatment date.</span>
+0021     <span class="comment">% Need to create values in the array space</span>
+0022     ub1 = lrow.UpperBound1 - minlb + 1;
+0023     lb1 = lrow.LowerBound1 - minlb + 1;
+0024     ub2 = lrow.UpperBound2 - minlb + 1;
+0025     lb2 = lrow.LowerBound2 - minlb + 1;
+0026     predrange = (ub1 - lb1 + 1);
+0027     <span class="keyword">if</span> ub2 ~= lb2
+0028         predrange = predrange + (ub2 - lb2 + 1);
+0029     <span class="keyword">end</span>
+0030     votesrow(lb1:ub1) = 1/predrange;
+0031     <span class="keyword">if</span> ub2 ~= lb2
+0032         votesrow(lb2:ub2) = 1/predrange;
+0033     <span class="keyword">end</span>
+0034     <span class="comment">%truevotes(i, (arrayrange + 1 + minlb - offset):arrayrange + 1 + maxub - offset)  = votesrow;</span>
+0035     <span class="comment">%falsevotes(i, (arrayrange + 1 + minlb - offset):arrayrange + 1 + maxub - offset) = 1 - votesrow;</span>
+0036     <span class="keyword">for</span> o = 0:max_offset - 1
+0037         truevotes(i, (arrayrange + 1 + minlb - o):arrayrange + 1 + maxub - o)  = truevotes(i, (arrayrange + 1 + minlb - o):arrayrange + 1 + maxub - o)  + votesrow       * pdoffset(o + 1);
+0038         falsevotes(i, (arrayrange + 1 + minlb - o):arrayrange + 1 + maxub - o) = falsevotes(i, (arrayrange + 1 + minlb - o):arrayrange + 1 + maxub - o) + (1 - votesrow) * pdoffset(o + 1);
+0039     <span class="keyword">end</span>
+0040 <span class="keyword">end</span>
+0041 
+0042 <span class="keyword">end</span>
+0043</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

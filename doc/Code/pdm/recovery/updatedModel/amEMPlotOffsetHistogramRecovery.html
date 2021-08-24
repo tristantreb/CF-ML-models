@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMPlotOffsetHistogramRecovery</title>
+  <meta name="keywords" content="amEMPlotOffsetHistogramRecovery">
+  <meta name="description" content="amEMPlotOffsetHistogram - plots the histogram of offsets for a given">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="../index.html">recovery</a> &gt; <a href="index.html">updatedModel</a> &gt; amEMPlotOffsetHistogramRecovery.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../../index.html"><img alt="<" border="0" src="../../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery/updatedModel&nbsp;<img alt=">" border="0" src="../../../../right.png"></a></td></tr></table>-->
+
+<h1>amEMPlotOffsetHistogramRecovery
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>amEMPlotOffsetHistogram - plots the histogram of offsets for a given</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>function amEMPlotOffsetHistogramRecovery(ax, offsets) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMPlotOffsetHistogram - plots the histogram of offsets for a given
+ alignment model run</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="amEMPlotAndSaveAlignedCurvesRecovery.html" class="code" title="function amEMPlotAndSaveAlignedCurvesRecovery(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets,measures, max_points, offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder)">amEMPlotAndSaveAlignedCurvesRecovery</a>	amEMPlotAndSaveAlignedCurves - plots the curves pre and post alignment for</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function amEMPlotOffsetHistogramRecovery(ax, offsets)</a>
+0002 
+0003 <span class="comment">% amEMPlotOffsetHistogram - plots the histogram of offsets for a given</span>
+0004 <span class="comment">% alignment model run</span>
+0005 
+0006 ymax = max(groupcounts(offsets)) + 5;
+0007 histogram(ax, offsets);
+0008 xlim(ax, [min(offsets)-0.5, max(offsets) + 0.5]);
+0009 ylim(ax, [0 ymax]);
+0010 title(ax, sprintf(<span class="string">'Offsets (%d Interventions)'</span>, size(offsets, 1)));
+0011 set(gca,<span class="string">'FontSize'</span>, 6);
+0012 <span class="keyword">end</span>
+0013</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

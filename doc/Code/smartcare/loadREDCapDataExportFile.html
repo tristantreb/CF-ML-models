@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadREDCapDataExportFile</title>
+  <meta name="keywords" content="loadREDCapDataExportFile">
+  <meta name="description" content="loadREDCapDataExportFile - loads the latest REDCap data export file">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadREDCapDataExportFile.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadREDCapDataExportFile
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>loadREDCapDataExportFile - loads the latest REDCap data export file</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [redcapdata, redcapinstrcounts] = loadREDCapDataExportFile(basedir, subfolder, redcapdict) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> loadREDCapDataExportFile - loads the latest REDCap data export file</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getLatestFileName.html" class="code" title="function [latestfname, filefound] = getLatestFileName(basedir, subfolder, fnamematchstring)">getLatestFileName</a>	getLatestFileName - returns the name of the most recent version of a file</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadbreatheclinicalREDCapdata.html" class="code" title="">loadbreatheclinicalREDCapdata</a>	loads Breathe clinical data from REDCap database</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [redcapdata, redcapinstrcounts] = loadREDCapDataExportFile(basedir, subfolder, redcapdict)</a>
+0002 
+0003 <span class="comment">% loadREDCapDataExportFile - loads the latest REDCap data export file</span>
+0004 
+0005 datefields = redcapdict.Variable_FieldName(ismember(redcapdict.TextValidationTypeORShowSliderNumber, {<span class="string">'date_dmy'</span>}));
+0006 ndatefields = size(datefields, 1);
+0007 
+0008 datasubfolder = sprintf(<span class="string">'%s/%s'</span>, subfolder, <span class="string">'DataExportFiles'</span>);
+0009 fnamematchstring = <span class="string">'AnalysisOfRemoteMoni_DATA*'</span>;
+0010 
+0011 [latestfname, filefound] = <a href="getLatestFileName.html" class="code" title="function [latestfname, filefound] = getLatestFileName(basedir, subfolder, fnamematchstring)">getLatestFileName</a>(basedir, datasubfolder, fnamematchstring);
+0012 
+0013 <span class="keyword">if</span> filefound
+0014     fprintf(<span class="string">'Latest filename found is %s\n'</span>, latestfname);
+0015     fprintf(<span class="string">'Loading...'</span>);
+0016 
+0017     opts = detectImportOptions(fullfile(basedir, datasubfolder, latestfname), <span class="string">'FileType'</span>, <span class="string">'Text'</span>, <span class="string">'Delimiter'</span>, <span class="string">','</span>);
+0018     <span class="keyword">for</span> d = 1:ndatefields
+0019         opts.VariableTypes(:, ismember(opts.VariableNames, datefields(d)))   = {<span class="string">'datetime'</span>};
+0020         opts = setvaropts(opts, datefields(d), <span class="string">'InputFormat'</span>, <span class="string">'yyyy-MM-dd'</span>);
+0021     <span class="keyword">end</span>
+0022     redcapdata = readtable(fullfile(basedir, datasubfolder, latestfname), opts);
+0023     
+0024     redcapdata = sortrows(redcapdata, {<span class="string">'redcap_repeat_instrument'</span>, <span class="string">'study_id'</span>, <span class="string">'redcap_repeat_instance'</span>}, {<span class="string">'Ascend'</span>, <span class="string">'Ascend'</span>, <span class="string">'Ascend'</span>});
+0025     
+0026     <span class="comment">% redcap has blank in the repeat_instrument for the singular instrument - in our case</span>
+0027     <span class="comment">% patient_info - as it's not a repeating instrument. But as we use this</span>
+0028     <span class="comment">% to index which table to populate, replace the blanks here</span>
+0029     redcapdata.redcap_repeat_instrument(ismember(redcapdata.redcap_repeat_instrument, <span class="string">''</span>)) = {<span class="string">'patient_info'</span>};
+0030     
+0031     fprintf(<span class="string">'%d rows...done\n'</span>, size(redcapdata, 1));
+0032     
+0033     redcapinstrcounts = groupcounts(redcapdata, <span class="string">'redcap_repeat_instrument'</span>);
+0034     
+0035     fprintf(<span class="string">'Instrument breakdown\n'</span>);
+0036     fprintf(<span class="string">'   Instrument     Count \n'</span>);
+0037     <span class="keyword">for</span> n = 1:size(redcapinstrcounts, 1)
+0038         fprintf(<span class="string">'%-17s %5d\n'</span>, redcapinstrcounts.redcap_repeat_instrument{n}, redcapinstrcounts.GroupCount(n));
+0039     <span class="keyword">end</span>
+0040     
+0041 <span class="keyword">else</span>
+0042     fprintf(<span class="string">'**** No matching files found ****\n'</span>);
+0043     redcapdata = [];
+0044     redcapinstrcounts = [];
+0045 <span class="keyword">end</span>
+0046 
+0047 
+0048 <span class="keyword">end</span>
+0049</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

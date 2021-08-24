@@ -1,0 +1,553 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadbreatheclinicalREDCapdata</title>
+  <meta name="keywords" content="loadbreatheclinicalREDCapdata">
+  <meta name="description" content="loads Breathe clinical data from REDCap database">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadbreatheclinicalREDCapdata.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadbreatheclinicalREDCapdata
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>loads Breathe clinical data from REDCap database</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> loads Breathe clinical data from REDCap database
+ - loads the clinical data from the REDCap data export for a given date
+ - stores this data in a set of matlab tables
+ - performs some field level data quality checks
+ 
+ Inputs:
+ ------
+ - PatientIDmappingFile-yyyymmdd.xlsx - Mapping of internal ID to REDCap ID
+ - AnalysisOfRemoteMonitoringVirt_DataDictionary_yyyy-mm-dd.csv - REDCap data 
+ dictionary (to get dropdown id/label mappings)
+ - REDCapFieldMappingFile_yyyymmdd.xlsx - REDCap table and field mapping (maps 
+ redcap instrument to matlab tables, and redcap fields to matlab columns
+ - AnalysisOfRemoteMoni_DATA_yyyy-mm-dd_hhmm.csv - REDCap data export file 
+ (containing the clinical data for all hospitals &amp; patients
+
+ Outputs:
+ -------
+ breatheclinicaldata.mat with the following variables:
+ - brAdmissions          admitted/discharged dates for all hospitalisations
+ - brAntibiotics         ab's name, route, homeIV, start/end date
+ - brClinicVisits        date, location (e.g. home or clinic)
+ - brCRP                 CRP measures
+ - brDrugTherapy         CFTR modulators therapy, start/stop date
+ - brEndStudy            empty for Breathe - nonrelevant
+ - brHghWght             height, weight (and seldom BMI, H_z &amp; W_z scores)
+ - brMicrobiology        what bacterias in the lungs
+ - brOtherVisits         e.g. annual reviews, emergencies
+ - brPatient             patient profile (including mutations, consent 
+ status, and last updated date for the clinical data
+ - brPFT                 Pulmonary Function Tests
+ - brUnplannedContact    Patient contacting hospitals e.g. call
+
+ Excel file
+ PatientIDmappingFile-yyyymmdd.xlsx - updated mapping of internal ID to 
+ REDCap ID to include any new patients since previous ingestion 
+
+ Histogram of patient clinical data by month of last update.png - plot</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="addIDsToREDCapDataTable.html" class="code" title="function [redcapdata] = addIDsToREDCapDataTable(redcapdata, redcapidmap, redcapfieldmap)">addIDsToREDCapDataTable</a>	addIDsToREDCapDataTable - adds internal id, hospital, and study number to</li><li><a href="addNewPatientsToMappingTable.html" class="code" title="function [redcapidmap] = addNewPatientsToMappingTable(redcapdata, redcapidmap)">addNewPatientsToMappingTable</a>	addNewPatientsToMappingTable - add records to the mapping table for new</li><li><a href="createBreatheSingleClinicalTable.html" class="code" title="function [mltable] = createBreatheSingleClinicalTable(mltablename, nrows)">createBreatheSingleClinicalTable</a>	createBreatheSingleClinicalTable - creates a given clinical</li><li><a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="getListOfBreatheHospitals.html" class="code" title="function [hosplist] = getListOfBreatheHospitals()">getListOfBreatheHospitals</a>	getListOfBreatheHospitals - returns a table containing the acronyms</li><li><a href="loadREDCapDataExportFile.html" class="code" title="function [redcapdata, redcapinstrcounts] = loadREDCapDataExportFile(basedir, subfolder, redcapdict)">loadREDCapDataExportFile</a>	loadREDCapDataExportFile - loads the latest REDCap data export file</li><li><a href="loadREDCapDictionaryFile.html" class="code" title="function [redcapdict] = loadREDCapDictionaryFile(basedir, subfolder)">loadREDCapDictionaryFile</a>	loadREDCapDictionaryFile - loads the latest REDCap dictionary file</li><li><a href="loadREDCapFieldMapFile.html" class="code" title="function [redcaptablemap, redcapfieldmap] = loadREDCapFieldMapFile(basedir, subfolder)">loadREDCapFieldMapFile</a>	loadREDCapFieldMapFile - loads the latest REDCap field mapping file</li><li><a href="loadREDCapPatientIDMapFile.html" class="code" title="function [redcapidmap] = loadREDCapPatientIDMapFile(basedir, subfolder)">loadREDCapPatientIDMapFile</a>	loadREDCapPatientIDMapFile - loads the latest REDCap patient id mapping</li><li><a href="populateDerivedColsInMLTables.html" class="code" title="function [brPatient, brCRP, brPFT] = populateDerivedColsInMLTables(brPatient, brCRP, brPFT)">populateDerivedColsInMLTables</a>	populateDerivedColsInMLTables - populates the derived columns in the</li><li><a href="populateMLTableFromREDCapData.html" class="code" title="function [mltable] = populateMLTableFromREDCapData(trcdata, mltable, tfieldmap)">populateMLTableFromREDCapData</a>	populateMLTableFromREDCapData - given a subset of the redcap data</li><li><a href="replaceDropDownValuesWithNames.html" class="code" title="function [redcapdata] = replaceDropDownValuesWithNames(redcapdata, redcapdict, colname)">replaceDropDownValuesWithNames</a>	replaceDropDownValuesWithNames - replaces the index values in the drop</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% loads Breathe clinical data from REDCap database</span>
+0002 <span class="comment">% - loads the clinical data from the REDCap data export for a given date</span>
+0003 <span class="comment">% - stores this data in a set of matlab tables</span>
+0004 <span class="comment">% - performs some field level data quality checks</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Inputs:</span>
+0007 <span class="comment">% ------</span>
+0008 <span class="comment">% - PatientIDmappingFile-yyyymmdd.xlsx - Mapping of internal ID to REDCap ID</span>
+0009 <span class="comment">% - AnalysisOfRemoteMonitoringVirt_DataDictionary_yyyy-mm-dd.csv - REDCap data</span>
+0010 <span class="comment">% dictionary (to get dropdown id/label mappings)</span>
+0011 <span class="comment">% - REDCapFieldMappingFile_yyyymmdd.xlsx - REDCap table and field mapping (maps</span>
+0012 <span class="comment">% redcap instrument to matlab tables, and redcap fields to matlab columns</span>
+0013 <span class="comment">% - AnalysisOfRemoteMoni_DATA_yyyy-mm-dd_hhmm.csv - REDCap data export file</span>
+0014 <span class="comment">% (containing the clinical data for all hospitals &amp; patients</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% Outputs:</span>
+0017 <span class="comment">% -------</span>
+0018 <span class="comment">% breatheclinicaldata.mat with the following variables:</span>
+0019 <span class="comment">% - brAdmissions          admitted/discharged dates for all hospitalisations</span>
+0020 <span class="comment">% - brAntibiotics         ab's name, route, homeIV, start/end date</span>
+0021 <span class="comment">% - brClinicVisits        date, location (e.g. home or clinic)</span>
+0022 <span class="comment">% - brCRP                 CRP measures</span>
+0023 <span class="comment">% - brDrugTherapy         CFTR modulators therapy, start/stop date</span>
+0024 <span class="comment">% - brEndStudy            empty for Breathe - nonrelevant</span>
+0025 <span class="comment">% - brHghWght             height, weight (and seldom BMI, H_z &amp; W_z scores)</span>
+0026 <span class="comment">% - brMicrobiology        what bacterias in the lungs</span>
+0027 <span class="comment">% - brOtherVisits         e.g. annual reviews, emergencies</span>
+0028 <span class="comment">% - brPatient             patient profile (including mutations, consent</span>
+0029 <span class="comment">% status, and last updated date for the clinical data</span>
+0030 <span class="comment">% - brPFT                 Pulmonary Function Tests</span>
+0031 <span class="comment">% - brUnplannedContact    Patient contacting hospitals e.g. call</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">% Excel file</span>
+0034 <span class="comment">% PatientIDmappingFile-yyyymmdd.xlsx - updated mapping of internal ID to</span>
+0035 <span class="comment">% REDCap ID to include any new patients since previous ingestion</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">% Histogram of patient clinical data by month of last update.png - plot</span>
+0038 
+0039 clear; clc; close all;
+0040 
+0041 study = <span class="string">'BR'</span>;
+0042 
+0043 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0044 subfolder = sprintf(<span class="string">'DataFiles/%s/REDCapData'</span>, study);
+0045 
+0046 <span class="comment">% today exists only in the FinancialToolBox !</span>
+0047 today = floor(now);
+0048 
+0049 fprintf(<span class="string">'Loading the latest clinical data from REDCap\n'</span>);
+0050 fprintf(<span class="string">'--------------------------------------------\n'</span>);
+0051 fprintf(<span class="string">'\n'</span>);
+0052 
+0053 <span class="comment">% load latest patient ID mapping file</span>
+0054 tic
+0055 fprintf(<span class="string">'Finding the most recent patient id mapping file\n'</span>);
+0056 [redcapidmap] = <a href="loadREDCapPatientIDMapFile.html" class="code" title="function [redcapidmap] = loadREDCapPatientIDMapFile(basedir, subfolder)">loadREDCapPatientIDMapFile</a>(basedir, subfolder);
+0057 toc
+0058 fprintf(<span class="string">'\n'</span>);
+0059 
+0060 <span class="comment">% load latest REDCap data dictionary file</span>
+0061 tic
+0062 fprintf(<span class="string">'Finding the most recent REDCap data dictionary file\n'</span>);
+0063 [redcapdict] = <a href="loadREDCapDictionaryFile.html" class="code" title="function [redcapdict] = loadREDCapDictionaryFile(basedir, subfolder)">loadREDCapDictionaryFile</a>(basedir, subfolder);
+0064 toc
+0065 fprintf(<span class="string">'\n'</span>);
+0066 
+0067 <span class="comment">% load latest REDCap table and field mapping file</span>
+0068 tic
+0069 fprintf(<span class="string">'Finding the most recent table and field mapping file\n'</span>);
+0070 [redcaptablemap, redcapfieldmap] = <a href="loadREDCapFieldMapFile.html" class="code" title="function [redcaptablemap, redcapfieldmap] = loadREDCapFieldMapFile(basedir, subfolder)">loadREDCapFieldMapFile</a>(basedir, subfolder);
+0071 toc
+0072 fprintf(<span class="string">'\n'</span>);
+0073 
+0074 <span class="comment">% load the latest data export from the REDCap database (covering all</span>
+0075 <span class="comment">% hospitals)</span>
+0076 tic
+0077 fprintf(<span class="string">'Finding the most recent REDCap data export file\n'</span>);
+0078 [redcapdata, redcapinstrcounts] = <a href="loadREDCapDataExportFile.html" class="code" title="function [redcapdata, redcapinstrcounts] = loadREDCapDataExportFile(basedir, subfolder, redcapdict)">loadREDCapDataExportFile</a>(basedir, subfolder, redcapdict);
+0079 toc
+0080 fprintf(<span class="string">'\n'</span>);
+0081 
+0082 <span class="comment">% replace drop down index values with names in the data file</span>
+0083 tic
+0084 fprintf(<span class="string">'Replacing drop down values with names\n'</span>);
+0085 [redcapdata] = <a href="replaceDropDownValuesWithNames.html" class="code" title="function [redcapdata] = replaceDropDownValuesWithNames(redcapdata, redcapdict, colname)">replaceDropDownValuesWithNames</a>(redcapdata, redcapdict, <span class="string">'mb_name'</span>);
+0086 [redcapdata] = <a href="replaceDropDownValuesWithNames.html" class="code" title="function [redcapdata] = replaceDropDownValuesWithNames(redcapdata, redcapdict, colname)">replaceDropDownValuesWithNames</a>(redcapdata, redcapdict, <span class="string">'up_type_of_contact'</span>);
+0087 [redcapdata] = <a href="replaceDropDownValuesWithNames.html" class="code" title="function [redcapdata] = replaceDropDownValuesWithNames(redcapdata, redcapdict, colname)">replaceDropDownValuesWithNames</a>(redcapdata, redcapdict, <span class="string">'ov_visit_type'</span>);
+0088 [redcapdata] = <a href="replaceDropDownValuesWithNames.html" class="code" title="function [redcapdata] = replaceDropDownValuesWithNames(redcapdata, redcapdict, colname)">replaceDropDownValuesWithNames</a>(redcapdata, redcapdict, <span class="string">'cv_location'</span>);
+0089 [redcapdata] = <a href="replaceDropDownValuesWithNames.html" class="code" title="function [redcapdata] = replaceDropDownValuesWithNames(redcapdata, redcapdict, colname)">replaceDropDownValuesWithNames</a>(redcapdata, redcapdict, <span class="string">'ab_name'</span>);
+0090 [redcapdata] = <a href="replaceDropDownValuesWithNames.html" class="code" title="function [redcapdata] = replaceDropDownValuesWithNames(redcapdata, redcapdict, colname)">replaceDropDownValuesWithNames</a>(redcapdata, redcapdict, <span class="string">'dt_name'</span>);
+0091 [redcapdata] = <a href="replaceDropDownValuesWithNames.html" class="code" title="function [redcapdata] = replaceDropDownValuesWithNames(redcapdata, redcapdict, colname)">replaceDropDownValuesWithNames</a>(redcapdata, redcapdict, <span class="string">'cfgene1'</span>);
+0092 [redcapdata] = <a href="replaceDropDownValuesWithNames.html" class="code" title="function [redcapdata] = replaceDropDownValuesWithNames(redcapdata, redcapdict, colname)">replaceDropDownValuesWithNames</a>(redcapdata, redcapdict, <span class="string">'cfgene2'</span>);
+0093 toc
+0094 fprintf(<span class="string">'\n'</span>);
+0095 
+0096 <span class="comment">% add a record to the id mapping file for each new patient (assigning a new</span>
+0097 <span class="comment">% internal id for each)</span>
+0098 tic
+0099 fprintf(<span class="string">'Assigning new study_ids for new patients and adding to the mapping file\n'</span>);
+0100 [redcapidmap] = <a href="addNewPatientsToMappingTable.html" class="code" title="function [redcapidmap] = addNewPatientsToMappingTable(redcapdata, redcapidmap)">addNewPatientsToMappingTable</a>(redcapdata, redcapidmap);
+0101 toc
+0102 fprintf(<span class="string">'\n'</span>);
+0103 
+0104 <span class="comment">% add internal id, hospital, and study number to all records in the red cap</span>
+0105 <span class="comment">% data table for convenience</span>
+0106 tic
+0107 fprintf(<span class="string">'Adding internal id, hospital and study number to all records in redcap data table\n'</span>);
+0108 [redcapdata] = <a href="addIDsToREDCapDataTable.html" class="code" title="function [redcapdata] = addIDsToREDCapDataTable(redcapdata, redcapidmap, redcapfieldmap)">addIDsToREDCapDataTable</a>(redcapdata, redcapidmap, redcapfieldmap);
+0109 toc
+0110 fprintf(<span class="string">'\n'</span>);
+0111 
+0112 <span class="comment">% load the data from each redcap instrument to the respective matlab table</span>
+0113 tic
+0114 fprintf(<span class="string">'Loading data from REDCap to Matlab\n'</span>);
+0115 ntables = size(redcaptablemap, 1);
+0116 <span class="keyword">for</span> t = 1:ntables
+0117     rcinstr = redcaptablemap.redcap_instrument{t};
+0118     brtable = redcaptablemap.matlab_table{t};
+0119     
+0120     fprintf(<span class="string">'Loading data from instrument %-17s to table %-18s: '</span>, rcinstr, brtable);
+0121     
+0122     <span class="comment">% extract data rows for this instrument/table combination</span>
+0123     trcdata = redcapdata(ismember(redcapdata.redcap_repeat_instrument, {rcinstr}), :);
+0124     completefld = sprintf(<span class="string">'%s_complete'</span>, rcinstr);
+0125     completeidx = table2array(trcdata(:, {completefld})) == 2;
+0126     trcdata = trcdata(completeidx, :);
+0127     <span class="comment">%ntrows  = redcapinstrcounts.GroupCount(ismember(redcapinstrcounts.redcap_repeat_instrument, {rcinstr}));</span>
+0128     ntrows = size(trcdata, 1);
+0129     <span class="keyword">if</span> sum(completeidx) ~= size(completeidx, 1)
+0130         warnsuffix = <span class="string">'**** incomplete status rows filtered ****'</span>;
+0131     <span class="keyword">else</span>
+0132         warnsuffix = <span class="string">''</span>;
+0133     <span class="keyword">end</span>
+0134     fprintf(<span class="string">'%5d status complete rows of %5d total rows %s\n'</span>, sum(completeidx), size(completeidx, 1), warnsuffix);
+0135     
+0136     tfieldmap = redcapfieldmap(ismember(redcapfieldmap.redcap_instrument, {rcinstr}), :);
+0137 
+0138     [mltable] = <a href="createBreatheSingleClinicalTable.html" class="code" title="function [mltable] = createBreatheSingleClinicalTable(mltablename, nrows)">createBreatheSingleClinicalTable</a>(brtable, ntrows);
+0139     
+0140     mltable = <a href="populateMLTableFromREDCapData.html" class="code" title="function [mltable] = populateMLTableFromREDCapData(trcdata, mltable, tfieldmap)">populateMLTableFromREDCapData</a>(trcdata, mltable, tfieldmap);
+0141 
+0142     eval(sprintf(<span class="string">'%s = mltable;'</span>, brtable));
+0143 
+0144 <span class="keyword">end</span>
+0145 toc
+0146 fprintf(<span class="string">'\n'</span>);
+0147 
+0148 <span class="comment">% additionally populate the specific derived columns in the relevant tables</span>
+0149 tic
+0150 fprintf(<span class="string">'Populating derived columns\n'</span>);
+0151 [brPatient, brCRP, brPFT] = <a href="populateDerivedColsInMLTables.html" class="code" title="function [brPatient, brCRP, brPFT] = populateDerivedColsInMLTables(brPatient, brCRP, brPFT)">populateDerivedColsInMLTables</a>(brPatient, brCRP, brPFT);
+0152 toc
+0153 fprintf(<span class="string">'\n'</span>);
+0154 
+0155 <span class="comment">% populate default values as necessary</span>
+0156 tic
+0157 fprintf(<span class="string">'Populating default values\n'</span>);
+0158 defidx = ~ismember(brAntibiotics.HomeIV_s, {<span class="string">'Yes'</span>, <span class="string">'No'</span>});
+0159 brAntibiotics.HomeIV_s(defidx) = {<span class="string">'No'</span>};
+0160 
+0161 
+0162 <span class="comment">% create stub variable for end of study for backward compatibility</span>
+0163 brtable = <span class="string">'brEndStudy'</span>;
+0164 [mltable] = <a href="createBreatheSingleClinicalTable.html" class="code" title="function [mltable] = createBreatheSingleClinicalTable(mltablename, nrows)">createBreatheSingleClinicalTable</a>(brtable, 0);
+0165 eval(sprintf(<span class="string">'%s = mltable;'</span>, brtable));
+0166 
+0167 <span class="comment">% sort rows</span>
+0168 tic
+0169 fprintf(<span class="string">'Sorting rows in tables\n'</span>);
+0170 brPatient           = sortrows(brPatient,          {<span class="string">'ID'</span>});
+0171 brDrugTherapy       = sortrows(brDrugTherapy,      {<span class="string">'ID'</span>, <span class="string">'DrugTherapyStartDate'</span>});
+0172 brAdmissions        = sortrows(brAdmissions,       {<span class="string">'ID'</span>, <span class="string">'Admitted'</span>});
+0173 brAntibiotics       = sortrows(brAntibiotics,      {<span class="string">'ID'</span>, <span class="string">'StartDate'</span>, <span class="string">'AntibioticName'</span>});
+0174 brClinicVisits      = sortrows(brClinicVisits,     {<span class="string">'ID'</span>, <span class="string">'AttendanceDate'</span>});
+0175 brOtherVisits       = sortrows(brOtherVisits,      {<span class="string">'ID'</span>, <span class="string">'AttendanceDate'</span>});
+0176 brUnplannedContact  = sortrows(brUnplannedContact, {<span class="string">'ID'</span>, <span class="string">'ContactDate'</span>});
+0177 brPFT               = sortrows(brPFT,              {<span class="string">'ID'</span>, <span class="string">'LungFunctionDate'</span>});
+0178 brCRP               = sortrows(brCRP,              {<span class="string">'ID'</span>, <span class="string">'CRPDate'</span>});
+0179 brMicrobiology      = sortrows(brMicrobiology,     {<span class="string">'ID'</span>, <span class="string">'DateMicrobiology'</span>});
+0180 brHghtWght          = sortrows(brHghtWght,         {<span class="string">'ID'</span>, <span class="string">'MeasDate'</span>});
+0181 toc
+0182 fprintf(<span class="string">'\n'</span>);
+0183 
+0184 <span class="comment">% data integrity checks</span>
+0185 tic
+0186 fprintf(<span class="string">'Data Integrity Checks\n'</span>);
+0187 fprintf(<span class="string">'---------------------\n'</span>);
+0188 <span class="comment">% patient data</span>
+0189 idx = isnat(brPatient.StudyDate) | isnat(brPatient.DOB);
+0190 fprintf(<span class="string">'Found %d Patients with blank dates\n'</span>, sum(idx));
+0191 <span class="keyword">if</span> sum(idx) &gt; 0
+0192     disp(brPatient(idx,{<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'StudyDate'</span>, <span class="string">'DOB'</span>}));
+0193     brPatient(idx, :) = [];
+0194 <span class="keyword">end</span>
+0195 idx = brPatient.Height &lt; 120 | brPatient.Height &gt; 220;
+0196 fprintf(<span class="string">'Found %d Patients height &lt; 1.2m or &gt; 2.2m\n'</span>, sum(idx));
+0197 <span class="keyword">if</span> sum(idx) &gt; 0
+0198     disp(brPatient(idx,{<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Height'</span>}));
+0199 <span class="keyword">end</span>
+0200 idx = brPatient.Weight &lt; 35 | brPatient.Weight &gt; 120;
+0201 fprintf(<span class="string">'Found %d Patients weight &lt; 35kg or &gt; 120kg\n'</span>, sum(idx));
+0202 <span class="keyword">if</span> sum(idx) &gt; 0
+0203     disp(brPatient(idx,{<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Weight'</span>}));
+0204 <span class="keyword">end</span>
+0205 idx = brPatient.Age &lt; 18 | brPatient.Age &gt; 60;
+0206 fprintf(<span class="string">'Found %d Patients aged &lt; 18 or &gt; 60\n'</span>, sum(idx));
+0207 <span class="keyword">if</span> sum(idx) &gt; 0
+0208     disp(brPatient(idx,{<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'StudyDate'</span>, <span class="string">'DOB'</span>, <span class="string">'Age'</span>, <span class="string">'CalcAge'</span>, <span class="string">'CalcAgeExact'</span>}));
+0209 <span class="keyword">end</span>
+0210 idx = abs(brPatient.Age - brPatient.CalcAge) &gt; 1;
+0211 fprintf(<span class="string">'Found %d Patients age inconsistent with age calculated from DOB (&gt; 1yr difference)\n'</span>, sum(idx));
+0212 <span class="keyword">if</span> sum(idx) &gt; 0
+0213     disp(brPatient(idx,{<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'StudyDate'</span>, <span class="string">'DOB'</span>, <span class="string">'Age'</span>, <span class="string">'CalcAge'</span>, <span class="string">'CalcAgeExact'</span>}));
+0214 <span class="keyword">end</span>
+0215 idx = abs(brPatient.PredictedFEV1 - brPatient.CalcPredictedFEV1) &gt; 0.3;
+0216 fprintf(<span class="string">'Found %d Patients with predicted FEV1 inconsistent with that calculated from age, height, gender (&gt; 300ml diff)\n'</span>, sum(idx));
+0217 <span class="keyword">if</span> sum(idx) &gt; 0
+0218     disp(brPatient(idx,{<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Age'</span>, <span class="string">'PredictedFEV1'</span>, <span class="string">'CalcPredictedFEV1'</span>}));
+0219 <span class="keyword">end</span>
+0220 
+0221 <span class="comment">% drug therapy data</span>
+0222 idx = isnat(brDrugTherapy.DrugTherapyStartDate);
+0223 fprintf(<span class="string">'Found %d Drug Therapy rows with blank start dates\n'</span>, sum(idx));
+0224 <span class="keyword">if</span> sum(idx) &gt; 0
+0225     disp(brDrugTherapy(idx,:));
+0226     <span class="comment">% replacing manually</span>
+0227     brDrugTherapy.DrugTherapyStartDate(brDrugTherapy.ID == 338 &amp; ismember(brDrugTherapy.DrugTherapyType,<span class="string">'Symkevi'</span>)) = datetime(&quot;01-May-2021&quot;);
+0228     replaced = 1; <span class="comment">% to be modified if new imputable stop dates are found</span>
+0229     fprintf(<span class="string">'Imputed %d/%d rows (found information in comment):\n'</span>, replaced, sum(idx));
+0230     disp(brDrugTherapy(idx,:));
+0231 <span class="keyword">end</span>
+0232 idx = contains(brDrugTherapy.DrugTherapyComment,&quot;topped&quot;) &amp; isnat(brDrugTherapy.DrugTherapyStopDate);
+0233 fprintf(<span class="string">'Found %d Drug Therapy rows with empty stop date, but stopped written in comments&quot;\n'</span>, sum(idx));
+0234 <span class="keyword">if</span> sum(idx) &gt; 0
+0235     disp(brDrugTherapy(idx,:));
+0236     <span class="comment">% replacing manually</span>
+0237     brDrugTherapy.DrugTherapyStopDate(brDrugTherapy.ID == 213 &amp; ismember(brDrugTherapy.DrugTherapyType,<span class="string">'Kaftrio/Trikafta/TripleTherapy'</span>)) = datetime(&quot;16-Dec-2020&quot;);
+0238     brDrugTherapy.DrugTherapyStopDate(brDrugTherapy.ID == 221 &amp; ismember(brDrugTherapy.DrugTherapyType,<span class="string">'Kaftrio/Trikafta/TripleTherapy'</span>)) = datetime(&quot;01-Dec-2020&quot;);
+0239     replaced = 2; <span class="comment">% to be modified if new imputable stop dates are found</span>
+0240     fprintf(<span class="string">'Imputed %d/%d rows (found information in comment):\n'</span>, replaced, sum(idx));
+0241     disp(brDrugTherapy(idx,:));
+0242 <span class="keyword">end</span>
+0243 
+0244 <span class="comment">% admission data</span>
+0245 idx = isnat(brAdmissions.Admitted) | isnat(brAdmissions.Discharge);
+0246 fprintf(<span class="string">'Found %d Admissions with blank dates\n'</span>, sum(idx));
+0247 <span class="keyword">if</span> sum(idx) &gt; 0
+0248     disp(brAdmissions(idx,:));
+0249     brAdmissions(idx, :) = [];
+0250 <span class="keyword">end</span>
+0251 idx = brAdmissions.Discharge &lt; brAdmissions.Admitted;
+0252 fprintf(<span class="string">'Found %d Admissions with Discharge before Admission\n'</span>, sum(idx));
+0253 <span class="keyword">if</span> sum(idx) &gt; 0
+0254     disp(brAdmissions(idx,:));
+0255     brAdmissions(idx, :) = [];
+0256 <span class="keyword">end</span>
+0257 idx = days(brAdmissions.Discharge - brAdmissions.Admitted) &gt; 30;
+0258 fprintf(<span class="string">'Found %d Admissions &gt; 1 month duration\n'</span>, sum(idx));
+0259 <span class="keyword">if</span> sum(idx) &gt; 0
+0260     disp(brAdmissions(idx,:))
+0261     <span class="comment">% do not delete this as they may be legitimate</span>
+0262     <span class="comment">% brAdmissions(idx, :) = [];</span>
+0263 <span class="keyword">end</span>
+0264 
+0265 <span class="comment">% antibiotics data</span>
+0266 idx = isnat(brAntibiotics.StartDate) &amp; isnat(brAntibiotics.StopDate);
+0267 fprintf(<span class="string">'Found %d Antibiotics with both blank dates\n'</span>, sum(idx));
+0268 <span class="keyword">if</span> sum(idx) &gt; 0
+0269     disp(brAntibiotics(idx,:))
+0270     brAntibiotics(idx, :) = [];
+0271 <span class="keyword">end</span>
+0272 idx = isnat(brAntibiotics.StartDate) &amp; ~isnat(brAntibiotics.StopDate);
+0273 fprintf(<span class="string">'Found %d Antibiotics with blank start dates\n'</span>, sum(idx));
+0274 <span class="keyword">if</span> sum(idx) &gt; 0
+0275     disp(brAntibiotics(idx,:));
+0276     brAntibiotics(idx, :) = [];
+0277 <span class="keyword">end</span>
+0278 idx = ~isnat(brAntibiotics.StartDate) &amp; isnat(brAntibiotics.StopDate);
+0279 fprintf(<span class="string">'Found %d Antibiotics with blank stop dates\n'</span>, sum(idx));
+0280 <span class="keyword">if</span> sum(idx) &gt; 0
+0281     disp(brAntibiotics(idx,:));
+0282     brAntibiotics(idx, :) = [];
+0283 <span class="keyword">end</span>
+0284 idx = brAntibiotics.StopDate &lt; brAntibiotics.StartDate;
+0285 fprintf(<span class="string">'Found %d Antibiotics with Stop Date before Start Date\n'</span>, sum(idx));
+0286 <span class="keyword">if</span> sum(idx) &gt; 0
+0287     disp(brAntibiotics(idx,:));
+0288     brAntibiotics(idx, :) = [];
+0289 <span class="keyword">end</span>
+0290 idx = days(brAntibiotics.StopDate - brAntibiotics.StartDate) &gt; 30;
+0291 fprintf(<span class="string">'Found %d Antibiotics &gt; 1 month duration\n'</span>, sum(idx));
+0292 <span class="keyword">if</span> sum(idx) &gt; 0
+0293     disp(brAntibiotics(idx,:));
+0294     <span class="comment">% do not delete this as they may be legitimate</span>
+0295     <span class="comment">%brAntibiotics(idx, :) = [];</span>
+0296 <span class="keyword">end</span>
+0297 
+0298 <span class="comment">% microbiology data</span>
+0299 idx = isnat(brMicrobiology.DateMicrobiology);
+0300 fprintf(<span class="string">'Found %d Microbiology records with blank dates\n'</span>, sum(idx));
+0301 <span class="comment">%if sum(idx) &gt; 0</span>
+0302 <span class="comment">%    disp(brMicrobiology(idx,:));</span>
+0303 <span class="comment">%end</span>
+0304 
+0305 <span class="comment">% clinic visits</span>
+0306 idx = isnat(brClinicVisits.AttendanceDate);
+0307 fprintf(<span class="string">'Found %d Clinic Visits with blank dates\n'</span>, sum(idx));
+0308 <span class="keyword">if</span> sum(idx) &gt; 0
+0309     disp(brClinicVisits(idx,:));
+0310     brClinicVisits(idx, :) = [];
+0311 <span class="keyword">end</span>
+0312 
+0313 <span class="comment">% other visits</span>
+0314 idx = isnat(brOtherVisits.AttendanceDate);
+0315 fprintf(<span class="string">'Found %d Other Visits with blank dates\n'</span>, sum(idx));
+0316 <span class="keyword">if</span> sum(idx) &gt; 0
+0317     disp(brOtherVisits(idx,:));
+0318     brOtherVisits(idx, :) = [];
+0319 <span class="keyword">end</span>
+0320 
+0321 <span class="comment">% unplanned contacts</span>
+0322 idx = isnat(brUnplannedContact.ContactDate);
+0323 fprintf(<span class="string">'Found %d Unplanned Contacts with blank dates\n'</span>, sum(idx));
+0324 <span class="keyword">if</span> sum(idx) &gt; 0
+0325     disp(brUnplannedContact(idx,:));
+0326     brUnplannedContact(idx, :) = [];
+0327 <span class="keyword">end</span>
+0328 
+0329 <span class="comment">% pft</span>
+0330 idx = isnat(brPFT.LungFunctionDate);
+0331 fprintf(<span class="string">'Found %d PFT measurements with blank dates\n'</span>, sum(idx));
+0332 <span class="keyword">if</span> sum(idx) &gt; 0
+0333     disp(brPFT(idx,:));
+0334     brPFT(idx, :) = [];
+0335 <span class="keyword">end</span>
+0336 idx = brPFT.FEV1 == 0;
+0337 fprintf(<span class="string">'Found %d zero PFT measurements\n'</span>, sum(idx));
+0338 <span class="keyword">if</span> sum(idx) &gt; 0
+0339     disp(brPFT(idx,:));
+0340     brPFT(idx, :) = [];
+0341 <span class="keyword">end</span>
+0342 idx = brPFT.FEV1 &gt; 6 | brPFT.FEV1 &lt; 0.5;
+0343 fprintf(<span class="string">'Found %d &lt; 0.5l or &gt; 6l PFT Clinical Measurements\n'</span>, sum(idx));
+0344 <span class="keyword">if</span> sum(idx) &gt; 0
+0345     disp(brPFT(idx,:));
+0346     brPFT(idx, :) = [];
+0347 <span class="keyword">end</span>
+0348 
+0349 <span class="comment">% crp</span>
+0350 idx = isnat(brCRP.CRPDate);
+0351 fprintf(<span class="string">'Found %d CRP measurements with blank dates\n'</span>, sum(idx));
+0352 <span class="keyword">if</span> sum(idx) &gt; 0
+0353     disp(brCRP(idx,:));
+0354     brCRP(idx, :) = [];
+0355 <span class="keyword">end</span>
+0356 idx = brCRP.NumericLevel &gt; 200;
+0357 fprintf(<span class="string">'Found %d &gt; 200mg/L CRP measurements\n'</span>, sum(idx));
+0358 <span class="keyword">if</span> sum(idx) &gt; 0
+0359     disp(brCRP(idx,:));
+0360 <span class="keyword">end</span>
+0361 
+0362 <span class="comment">% crp</span>
+0363 idx = isnat(brHghtWght.MeasDate);
+0364 fprintf(<span class="string">'Found %d Height Weight measurements with blank dates\n'</span>, sum(idx));
+0365 <span class="keyword">if</span> sum(idx) &gt; 0
+0366     disp(brHghtWght(idx,:));
+0367     brHghtWght(idx, :) = [];
+0368 <span class="keyword">end</span>
+0369 idx = brHghtWght.Weight &lt; 35 | brHghtWght.Weight &gt; 120;
+0370 fprintf(<span class="string">'Found %d &lt; 35kg or &gt; 120kg Weight measurements\n'</span>, sum(idx));
+0371 <span class="keyword">if</span> sum(idx) &gt; 0
+0372     disp(brHghtWght(idx,:));
+0373 <span class="keyword">end</span>
+0374 toc
+0375 fprintf(<span class="string">'\n'</span>);
+0376 
+0377 tic
+0378 fprintf(<span class="string">'Checking for dates in the future\n'</span>);
+0379 brDrugTherapy(brDrugTherapy.DrugTherapyStartDate &gt; datetime(&quot;today&quot;),:)
+0380 brAdmissions(brAdmissions.Admitted &gt; datetime(&quot;today&quot;),:)
+0381 brAdmissions(brAdmissions.Discharge &gt; datetime(&quot;today&quot;),:)
+0382 brAntibiotics(brAntibiotics.StartDate &gt; datetime(&quot;today&quot;), :)
+0383 brAntibiotics(brAntibiotics.StopDate &gt; datetime(&quot;today&quot;),:)
+0384 brClinicVisits(brClinicVisits.AttendanceDate &gt; datetime(&quot;today&quot;),:)
+0385 brOtherVisits(brOtherVisits.AttendanceDate &gt; datetime(&quot;today&quot;),:)
+0386 brUnplannedContact(brUnplannedContact.ContactDate &gt; datetime(&quot;today&quot;),:)
+0387 brCRP(brCRP.CRPDate &gt; datetime(&quot;today&quot;),:)
+0388 brPFT(brPFT.LungFunctionDate &gt; datetime(&quot;today&quot;),:)
+0389 brHghtWght(brHghtWght.MeasDate &gt; datetime(&quot;today&quot;),:)
+0390 toc
+0391 fprintf(<span class="string">'\n'</span>);
+0392 
+0393 fprintf(<span class="string">'Row Counts by table\n'</span>);
+0394 fprintf(<span class="string">'-------------------\n'</span>);
+0395 <span class="keyword">for</span> t = 1:size(redcaptablemap, 1)
+0396     eval(sprintf(<span class="string">'mltable = %s;'</span>, redcaptablemap.matlab_table{t}));
+0397     fprintf(<span class="string">'%-18s: %5d rows\n'</span>, redcaptablemap.matlab_table{t}, size(mltable, 1));
+0398 <span class="keyword">end</span>
+0399 fprintf(<span class="string">'\n'</span>);
+0400 
+0401 
+0402 <span class="comment">% save output files</span>
+0403 tic
+0404 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0405 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0406 outputfilename = <span class="string">'breatheclinicaldata.mat'</span>;
+0407 fprintf(<span class="string">'Saving output variables to file %s\n'</span>, outputfilename);
+0408 save(fullfile(basedir, subfolder,outputfilename), <span class="string">'brPatient'</span>, <span class="string">'brDrugTherapy'</span>, <span class="string">'brAdmissions'</span>, <span class="keyword">...</span>
+0409     <span class="string">'brAntibiotics'</span>, <span class="string">'brClinicVisits'</span>, <span class="string">'brOtherVisits'</span>, <span class="string">'brUnplannedContact'</span>, <span class="keyword">...</span>
+0410     <span class="string">'brPFT'</span>, <span class="string">'brCRP'</span>, <span class="string">'brHghtWght'</span>, <span class="string">'brMicrobiology'</span>, <span class="string">'brEndStudy'</span>);
+0411 toc
+0412 fprintf(<span class="string">'\n'</span>);
+0413 
+0414 <span class="comment">% save updated patient id mapping table to excel</span>
+0415 tic
+0416 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0417 subfolder = sprintf(<span class="string">'DataFiles/%s/REDCapData/IDMappingFiles'</span>, study);
+0418 outputfilename = sprintf(<span class="string">'PatientIDMappingFile-%s.xlsx'</span>, datestr(today, <span class="string">'yyyymmdd'</span>));
+0419 fprintf(<span class="string">'Saving patient ID mapping table to file %s\n'</span>, outputfilename);
+0420 writetable(redcapidmap, fullfile(basedir, subfolder, outputfilename), <span class="string">'Sheet'</span>, <span class="string">'IDMap'</span>)
+0421 toc
+0422 fprintf(<span class="string">'\n'</span>);
+0423 
+0424 <span class="comment">% plot histograms by hospital and by month of last patient clinical data</span>
+0425 <span class="comment">% update</span>
+0426 
+0427 brhosp = <a href="getListOfBreatheHospitals.html" class="code" title="function [hosplist] = getListOfBreatheHospitals()">getListOfBreatheHospitals</a>();
+0428 plotsacross = 2;
+0429 plotsdown   = size(brhosp, 1);
+0430 
+0431 pghght = 3 * plotsdown;
+0432 pgwdth = 7;
+0433 
+0434 plottitle = sprintf(<span class="string">'Histogram of patient clinical data by month of last update'</span>);
+0435 [f, p] = <a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(plottitle, pgwdth, pghght);
+0436 
+0437 <span class="keyword">for</span> i = 1:size(brhosp, 1)
+0438 
+0439     ax = subplot(plotsdown, plotsacross, (2 * i - 1), <span class="string">'Parent'</span>, p);
+0440 
+0441     histogram(ax, month(brPatient.PatClinDate(ismember(brPatient.Hospital, brhosp.Acronym(i)) &amp; ismember(brPatient.ConsentStatus, <span class="string">'Yes'</span>))));
+0442     xlabel(ax, <span class="string">'Month'</span>);
+0443     ylabel(ax, <span class="string">'Count'</span>);
+0444     title(ax, sprintf(<span class="string">'%s Active'</span>, brhosp.Name{i}));
+0445     xlim(ax, [0.5 12.5]);
+0446     
+0447     ax = subplot(plotsdown, plotsacross, (2 * i), <span class="string">'Parent'</span>, p);
+0448     
+0449     histogram(ax, month(brPatient.PatClinDate(ismember(brPatient.Hospital, brhosp.Acronym(i)) &amp; ~ismember(brPatient.ConsentStatus, <span class="string">'Yes'</span>))));
+0450     xlabel(ax, <span class="string">'Month'</span>);
+0451     ylabel(ax, <span class="string">'Count'</span>);
+0452     title(ax, sprintf(<span class="string">'%s Inactive'</span>, brhosp.Name{i}));
+0453     xlim(ax, [0.5 12.5]);
+0454     
+0455 <span class="keyword">end</span>
+0456 
+0457 plotsubfolder = sprintf(<span class="string">'Plots/%s'</span>, study);
+0458 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0459 close(f);
+0460 
+0461 fprintf(<span class="string">'Active patients with aged last update date\n'</span>);
+0462 fprintf(<span class="string">'------------------------------------------\n'</span>);
+0463 fprintf(<span class="string">'\n'</span>);
+0464 brPatient((today - datenum(brPatient.PatClinDate)) &gt; 62 &amp; ismember(brPatient.ConsentStatus, <span class="string">'Yes'</span>), <span class="keyword">...</span>
+0465     {<span class="string">'ID'</span>, <span class="string">'REDCapID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'StudyDate'</span>, <span class="string">'PatClinDate'</span>, <span class="string">'ConsentStatus'</span>})
+0466 
+0467 
+0468 
+0469 
+0470</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotFEV1profiles</title>
+  <meta name="keywords" content="plotFEV1profiles">
+  <meta name="description" content="plot FEV1 profiles with modulators and treatments">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">FEV1variability</a> &gt; plotFEV1profiles.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/FEV1variability&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>plotFEV1profiles
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>plot FEV1 profiles with modulators and treatments</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> plot FEV1 profiles with modulators and treatments
+ 
+ Input:
+ ------
+ clinical and measurements data
+
+ Output:
+ -------
+ one plot per patient</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/helperfunctions/extractConsecutiveSequences.html" class="code" title="function [out cat_out] = extractConsecutiveSequences(in, gap)">extractConsecutiveSequences</a>	keep consecutive values with tolerance = gap</li><li><a href="../../../Code/pdm/helperfunctions/getStableIdx.html" class="code" title="function [idx2keep, days_t, days_m] = getStableIdx(patient, FEVdata,treatments_table, nprior_t, npost_t, modulators_table, npost_m, filter)">getStableIdx</a>	filters indexes corresponding to patient's stable days</li><li><a href="../../../Code/pdm/recovery/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% plot FEV1 profiles with modulators and treatments</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% Input:</span>
+0004 <span class="comment">% ------</span>
+0005 <span class="comment">% clinical and measurements data</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Output:</span>
+0008 <span class="comment">% -------</span>
+0009 <span class="comment">% one plot per patient</span>
+0010 
+0011 <span class="comment">%% load the data</span>
+0012 
+0013 <a href="init.html" class="code" title="">init</a>;
+0014 
+0015 <span class="comment">% load measures</span>
+0016 [datamatfile, ~, ~] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0017 [brphysdata, broffset, ~] = <a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0018 <span class="comment">% load treatments</span>
+0019 load(fullfile(basedir, subfolder, <span class="string">'BRivandmeasures_recovery_gap10.mat'</span>));
+0020 <span class="comment">% load CFTR modulators therapy</span>
+0021 load(fullfile(basedir, subfolder, <span class="string">'breatheclinicaldata.mat'</span>),<span class="string">'brDrugTherapy'</span>);
+0022 
+0023 <span class="comment">% clean modulators tables</span>
+0024 brDrugTherapy.DateNum = datenum(brDrugTherapy.DrugTherapyStartDate) - broffset;
+0025 brDrugTherapy.StopDateNum = datenum(brDrugTherapy.DrugTherapyStopDate) - broffset;
+0026 <span class="comment">% remove patients with negative dates</span>
+0027 neg_dates = size(brDrugTherapy,1);
+0028 brDrugTherapy(brDrugTherapy.DateNum &lt; 0,:)=[];
+0029 neg_dates = neg_dates - size(brDrugTherapy,1);
+0030 
+0031 <span class="comment">%% extract signals</span>
+0032 
+0033 <span class="comment">% mask for rows with FEV1 as recording type</span>
+0034 i = ismember(brphysdata(:,5).(1), {<span class="string">'FEV1Recording'</span>        });
+0035 <span class="comment">% extract SmartCareID, DateNum, FEV1</span>
+0036 dataFEV1 = table2array(brphysdata(i,[1 3 8]));
+0037 
+0038 <span class="comment">% O2_saturation</span>
+0039 i = ismember(brphysdata(:,5).(1), {<span class="string">'O2SaturationRecording'</span>        });
+0040 dataO2_saturation = table2array(brphysdata(i,[1 3 10]));
+0041 
+0042 <span class="comment">% weight</span>
+0043 i = ismember(brphysdata(:,5).(1), {<span class="string">'WeightRecording'</span>        });
+0044 dataweight = table2array(brphysdata(i,[1 3 9]));
+0045 
+0046 <span class="comment">% manual recording</span>
+0047 <span class="comment">% wellness</span>
+0048 i = ismember(brphysdata(:,5).(1), {<span class="string">'WellnessRecording'</span>        });
+0049 datawellness = table2array(brphysdata(i,[1 3 14]));
+0050 
+0051 <span class="comment">% cough</span>
+0052 i = ismember(brphysdata(:,5).(1), {<span class="string">'CoughRecording'</span>        });
+0053 datacough = table2array(brphysdata(i,[1 3 14]));
+0054 
+0055 <span class="comment">% temperature</span>
+0056 i = ismember(brphysdata(:,5).(1), {<span class="string">'TemperatureRecording'</span>        });
+0057 datatemperature = table2array(brphysdata(i,[1 3 12]));
+0058 
+0059 <span class="comment">% automatic recordings</span>
+0060 <span class="comment">% Calories</span>
+0061 i = ismember(brphysdata(:,5).(1), {<span class="string">'CalorieRecording'</span>        });
+0062 datacalories = table2array(brphysdata(i,[1 3 13]));
+0063 
+0064 <span class="comment">% resting_heart_rate</span>
+0065 i = ismember(brphysdata(:,5).(1), {<span class="string">'RestingHRRecording'</span>        });
+0066 dataresting_heart_rate = table2array(brphysdata(i,[1 3 11]));
+0067 clear i
+0068 
+0069 <span class="comment">% cold or flue</span>
+0070 i = ismember(brphysdata(:,5).(1), {<span class="string">'HasColdOrFluRecording'</span>});
+0071 dataresting_cold_flue = table2array(brphysdata(i,[1 3 16]));
+0072 clear i
+0073 
+0074 <span class="comment">%%</span>
+0075 <span class="comment">% parameters</span>
+0076 n_prior_t=0;
+0077 n_post_t=0;
+0078 n_post_m=1; <span class="comment">% take one day for the modulators</span>
+0079 p_filter=1; <span class="comment">% treatments and modulators</span>
+0080 
+0081 
+0082 p_all_patients = 101:106<span class="comment">%unique(dataFEV1(:,1));</span>
+0083 patients_missing_trikafta = [835, 812, 803, 598, 525, 523, 517, 516, 501];
+0084 
+0085 <span class="keyword">for</span> patient = p_all_patients
+0086 
+0087     <span class="comment">% mask revealing patient data</span>
+0088     mask_patient = dataFEV1(:,1) == patient;
+0089 
+0090     <span class="comment">% mask revealing patient data during stable period</span>
+0091     [mask, days_t, days_m] = <a href="../../../Code/pdm/helperfunctions/getStableIdx.html" class="code" title="function [idx2keep, days_t, days_m] = getStableIdx(patient, FEVdata,treatments_table, nprior_t, npost_t, modulators_table, npost_m, filter)">getStableIdx</a>(patient, dataFEV1, <span class="keyword">...</span>
+0092         ivandmeasurestable, n_prior_t, n_post_t, <span class="keyword">...</span>
+0093         brDrugTherapy, n_post_m, <span class="keyword">...</span>
+0094         p_filter);
+0095 
+0096     <span class="comment">% check data count</span>
+0097     <span class="keyword">if</span> sum(mask_patient) &gt;= 1 <span class="comment">% at least one datapoint</span>
+0098        
+0099         <span class="comment">% define colors</span>
+0100         cvcol   = [0.94  0.52  0.15];
+0101         admcol  = [0.694 0.627 0.78]; 
+0102         ivcol   = [1     0     0   ];
+0103         oralcol = [1     0.85  0   ];
+0104         trplcol = [0     1     0   ];
+0105         drugcol = [0     0.8   0.6 ];
+0106         
+0107         <span class="comment">% plot patient</span>
+0108         figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 2000 1000])
+0109         
+0110         <span class="comment">%subplot(8,1,1)</span>
+0111         
+0112         <span class="comment">% referenced on patient mean</span>
+0113         avg = mean(dataFEV1(mask_patient, 3)); 
+0114         
+0115         x = dataFEV1(mask_patient, 2); <span class="comment">% date</span>
+0116         y = dataFEV1(mask_patient, 3); <span class="comment">% measurements</span>
+0117 
+0118         ylim([-0.8 0.8]); 
+0119         yl = ylim;
+0120         xlim([min(x) max(x)]);
+0121         
+0122         <span class="comment">% plot raw measures</span>
+0123         plot(datetime(datestr(x+broffset)),y-avg,<span class="string">'.'</span>,<span class="string">'MarkerEdgeColor'</span>,<span class="string">'b'</span>)
+0124         xlabel(<span class="string">'Day'</span>)
+0125         ylabel(<span class="string">'FEV1 (L)'</span>)
+0126         title(sprintf(<span class="string">'Patient %i, mean FEV1: %1.1f L'</span>, patient, avg))
+0127         grid(<span class="string">'on'</span>)
+0128         hold on
+0129 
+0130         <span class="comment">% first patient's measurement date</span>
+0131         first_date = min(x);
+0132 
+0133          <span class="comment">% plot IV &amp; oral influence period</span>
+0134          seq = <a href="../../../Code/pdm/helperfunctions/extractConsecutiveSequences.html" class="code" title="function [out cat_out] = extractConsecutiveSequences(in, gap)">extractConsecutiveSequences</a>(days_t(days_t&gt;first_date),0);
+0135          <span class="keyword">for</span> a = 1:size(seq,2)
+0136             temp = datetime(datestr(seq{a}+broffset));
+0137             fill([temp(1) temp(end) temp(end) temp(1)], <span class="keyword">...</span>
+0138                 [yl(1) yl(1) yl(2) yl(2)], ivcol, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0139          <span class="keyword">end</span>
+0140 
+0141          <span class="comment">% plot modulators influence period</span>
+0142          <span class="comment">% BEWARE: NO DIFFERENCE BETWEEN TRIKAFTA AND OTHER MODULATORS</span>
+0143          seq = <a href="../../../Code/pdm/helperfunctions/extractConsecutiveSequences.html" class="code" title="function [out cat_out] = extractConsecutiveSequences(in, gap)">extractConsecutiveSequences</a>(days_m(days_m&gt;first_date),0);
+0144          <span class="keyword">for</span> a = 1:size(seq,2)
+0145             temp = datetime(datestr(seq{a}+broffset));
+0146             fill([temp(1) temp(end) temp(end) temp(1)], <span class="keyword">...</span>
+0147                 [yl(1) yl(1) yl(2) yl(2)], trplcol, <span class="string">'FaceAlpha'</span>, <span class="string">'1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0148          <span class="keyword">end</span>
+0149          
+0150          <span class="comment">%saveas(gcf,fullfile(plotfolder,['FEV1Profile_ID' num2str(patient) '.png']))</span>
+0151          close all
+0152          hold off
+0153         
+0154     <span class="keyword">end</span>
+0155 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

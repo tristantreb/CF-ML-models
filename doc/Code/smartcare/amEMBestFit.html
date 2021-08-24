@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMBestFit</title>
+  <meta name="keywords" content="amEMBestFit">
+  <meta name="description" content="amEMBestFit - calculates the offset for an intervention by minimising the">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMBestFit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMBestFit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMBestFit - calculates the offset for an intervention by minimising the</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [better_offset, hstg, pdoffset, overall_hstg, overall_pdoffset, isOutlier] = amEMBestFit(meancurvemean, meancurvestd,amIntrCube, amHeldBackcube, measuresmask, measuresrange, normstd, hstg, pdoffset, overall_hstg, overall_pdoffset, isOutlier, outprior, currinter, min_offset, max_offset, align_wind,nmeasures, sigmamethod, smoothingmethod, runmode) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMBestFit - calculates the offset for an intervention by minimising the
+ objective function</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMCalcObjFcn.html" class="code" title="function [dist, count, hstg, isOutlier] = amEMCalcObjFcn(meancurvemean, meancurvestd, amIntrCube,amHeldBackcube, isOutlier, outprior, measuresmask, measuresrange, normstd, hstg, currinter,curroffset, max_offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod)">amEMCalcObjFcn</a>	amEMCalcObjFcn - calculates residual sum of squares distance for points in</li><li><a href="convertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = convertFromLogSpaceAndNormalise(distfcn)">convertFromLogSpaceAndNormalise</a>	convertFromLogSpaceAndNormalise - takes the results from a 'distance'</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMAlignCurves.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount, meancurvemean, meancurvestd, animatedmeancurvemean, profile_pre,offsets, animatedoffsets, hstg, pdoffset, overall_hstg, overall_pdoffset, animated_overall_pdoffset,isOutlier, ppts, qual, min_offset, iter] =amEMAlignCurves(amIntrCube, amHeldBackcube, amInterventions, outprior, measures, normstd, max_offset, align_wind, nmeasures, ninterventions,detaillog, sigmamethod, smoothingmethod, offsetblockingmethod, runmode, fnmodelrun)">amEMAlignCurves</a>	amEMAlignCurves - function to align measurement curves prior to intervention</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [better_offset, hstg, pdoffset, overall_hstg, overall_pdoffset, isOutlier] = amEMBestFit(meancurvemean, meancurvestd, </a><span class="keyword">...</span>
+0002     amIntrCube, amHeldBackcube, measuresmask, measuresrange, normstd, hstg, pdoffset, overall_hstg, overall_pdoffset, isOutlier, outprior, currinter, min_offset, max_offset, align_wind, <span class="keyword">...</span>
+0003     nmeasures, sigmamethod, smoothingmethod, runmode)
+0004 
+0005 <span class="comment">% amEMBestFit - calculates the offset for an intervention by minimising the</span>
+0006 <span class="comment">% objective function</span>
+0007 
+0008 <span class="comment">% update the histogram during alignment process</span>
+0009 update_histogram = 1;
+0010 
+0011 <span class="comment">% initialise variables</span>
+0012 better_offset = 0;
+0013 minidist = 1000000;
+0014 
+0015 <span class="keyword">for</span> i = min_offset:max_offset - 1
+0016     [currdist, dummy, hstg, isOutlier] = <a href="amEMCalcObjFcn.html" class="code" title="function [dist, count, hstg, isOutlier] = amEMCalcObjFcn(meancurvemean, meancurvestd, amIntrCube,amHeldBackcube, isOutlier, outprior, measuresmask, measuresrange, normstd, hstg, currinter,curroffset, max_offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod)">amEMCalcObjFcn</a>(meancurvemean, meancurvestd, amIntrCube, amHeldBackcube, isOutlier, outprior, <span class="keyword">...</span>
+0017         measuresmask, measuresrange, normstd, hstg, currinter, i, max_offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod);
+0018     <span class="keyword">if</span> currdist &lt; minidist
+0019         better_offset = i;
+0020         minidist = currdist;
+0021     <span class="keyword">end</span>
+0022 <span class="keyword">end</span>
+0023 
+0024 <span class="keyword">for</span> m=1:nmeasures
+0025     pdoffset(m, currinter, min_offset+1:max_offset) = <a href="convertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = convertFromLogSpaceAndNormalise(distfcn)">convertFromLogSpaceAndNormalise</a>(hstg(m, currinter, min_offset+1:max_offset));
+0026 <span class="keyword">end</span>
+0027 
+0028 overall_hstg(currinter, :)     = reshape(sum(hstg(find(measuresmask),currinter,:),1), [1, max_offset]);
+0029 
+0030 <span class="keyword">if</span> runmode == 5
+0031     overall_pdoffset(currinter,min_offset+1:max_offset) = 0;
+0032     overall_pdoffset(currinter, better_offset + 1) = 1;
+0033 <span class="keyword">else</span>
+0034     overall_pdoffset(currinter,min_offset+1:max_offset) = <a href="convertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = convertFromLogSpaceAndNormalise(distfcn)">convertFromLogSpaceAndNormalise</a>(overall_hstg(currinter,min_offset+1:max_offset));
+0035 <span class="keyword">end</span>
+0036     
+0037 <span class="keyword">end</span>
+0038</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

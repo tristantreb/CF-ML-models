@@ -1,0 +1,248 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getMeasuresMask</title>
+  <meta name="keywords" content="getMeasuresMask">
+  <meta name="description" content="reset measures mask">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; getMeasuresMask.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>getMeasuresMask
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>reset measures mask</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function measures = getMeasuresMask(measuresmask, measures) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> reset measures mask</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/exploration/createHeatMapInterventions.html" class="code" title="">createHeatMapInterventions</a>	plot heatmap with  #measurements per day for all interventions</li><li><a href="../../Code/pdm/exploration/exploreInterventions.html" class="code" title="">exploreInterventions</a>	explores the list of interventions</li><li><a href="../../Code/pdm/recovery/plotTypicalProfileAndTimeToResponse.html" class="code" title="">plotTypicalProfileAndTimeToResponse</a>	plot typical profile and compute time to response</li><li><a href="../../Code/pdm/recovery/updatedModel/amEMMCPreprocessMeasuresRecovery.html" class="code" title="function [amDatacube, measures, nmeasures] = amEMMCPreprocessMeasuresRecovery(amDatacube, amInterventions, measures,demographicstable, measuresmask, align_wind, npatients, ndays, ninterventions, nmeasures, study)">amEMMCPreprocessMeasuresRecovery</a>	amEMMCPreprocessMeasures - 1) select a set of measures, 2) filter</li><li><a href="amEMMCPreprocessMeasures.html" class="code" title="function [amDatacube, measures, nmeasures] = amEMMCPreprocessMeasures(amDatacube, amInterventions, measures,demographicstable, measuresmask, align_wind, npatients, ndays, ninterventions, nmeasures, study)">amEMMCPreprocessMeasures</a>	amEMMCPreprocessMeasures - various bits of pre-processing to measures table</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function measures = getMeasuresMask(measuresmask, measures)</a>
+0002 <span class="comment">% reset measures mask</span>
+0003 measures.Mask(:) = 0;
+0004 <span class="comment">% set the measures mask depending on option chosen</span>
+0005 <span class="keyword">if</span> measuresmask == 0
+0006     <span class="comment">% all</span>
+0007     measures.Mask(:) = 1;
+0008 <span class="keyword">elseif</span> measuresmask(:) == 1
+0009     <span class="comment">% all except activity</span>
+0010     idx = ~ismember(measures.DisplayName, {<span class="string">'Activity'</span>});
+0011     measures.Mask(idx) = 1;
+0012 <span class="keyword">elseif</span> measuresmask == 2
+0013     <span class="comment">% cough, lung function and wellness</span>
+0014     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'LungFunction'</span>, <span class="string">'Wellness'</span>});
+0015     measures.Mask(idx) = 1;
+0016 <span class="keyword">elseif</span> measuresmask == 3
+0017     <span class="comment">% all except activity and lung function</span>
+0018     idx = ~ismember(measures.DisplayName, {<span class="string">'Activity'</span>, <span class="string">'LungFunction'</span>});
+0019     measures.Mask(idx) = 1;
+0020 <span class="keyword">elseif</span> measuresmask == 4
+0021     <span class="comment">% all except activity and weight</span>
+0022     idx = ~ismember(measures.DisplayName, {<span class="string">'Activity'</span>, <span class="string">'Weight'</span>});
+0023     measures.Mask(idx) = 1;
+0024 <span class="keyword">elseif</span> measuresmask == 5
+0025     <span class="comment">% all except weight</span>
+0026     idx = ~ismember(measures.DisplayName, {<span class="string">'Weight'</span>});
+0027     measures.Mask(idx) = 1;
+0028 <span class="keyword">elseif</span> measuresmask == 6
+0029     <span class="comment">% project breathe</span>
+0030     idx = ismember(measures.DisplayName, {<span class="string">'Calorie'</span>, <span class="string">'Cough'</span>, <span class="string">'FEV1'</span>, <span class="string">'MinsAsleep'</span>, <span class="string">'MinsAwake'</span>, <span class="keyword">...</span>
+0031         <span class="string">'O2Saturation'</span>, <span class="string">'PulseRate'</span>, <span class="string">'RestingHR'</span>, <span class="string">'Temperature'</span>, <span class="string">'Weight'</span>, <span class="string">'Wellness'</span>});
+0032     measures.Mask(idx) = 1;
+0033 <span class="keyword">elseif</span> measuresmask == 7
+0034     <span class="comment">% project breathe</span>
+0035     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'FEV1'</span>, <span class="string">'MinsAwake'</span>, <span class="string">'O2Saturation'</span>, <span class="keyword">...</span>
+0036         <span class="string">'RestingHR'</span>, <span class="string">'Temperature'</span>, <span class="string">'Wellness'</span>});
+0037     measures.Mask(idx) = 1;
+0038 <span class="keyword">elseif</span> measuresmask == 8
+0039     <span class="comment">% project breathe</span>
+0040     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'FEF2575'</span>, <span class="string">'MinsAsleep'</span>, <span class="string">'O2Saturation'</span>, <span class="keyword">...</span>
+0041         <span class="string">'RestingHR'</span>, <span class="string">'Temperature'</span>, <span class="string">'Wellness'</span>});
+0042     measures.Mask(idx) = 1;
+0043 <span class="keyword">elseif</span> measuresmask == 9
+0044     <span class="comment">% project climb</span>
+0045     idx = ismember(measures.DisplayName, {<span class="string">'Appetite'</span>, <span class="string">'Cough'</span>, <span class="string">'SleepActivity'</span>, <span class="keyword">...</span>
+0046         <span class="string">'SputumVolume'</span>, <span class="string">'Tiredness'</span>, <span class="string">'Wellness'</span>});
+0047     measures.Mask(idx) = 1;
+0048 <span class="keyword">elseif</span> measuresmask == 10
+0049     <span class="comment">% project climb</span>
+0050     idx = ~ismember(measures.DisplayName, {<span class="string">'Activity'</span>, <span class="string">'Temperature'</span>});
+0051     measures.Mask(idx) = 1;
+0052 <span class="keyword">elseif</span> measuresmask == 11
+0053     <span class="comment">% project climb</span>
+0054     idx = ismember(measures.DisplayName, {<span class="string">'Appetite'</span>, <span class="string">'Cough'</span>, <span class="string">'O2Saturation'</span>, <span class="string">'PulseRate'</span>, <span class="keyword">...</span>
+0055         <span class="string">'SleepActivity'</span>, <span class="string">'SputumVolume'</span>, <span class="string">'Tiredness'</span>, <span class="string">'Wellness'</span>});
+0056     measures.Mask(idx) = 1;
+0057 <span class="keyword">elseif</span> measuresmask == 12
+0058     <span class="comment">% project climb</span>
+0059     idx = ismember(measures.DisplayName, {<span class="string">'Appetite'</span>, <span class="string">'Cough'</span>, <span class="string">'FEV1'</span>, <span class="string">'O2Saturation'</span>, <span class="string">'PulseRate'</span>, <span class="keyword">...</span>
+0060         <span class="string">'SleepActivity'</span>, <span class="string">'SputumVolume'</span>, <span class="string">'Tiredness'</span>, <span class="string">'Wellness'</span>});
+0061     measures.Mask(idx) = 1;
+0062 <span class="keyword">elseif</span> measuresmask == 13
+0063     <span class="comment">% project breathe</span>
+0064     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'FEV1'</span>, <span class="string">'MinsAsleep'</span>, <span class="keyword">...</span>
+0065         <span class="string">'RestingHR'</span>, <span class="string">'Temperature'</span>, <span class="string">'Wellness'</span>});
+0066     measures.Mask(idx) = 1;
+0067 <span class="keyword">elseif</span> measuresmask == 14
+0068     <span class="comment">% project climb</span>
+0069     idx = ismember(measures.DisplayName, {<span class="string">'Appetite'</span>, <span class="string">'Cough'</span>, <span class="string">'FEV1'</span>, <span class="string">'O2Saturation'</span>, <span class="string">'PulseRate'</span>, <span class="keyword">...</span>
+0070         <span class="string">'SleepActivity'</span>, <span class="string">'SputumVolume'</span>, <span class="string">'Temperature'</span>, <span class="string">'Tiredness'</span>, <span class="string">'Wellness'</span>});
+0071     measures.Mask(idx) = 1;
+0072 <span class="keyword">elseif</span> measuresmask == 15
+0073     <span class="comment">% project climb</span>
+0074     idx = ismember(measures.DisplayName, {<span class="string">'Appetite'</span>, <span class="string">'Cough'</span>, <span class="string">'FEV1'</span>, <span class="string">'O2Saturation'</span>, <span class="string">'PulseRate'</span>, <span class="keyword">...</span>
+0075         <span class="string">'SleepActivity'</span>, <span class="string">'SputumVolume'</span>, <span class="string">'Temperature'</span>, <span class="string">'Tiredness'</span>, <span class="string">'Weight'</span>, <span class="string">'Wellness'</span>});
+0076     measures.Mask(idx) = 1;
+0077 <span class="keyword">elseif</span> measuresmask == 16
+0078     <span class="comment">% project climb</span>
+0079     idx = ismember(measures.DisplayName, {<span class="string">'SputumVolume'</span>});
+0080     measures.Mask(idx) = 1;
+0081 <span class="keyword">elseif</span> measuresmask == 17
+0082     <span class="comment">% project climb</span>
+0083     idx = ismember(measures.DisplayName, {<span class="string">'Appetite'</span>, <span class="string">'Cough'</span>, <span class="string">'O2Saturation'</span>, <span class="string">'PulseRate'</span>, <span class="keyword">...</span>
+0084         <span class="string">'SleepActivity'</span>, <span class="string">'SputumVolume'</span>, <span class="string">'Temperature'</span>, <span class="string">'Tiredness'</span>, <span class="string">'Weight'</span>, <span class="string">'Wellness'</span>});
+0085     measures.Mask(idx) = 1;
+0086 <span class="keyword">elseif</span> measuresmask == 18
+0087     <span class="comment">% project climb</span>
+0088     idx = ismember(measures.DisplayName, {<span class="string">'Appetite'</span>, <span class="string">'Cough'</span>, <span class="string">'InterpFEV1'</span>, <span class="string">'O2Saturation'</span>, <span class="string">'PulseRate'</span>, <span class="keyword">...</span>
+0089         <span class="string">'SleepActivity'</span>, <span class="string">'SputumVolume'</span>, <span class="string">'Temperature'</span>, <span class="string">'Tiredness'</span>, <span class="string">'Wellness'</span>});
+0090     measures.Mask(idx) = 1;
+0091 <span class="keyword">elseif</span> measuresmask == 19
+0092     <span class="comment">% project climb</span>
+0093     idx = ismember(measures.DisplayName, {<span class="string">'Appetite'</span>, <span class="string">'Cough'</span>, <span class="string">'InterpFEV1'</span>, <span class="string">'O2Saturation'</span>, <span class="string">'PulseRate'</span>, <span class="keyword">...</span>
+0094         <span class="string">'SleepActivity'</span>, <span class="string">'SputumVolume'</span>, <span class="string">'Temperature'</span>, <span class="string">'Tiredness'</span>, <span class="string">'InterpWeight'</span>, <span class="string">'Wellness'</span>});
+0095     measures.Mask(idx) = 1;
+0096 <span class="keyword">elseif</span> measuresmask == 20
+0097     <span class="comment">% project climb</span>
+0098     idx = ismember(measures.DisplayName, {<span class="string">'Appetite'</span>, <span class="string">'Cough'</span>, <span class="string">'O2Saturation'</span>, <span class="string">'PulseRate'</span>, <span class="keyword">...</span>
+0099         <span class="string">'SleepActivity'</span>, <span class="string">'SputumVolume'</span>, <span class="string">'Temperature'</span>, <span class="string">'Tiredness'</span>, <span class="string">'InterpWeight'</span>, <span class="string">'Wellness'</span>});
+0100     measures.Mask(idx) = 1;
+0101 <span class="keyword">elseif</span> measuresmask == 21
+0102     <span class="comment">% project breathe</span>
+0103     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'FEV1'</span>, <span class="string">'MinsAsleep'</span>, <span class="string">'O2Saturation'</span>, <span class="keyword">...</span>
+0104         <span class="string">'RestingHR'</span>, <span class="string">'Temperature'</span>, <span class="string">'Wellness'</span>});
+0105     measures.Mask(idx) = 1;
+0106 <span class="keyword">elseif</span> measuresmask == 22
+0107     <span class="comment">% project breathe</span>
+0108     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'FEV1'</span>, <span class="string">'MinsAsleep'</span>, <span class="string">'O2Saturation'</span>, <span class="keyword">...</span>
+0109         <span class="string">'PulseRate'</span>, <span class="string">'Temperature'</span>, <span class="string">'Wellness'</span>});
+0110     measures.Mask(idx) = 1;
+0111 <span class="keyword">elseif</span> measuresmask == 23
+0112     <span class="comment">% project breathe</span>
+0113     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'FEV1'</span>, <span class="string">'MinsAsleep'</span>, <span class="string">'O2Saturation'</span>, <span class="keyword">...</span>
+0114         <span class="string">'RestingHR'</span>, <span class="string">'Wellness'</span>});
+0115     measures.Mask(idx) = 1;
+0116 <span class="keyword">elseif</span> measuresmask == 24
+0117     <span class="comment">% project breathe</span>
+0118     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'FEV1'</span>, <span class="string">'MinsAsleep'</span>, <span class="string">'MinsAwake'</span>, <span class="string">'O2Saturation'</span>, <span class="keyword">...</span>
+0119         <span class="string">'RestingHR'</span>, <span class="string">'Wellness'</span>});
+0120     measures.Mask(idx) = 1;    
+0121 <span class="keyword">elseif</span> measuresmask == 25
+0122     <span class="comment">% project breathe</span>
+0123     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'FEV1'</span>, <span class="string">'MinsAsleep'</span>, <span class="string">'MinsAwake'</span>, <span class="string">'O2Saturation'</span>, <span class="keyword">...</span>
+0124         <span class="string">'RestingHR'</span>, <span class="string">'Temperature'</span>, <span class="string">'Wellness'</span>});
+0125     measures.Mask(idx) = 1;
+0126 <span class="keyword">elseif</span> measuresmask == 26
+0127     <span class="comment">% project breathe</span>
+0128     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'LungFunction'</span>, <span class="string">'MinsAsleep'</span>, <span class="keyword">...</span>
+0129         <span class="string">'PulseRate'</span>, <span class="string">'Temperature'</span>, <span class="string">'Wellness'</span>});
+0130     measures.Mask(idx) = 1;
+0131 <span class="keyword">elseif</span> measuresmask == 27
+0132     <span class="comment">% project breathe</span>
+0133     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'LungFunction'</span>, <span class="string">'MinsAsleep'</span>, <span class="string">'O2Saturation'</span>, <span class="keyword">...</span>
+0134         <span class="string">'PulseRate'</span>, <span class="string">'Temperature'</span>, <span class="string">'Wellness'</span>});
+0135     measures.Mask(idx) = 1;
+0136 <span class="keyword">elseif</span> measuresmask == 28
+0137     <span class="comment">% project breathe</span>
+0138     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'LungFunction'</span>, <span class="string">'MinsAsleep'</span>, <span class="keyword">...</span>
+0139         <span class="string">'RestingHR'</span>, <span class="string">'Temperature'</span>, <span class="string">'Wellness'</span>});
+0140     measures.Mask(idx) = 1;
+0141 <span class="keyword">elseif</span> measuresmask == 29
+0142     <span class="comment">% project breathe</span>
+0143     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'LungFunction'</span>, <span class="string">'MinsAsleep'</span>, <span class="string">'O2Saturation'</span>, <span class="keyword">...</span>
+0144         <span class="string">'RestingHR'</span>, <span class="string">'Temperature'</span>, <span class="string">'Wellness'</span>});
+0145     measures.Mask(idx) = 1;
+0146 <span class="keyword">elseif</span> measuresmask == 30
+0147     <span class="comment">% project breathe</span>
+0148     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'FEV1'</span>, <span class="string">'FEF2575'</span>, <span class="string">'O2Saturation'</span>, <span class="keyword">...</span>
+0149         <span class="string">'RestingHR'</span>, <span class="string">'PulseRate'</span>, <span class="string">'Weight'</span>, <span class="string">'Wellness'</span>});
+0150     measures.Mask(idx) = 1;
+0151 <span class="keyword">elseif</span> measuresmask == 31
+0152     <span class="comment">% project breathe</span>
+0153     idx = ismember(measures.DisplayName, {<span class="string">'FEV1'</span>});
+0154     measures.Mask(idx) = 1;
+0155 <span class="keyword">elseif</span> measuresmask == 32
+0156     <span class="comment">% project breathe</span>
+0157     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'FEV1'</span>, <span class="string">'FEF2575'</span>, <span class="string">'O2Saturation'</span>, <span class="keyword">...</span>
+0158         <span class="string">'PulseRate'</span>, <span class="string">'Wellness'</span>});
+0159     measures.Mask(idx) = 1;
+0160 <span class="keyword">elseif</span> measuresmask == 33
+0161     <span class="comment">% project breathe</span>
+0162     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'MinsAsleep'</span>, <span class="string">'FEV1'</span>, <span class="string">'FEF2575'</span>, <span class="string">'O2Saturation'</span>, <span class="keyword">...</span>
+0163         <span class="string">'PulseRate'</span>, <span class="string">'Wellness'</span>});
+0164     measures.Mask(idx) = 1;
+0165 <span class="keyword">elseif</span> measuresmask == 34
+0166     <span class="comment">% project breathe - reference for recovery</span>
+0167     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>, <span class="string">'FEV1'</span>, <span class="string">'FEF2575'</span>, <span class="string">'MinsAsleep'</span>, <span class="string">'O2Saturation'</span>, <span class="keyword">...</span>
+0168         <span class="string">'PulseRate'</span>, <span class="string">'Wellness'</span>, <span class="string">'Temperature'</span>});
+0169     measures.Mask(idx) = 1;
+0170 <span class="keyword">elseif</span> measuresmask == 35
+0171     <span class="comment">% project breathe</span>
+0172     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>});
+0173     measures.Mask(idx) = 1;
+0174 <span class="keyword">elseif</span> measuresmask == 36
+0175     <span class="comment">% project breathe</span>
+0176     idx = ismember(measures.DisplayName, {<span class="string">'Wellness'</span>});
+0177     measures.Mask(idx) = 1;
+0178 <span class="keyword">elseif</span> measuresmask == 37
+0179     <span class="comment">% project breathe</span>
+0180     idx = ismember(measures.DisplayName, {<span class="string">'MinsAsleep'</span>});
+0181     measures.Mask(idx) = 1;
+0182 <span class="keyword">elseif</span> measuresmask == 38
+0183     <span class="comment">% project breathe</span>
+0184     idx = ismember(measures.DisplayName, {<span class="string">'O2Saturation'</span>});
+0185     measures.Mask(idx) = 1;
+0186 <span class="keyword">elseif</span> measuresmask == 39
+0187     <span class="comment">% project breathe</span>
+0188     idx = ismember(measures.DisplayName, {<span class="string">'PulseRate'</span>});
+0189     measures.Mask(idx) = 1;
+0190 <span class="keyword">elseif</span> measuresmask == 40
+0191     <span class="comment">% project breathe</span>
+0192     idx = ismember(measures.DisplayName, {<span class="string">'Temperature'</span>});
+0193     measures.Mask(idx) = 1;
+0194 <span class="keyword">else</span>
+0195     <span class="comment">% shouldn't ever get here - but default to just cough if it ever</span>
+0196     <span class="comment">% happens</span>
+0197     idx = ismember(measures.DisplayName, {<span class="string">'Cough'</span>});
+0198     measures.Mask(idx) = 1;
+0199 <span class="keyword">end</span>
+0200 <span class="keyword">end</span>
+0201</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calcEmergContForPatient</title>
+  <meta name="keywords" content="calcEmergContForPatient">
+  <meta name="description" content="calcEmergContForPatient - calculate the number emergency contacts for a given">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; calcEmergContForPatient.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>calcEmergContForPatient
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>calcEmergContForPatient - calculate the number emergency contacts for a given</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function nec = calcEmergContForPatient(pecdata, fromd, tod) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> calcEmergContForPatient - calculate the number emergency contacts for a given
+ period</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="calcDaysInPeriodWithHistogram.html" class="code" title="function [brIntChkptPat, brIntChkptSum] = calcDaysInPeriodWithHistogram(brIntChkptPat, brIntChkptSum, perioddata, study, meastype, period1, period2, twindow, type, cutoffd, plotsubfolder)">calcDaysInPeriodWithHistogram</a>	calcDaysInPeriodWithHistogram - calculate the days on IV for pre and during</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function nec = calcEmergContForPatient(pecdata, fromd, tod)</a>
+0002 
+0003 <span class="comment">% calcEmergContForPatient - calculate the number emergency contacts for a given</span>
+0004 <span class="comment">% period</span>
+0005 nec = 0;
+0006 ndays = days(tod - fromd);
+0007 
+0008 tmpdate = fromd;
+0009 <span class="keyword">for</span> i = 1:ndays
+0010     
+0011     <span class="keyword">if</span> any(pecdata.Date == tmpdate)
+0012         nec = nec + 1;
+0013         fprintf(<span class="string">'%d '</span>, i);
+0014     <span class="keyword">end</span>
+0015     tmpdate = tmpdate + days(1);
+0016 <span class="keyword">end</span>
+0017 
+0018 fprintf(<span class="string">'%2d '</span>, nec);
+0019</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

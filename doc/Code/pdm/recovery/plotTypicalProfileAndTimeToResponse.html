@@ -1,0 +1,331 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotTypicalProfileAndTimeToResponse</title>
+  <meta name="keywords" content="plotTypicalProfileAndTimeToResponse">
+  <meta name="description" content="plot typical profile and compute time to response">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">recovery</a> &gt; plotTypicalProfileAndTimeToResponse.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>plotTypicalProfileAndTimeToResponse
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>plot typical profile and compute time to response</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> plot typical profile and compute time to response</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/smartcare/getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>	getInvertedMeasures - returns an array of measure display names that need</li><li><a href="../../../Code/smartcare/getMeasuresMask.html" class="code" title="function measures = getMeasuresMask(measuresmask, measures)">getMeasuresMask</a>	reset measures mask</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function curve = adjustMeanCurve(meancurvemean,align,day_recovery_start)</a></li><li><a href="#_sub2" class="code">function tao = computeResponseToTreatment(amInterventions, day_start)</a></li><li><a href="#_sub3" class="code">function curveout = smartSmooth(curvein,smoothparam)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% plot typical profile and compute time to response</span>
+0002 
+0003 <span class="comment">% multiple options can be selected for different typical profile rendering</span>
+0004 
+0005 <span class="comment">% Input: alignment results mat file</span>
+0006 <span class="comment">% ------</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Output:</span>
+0009 <span class="comment">% -------</span>
+0010 <span class="comment">% - typical profile + treatment start/end below</span>
+0011 <span class="comment">% - bar graph with time to treatment response</span>
+0012 
+0013 <a href="init.html" class="code" title="">init</a>;
+0014 
+0015 <span class="comment">% change during model result selection</span>
+0016 nl = 1;
+0017 rs = 4;
+0018 prefix = <span class="string">'tb_failnolist'</span>;
+0019 
+0020 <span class="comment">% changed during parameter optimisation</span>
+0021 dw = 20;
+0022 mm = 34;
+0023 vm = 0.4;
+0024 ou = 15;
+0025 
+0026 <span class="comment">% load all files that are similar except their random seed</span>
+0027 dircontent = dir(fullfile(basedir, subfolder, sprintf(<span class="string">'%s*BRvEMMC_gp10_lm1_sig4_mu4_ca2_sm2_rm4_in1_im1_cm2_mm%i_od0_ou%i_dw%i_nl%i_rs%i_ds1_ct5_sc22-V_vs1_vm%.1f*.mat'</span>,prefix,mm, ou, dw, nl, rs, vm)));
+0028 ModelResultsFiles = cell(size(dircontent,1),1);
+0029 <span class="keyword">for</span> a = 1:size(ModelResultsFiles,1)
+0030     ModelResultsFiles{a} = dircontent(a).name;
+0031 <span class="keyword">end</span>
+0032 
+0033 <span class="comment">%% load file data</span>
+0034 nfiles = size(ModelResultsFiles,1);
+0035 fprintf(<span class="string">'Loading results\n'</span>);
+0036 fprintf(<span class="string">'---------------\n'</span>);
+0037 
+0038 <span class="keyword">for</span> i = 1<span class="comment">%:nfiles</span>
+0039 
+0040     fprintf(<span class="string">'Model number %3i - Filename: %s\n'</span>, i, ModelResultsFiles{i});
+0041     load(fullfile(basedir, subfolder,ModelResultsFiles{i}),<span class="string">'meancurvemean'</span>, <span class="string">'measures'</span>,<span class="string">'measuresmask'</span>,<span class="string">'amInterventions'</span>, <span class="string">'offset'</span>,<span class="string">'ninterventions'</span>); 
+0042 <span class="keyword">end</span>
+0043 initamInterventions = amInterventions;
+0044 initial_mean = meancurvemean;
+0045 
+0046 <span class="comment">%% set recovery start for all following plots</span>
+0047 
+0048 day_recovery_start = 10;
+0049 fontsize = 15;
+0050 
+0051 <span class="keyword">if</span> nl == 2
+0052 <span class="comment">%     % assign C1 to largest group</span>
+0053 <span class="comment">%     idxC1 = amInterventions.LatentCurve == 1;</span>
+0054 <span class="comment">%     if sum(idxC1) &lt; sum(not(idxC1))</span>
+0055 <span class="comment">%         amInterventions.LatentCurve(idxC1) = 2;</span>
+0056 <span class="comment">%         amInterventions.LatentCurve(not(idxC1)) = 1;</span>
+0057 <span class="comment">%     end</span>
+0058     
+0059     idx=1;
+0060     meancurvemean = initial_mean(idx,:,:);
+0061     amInterventions = initamInterventions(initamInterventions.LatentCurve == idx,:);
+0062     
+0063 <span class="keyword">end</span>
+0064 
+0065 <span class="comment">%% response to treatment plot</span>
+0066 
+0067 figure(<span class="string">'DefaultAxesFontSize'</span>,fontsize,<span class="string">'Position'</span>, [1 1 800 400])
+0068 tao = <a href="#_sub2" class="code" title="subfunction tao = computeResponseToTreatment(amInterventions, day_start)">computeResponseToTreatment</a>(amInterventions, day_recovery_start);
+0069 histogram(tao)
+0070 xlabel(<span class="string">'\tau (days)'</span>);
+0071 ylabel(sprintf(<span class="string">'Proportion of interventions (%%)'</span>, size(amInterventions,1)));
+0072 title(sprintf(<span class="string">'mean = %.1f days (std = %.1f), median = %.0f days'</span>, mean(tao),std(tao),median(tao)));
+0073 saveas(gcf,fullfile(plotfolder,string([ModelResultsFiles{1}(1:end-4) <span class="string">'.png'</span>])))
+0074 
+0075 
+0076 <span class="comment">%% main plot (typical profile + bar graph with treatments start/end</span>
+0077 
+0078 <span class="comment">% create figure</span>
+0079 
+0080 figure(<span class="string">'DefaultAxesFontSize'</span>,fontsize,<span class="string">'Position'</span>, [1 1 800 800])
+0081 
+0082 <span class="comment">% define x axis</span>
+0083 x = -day_recovery_start : (size(meancurvemean,2) - day_recovery_start -1 );
+0084 
+0085 
+0086 <span class="comment">% plot typical profile</span>
+0087 ax1 = subplot(4,1,[1 2 3]);
+0088 hold on
+0089 
+0090 <span class="comment">% define parameters</span>
+0091 mm = 22; <span class="comment">% 34 don't plot FEF2575 because very similar to FEV1 (helped convergence)</span>
+0092 measures = <a href="../../../Code/smartcare/getMeasuresMask.html" class="code" title="function measures = getMeasuresMask(measuresmask, measures)">getMeasuresMask</a>(mm, measures);  measures.Mask(16) = false; <span class="comment">% temperature not meaningful</span>
+0093 <span class="comment">% set method to align measures</span>
+0094 align = &quot;min&quot;;
+0095 align = &quot;consensus_end&quot;;
+0096 align = &quot;consensus_start&quot;;
+0097 align = &quot;no&quot;;
+0098 <span class="comment">% colors for measure - same as APE study</span>
+0099 mcolors = [[0 0.4470 0.7410] <span class="keyword">...</span><span class="comment"> %blue</span>
+0100     <span class="comment">%;[0.9290 0.6940 0.1250]...%orange</span>
+0101     ;[0.8500 0.3250 0.0980]<span class="keyword">...</span><span class="comment">%red</span>
+0102     ;[0.4660 0.6740 0.1880] <span class="keyword">...</span><span class="comment">%g</span>
+0103     ;[0.8 0.8 0] <span class="keyword">...</span><span class="comment"> %yellow</span>
+0104     ;[0.4940 0.1840 0.5560] <span class="keyword">...</span><span class="comment">%purple</span>
+0105     <span class="comment">%;[0.6350 0.0780 0.1840] ... %bordeau</span>
+0106     ;[0.3010 0.7450 0.9330]]; <span class="comment">% light blue</span>
+0107 color = 1;
+0108 
+0109 <span class="comment">% plot</span>
+0110 idx = logical(measures.Mask); <span class="comment">%idx(16)=false;</span>
+0111 <span class="keyword">for</span> m = measures.Index(idx)'
+0112     smoothedmeancurvemean = <a href="#_sub3" class="code" title="subfunction curveout = smartSmooth(curvein,smoothparam)">smartSmooth</a>(meancurvemean(1,:,m), 3);
+0113     y = <a href="#_sub1" class="code" title="subfunction curve = adjustMeanCurve(meancurvemean,align,day_recovery_start)">adjustMeanCurve</a>(smoothedmeancurvemean,align,day_recovery_start)';
+0114 <span class="comment">%     if ismember(measures.DisplayName(m),getInvertedMeasures(study))</span>
+0115 <span class="comment">%         y = -y;</span>
+0116 <span class="comment">%     end</span>
+0117     <span class="keyword">if</span> ismember(string(measures.DisplayName(m)),[&quot;Wellness&quot;, &quot;FEV1&quot;])
+0118         plot(x,y,<span class="string">'LineStyle'</span>,<span class="string">'-'</span>, <span class="string">'Color'</span>, mcolors(color,:),<span class="string">'LineWidth'</span>,6,<span class="string">'Marker'</span>,<span class="string">'.'</span>,<span class="string">'MarkerSize'</span>,3);
+0119     <span class="keyword">else</span>
+0120         plot(x,y,<span class="string">'LineStyle'</span>,<span class="string">'-'</span>, <span class="string">'Color'</span>, mcolors(color,:),<span class="string">'LineWidth'</span>,3,<span class="string">'Marker'</span>,<span class="string">'.'</span>,<span class="string">'MarkerSize'</span>,3);
+0121     <span class="keyword">end</span>
+0122     yl = ylim;
+0123     color = color+1;
+0124 <span class="keyword">end</span>
+0125 <span class="comment">%fill([-day_recovery_start 35-day_recovery_start 35-day_recovery_start -day_recovery_start], ...</span>
+0126 <span class="comment">%            [0 -0.27 -0.27 0], 'k', 'FaceAlpha', '0.1', 'EdgeColor', 'none');</span>
+0127 hold off
+0128 grid(<span class="string">'on'</span>);
+0129 ylabel(<span class="string">'Signal change from stable baseline'</span>);
+0130 xlim([min(x),max(x)]);
+0131 <span class="keyword">if</span> mod(min(x),2) == 0
+0132     xticks(min(x):2:max(x));
+0133 <span class="keyword">else</span>
+0134     xticks(min(x)+1:2:max(x));
+0135 <span class="keyword">end</span>
+0136 
+0137 <span class="comment">% annotations</span>
+0138 xline(0,<span class="string">'--k'</span>,<span class="string">'LineWidth'</span>,1);
+0139 x_annotation =  0.02 + 0.08 + (0.903-0.08)/34*day_recovery_start; <span class="comment">% linear interpolation between max and min location of the graph window</span>
+0140 annotation(<span class="string">'textbox'</span>,[.9 .803 .1 .05],<span class="string">'String'</span>,<span class="string">'stable baseline'</span>,<span class="string">'FontSize'</span>,12,<span class="string">'FontWeight'</span>,<span class="string">'bold'</span>,<span class="string">'EdgeColor'</span>,<span class="string">'none'</span>); <span class="comment">% faster by hand</span>
+0141 yline(0,<span class="string">'--k'</span>,<span class="string">'LineWidth'</span>,1);
+0142 annotation(<span class="string">'textbox'</span>,[max(x_annotation,0.13) .85 .1 .1],<span class="string">'String'</span>,<span class="string">'recovery start'</span>,<span class="string">'FontSize'</span>,12,<span class="string">'FontWeight'</span>,<span class="string">'bold'</span>,<span class="string">'EdgeColor'</span>,<span class="string">'none'</span>);
+0143 <span class="comment">%legend</span>
+0144 
+0145 mask = ismember(measures.DisplayName,<a href="../../../Code/smartcare/getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>(study));
+0146 measures.DisplayNameLegend(not(mask)) = measures.DisplayName(not(mask));
+0147 <span class="keyword">for</span> i = 1:size(measures,1)
+0148     <span class="keyword">if</span> mask(i) == 1
+0149         measures.DisplayNameLegend(i) = {measures.DisplayName{i} + &quot; inverted&quot;};
+0150     <span class="keyword">end</span>
+0151     <span class="keyword">if</span> i == 13
+0152         measures.DisplayNameLegend(i) = {<span class="string">'O2 saturation'</span>};
+0153     <span class="keyword">elseif</span> i == 11
+0154         measures.DisplayNameLegend(i) = {<span class="string">'Minutes asleep'</span>};
+0155     <span class="keyword">end</span>
+0156 <span class="keyword">end</span>
+0157 
+0158 LegendsStrings = measures.DisplayNameLegend(idx);
+0159 legend(LegendsStrings,<span class="string">'Interpreter'</span>,<span class="string">'none'</span>,<span class="string">'location'</span>,<span class="string">'southeast'</span>);
+0160 
+0161 <span class="comment">%day_recovery_start</span>
+0162 
+0163 <span class="comment">% plot bar graphs</span>
+0164 ax2 = subplot(4,1,4); 
+0165 
+0166 <span class="comment">% treatment start</span>
+0167 Date = amInterventions.Offset - day_recovery_start;
+0168 TreatmentStart = table(Date);
+0169 TreatmentStart = groupcounts(TreatmentStart,<span class="string">'Date'</span>);
+0170 bar(ax2, TreatmentStart.Date, TreatmentStart.GroupCount/sum(TreatmentStart.GroupCount)*100,<span class="string">'FaceColor'</span>,[0 0.2 0.12],<span class="string">'FaceAlpha'</span>,0.8,<span class="string">'EdgeColor'</span>,<span class="string">'k'</span>,<span class="string">'LineWidth'</span>,0.1)
+0171 
+0172 <span class="comment">% treatment end</span>
+0173 hold on
+0174 Date = amInterventions.IVStopDateNum - amInterventions.IVDateNum + amInterventions.Offset - day_recovery_start;
+0175 TreatmentStop = table(Date);
+0176 TreatmentStop = groupcounts(TreatmentStop,<span class="string">'Date'</span>);
+0177 idx_in = TreatmentStop.Date &lt; max(x);
+0178 n_interventions_stopped_after_xmax = sum(not(idx_in));
+0179 TreatmentStop = TreatmentStop(idx_in ,:);
+0180 bar(ax2, TreatmentStop.Date, TreatmentStop.GroupCount/sum(TreatmentStop.GroupCount)*100,<span class="string">'FaceColor'</span>,[.55 0 0],<span class="string">'FaceAlpha'</span>,0.8,<span class="string">'EdgeColor'</span>,<span class="string">'k'</span>,<span class="string">'LineWidth'</span>,0.1)
+0181 text = sprintf(<span class="string">'(%.0f%% treatments end after day %i)'</span>,n_interventions_stopped_after_xmax/sum(TreatmentStop.GroupCount)*100, max(x));
+0182 annotation(<span class="string">'textbox'</span>,[0.72 0.19 .1 .1],<span class="string">'String'</span>,text,<span class="string">'FontSize'</span>,10,<span class="string">'EdgeColor'</span>,<span class="string">'none'</span>);
+0183 
+0184 <span class="comment">% common definitions for the two bar graphs</span>
+0185 hold off
+0186 ylim([0 max(10,max(max(TreatmentStop.GroupCount),max(TreatmentStart.GroupCount)))])
+0187 <span class="keyword">if</span> mod(min(x),2) == 0
+0188     xticks(min(x):2:max(x));
+0189 <span class="keyword">else</span>
+0190     xticks(min(x)+1:2:max(x));
+0191 <span class="keyword">end</span>
+0192 legend(<span class="string">'Start'</span>,<span class="string">'End'</span>);
+0193 ylabel(<span class="string">'Treatments (%)'</span>);
+0194 grid(<span class="string">'on'</span>)
+0195 set(gca,<span class="string">'Fontsize'</span>,fontsize)
+0196 
+0197 <span class="comment">% common x axis for typical profile and bar graphs</span>
+0198 xlabel(<span class="string">'Number of days from recovery start'</span>); 
+0199 
+0200 linkaxes([ax1,ax2],<span class="string">'x'</span>);
+0201 
+0202 saveas(gcf,fullfile(plotfolder,sprintf(<span class="string">'%sprofile_align_%s.png'</span>,prefix,align)))
+0203 <span class="comment">%close all;</span>
+0204 
+0205 <span class="comment">%% plot reference profile for one measure only</span>
+0206 
+0207 day_recovery_start=7;
+0208 
+0209 x = -day_recovery_start : (size(meancurvemean,2) - day_recovery_start -1 );
+0210 mm = 22; <span class="comment">% 34 don't plot FEF2575 because very similar to FEV1 (helped convergence)</span>
+0211 measures = <a href="../../../Code/smartcare/getMeasuresMask.html" class="code" title="function measures = getMeasuresMask(measuresmask, measures)">getMeasuresMask</a>(mm, measures);  measures.Mask(16) = false; <span class="comment">% temperature not meaningful</span>
+0212 <span class="comment">% set method to align measures</span>
+0213 align = &quot;no&quot;;
+0214 
+0215 <span class="comment">% plot</span>
+0216 idx = logical(measures.Mask); <span class="comment">%idx(16)=false;</span>
+0217 <span class="keyword">for</span> m = 6<span class="comment">% measures.Index(idx)'</span>
+0218     smoothedmeancurvemean = <a href="#_sub3" class="code" title="subfunction curveout = smartSmooth(curvein,smoothparam)">smartSmooth</a>(meancurvemean(1,:,m), 3);
+0219     y = <a href="#_sub1" class="code" title="subfunction curve = adjustMeanCurve(meancurvemean,align,day_recovery_start)">adjustMeanCurve</a>(smoothedmeancurvemean,align,day_recovery_start)';
+0220     plot(x,y,<span class="string">'LineStyle'</span>,<span class="string">'-'</span>, <span class="string">'Color'</span>, <span class="string">'k'</span>,<span class="string">'LineWidth'</span>,3,<span class="string">'Marker'</span>,<span class="string">'.'</span>,<span class="string">'MarkerSize'</span>,3);
+0221     yl = ylim;
+0222 <span class="keyword">end</span>
+0223 <span class="comment">%fill([-day_recovery_start 35-day_recovery_start 35-day_recovery_start -day_recovery_start], ...</span>
+0224 <span class="comment">%            [0 -0.27 -0.27 0], 'k', 'FaceAlpha', '0.1', 'EdgeColor', 'none');</span>
+0225 hold off
+0226 grid(<span class="string">'on'</span>);
+0227 ylabel(<span class="string">'Signal change from stable baseline'</span>);
+0228 xlim([min(x),max(x)]);
+0229 <span class="keyword">if</span> mod(min(x),2) == 0
+0230     xticks(min(x):2:max(x));
+0231 <span class="keyword">else</span>
+0232     xticks(min(x)+1:2:max(x));
+0233 <span class="keyword">end</span>
+0234 
+0235 <span class="comment">% annotations</span>
+0236 xline(0,<span class="string">'--k'</span>,<span class="string">'LineWidth'</span>,1);
+0237 x_annotation =  0.03 + 0.08 + (0.903-0.08)/34*day_recovery_start; <span class="comment">% linear interpolation between max and min location of the graph window</span>
+0238 annotation(<span class="string">'textbox'</span>,[.9 .843 .1 .05],<span class="string">'String'</span>,<span class="string">'stable baseline'</span>,<span class="string">'FontSize'</span>,12,<span class="string">'FontWeight'</span>,<span class="string">'bold'</span>,<span class="string">'EdgeColor'</span>,<span class="string">'none'</span>); <span class="comment">% faster by hand</span>
+0239 yline(0,<span class="string">'--k'</span>,<span class="string">'LineWidth'</span>,1);
+0240 annotation(<span class="string">'textbox'</span>,[max(x_annotation,0.13) .85 .1 .1],<span class="string">'String'</span>,<span class="string">'recovery start'</span>,<span class="string">'FontSize'</span>,12,<span class="string">'FontWeight'</span>,<span class="string">'bold'</span>,<span class="string">'EdgeColor'</span>,<span class="string">'none'</span>);
+0241 <span class="comment">%legend</span>
+0242 xlabel(<span class="string">'Number of days from recovery start'</span>);
+0243 set(gca,<span class="string">'Fontsize'</span>,fontsize)
+0244 
+0245 
+0246 
+0247 <span class="comment">%% functions</span>
+0248 <a name="_sub0" href="#_subfunctions" class="code">function curve = adjustMeanCurve(meancurvemean,align,day_recovery_start)</a>
+0249 day_max_recovery = 25;
+0250 <span class="keyword">switch</span> align
+0251     <span class="keyword">case</span> &quot;no&quot;
+0252          curve = meancurvemean(:);
+0253     <span class="keyword">case</span> &quot;consensus_end&quot;
+0254         curve = meancurvemean(:) - meancurvemean(day_max_recovery);
+0255     <span class="keyword">case</span> &quot;consensus_start&quot;
+0256         curve = meancurvemean(:) - meancurvemean(day_recovery_start);
+0257     <span class="keyword">case</span> &quot;min&quot;
+0258         curve = meancurvemean(:) - min(meancurvemean(:));
+0259 <span class="keyword">end</span>
+0260 
+0261 <span class="keyword">end</span>
+0262 
+0263 <a name="_sub1" href="#_subfunctions" class="code">function tao = computeResponseToTreatment(amInterventions, day_start) </a>
+0264 ninterventions = size(amInterventions,1);
+0265 tao = nan(ninterventions,1);
+0266 <span class="keyword">for</span> i = 1:ninterventions
+0267     <span class="keyword">if</span> amInterventions.Offset(i) &lt; day_start
+0268         tao(i) = day_start - amInterventions.Offset(i);
+0269     <span class="keyword">else</span>
+0270         tao(i) = 0;
+0271     <span class="keyword">end</span> 
+0272 <span class="keyword">end</span>
+0273 <span class="keyword">end</span>
+0274 
+0275 <a name="_sub2" href="#_subfunctions" class="code">function curveout = smartSmooth(curvein,smoothparam)</a>
+0276 <span class="comment">% start smoothing when there is data</span>
+0277 <span class="comment">% nan values are kept to nan in curveout</span>
+0278 idx = ~isnan(curvein);
+0279 
+0280 curveout(idx) = smooth(curvein(idx),smoothparam);
+0281 curveout(not(idx)) = curvein(not(idx));
+0282 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

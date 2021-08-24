@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of compareMultipleModelRunResults</title>
+  <meta name="keywords" content="compareMultipleModelRunResults">
+  <meta name="description" content="compareMultipleModelRunResults - compares the results of multiple model">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; compareMultipleModelRunResults.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>compareMultipleModelRunResults
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>compareMultipleModelRunResults - compares the results of multiple model</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [modeliterations, modeloffsets] = compareMultipleModelRunResults(modelrun, modelidx, models, basedir, subfolder) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> compareMultipleModelRunResults - compares the results of multiple model 
+ runs (iterations to converge, offsets, prob distributions etc</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runModelUtilityFunctions.html" class="code" title="">runModelUtilityFunctions</a>	</li><li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [modeliterations, modeloffsets] = compareMultipleModelRunResults(modelrun, modelidx, models, basedir, subfolder)</a>
+0002 
+0003 <span class="comment">% compareMultipleModelRunResults - compares the results of multiple model</span>
+0004 <span class="comment">% runs (iterations to converge, offsets, prob distributions etc</span>
+0005 
+0006 load(fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>, modelrun)));
+0007 nmodelruns = size(models, 1);
+0008 modeliterations = nan(nmodelruns, 1);
+0009 modeloffsets = nan(nmodelruns, ninterventions);
+0010 plotsdown = 1;
+0011 plotsacross = 2;
+0012 pagebreak1 = 45;
+0013 multiplier = (162 / nmodelruns)^0.5;
+0014 
+0015 <span class="keyword">if</span> ninterventions &lt; pagebreak1
+0016     pagebreak1 = ninterventions;
+0017 <span class="keyword">end</span>
+0018 
+0019 name = sprintf(<span class="string">'%s - Dispersion plot by Intervention of offsets across model runs %s %d-%d'</span>, study, mversion, modelidx, nmodelruns);
+0020 
+0021 <span class="keyword">for</span> midx = modelidx:size(models,1)
+0022     <span class="keyword">if</span> (~isequal(models{midx}, <span class="string">'placeholder'</span>) &amp;&amp; ~contains(models{midx}, <span class="string">'xxx'</span>))
+0023         load(fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>, models{midx})));
+0024         
+0025         modeliterations(midx) = niterations;
+0026         modeloffsets(midx,:) = amInterventions.Offset';
+0027          
+0028     <span class="keyword">end</span>
+0029 <span class="keyword">end</span>
+0030 
+0031 
+0032 [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(name, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0033 ax = subplot(plotsdown, plotsacross, 1, <span class="string">'Parent'</span>,p);
+0034 
+0035 
+0036 <span class="keyword">for</span> n = 1:pagebreak1
+0037     ioffsets = array2table(modeloffsets(~isnan(modeloffsets(:,n)),n));
+0038     ioffsets.Properties.VariableNames{<span class="string">'Var1'</span>} = <span class="string">'Offset'</span>;
+0039     ioffsets.Count(:) = 1;
+0040     counts = varfun(@mean,ioffsets, <span class="string">'GroupingVariables'</span>, {<span class="string">'Offset'</span>});
+0041     line(ax, [0:(max_offset - 1)] , (n * ones(1, max_offset)), <span class="keyword">...</span>
+0042         <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="keyword">...</span>
+0043         <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="keyword">...</span>
+0044         <span class="string">'LineWidth'</span>, 0.5);
+0045     
+0046     <span class="keyword">for</span> i = 1:size(counts)    
+0047         line(ax, counts.Offset(i) , n, <span class="keyword">...</span>
+0048             <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="keyword">...</span>
+0049             <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0050             <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0051             <span class="string">'MarkerSize'</span>, multiplier * (counts.GroupCount(i))^0.5,<span class="keyword">...</span>
+0052             <span class="string">'MarkerEdgeColor'</span>, <span class="string">'blue'</span>, <span class="keyword">...</span>
+0053             <span class="string">'MarkerFaceColor'</span>, <span class="string">'blue'</span>);
+0054     <span class="keyword">end</span>
+0055 <span class="keyword">end</span>
+0056 yl = [1 pagebreak1];
+0057 xl = [0 (max_offset - 1)];
+0058 ylim(yl);
+0059 xlim(xl);
+0060 ax.XMinorTick = <span class="string">'on'</span>;
+0061 ax.YMinorTick = <span class="string">'on'</span>;
+0062 ax.TickDir = <span class="string">'out'</span>;
+0063 
+0064 ax2 = subplot(plotsdown, plotsacross, 2, <span class="string">'Parent'</span>,p);
+0065 
+0066 <span class="keyword">if</span> ninterventions &gt; pagebreak1
+0067     <span class="keyword">for</span> n = pagebreak1 + 1:ninterventions
+0068         ioffsets = array2table(modeloffsets(~isnan(modeloffsets(:,n)),n));
+0069         ioffsets.Properties.VariableNames{<span class="string">'Var1'</span>} = <span class="string">'Offset'</span>;
+0070         ioffsets.Count(:) = 1;
+0071         counts = varfun(@mean,ioffsets, <span class="string">'GroupingVariables'</span>, {<span class="string">'Offset'</span>});
+0072         line(ax2, [0:(max_offset - 1)] , (n * ones(1, max_offset)), <span class="keyword">...</span>
+0073             <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="keyword">...</span>
+0074             <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="keyword">...</span>
+0075             <span class="string">'LineWidth'</span>, 0.5);
+0076     
+0077         <span class="keyword">for</span> i = 1:size(counts)    
+0078             line(ax2, counts.Offset(i) , n, <span class="keyword">...</span>
+0079                 <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="keyword">...</span>
+0080                 <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0081                 <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0082                 <span class="string">'MarkerSize'</span>, 3 * (counts.GroupCount(i))^0.5,<span class="keyword">...</span>
+0083                 <span class="string">'MarkerEdgeColor'</span>, <span class="string">'blue'</span>, <span class="keyword">...</span>
+0084                 <span class="string">'MarkerFaceColor'</span>, <span class="string">'blue'</span>);
+0085         <span class="keyword">end</span>
+0086     <span class="keyword">end</span>
+0087     yl = [pagebreak1 + 1 ninterventions];
+0088     xl = [0 (max_offset - 1)];
+0089     ylim(yl);
+0090     xlim(xl);
+0091     ax.XMinorTick = <span class="string">'on'</span>;
+0092     ax.YMinorTick = <span class="string">'on'</span>;
+0093     ax.TickDir = <span class="string">'out'</span>;
+0094 
+0095 <span class="keyword">end</span>
+0096 
+0097 plotsubfolder = <span class="string">'Plots'</span>;
+0098 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, name, plotsubfolder);
+0099 close(f);
+0100 
+0101 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

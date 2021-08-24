@@ -1,0 +1,243 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCPlotsAndSavePredictions</title>
+  <meta name="keywords" content="amEMMCPlotsAndSavePredictions">
+  <meta name="description" content="amEMMCPlotsAndSavePredictions - plots measures prior to">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCPlotsAndSavePredictions.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCPlotsAndSavePredictions
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCPlotsAndSavePredictions - plots measures prior to</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function amEMMCPlotsAndSavePredictions(amInterventions, amIntrcube, measures, pdoffset,overall_pdoffset, hstg, overall_hist, vshift, meancurvemean, normmean, normstd, isOutlier,ex_start_array, thisinter, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder, normmode) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCPlotsAndSavePredictions - plots measures prior to
+ treatment with alignment model predictions and overlaid with the mean
+ curve for visual comparison, as well as plots of the posterior
+ probability distributions by measure (handling multiple sets of latent
+ curves)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="plotExStart.html" class="code" title="function [xl, yl] = plotExStart(ax, ex_start, offset, xl, yl, colour, linestyle, linewidth)">plotExStart</a>	plotExStart - plots the predicted exacerbation start plus average</li><li><a href="plotFillArea.html" class="code" title="function plotFillArea(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillArea</a>	plotFillArea - plots a shaded area on the graph (eg for confidence bounds</li><li><a href="plotHorizontalLine.html" class="code" title="function [xl, yl] = plotHorizontalLine(ax, yval, xl, yl, colour, linestyle, linewidth)">plotHorizontalLine</a>	plotHotizontalLine - plots a horizontal line</li><li><a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>	plotLatentCurve - plots the latent curve actual and smoothed</li><li><a href="plotMeasurementData.html" class="code" title="function [xl, yl] = plotMeasurementData(ax, days, mdata, xl, yl, measure, colour, linestyle, linewidth, marker, markersize, markerec, markerfc)">plotMeasurementData</a>	plotMeasurementDataAndMean - plots the measurement data along with the mean and</li><li><a href="plotOutlierDataPoints.html" class="code" title="function plotOutlierDataPoints(ax, days, mdata, outliers, max_offset, align_wind, colour, linestyle, linewidth, marker, markersize, markerec, markerfc)">plotOutlierDataPoints</a>	plotDataOutliers - plots the outliers in the measurement data</li><li><a href="plotProbDistribution.html" class="code" title="function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc)">plotProbDistribution</a>	plotProbDistribution - plots a prob distribution</li><li><a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>	plotVerticalLine - plots a vertical line</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>	setMinYDisplayRangeForMeasure - sets the minimum range for Y axis for</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/recovery/runAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist)">runAlignmentModelEMMCRecoveryFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="../../Code/pdm/recovery/runFastAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runFastAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist, nameaddendum)">runFastAlignmentModelEMMCRecoveryFcn</a>	fast version with 1 plot (typical profile) + alignment result matfile</li><li><a href="runAlignmentModelEMMCFcn.html" class="code" title="function runAlignmentModelEMMCFcn(amRunParameters)">runAlignmentModelEMMCFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="runAlignmentModelEMMCFcnSplit.html" class="code" title="function runAlignmentModelEMMCFcnSplit(amRunParameters)">runAlignmentModelEMMCFcnSplit</a>	function to run the alignment model (EM version) given a set of run</li><li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function amEMMCPlotsAndSavePredictions(amInterventions, amIntrcube, measures, pdoffset, </a><span class="keyword">...</span>
+0002     overall_pdoffset, hstg, overall_hist, vshift, meancurvemean, normmean, normstd, isOutlier, <span class="keyword">...</span>
+0003     ex_start_array, thisinter, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder, normmode)
+0004 
+0005 <span class="comment">% amEMMCPlotsAndSavePredictions - plots measures prior to</span>
+0006 <span class="comment">% treatment with alignment model predictions and overlaid with the mean</span>
+0007 <span class="comment">% curve for visual comparison, as well as plots of the posterior</span>
+0008 <span class="comment">% probability distributions by measure (handling multiple sets of latent</span>
+0009 <span class="comment">% curves)</span>
+0010 
+0011 
+0012 <span class="keyword">if</span> nmeasures &lt;= 8
+0013     plotsdown = 9;
+0014     plotsacross = 5;
+0015     mpos = [ 1  2  6  7 ;  3  4  8  9 ; 
+0016             11 12 16 17 ; 13 14 18 19 ; 
+0017             21 22 26 27 ; 23 24 28 29 ; 
+0018             31 32 36 37 ; 33 34 38 39 ];
+0019     hpos = [ 5 ; 10 ; 
+0020             15 ; 20 ; 
+0021             25 ; 30 ; 
+0022             35 ; 40 ; 
+0023             45      ];
+0024     <span class="comment">%hpos = [ 5 ; 10 ; 15 ; 20 ; 25 ; 30 ; 35 ; 40 ; 45 ; 44 ; 43 ; 42 ; 41 ];</span>
+0025 <span class="keyword">elseif</span> nmeasures &gt; 8 &amp;&amp; nmeasures &lt;= 18
+0026     plotsdown = 14;
+0027     plotsacross = 8;
+0028     mpos = [ 1  2  9 10 ;  3  4 11 12 ;  5  6 13 14 ; 
+0029             17 18 25 26 ; 19 20 27 28 ; 21 22 29 30 ; 
+0030             33 34 41 42 ; 35 36 43 44 ; 37 38 45 46 ; 
+0031             49 50 57 58 ; 51 52 59 60 ; 53 54 61 62 ;
+0032             65 66 73 74 ; 67 68 75 76 ; 69 70 77 78 ; 
+0033             81 82 89 90 ; 83 84 91 92 ; 85 86 93 94 ];
+0034     hpos = [  7 ;  8 ; 15 ; 
+0035              23 ; 24 ; 31 ;  
+0036              39 ; 40 ; 47 ; 
+0037              55 ; 56 ; 63 ; 
+0038              71 ; 72 ; 79 ;
+0039              87 ; 88 ; 95 ;
+0040              103          ];
+0041 <span class="keyword">end</span>
+0042 
+0043 dayset = [-1 * (max_offset + align_wind - 1): -1];
+0044 anchor = 0; <span class="comment">% latent curve is to be shifted by offset on the plot</span>
+0045 
+0046 <span class="keyword">if</span> normmode == 2
+0047     normtxt = <span class="string">'Norm'</span>;
+0048 <span class="keyword">else</span>
+0049     normtxt = <span class="string">''</span>;
+0050 <span class="keyword">end</span>
+0051 
+0052 scid = amInterventions.SmartCareID(thisinter);
+0053 lc = amInterventions.LatentCurve(thisinter);
+0054 ex_start = ex_start_array(lc);
+0055 noutliers = sum(sum(isOutlier(lc, thisinter, :, :, amInterventions.Offset(thisinter) + 1)));
+0056 name = sprintf(<span class="string">'%s-%s-%d_ID_%d_Dt_%s_Off_%d_C%d_Out_%d'</span>, plotname, normtxt, thisinter, <span class="keyword">...</span>
+0057     scid, datestr(amInterventions.IVStartDate(thisinter),29), amInterventions.Offset(thisinter), amInterventions.LatentCurve(thisinter), noutliers);
+0058 fprintf(<span class="string">'%s\n'</span>, name);
+0059 
+0060 [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(name, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0061 
+0062 <span class="keyword">for</span> m = 1:nmeasures
+0063     <span class="keyword">if</span> all(isnan(amIntrcube(thisinter, :, m)))
+0064         <span class="keyword">continue</span>;
+0065     <span class="keyword">end</span>
+0066     <span class="keyword">if</span> normmode == 1
+0067         adjmeasdata = amIntrcube(thisinter, :, m);
+0068         <span class="keyword">if</span> sigmamethod == 4
+0069             adjmeancurvemean = ((meancurvemean(lc, :, m) - vshift(lc, thisinter, m, amInterventions.Offset(thisinter) + 1)) * normstd(thisinter, m)) + normmean(thisinter, m)  ;
+0070             <span class="comment">%adjmeancurvemean = (meancurvemean(lc, :, m) * normstd(thisinter, m)) + normmean(thisinter, m)  ;</span>
+0071         <span class="keyword">else</span>
+0072             adjmeancurvemean =  meancurvemean(lc, :, m) - vshift(lc, thisinter, m, amInterventions.Offset(thisinter) + 1) + normmean(thisinter, m) ;
+0073             <span class="comment">%adjmeancurvemean =  meancurvemean(lc, :, m) + normmean(thisinter, m) ;</span>
+0074         <span class="keyword">end</span>
+0075     <span class="keyword">else</span>
+0076         adjmeasdata = amIntrcube(thisinter, :, m) + vshift(lc, thisinter, m, amInterventions.Offset(thisinter) + 1);
+0077         adjmeancurvemean = meancurvemean(lc, :, m);
+0078     <span class="keyword">end</span>
+0079     
+0080     <span class="comment">% initialise plot areas</span>
+0081     xl = [0 0];
+0082     yl = [min(adjmeancurvemean(1:max_offset + align_wind - 1 - amInterventions.Offset(thisinter)) * .99) <span class="keyword">...</span>
+0083           max(adjmeancurvemean(1:max_offset + align_wind - 1 - amInterventions.Offset(thisinter)) * 1.01)];
+0084     <span class="keyword">if</span> yl(1) == yl(2)
+0085         rangelimit = <a href="setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>(measures.Name{m});
+0086         yl(1) = yl(1) - rangelimit * 0.5;
+0087         yl(2) = yl(2) + rangelimit * 0.5;
+0088     <span class="keyword">end</span>
+0089     
+0090     <span class="comment">% create subplot and plot required data arrays</span>
+0091     ax = subplot(plotsdown, plotsacross, mpos(m,:), <span class="string">'Parent'</span>,p);               
+0092     <span class="comment">%[xl, yl] = plotMeasurementData(ax, dayset, amIntrcube(thisinter, :, m), xl, yl, measures(m,:), [0, 0.65, 1], '-', 1.0, 'o', 2.0, 'blue', 'green');</span>
+0093     [xl, yl] = <a href="plotMeasurementData.html" class="code" title="function [xl, yl] = plotMeasurementData(ax, days, mdata, xl, yl, measure, colour, linestyle, linewidth, marker, markersize, markerec, markerfc)">plotMeasurementData</a>(ax, dayset, adjmeasdata, xl, yl, measures(m,:), [0, 0.65, 1], <span class="string">'-'</span>, 1.0, <span class="string">'o'</span>, 2.0, <span class="string">'blue'</span>, <span class="string">'green'</span>);
+0094     
+0095     <span class="keyword">if</span> normmode == 1
+0096         [xl, yl] = <a href="plotHorizontalLine.html" class="code" title="function [xl, yl] = plotHorizontalLine(ax, yval, xl, yl, colour, linestyle, linewidth)">plotHorizontalLine</a>(ax, normmean(thisinter, m), xl, yl, <span class="string">'blue'</span>, <span class="string">'--'</span>, 0.5); <span class="comment">% plot stable mean</span>
+0097     <span class="keyword">end</span>
+0098     
+0099     [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, amInterventions.Offset(thisinter), adjmeancurvemean, xl, yl, <span class="string">'red'</span>, <span class="string">':'</span>, 1.0, anchor);
+0100     [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, amInterventions.Offset(thisinter), smooth(adjmeancurvemean,5), xl, yl, <span class="string">'red'</span>, <span class="string">'-'</span>, 1.0, anchor);
+0101 
+0102     [xl, yl] = <a href="plotExStart.html" class="code" title="function [xl, yl] = plotExStart(ax, ex_start, offset, xl, yl, colour, linestyle, linewidth)">plotExStart</a>(ax, ex_start, amInterventions.Offset(thisinter), xl, yl,  <span class="string">'black'</span>, <span class="string">'-'</span>, 0.5);            
+0103     [xl, yl] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax, 0, xl, yl, <span class="string">'cyan'</span>, <span class="string">'-'</span>, 0.5); <span class="comment">% plot treatment start</span>
+0104     
+0105     <span class="comment">%plotOutlierDataPoints(ax, dayset, amIntrcube(thisinter, :, m), isOutlier(lc, thisinter, :, m, amInterventions.Offset(thisinter) + 1), ...</span>
+0106     <span class="comment">%    max_offset, align_wind, [0, 0.65, 1], 'none', 1.0, 'o', 4.0, 'red', 'yellow');</span>
+0107     <a href="plotOutlierDataPoints.html" class="code" title="function plotOutlierDataPoints(ax, days, mdata, outliers, max_offset, align_wind, colour, linestyle, linewidth, marker, markersize, markerec, markerfc)">plotOutlierDataPoints</a>(ax, dayset, adjmeasdata, isOutlier(lc, thisinter, :, m, amInterventions.Offset(thisinter) + 1), <span class="keyword">...</span>
+0108         max_offset, align_wind, [0, 0.65, 1], <span class="string">'none'</span>, 1.0, <span class="string">'o'</span>, 4.0, <span class="string">'red'</span>, <span class="string">'yellow'</span>);
+0109     
+0110     hold on;
+0111     <a href="plotFillArea.html" class="code" title="function plotFillArea(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillArea</a>(ax, ex_start + amInterventions.LowerBound1(thisinter), ex_start + amInterventions.UpperBound1(thisinter), <span class="keyword">...</span>
+0112         yl(1), yl(2), <span class="string">'red'</span>, <span class="string">'0.1'</span>, <span class="string">'none'</span>);
+0113     <span class="keyword">if</span> amInterventions.LowerBound2(thisinter) ~= -1
+0114         <a href="plotFillArea.html" class="code" title="function plotFillArea(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillArea</a>(ax, ex_start + amInterventions.LowerBound2(thisinter), ex_start + amInterventions.UpperBound2(thisinter), <span class="keyword">...</span>
+0115             yl(1), yl(2), <span class="string">'red'</span>, <span class="string">'0.1'</span>, <span class="string">'none'</span>);
+0116     <span class="keyword">end</span>
+0117     hold off;
+0118         
+0119     xl2 = [0 max_offset-1];
+0120     yl2 = [0 0.25];            
+0121     ax2 = subplot(plotsdown, plotsacross, hpos(m,:),<span class="string">'Parent'</span>,p);           
+0122     [xl2, yl2] = <a href="plotProbDistribution.html" class="code" title="function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc)">plotProbDistribution</a>(ax2, max_offset, pdoffset(lc, m, thisinter,:), xl2, yl2, <span class="string">'o'</span>, 0.5, 2.0, <span class="string">'blue'</span>, <span class="string">'blue'</span>);
+0123     [xl2, yl2] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax2, amInterventions.Offset(thisinter), xl2, yl2, <span class="string">'black'</span>, <span class="string">'-'</span>, 0.5); <span class="comment">% plot predicted offset</span>
+0124     hold on;
+0125     <a href="plotFillArea.html" class="code" title="function plotFillArea(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillArea</a>(ax2, amInterventions.LowerBound1(thisinter), amInterventions.UpperBound1(thisinter), <span class="keyword">...</span>
+0126         yl2(1), yl2(2), <span class="string">'red'</span>, <span class="string">'0.1'</span>, <span class="string">'none'</span>);
+0127     <span class="keyword">if</span> amInterventions.LowerBound2(thisinter) ~= -1
+0128         <a href="plotFillArea.html" class="code" title="function plotFillArea(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillArea</a>(ax2, amInterventions.LowerBound2(thisinter), amInterventions.UpperBound2(thisinter), <span class="keyword">...</span>
+0129             yl2(1), yl2(2), <span class="string">'red'</span>, <span class="string">'0.1'</span>, <span class="string">'none'</span>);
+0130     <span class="keyword">end</span>
+0131     hold off;
+0132     set(gca,<span class="string">'fontsize'</span>,6);
+0133     <span class="keyword">if</span> measures.Mask(m) == 1
+0134         title(sprintf(<span class="string">'%s (%.1f)'</span>, measures.DisplayName{m}, hstg(lc, m, thisinter, amInterventions.Offset(thisinter) + 1)), <span class="string">'BackgroundColor'</span>, <span class="string">'g'</span>);
+0135     <span class="keyword">else</span>
+0136         title(sprintf(<span class="string">'%s (%.1f)'</span>, measures.DisplayName{m}, hstg(lc, m, thisinter, amInterventions.Offset(thisinter) + 1)));
+0137     <span class="keyword">end</span>
+0138                     
+0139 <span class="keyword">end</span>
+0140 
+0141 <span class="comment">% plot the overall posterior distributions</span>
+0142 xl2 = [0 max_offset-1];
+0143 yl2 = [0 0.25];
+0144 ax2 = subplot(plotsdown, plotsacross, hpos(nmeasures + 1,:),<span class="string">'Parent'</span>,p); 
+0145 [xl2, yl2] = <a href="plotProbDistribution.html" class="code" title="function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc)">plotProbDistribution</a>(ax2, max_offset, overall_pdoffset(lc, thisinter, :), xl2, yl2, <span class="string">'o'</span>, 0.5, 2.0, <span class="string">'blue'</span>, <span class="string">'blue'</span>);                
+0146 [xl2, yl2] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax2, amInterventions.Offset(thisinter), xl2, yl2, <span class="string">'black'</span>, <span class="string">'-'</span>, 0.5); <span class="comment">% plot predicted offset</span>
+0147 hold on;
+0148 <a href="plotFillArea.html" class="code" title="function plotFillArea(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillArea</a>(ax2, amInterventions.LowerBound1(thisinter), amInterventions.UpperBound1(thisinter), <span class="keyword">...</span>
+0149         yl2(1), yl2(2), <span class="string">'red'</span>, <span class="string">'0.1'</span>, <span class="string">'none'</span>);
+0150 <span class="keyword">if</span> amInterventions.LowerBound2(thisinter) ~= -1
+0151     <a href="plotFillArea.html" class="code" title="function plotFillArea(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillArea</a>(ax2, amInterventions.LowerBound2(thisinter), amInterventions.UpperBound2(thisinter), <span class="keyword">...</span>
+0152         yl2(1), yl2(2), <span class="string">'red'</span>, <span class="string">'0.1'</span>, <span class="string">'none'</span>);
+0153 <span class="keyword">end</span>
+0154 hold off;
+0155 set(gca,<span class="string">'fontsize'</span>,6);
+0156 title(sprintf(<span class="string">'Overall (%.1f)'</span>, overall_hist(lc, thisinter, amInterventions.Offset(thisinter) + 1)), <span class="string">'BackgroundColor'</span>, <span class="string">'g'</span>);
+0157 
+0158 infostring = [ {sprintf(<span class="string">'Latent Curve Set:             %11d'</span>, lc)} ; <span class="keyword">...</span>
+0159                {sprintf(<span class="string">'Treatment Date:               %11s'</span>, datestr(amInterventions.IVStartDate(thisinter), 1))} ; <span class="keyword">...</span>
+0160                {sprintf(<span class="string">'Predicted Exacerbation Start: %11s'</span>, datestr((amInterventions.IVStartDate(thisinter) + days(ex_start + amInterventions.Offset(thisinter))), 1))} ; <span class="keyword">...</span>
+0161                {sprintf(<span class="string">'90%% confidence Lower Bound1:  %11s'</span>, datestr((amInterventions.IVStartDate(thisinter) + days(ex_start + amInterventions.LowerBound1(thisinter))), 1))} ; <span class="keyword">...</span>
+0162                {sprintf(<span class="string">'90%% confidence Upper Bound2:  %11s'</span>, datestr((amInterventions.IVStartDate(thisinter) + days(ex_start + amInterventions.UpperBound1(thisinter) + 1)), 1))} ; <span class="keyword">...</span>
+0163              ];
+0164 
+0165 <span class="keyword">if</span> amInterventions.LowerBound2(thisinter) ~= -1
+0166     rowstring = sprintf(<span class="string">'90%% confidence Lower Bound2:  %11s'</span>, datestr((amInterventions.IVStartDate(thisinter) + days(ex_start + amInterventions.LowerBound2(thisinter))),1));
+0167     infostring = [infostring ; rowstring];
+0168     rowstring = sprintf(<span class="string">'90%% confidence Upper Bound2:  %11s'</span>, datestr((amInterventions.IVStartDate(thisinter) + days(ex_start + amInterventions.UpperBound2(thisinter) + 1)),1));
+0169     infostring = [infostring ; rowstring];
+0170 <span class="keyword">else</span>
+0171     rowstring = sprintf(<span class="string">'90%% confidence Lower Bound2:  %11s'</span>, <span class="string">'N/A'</span>);
+0172     infostring = [infostring ; rowstring];
+0173     rowstring = sprintf(<span class="string">'90%% confidence Upper Bound2:  %11s'</span>, <span class="string">'N/A'</span>);
+0174     infostring = [infostring ; rowstring];
+0175 <span class="keyword">end</span>
+0176 
+0177 sp1 = uicontrol(<span class="string">'Parent'</span>, p, <span class="keyword">...</span>
+0178                 <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="keyword">...</span>
+0179                 <span class="string">'OuterPosition'</span>, [0.2, 0.075, 0.5, 0.1], <span class="keyword">...</span>
+0180                 <span class="string">'Style'</span>, <span class="string">'text'</span>, <span class="keyword">...</span>
+0181                 <span class="string">'FontName'</span>, <span class="string">'FixedWidth'</span>, <span class="keyword">...</span>
+0182                 <span class="string">'FontSize'</span>, 8, <span class="keyword">...</span>
+0183                 <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>, <span class="keyword">...</span>
+0184                 <span class="string">'HorizontalAlignment'</span>, <span class="string">'left'</span>, <span class="keyword">...</span>
+0185                 <span class="string">'BackgroundColor'</span>, <span class="string">'white'</span>, <span class="keyword">...</span>
+0186                 <span class="string">'String'</span>, infostring);
+0187             
+0188 <span class="comment">% save plot</span>
+0189 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, name, plotsubfolder);
+0190 close(f);
+0191 
+0192 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

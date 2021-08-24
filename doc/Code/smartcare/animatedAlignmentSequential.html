@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of animatedAlignmentSequential</title>
+  <meta name="keywords" content="animatedAlignmentSequential">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; animatedAlignmentSequential.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>animatedAlignmentSequential
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [f, p, niterations] = animatedAlignmentSequential(animatedmeancurvemean, profile_pre, measures, max_offset, align_wind, nmeasures, moviefilename) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runModelUtilityFunctions.html" class="code" title="">runModelUtilityFunctions</a>	</li><li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li><li><a href="runPlotFunctions.html" class="code" title="">runPlotFunctions</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [f, p, niterations] = animatedAlignmentSequential(animatedmeancurvemean, profile_pre, measures, max_offset, align_wind, nmeasures, moviefilename)</a>
+0002 
+0003 v = VideoWriter(moviefilename, <span class="string">'MPEG-4'</span>);
+0004 open(v);
+0005 
+0006 plotsacross = 3;
+0007 plotsdown = 3;
+0008 <span class="keyword">for</span> niterations = 1:2000
+0009     <span class="keyword">if</span> all(animatedmeancurvemean(:,:,niterations)==0)
+0010         <span class="keyword">break</span>;
+0011     <span class="keyword">end</span>
+0012 <span class="keyword">end</span>
+0013 niterations = niterations - 1;
+0014 days = -1 * (max_offset+align_wind-1):-1;
+0015 
+0016 [f,p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(<span class="string">'Animation of Curve Alignment'</span>,<span class="string">'portrait'</span>,<span class="string">'a4'</span>);
+0017 
+0018 <span class="keyword">for</span> m = 1:nmeasures
+0019     ax = subplot(plotsdown,plotsacross,m, <span class="string">'Parent'</span>, p);
+0020     xl = [min(days) max(days)];
+0021     xlim(xl);
+0022     yl = [min(min(profile_pre(:,m)), min(min(animatedmeancurvemean(:,m,1:niterations),[],3))), <span class="keyword">...</span>
+0023         max(max(profile_pre(:,m)), max(max(animatedmeancurvemean(:,m,1:niterations),[],3)))];
+0024     ylim(yl);
+0025     <span class="keyword">if</span> measures.Mask(m) == 1
+0026         title(sprintf(<span class="string">'%s - Iteration %2d'</span>, measures.DisplayName{m}, 1), <span class="string">'BackgroundColor'</span>, <span class="string">'green'</span>);
+0027     <span class="keyword">else</span>
+0028         title(sprintf(<span class="string">'%s - Iteration %2d'</span>, measures.DisplayName{m}, 1));
+0029     <span class="keyword">end</span>
+0030     line(days, profile_pre(:,m), <span class="string">'Color'</span>, <span class="string">'red'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="string">'Linewidth'</span>, 0.5);
+0031     line(days, smooth(profile_pre(:,m),5), <span class="string">'Color'</span>, <span class="string">'red'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'Linewidth'</span>, 0.5);
+0032 
+0033     an1 = animatedline(days, profile_pre(:,m), <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="string">'Linewidth'</span>, 0.5);
+0034     an2 = animatedline(days, smooth(profile_pre(:,m),5), <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'Linewidth'</span>, 0.5);
+0035     
+0036     frame = getframe(f);
+0037     writeVideo(v,frame);
+0038 
+0039     pause(0.5);
+0040 
+0041     <span class="keyword">for</span> i = 1:niterations
+0042         <span class="keyword">if</span> measures.Mask(m) == 1
+0043             title(sprintf(<span class="string">'%s - Iteration %2d'</span>, measures.DisplayName{m}, i), <span class="string">'BackgroundColor'</span>, <span class="string">'green'</span>);
+0044         <span class="keyword">else</span>
+0045             title(sprintf(<span class="string">'%s - Iteration %2d'</span>, measures.DisplayName{m}, i));
+0046         <span class="keyword">end</span>
+0047         title(sprintf(<span class="string">'%s - Iteration %2d'</span>, measures.DisplayName{m}, i));
+0048         clearpoints(an1);
+0049         addpoints(an1, days, animatedmeancurvemean(:, m, i));
+0050         clearpoints(an2);
+0051         addpoints(an2, days, smooth(animatedmeancurvemean(:, m, i),5));
+0052         drawnow nocallbacks;
+0053         <span class="comment">%pause(0.01);</span>
+0054         
+0055         frame = getframe(f);
+0056         writeVideo(v,frame);
+0057         
+0058     <span class="keyword">end</span>
+0059 
+0060 <span class="keyword">end</span>
+0061 
+0062 close(v);
+0063 close(f);
+0064 
+0065 <span class="keyword">end</span>
+0066</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

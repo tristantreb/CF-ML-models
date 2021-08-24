@@ -1,0 +1,284 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCCompareModelRunToTestData</title>
+  <meta name="keywords" content="amEMMCCompareModelRunToTestData">
+  <meta name="description" content="amEMMCCompareModelRunToTestData - compares the output of a chosen model run to">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCCompareModelRunToTestData.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCCompareModelRunToTestData
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCCompareModelRunToTestData - compares the output of a chosen model run to</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function amEMMCCompareModelRunToTestData(amLabelledInterventions, amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset,hstg, overall_hist, meancurvemean, normmean, normstd, ex_start, nmeasures, ninterventions, nlatentcurves, max_offset,align_wind, sigmamethod, study, mversion, modelrun, modelidx, testsetmode) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCCompareModelRunToTestData - compares the output of a chosen model run to
+ the labelled test data (able to handle multiple sets of latent curves</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="plotExStart.html" class="code" title="function [xl, yl] = plotExStart(ax, ex_start, offset, xl, yl, colour, linestyle, linewidth)">plotExStart</a>	plotExStart - plots the predicted exacerbation start plus average</li><li><a href="plotHorizontalLine.html" class="code" title="function [xl, yl] = plotHorizontalLine(ax, yval, xl, yl, colour, linestyle, linewidth)">plotHorizontalLine</a>	plotHotizontalLine - plots a horizontal line</li><li><a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>	plotLatentCurve - plots the latent curve actual and smoothed</li><li><a href="plotMeasurementData.html" class="code" title="function [xl, yl] = plotMeasurementData(ax, days, mdata, xl, yl, measure, colour, linestyle, linewidth, marker, markersize, markerec, markerfc)">plotMeasurementData</a>	plotMeasurementDataAndMean - plots the measurement data along with the mean and</li><li><a href="plotProbDistribution.html" class="code" title="function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc)">plotProbDistribution</a>	plotProbDistribution - plots a prob distribution</li><li><a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>	plotVerticalLine - plots a vertical line</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function amEMMCCompareModelRunToTestData(amLabelledInterventions, amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset, </a><span class="keyword">...</span>
+0002     hstg, overall_hist, meancurvemean, normmean, normstd, ex_start, nmeasures, ninterventions, nlatentcurves, max_offset, <span class="keyword">...</span>
+0003     align_wind, sigmamethod, study, mversion, modelrun, modelidx, testsetmode)
+0004 
+0005 <span class="comment">% amEMMCCompareModelRunToTestData - compares the output of a chosen model run to</span>
+0006 <span class="comment">% the labelled test data (able to handle multiple sets of latent curves</span>
+0007 
+0008 amLabelledInterventions = amLabelledInterventions(ismember(amLabelledInterventions.SmartCareID,amInterventions.SmartCareID),:);
+0009 amLabelledInterventions = [array2table((1:ninterventions)'), amLabelledInterventions];
+0010 amLabelledInterventions.Properties.VariableNames{<span class="string">'Var1'</span>} = <span class="string">'InterNbr'</span>;
+0011 
+0012 <span class="keyword">if</span> testsetmode == 1
+0013     testidx = amLabelledInterventions.IncludeInTestSet==<span class="string">'Y'</span>;
+0014 <span class="keyword">elseif</span> testsetmode == 2
+0015     testidx = true(size(amLabelledInterventions, 1), 1);
+0016 <span class="keyword">else</span>
+0017     fprintf(<span class="string">'**** Unknown test set mode ****\n'</span>);
+0018     <span class="keyword">return</span>
+0019 <span class="keyword">end</span> 
+0020 testset = amLabelledInterventions(testidx,:);
+0021 testsetsize = size(testset,1);    
+0022 modelpreds = amInterventions.Pred(testidx);
+0023 amintrtst  = amInterventions(testidx, :);
+0024         
+0025 matchidx   = (modelpreds &gt;= (testset.IVScaledDateNum + testset.LowerBound1) &amp; modelpreds &lt;= (testset.IVScaledDateNum + testset.UpperBound1)) | <span class="keyword">...</span>
+0026              (modelpreds &gt;= (testset.IVScaledDateNum + testset.LowerBound2) &amp; modelpreds &lt;= (testset.IVScaledDateNum + testset.UpperBound2));
+0027         
+0028 dist = 0;
+0029 distArr = zeros(1,4);
+0030 
+0031 <span class="keyword">for</span> i = 1:size(testset,1)
+0032     <span class="keyword">if</span> ~matchidx(i)
+0033         <span class="comment">%dist1 = min(abs(testset.IVScaledDateNum(i) + testset.LowerBound1(i) - modelpreds(i)), abs(testset.IVScaledDateNum(i) + testset.LowerBound2(i) - modelpreds(i)));</span>
+0034         <span class="comment">%dist2 = min(abs(testset.IVScaledDateNum(i) + testset.UpperBound1(i) - modelpreds(i)), abs(testset.IVScaledDateNum(i) + testset.UpperBound2(i) - modelpreds(i)));</span>
+0035         <span class="comment">%dist = dist + min(dist1, dist2);</span>
+0036         distArr(1) = abs(testset.IVScaledDateNum(i) + testset.LowerBound1(i) - modelpreds(i));
+0037         distArr(2) = abs(testset.IVScaledDateNum(i) + testset.UpperBound1(i) - modelpreds(i));
+0038         <span class="keyword">if</span> testset.LowerBound2(i) ~= 0
+0039             distArr(3) = abs(testset.IVScaledDateNum(i) + testset.LowerBound2(i) - modelpreds(i));
+0040             distArr(4) = abs(testset.IVScaledDateNum(i) + testset.UpperBound2(i) - modelpreds(i));
+0041         <span class="keyword">else</span>
+0042             distArr(3) = 100;
+0043             distArr(4) = 100;
+0044         <span class="keyword">end</span>
+0045         dist = dist + min(distArr);
+0046     <span class="keyword">end</span>
+0047 <span class="keyword">end</span>
+0048 
+0049 fprintf(<span class="string">'For model %d: %s:\n'</span>, modelidx, modelrun);
+0050 fprintf(<span class="string">'%2d of %2d results match labelled test data\n'</span>, sum(matchidx), testsetsize);
+0051 fprintf(<span class="string">'Quality Score is %d\n'</span>, dist);
+0052 fprintf(<span class="string">'\n'</span>);
+0053 
+0054 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0055 plotsubfolder = strcat(<span class="string">'Plots/'</span>, sprintf(<span class="string">'%s%sm%d vs Labels'</span>, study, mversion, modelidx));
+0056 mkdir(strcat(basedir, plotsubfolder));
+0057 
+0058 plotsdown = 9;
+0059 <span class="keyword">if</span> nlatentcurves == 1
+0060     <span class="keyword">if</span> nmeasures &lt;= 8
+0061         plotsdown = 9;
+0062         plotsacross = 5;
+0063         mpos = [ 1  2  6  7 ;  3  4  8  9 ; 
+0064                 11 12 16 17 ; 13 14 18 19 ; 
+0065                 21 22 26 27 ; 23 24 28 29 ; 
+0066                 31 32 36 37 ; 33 34 38 39 ];
+0067         hpos(1,:) = [ 5 ; 10 ; 
+0068                      15 ; 20 ; 
+0069                      25 ; 30 ; 
+0070                      35 ; 40 ; 
+0071                      45      ];
+0072     <span class="keyword">elseif</span> nmeasures &gt; 8 &amp;&amp; nmeasures &lt;= 18
+0073         plotsdown = 14;
+0074         plotsacross = 8;
+0075         mpos = [ 1  2  9 10 ;  3  4 11 12 ;  5  6 13 14 ; 
+0076                 17 18 25 26 ; 19 20 27 28 ; 21 22 29 30 ; 
+0077                 33 34 41 42 ; 35 36 43 44 ; 37 38 45 46 ; 
+0078                 49 50 57 58 ; 51 52 59 60 ; 53 54 61 62 ;
+0079                 65 66 73 74 ; 67 68 75 76 ; 69 70 77 78 ; 
+0080                 81 82 89 90 ; 83 84 91 92 ; 85 86 93 94 ];
+0081         hpos(1,:) = [  7 ;  8 ; 15 ; 
+0082                       23 ; 24 ; 31 ;  
+0083                       39 ; 40 ; 47 ; 
+0084                       55 ; 56 ; 63 ; 
+0085                       71 ; 72 ; 79 ;
+0086                       87 ; 88 ; 95 ;
+0087                       103          ];
+0088     <span class="keyword">end</span>
+0089     <span class="comment">%plotsacross = 5;</span>
+0090     <span class="comment">%mpos = [ 1 2 6 7 ; 3 4 8 9 ; 11 12 16 17 ; 13 14 18 19 ; 21 22 26 27 ; 23 24 28 29 ; 31 32 36 37 ; 33 34 38 39];</span>
+0091     <span class="comment">%hpos(1, :) = [ 5 ; 10 ; 15 ; 20 ; 25 ; 30 ; 35 ; 40 ; 45 ; 44 ; 43 ; 42 ; 41 ];</span>
+0092 <span class="keyword">elseif</span> nlatentcurves == 2
+0093     plotsacross = 6;
+0094     mpos       = [ 1 2 7 8 ; 3 4 9 10 ; 13 14 19 20 ; 15 16 21 22 ; 25 26 31 32 ; 27 28 33 34 ; 37 38 43 44 ; 39 40 45 46 ];
+0095     hpos(1, :) = [ 5       ; 11       ; 17          ; 23          ; 29          ; 35          ; 41          ; 47          ; 53 ];
+0096     hpos(2, :) = [ 6       ; 12       ; 18          ; 24          ; 30          ; 36          ; 42          ; 48          ; 54 ];
+0097 <span class="keyword">elseif</span> nlatentcurves == 3
+0098     plotsacross = 7;
+0099     mpos       = [ 1 2 8 9 ; 3 4 10 11 ; 15 16 22 23 ; 17 18 24 25 ; 29 30 36 37 ; 31 32 38 39 ; 43 44 50 51 ; 45 46 52 53 ];
+0100     hpos(1, :) = [ 5       ; 12        ; 19          ; 26          ; 33          ; 40          ; 47          ; 54          ; 61 ];
+0101     hpos(2, :) = [ 6       ; 13        ; 20          ; 27          ; 34          ; 41          ; 48          ; 55          ; 62 ];
+0102     hpos(3, :) = [ 7       ; 14        ; 21          ; 28          ; 35          ; 42          ; 49          ; 56          ; 63 ];    
+0103 <span class="keyword">else</span>
+0104     fprintf(<span class="string">'Only supports up to 3 sets of latent curves\n'</span>);
+0105 <span class="keyword">end</span>
+0106 
+0107 days = -1 * (max_offset + align_wind - 1): -1;
+0108 anchor = 0; <span class="comment">% latent curve is to be shifted by offset on the plot</span>
+0109 
+0110 <span class="keyword">for</span> i = 1:testsetsize
+0111     scid      = testset.SmartCareID(i);
+0112     thisinter = testset.InterNbr(i);
+0113     lc        = amintrtst.LatentCurve(i);
+0114     exstrt    = amintrtst.Ex_Start(i);
+0115     pred      = amintrtst.Ex_Start(i) + amintrtst.Offset(i);
+0116     offset    = amintrtst.Offset(i);
+0117     <span class="keyword">if</span> matchidx(i)
+0118         result = <span class="string">'MATCH'</span>;
+0119     <span class="keyword">else</span>
+0120         result = <span class="string">'MISMATCH'</span>;
+0121     <span class="keyword">end</span>
+0122     <span class="keyword">if</span> testset.SequentialIntervention(i) == <span class="string">'Y'</span>
+0123         seqstring = <span class="string">' Seq'</span>;
+0124     <span class="keyword">else</span>
+0125         seqstring = <span class="string">''</span>;
+0126     <span class="keyword">end</span>
+0127     fprintf(<span class="string">'Intervention %2d (ID %d Date %s%s):'</span>, testset.InterNbr(i), scid, datestr(testset.IVStartDate(i),29), seqstring);
+0128     fprintf(<span class="string">' %8s :'</span>, result);
+0129     fprintf(<span class="string">'Labelled Range: %2d:%2d '</span>, testset.LowerBound1(i), testset.UpperBound1(i));
+0130     <span class="keyword">if</span> testset.LowerBound2(i) ~= 0
+0131         fprintf(<span class="string">'and %2d:%2d '</span>, testset.LowerBound2(i), testset.UpperBound2(i));
+0132     <span class="keyword">end</span>
+0133     fprintf(<span class="string">'Model Pred: %2d\n'</span>, pred);
+0134     
+0135     name = sprintf(<span class="string">'%s%sm%d vs Labels - Ex %d (ID %d Date %s%s) Pred %2d %s'</span>, study, mversion, modelidx, thisinter, scid, <span class="keyword">...</span>
+0136                     datestr(testset.IVStartDate(i),29), seqstring, pred, result);
+0137     
+0138     [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(name, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0139 
+0140     <span class="keyword">for</span> m = 1:nmeasures
+0141         <span class="keyword">if</span> all(isnan(amIntrDatacube(thisinter, :, m)))
+0142             <span class="keyword">continue</span>;
+0143         <span class="keyword">end</span>
+0144         
+0145         <span class="keyword">if</span> sigmamethod == 4
+0146             adjmeancurvemean = (meancurvemean(lc, :, m) * normstd(thisinter, m)) + normmean(thisinter, m);
+0147         <span class="keyword">else</span>
+0148             adjmeancurvemean =  meancurvemean(lc, :, m) + normmean1(thisinter, m);
+0149         <span class="keyword">end</span>
+0150         <span class="comment">%adjmeancurvemean = (meancurvemean(lc, :, m) * normstd(thisinter, m)) + normmean(thisinter, m);</span>
+0151         
+0152         <span class="comment">% initialise plot areas</span>
+0153         xl = [0 0];
+0154         yl = [min(adjmeancurvemean(1:max_offset + align_wind - 1 - offset) * .99) <span class="keyword">...</span>
+0155               max(adjmeancurvemean(1:max_offset + align_wind - 1 - offset) * 1.01)];
+0156       
+0157         <span class="comment">% create subplot and plot required data arrays</span>
+0158         ax = subplot(plotsdown, plotsacross, mpos(m,:), <span class="string">'Parent'</span>,p);               
+0159         [xl, yl] = <a href="plotMeasurementData.html" class="code" title="function [xl, yl] = plotMeasurementData(ax, days, mdata, xl, yl, measure, colour, linestyle, linewidth, marker, markersize, markerec, markerfc)">plotMeasurementData</a>(ax, days, amIntrDatacube(thisinter, :, m), xl, yl, measures(m,:), [0, 0.65, 1], <span class="string">'-'</span>, 1.0, <span class="string">'o'</span>, 2.0, <span class="string">'blue'</span>, <span class="string">'green'</span>);
+0160         [xl, yl] = <a href="plotHorizontalLine.html" class="code" title="function [xl, yl] = plotHorizontalLine(ax, yval, xl, yl, colour, linestyle, linewidth)">plotHorizontalLine</a>(ax, normmean(thisinter, m), xl, yl, <span class="string">'blue'</span>, <span class="string">'--'</span>, 0.5); <span class="comment">% plot mean</span>
+0161         [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, offset, adjmeancurvemean, xl, yl, <span class="string">'red'</span>, <span class="string">':'</span>, 1.0, anchor);
+0162         [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, offset, smooth(adjmeancurvemean,5), xl, yl, <span class="string">'red'</span>, <span class="string">'-'</span>, 1.0, anchor);
+0163     
+0164         [xl, yl] = <a href="plotExStart.html" class="code" title="function [xl, yl] = plotExStart(ax, ex_start, offset, xl, yl, colour, linestyle, linewidth)">plotExStart</a>(ax, exstrt, offset, xl, yl,  <span class="string">'black'</span>, <span class="string">'-'</span>, 0.5);
+0165         [xl, yl] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax, 0, xl, yl, <span class="string">'cyan'</span>, <span class="string">'-'</span>, 0.5); <span class="comment">% plot treatment start</span>
+0166         tempyl = yl;
+0167         tempyl(2) = yl(1) + ((yl(2)-yl(1)) * 0.1);
+0168         hold on;
+0169         fill(ax, [ testset.LowerBound1(i) testset.UpperBound1(i)    <span class="keyword">...</span>
+0170                    testset.UpperBound1(i) testset.LowerBound1(i) ], <span class="keyword">...</span>
+0171                    [yl(1) yl(1) yl(2) yl(2)], <span class="string">'red'</span>, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0172         <span class="keyword">if</span> testset.LowerBound2(i) ~= 0
+0173             fill(ax, [ testset.LowerBound2(i) testset.UpperBound2(i)    <span class="keyword">...</span>
+0174                        testset.UpperBound2(i) testset.LowerBound2(i) ], <span class="keyword">...</span>
+0175                        [yl(1) yl(1) yl(2) yl(2)], <span class="string">'red'</span>, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0176         <span class="keyword">end</span>    
+0177         hold off;
+0178         
+0179         <span class="comment">% plot prob distributions</span>
+0180         <span class="keyword">for</span> lc = 1:nlatentcurves
+0181             xl2 = [0 max_offset-1];
+0182             yl2 = [0 0.25];
+0183             ax2 = subplot(plotsdown, plotsacross, hpos(lc, m),<span class="string">'Parent'</span>,p);
+0184             [xl2, yl2] = <a href="plotProbDistribution.html" class="code" title="function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc)">plotProbDistribution</a>(ax2, max_offset, reshape(pdoffset(lc, m, thisinter,:), [1 max_offset]), xl2, yl2, <span class="string">'o'</span>, 0.5, 2.0, <span class="string">'blue'</span>, <span class="string">'blue'</span>);
+0185             [xl2, yl2] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax2, offset, xl2, yl2, <span class="string">'black'</span>, <span class="string">'-'</span>, 0.5); <span class="comment">% plot predicted offset</span>
+0186             hold on;
+0187             fill(ax2, [ (testset.LowerBound1(i) - ex_start(lc)) (testset.UpperBound1(i) - ex_start(lc))    <span class="keyword">...</span>
+0188                         (testset.UpperBound1(i) - ex_start(lc)) (testset.LowerBound1(i) - ex_start(lc)) ], <span class="keyword">...</span>
+0189                         [ yl2(1) yl2(1) yl2(2) yl2(2) ], <span class="string">'red'</span>, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0190             <span class="keyword">if</span> testset.LowerBound2(i) ~= 0
+0191                 fill(ax2, [ (testset.LowerBound2(i) - ex_start(lc)) (testset.UpperBound2(i) - ex_start(lc))    <span class="keyword">...</span>
+0192                             (testset.UpperBound2(i) - ex_start(lc)) (testset.LowerBound2(i) - ex_start(lc)) ], <span class="keyword">...</span>
+0193                             [ yl2(1) yl2(1) yl2(2) yl2(2) ], <span class="string">'red'</span>, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0194             <span class="keyword">end</span>    
+0195             hold off
+0196 
+0197             set(gca,<span class="string">'fontsize'</span>,6);
+0198             <span class="keyword">if</span> measures.Mask(m) == 1
+0199                 title(sprintf(<span class="string">'%s (%.1f)'</span>, measures.DisplayName{m}, hstg(lc, m, thisinter, offset + 1)), <span class="string">'BackgroundColor'</span>, <span class="string">'g'</span>);
+0200             <span class="keyword">else</span>
+0201                 title(sprintf(<span class="string">'%s (%.1f)'</span>, measures.DisplayName{m}, hstg(lc, m, thisinter, offset + 1)));
+0202             <span class="keyword">end</span>
+0203         <span class="keyword">end</span>
+0204                     
+0205     <span class="keyword">end</span>
+0206 
+0207     <span class="comment">% plot the overall posterior distribution</span>
+0208     <span class="keyword">for</span> lc = 1:nlatentcurves
+0209         xl2 = [0 max_offset-1];
+0210         yl2 = [0 0.25];
+0211         ax2 = subplot(plotsdown, plotsacross, hpos(lc, nmeasures + 1),<span class="string">'Parent'</span>,p);
+0212         
+0213         [xl2, yl2] = <a href="plotProbDistribution.html" class="code" title="function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc)">plotProbDistribution</a>(ax2, max_offset, reshape(overall_pdoffset(lc, thisinter, :), [1 max_offset]), xl2, yl2, <span class="string">'o'</span>, 0.5, 2.0, <span class="string">'blue'</span>, <span class="string">'blue'</span>);                
+0214         [xl2, yl2] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax2, offset, xl2, yl2, <span class="string">'black'</span>, <span class="string">'-'</span>, 0.5); <span class="comment">% plot predicted offset</span>
+0215         hold on;
+0216         fill(ax2, [ (testset.LowerBound1(i) - ex_start(lc)) (testset.UpperBound1(i) - ex_start(lc))    <span class="keyword">...</span>
+0217                     (testset.UpperBound1(i) - ex_start(lc)) (testset.LowerBound1(i) - ex_start(lc)) ], <span class="keyword">...</span>
+0218                     [ yl2(1) yl2(1) yl2(2) yl2(2) ], <span class="string">'red'</span>, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0219         <span class="keyword">if</span> testset.LowerBound2(i) ~= 0
+0220             fill(ax2, [ (testset.LowerBound2(i) - ex_start(lc)) (testset.UpperBound2(i) - ex_start(lc))    <span class="keyword">...</span>
+0221                         (testset.UpperBound2(i) - ex_start(lc)) (testset.LowerBound2(i) - ex_start(lc)) ], <span class="keyword">...</span>
+0222                         [ yl2(1) yl2(1) yl2(2) yl2(2) ], <span class="string">'red'</span>, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0223         <span class="keyword">end</span>    
+0224         hold off
+0225 
+0226         set(gca,<span class="string">'fontsize'</span>,6);
+0227         title(sprintf(<span class="string">'Overall (%.1f)'</span>, overall_hist(lc, thisinter, offset + 1)), <span class="string">'BackgroundColor'</span>, <span class="string">'g'</span>);
+0228     <span class="keyword">end</span>
+0229 
+0230     <span class="comment">% save plot</span>
+0231     <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, name, plotsubfolder);
+0232     close(f);
+0233 <span class="keyword">end</span>
+0234     
+0235 <span class="keyword">end</span>
+0236</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

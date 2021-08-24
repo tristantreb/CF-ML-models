@@ -1,0 +1,268 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotPatientProfiles</title>
+  <meta name="keywords" content="plotPatientProfiles">
+  <meta name="description" content="plot a profile of each measures for each patient over the whole enrolment period">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">exploration</a> &gt; plotPatientProfiles.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/exploration&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>plotPatientProfiles
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>plot a profile of each measures for each patient over the whole enrolment period</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> plot a profile of each measures for each patient over the whole enrolment period
+ 
+ script extracted and adapted from visualisePatientSummary.m
+ 
+ Input:
+ ------
+ clinical and home measurements data
+ 
+ Output: one plot per patient (containing all measures)
+ -------</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/helperfunctions/cleanDrugTherapyNamings.html" class="code" title="function out = cleanDrugTherapyNamings(str_array)">cleanDrugTherapyNamings</a>	useful only for pre-REDCAP update datasets</li><li><a href="../../../Code/pdm/recovery/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/smartcare/cleanDrugTherapyNamings.html" class="code" title="function out = cleanDrugTherapyNamings(str_array)">cleanDrugTherapyNamings</a>	inputs: array, output: array with cleaned drugtherapy names</li><li><a href="../../../Code/smartcare/getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>	getColumnForMeasure - returns the column name from physdata for the</li><li><a href="../../../Code/smartcare/getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>	gets the patient offset table</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="../../../Code/smartcare/selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="../../../Code/smartcare/setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>	setMinYDisplayRangeForMeasure - sets the minimum range for Y axis for</li><li><a href="../../../Code/smartcare/setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>	setYDisplayRange - function to scale y axis of plots appropriately</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% plot a profile of each measures for each patient over the whole enrolment period</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% script extracted and adapted from visualisePatientSummary.m</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Input:</span>
+0006 <span class="comment">% ------</span>
+0007 <span class="comment">% clinical and home measurements data</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Output: one plot per patient (containing all measures)</span>
+0010 <span class="comment">% -------</span>
+0011 
+0012 <a href="init.html" class="code" title="">init</a>;
+0013 
+0014 [studynbr, study, ~] = <a href="../../../Code/smartcare/selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
+0015 [datamatfile, clinicalmatfile, demographicsmatfile] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0016 [physdata, offset, physdata_predateoutlierhandling] = <a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0017 [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP, <span class="keyword">...</span>
+0018     cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght] = <a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0019 
+0020 <span class="comment">% Tristan's function to harmonise drug therapy namings - temporary until</span>
+0021 <span class="comment">% REDcap is active</span>
+0022 cdDrugTherapy.DrugTherapyType = <a href="../../../Code/pdm/helperfunctions/cleanDrugTherapyNamings.html" class="code" title="function out = cleanDrugTherapyNamings(str_array)">cleanDrugTherapyNamings</a>(cdDrugTherapy.DrugTherapyType);
+0023 
+0024 tic
+0025 fprintf(<span class="string">'Loading demographic data by patient\n'</span>);
+0026 load(fullfile(basedir, subfolder, demographicsmatfile), <span class="string">'demographicstable'</span>, <span class="string">'overalltable'</span>);
+0027 toc
+0028 fprintf(<span class="string">'\n'</span>);
+0029 
+0030 subfolder = sprintf(<span class="string">'Plots/%s'</span>, study);
+0031 <span class="keyword">if</span> ~exist(strcat(basedir, subfolder), <span class="string">'dir'</span>)
+0032     mkdir(strcat(basedir, subfolder));
+0033 <span class="keyword">end</span>
+0034 
+0035 runmode = input(<span class="string">'Which patients to run for 1) Those with enough data 2) Those without enough data ?'</span>);
+0036 <span class="keyword">if</span> runmode ~= 1 &amp; runmode ~= 2
+0037     fprintf(<span class="string">'Invalid entry'</span>)
+0038     <span class="keyword">return</span>;
+0039 <span class="keyword">end</span>
+0040 <span class="keyword">if</span> runmode == 1
+0041     patientlist = unique(physdata.SmartCareID);
+0042 <span class="keyword">elseif</span> runmode == 2
+0043     goodpatients = unique(physdata.SmartCareID);
+0044     patientlist = unique(physdata_predateoutlierhandling.SmartCareID(~ismember(physdata_predateoutlierhandling.SmartCareID, goodpatients)));
+0045     physdata = physdata_predateoutlierhandling;
+0046 <span class="keyword">end</span>
+0047 
+0048 patientoffsets = <a href="../../../Code/smartcare/getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>(physdata);
+0049 cvcol   = [0.94  0.52  0.15];
+0050 admcol  = [0.694 0.627 0.78]; 
+0051 ivcol   = [1     0     0   ];
+0052 oralcol = [1     0.85  0   ];
+0053 trplcol = [0     1     0   ];
+0054 drugcol = [0     0.8   0.6 ];
+0055 
+0056 <span class="keyword">for</span> i = 1:size(patientlist,1)
+0057 
+0058     tic
+0059     scid       = patientlist(i);
+0060     fprintf(<span class="string">'Creating patient summary for patient %d\n'</span>, scid);
+0061      poffset    = patientoffsets.PatientOffset(patientoffsets.SmartCareID == scid);
+0062      studyid   = cdPatient.StudyNumber{cdPatient.ID == scid};
+0063      hospital   = cdPatient.Hospital{cdPatient.ID == scid};
+0064 <span class="comment">%     sex        = cdPatient.Sex{cdPatient.ID == scid};</span>
+0065      spstart    = cdPatient.StudyDate(cdPatient.ID == scid);
+0066      spstartdn  = datenum(spstart) - offset - poffset + 1;
+0067 <span class="comment">%     spend      = cdPatient.StudyDate(cdPatient.ID == scid)+days(183);</span>
+0068      spenddn    = spstartdn + 183;
+0069 <span class="comment">%     if studynbr == 3 || studynbr == 4</span>
+0070 <span class="comment">%         spendstatus = ' ';</span>
+0071 <span class="comment">%     else</span>
+0072 <span class="comment">%         spendstatus = cdEndStudy.EndOfStudyReason{cdEndStudy.ID == scid};</span>
+0073 <span class="comment">%     end</span>
+0074 <span class="comment">%     hmstart    = min(physdata.Date_TimeRecorded(physdata.SmartCareID == scid));</span>
+0075      hmstartdn  = min(physdata.ScaledDateNum(physdata.SmartCareID == scid));
+0076 <span class="comment">%     hmend      = max(physdata.Date_TimeRecorded(physdata.SmartCareID == scid));</span>
+0077      hmenddn    = max(physdata.ScaledDateNum(physdata.SmartCareID == scid));
+0078 <span class="comment">%</span>
+0079 <span class="comment">%     spclinicvisits  = size(cdClinicVisits.ID(cdClinicVisits.ID == scid &amp; cdClinicVisits.AttendanceDate &gt;= spstart &amp; cdClinicVisits.AttendanceDate &lt;= spend),1);</span>
+0080 <span class="comment">%     sphospadm       = size(cdAdmissions.ID(cdAdmissions.ID == scid &amp; cdAdmissions.Admitted &gt;= spstart &amp; cdAdmissions.Admitted &lt;= spend),1);</span>
+0081 <span class="comment">%     spivab          = size(cdAntibiotics.ID(cdAntibiotics.ID == scid &amp; ismember(cdAntibiotics.Route, 'IV') &amp; cdAntibiotics.StartDate &gt;= spstart &amp; cdAntibiotics.StartDate &lt;= spend),1);</span>
+0082 <span class="comment">%     sporalab        = size(cdAntibiotics.ID(cdAntibiotics.ID == scid &amp; ismember(cdAntibiotics.Route, 'Oral') &amp; cdAntibiotics.StartDate &gt;= spstart &amp; cdAntibiotics.StartDate &lt;= spend),1);</span>
+0083 <span class="comment">%     spcpftmeas      = size(cdPFT.ID(cdPFT.ID == scid &amp; cdPFT.LungFunctionDate &gt;= spstart &amp; cdPFT.LungFunctionDate &lt;= spend),1);</span>
+0084 <span class="comment">%     spccrpmeas      = size(cdCRP.ID(cdCRP.ID == scid &amp; cdCRP.CRPDate &gt;= spstart &amp; cdCRP.CRPDate &lt;= spend),1);</span>
+0085 <span class="comment">%</span>
+0086 <span class="comment">%     hmclinicvisits  = size(cdClinicVisits.ID(cdClinicVisits.ID == scid &amp; cdClinicVisits.AttendanceDate &gt;= hmstart &amp; cdClinicVisits.AttendanceDate &lt;= hmend),1);</span>
+0087 <span class="comment">%     hmhospadm       = size(cdAdmissions.ID(cdAdmissions.ID == scid &amp; cdAdmissions.Admitted &gt;= hmstart &amp; cdAdmissions.Admitted &lt;= hmend),1);</span>
+0088 <span class="comment">%     hmivab          = size(cdAntibiotics.ID(cdAntibiotics.ID == scid &amp; ismember(cdAntibiotics.Route, 'IV') &amp; cdAntibiotics.StartDate &gt;= hmstart &amp; cdAntibiotics.StartDate &lt;= hmend),1);</span>
+0089 <span class="comment">%     hmoralab        = size(cdAntibiotics.ID(cdAntibiotics.ID == scid &amp; ismember(cdAntibiotics.Route, 'Oral') &amp; cdAntibiotics.StartDate &gt;= hmstart &amp; cdAntibiotics.StartDate &lt;= hmend),1);</span>
+0090 <span class="comment">%     hmcpftmeas      = size(cdPFT.ID(cdPFT.ID == scid &amp; cdPFT.LungFunctionDate &gt;= hmstart &amp; cdPFT.LungFunctionDate &lt;= hmend),1);</span>
+0091 <span class="comment">%     hmccrpmeas      = size(cdCRP.ID(cdCRP.ID == scid &amp; cdCRP.CRPDate &gt;= hmstart &amp; cdCRP.CRPDate &lt;= hmend),1);</span>
+0092 <span class="comment">%</span>
+0093 <span class="comment">%     allclinicvisits = size(cdClinicVisits.ID(cdClinicVisits.ID == scid),1);</span>
+0094 <span class="comment">%     allhospadm      = size(cdAdmissions.ID(cdAdmissions.ID == scid),1);</span>
+0095 <span class="comment">%     allcpftmeas     = size(cdPFT.ID(cdPFT.ID == scid),1);</span>
+0096 <span class="comment">%     allccrpmeas     = size(cdCRP.ID(cdCRP.ID == scid),1);</span>
+0097 <span class="comment">%     allivab         = size(cdAntibiotics.ID(cdAntibiotics.ID == scid &amp; ismember(cdAntibiotics.Route, 'IV')),1);</span>
+0098 <span class="comment">%     alloralab       = size(cdAntibiotics.ID(cdAntibiotics.ID == scid &amp; ismember(cdAntibiotics.Route, 'Oral')),1);</span>
+0099 <span class="comment">%</span>
+0100 <span class="comment">%     allcavgfev1     = mean(cdPFT.FEV1(cdPFT.ID == scid));</span>
+0101 <span class="comment">%     allcstdfev1     = std(cdPFT.FEV1(cdPFT.ID == scid));</span>
+0102 <span class="comment">%     allcminfev1     = min(cdPFT.FEV1(cdPFT.ID == scid));</span>
+0103 <span class="comment">%     allcmaxfev1     = max(cdPFT.FEV1(cdPFT.ID == scid));</span>
+0104 <span class="comment">%</span>
+0105 <span class="comment">%     allcavgfev1_    = mean(cdPFT.CalcFEV1_(cdPFT.ID == scid));</span>
+0106 <span class="comment">%     allcstdfev1_    = std (cdPFT.CalcFEV1_(cdPFT.ID == scid));</span>
+0107 <span class="comment">%     allcminfev1_    = min(cdPFT.CalcFEV1_(cdPFT.ID == scid));</span>
+0108 <span class="comment">%     allcmaxfev1_    = max(cdPFT.CalcFEV1_(cdPFT.ID == scid));</span>
+0109 <span class="comment">%</span>
+0110 <span class="comment">%     allcavgcrp      = mean(cdCRP.NumericLevel(cdCRP.ID == scid));</span>
+0111 <span class="comment">%     allcstdcrp      = std(cdCRP.NumericLevel(cdCRP.ID == scid));</span>
+0112 <span class="comment">%     allcmincrp      = min(cdCRP.NumericLevel(cdCRP.ID == scid));</span>
+0113 <span class="comment">%     allcmaxcrp      = max(cdCRP.NumericLevel(cdCRP.ID == scid));</span>
+0114 <span class="comment">%</span>
+0115 <span class="comment">%     hmtotal         = size(physdata.SmartCareID(physdata.SmartCareID == scid),1);</span>
+0116 <span class="comment">%     hmduration      = max(physdata.DateNum(physdata.SmartCareID == scid)) - min(physdata.DateNum(physdata.SmartCareID == scid));</span>
+0117 <span class="comment">%     hmavgperday     = hmtotal/hmduration;</span>
+0118                                                 
+0119     microbiology = unique(cdMicrobiology.Microbiology(cdMicrobiology.ID==scid));
+0120            
+0121     mplotsacross = 1;
+0122     mplotsdown = 9;
+0123     mplotsperpage = mplotsacross * mplotsdown;
+0124     
+0125     measures = [{<span class="string">'HasColdOrFluRecording'</span>};{<span class="string">'CoughRecording'</span>};{<span class="string">'WellnessRecording'</span>};{<span class="string">'FEV1Recording'</span>};{<span class="string">'O2SaturationRecording'</span>};{<span class="string">'RestingHRRecording'</span>};{<span class="string">'WeightRecording'</span>};{<span class="string">'TemperatureRecording'</span>};{<span class="string">'CalorieRecording'</span>}];
+0126     npages = ceil(size(measures, 1) / mplotsperpage);
+0127     page = 2;
+0128     filenameprefix = sprintf(<span class="string">'%s-Patient Summary - ID %d (%s) Hosp %s'</span>, study, scid, studyid, hospital);
+0129     imagefilename = sprintf(filenameprefix);
+0130     
+0131     daysfrom = min(spstartdn, hmstartdn) - 14;
+0132     daysto   = max(spenddn, hmenddn) + 14;
+0133     xl = [daysfrom daysto];
+0134     
+0135     cvset     = cdClinicVisits(cdClinicVisits.ID == scid,:);
+0136     cvset.AttendanceDatedn = datenum(cvset.AttendanceDate) - offset - poffset + 1;
+0137     admset    = cdAdmissions(cdAdmissions.ID == scid,:);
+0138     admset.Admitteddn = datenum(admset.Admitted) - offset - poffset + 1;
+0139     admset.Dischargedn = datenum(admset.Discharge) - offset - poffset + 1;
+0140     admdates = unique([admset.Admitteddn ; admset.Dischargedn]);
+0141     ivabset   = cdAntibiotics(cdAntibiotics.ID == scid &amp; ismember(cdAntibiotics.Route, {<span class="string">'IV'</span>}),:);
+0142     ivabset.Startdn = datenum(ivabset.StartDate) - offset - poffset + 1;
+0143     ivabset.Stopdn = datenum(ivabset.StopDate) - offset - poffset + 1;
+0144     oralabset = cdAntibiotics(cdAntibiotics.ID == scid &amp; ismember(cdAntibiotics.Route, {<span class="string">'Oral'</span>}),:);
+0145     oralabset.Startdn = datenum(oralabset.StartDate) - offset - poffset + 1;
+0146     oralabset.Stopdn = datenum(oralabset.StopDate) - offset - poffset + 1;
+0147     trplset = cdDrugTherapy(cdDrugTherapy.ID == scid &amp; ismember(cdDrugTherapy.DrugTherapyType, {<span class="string">'Triple Therapy'</span>}),:);
+0148     trplset.Startdn = datenum(trplset.DrugTherapyStartDate) - offset - poffset + 1;
+0149     drugset = cdDrugTherapy(cdDrugTherapy.ID == scid &amp; ~ismember(cdDrugTherapy.DrugTherapyType, {<span class="string">'Triple Therapy'</span>}),:);
+0150     drugset.Startdn = datenum(drugset.DrugTherapyStartDate) - offset - poffset + 1;
+0151     
+0152     f = figure(<span class="string">'Name'</span>,filenameprefix,<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 2000 1000]);
+0153 
+0154     <span class="comment">% get all measures so the plots for each appear in a consistent place</span>
+0155     <span class="comment">% across all patients</span>
+0156     <span class="keyword">for</span> m = 1:size(measures,1)
+0157         measure = measures{m};
+0158         column = <a href="../../../Code/smartcare/getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>(measure);
+0159         scdata = physdata(physdata.SmartCareID == scid &amp; ismember(physdata.RecordingType, measure), :);
+0160         scdata = scdata(:, {<span class="string">'SmartCareID'</span>,<span class="string">'ScaledDateNum'</span> <span class="string">'Date_TimeRecorded'</span>, column});
+0161         scdata.Properties.VariableNames{column} = <span class="string">'Measurement'</span>;
+0162         
+0163         <span class="keyword">if</span> size(scdata,1) &gt; 0
+0164             ax = subplot(mplotsdown, mplotsacross, m - (page-2) * mplotsperpage,<span class="string">'Parent'</span>,f);
+0165             hold on;
+0166             xlim(xl);
+0167             rangelimit = <a href="../../../Code/smartcare/setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>(measure);
+0168             yl = <a href="../../../Code/smartcare/setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>(min(scdata.Measurement), max(scdata.Measurement), rangelimit);
+0169             ylim(yl);
+0170             ylabel(ax, replace(measure, <span class="string">'Recording'</span>, <span class="string">''</span>));
+0171             
+0172             plot(ax, scdata.ScaledDateNum, scdata.Measurement, <span class="keyword">...</span>
+0173                 <span class="string">'Color'</span>, [0, 0.65, 1], <span class="keyword">...</span>
+0174                 <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="keyword">...</span>
+0175                 <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0176                 <span class="string">'LineWidth'</span>,1,<span class="keyword">...</span>
+0177                 <span class="string">'MarkerSize'</span>,2,<span class="keyword">...</span>
+0178                 <span class="string">'MarkerEdgeColor'</span>,<span class="string">'b'</span>,<span class="keyword">...</span>
+0179                 <span class="string">'MarkerFaceColor'</span>,<span class="string">'g'</span>);
+0180     
+0181             <span class="keyword">for</span> a = 1:size(ivabset,1)
+0182                 fill(ax, [ivabset.Startdn(a) ivabset.Stopdn(a) ivabset.Stopdn(a) ivabset.Startdn(a)], <span class="keyword">...</span>
+0183                           [yl(1) yl(1) yl(2) yl(2)], ivcol, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0184             <span class="keyword">end</span>
+0185             <span class="keyword">for</span> a = 1:size(oralabset,1)
+0186                 fill(ax, [oralabset.Startdn(a) oralabset.Stopdn(a) oralabset.Stopdn(a) oralabset.Startdn(a)], <span class="keyword">...</span>
+0187                           [yl(1) yl(1) yl(2) yl(2)], oralcol, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0188             <span class="keyword">end</span>
+0189             <span class="keyword">for</span> a = 1:size(trplset,1)
+0190             fill(ax, [trplset.Startdn(a), trplset.Startdn(a) + 1, trplset.Startdn(a) + 1, trplset.Startdn(a)] , <span class="keyword">...</span>
+0191                          [yl(1) yl(1) yl(2) yl(2)], trplcol, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0192             <span class="keyword">end</span>
+0193             <span class="keyword">for</span> a = 1:size(drugset,1)
+0194                 fill(ax, [drugset.Startdn(a), drugset.Startdn(a) + 1, drugset.Startdn(a) + 1, drugset.Startdn(a)], <span class="keyword">...</span>
+0195                          [yl(1) yl(1) yl(2) yl(2)], drugcol, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0196             <span class="keyword">end</span>
+0197             grid(<span class="string">'on'</span>)
+0198             hold off;
+0199         <span class="keyword">end</span>
+0200     <span class="keyword">end</span>
+0201     
+0202     <span class="keyword">if</span> exist(<span class="string">'f'</span>, <span class="string">'var'</span>)
+0203         <a href="../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, imagefilename, subfolder);
+0204         close(f);
+0205     <span class="keyword">end</span>
+0206 
+0207     toc
+0208     
+0209 <span class="keyword">end</span>
+0210 
+0211     
+0212</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

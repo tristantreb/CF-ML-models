@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of runPlotFunctions</title>
+  <meta name="keywords" content="runPlotFunctions">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; runPlotFunctions.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>runPlotFunctions
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMPlotsAndSavePredictions.html" class="code" title="function amEMPlotsAndSavePredictions(amInterventions, amIntrDatacube, measures, pdoffset,overall_pdoffset, hstg, overall_hist, meancurvemean, normmean, normstd, isOutlier,ex_start, thisinter, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder)">amEMPlotsAndSavePredictions</a>	amEMPlotsAndSavePredictions - plots measures prior to</li><li><a href="animatedAlignmentConcurrent.html" class="code" title="function [f, p, niterations] = animatedAlignmentConcurrent(animatedmeancurvemean, animatedoffsets, animated_overall_pdoffset,profile_pre, measures, max_offset, align_wind, nmeasures, ninterventions, runmode, moviefilename)">animatedAlignmentConcurrent</a>	animatedALingmentConcurrent - function to display animated curve</li><li><a href="animatedAlignmentSequential.html" class="code" title="function [f, p, niterations] = animatedAlignmentSequential(animatedmeancurvemean, profile_pre, measures, max_offset, align_wind, nmeasures, moviefilename)">animatedAlignmentSequential</a>	</li><li><a href="animatedProbDistConcurrent.html" class="code" title="function [f, p, niterations] = animatedProbDistConcurrent(animated_overall_pdoffset, max_offset, ninterventions, moviefilename)">animatedProbDistConcurrent</a>	animatedALingmentConcurrent - function to display animated curve</li><li><a href="selectModelRunFromList.html" class="code" title="function [modelrun, modelidx, models] = selectModelRunFromList(loadtype)">selectModelRunFromList</a>	selectModelRunFromList - allows you to load the saved variables from a</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; close all; clc;
+0002 
+0003 modelrun = <a href="selectModelRunFromList.html" class="code" title="function [modelrun, modelidx, models] = selectModelRunFromList(loadtype)">selectModelRunFromList</a>(<span class="string">''</span>);
+0004 
+0005 <span class="comment">% other models to potentially add</span>
+0006 <span class="comment">% sig4 version (although zero offset start is infinity</span>
+0007 <span class="comment">% vEM with bet random start from 3 or 4</span>
+0008 
+0009 fprintf(<span class="string">'Choose function to run\n'</span>);
+0010 fprintf(<span class="string">'----------------------\n'</span>);
+0011 fprintf(<span class="string">'1: Run prediction plots\n'</span>);
+0012 fprintf(<span class="string">'2: Run alignment animation (concurrent)\n'</span>);
+0013 fprintf(<span class="string">'3: Run alignment animation (sequential)\n'</span>);
+0014 fprintf(<span class="string">'4: Run prod dist animation (concurrent)\n'</span>);
+0015 fprintf(<span class="string">'5: Extract and save prob distributions\n'</span>);
+0016 runfunction = input(<span class="string">'Choose function (1-5) '</span>);
+0017 
+0018 fprintf(<span class="string">'\n'</span>);
+0019 
+0020 <span class="keyword">if</span> runfunction &gt; 5
+0021     fprintf(<span class="string">'Invalid choice\n'</span>);
+0022     <span class="keyword">return</span>;
+0023 <span class="keyword">end</span>
+0024 <span class="keyword">if</span> isequal(runfunction,<span class="string">''</span>)
+0025     fprintf(<span class="string">'Invalid choice\n'</span>);
+0026     <span class="keyword">return</span>;
+0027 <span class="keyword">end</span>
+0028 
+0029 fprintf(<span class="string">'\n'</span>);
+0030 basedir = <span class="string">'./'</span>;
+0031 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0032 fprintf(<span class="string">'Loading output from model run\n'</span>);
+0033 load(fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>, modelrun)));
+0034 
+0035 <span class="keyword">if</span> exist(<span class="string">'animated_overall_pdoffset'</span>, <span class="string">'var'</span>) == 0
+0036     animated_overall_pdoffset = 0;
+0037 <span class="keyword">end</span>
+0038     
+0039 <span class="keyword">if</span> runfunction == 1
+0040     tic
+0041     subfolder = <span class="string">'Plots'</span>;
+0042     fprintf(<span class="string">'Plotting prediction results\n'</span>);
+0043     <span class="keyword">for</span> i=1:ninterventions
+0044         <a href="amEMPlotsAndSavePredictions.html" class="code" title="function amEMPlotsAndSavePredictions(amInterventions, amIntrDatacube, measures, pdoffset,overall_pdoffset, hstg, overall_hist, meancurvemean, normmean, normstd, isOutlier,ex_start, thisinter, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder)">amEMPlotsAndSavePredictions</a>(amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset, <span class="keyword">...</span>
+0045             overall_pdoffset_all, overall_pdoffset_xAL, hstg, overall_hist, overall_hist_all, overall_hist_xAL, <span class="keyword">...</span>
+0046             offsets, meancurvemean, normmean, ex_start, i, nmeasures, max_offset, align_wind, study, version);
+0047     <span class="keyword">end</span>
+0048     toc
+0049     fprintf(<span class="string">'\n'</span>);
+0050 <span class="keyword">elseif</span> runfunction == 2
+0051     tic
+0052     subfolder = <span class="string">'AnimatedPlots'</span>;
+0053     fprintf(<span class="string">'Running concurrent alignment animation\n'</span>);
+0054     moviefilename = sprintf(<span class="string">'%s-ConcurrentAlignment'</span>, modelrun);
+0055     [f, p, niterations] = <a href="animatedAlignmentConcurrent.html" class="code" title="function [f, p, niterations] = animatedAlignmentConcurrent(animatedmeancurvemean, animatedoffsets, animated_overall_pdoffset,profile_pre, measures, max_offset, align_wind, nmeasures, ninterventions, runmode, moviefilename)">animatedAlignmentConcurrent</a>(animatedmeancurvemean, animatedoffsets, animated_overall_pdoffset, <span class="keyword">...</span>
+0056         unaligned_profile, measures, max_offset, align_wind, nmeasures, ninterventions, runmode, fullfile(basedir, subfolder, moviefilename));
+0057     toc
+0058     fprintf(<span class="string">'\n'</span>);
+0059 <span class="keyword">elseif</span> runfunction == 3
+0060     tic
+0061     subfolder = <span class="string">'AnimatedPlots'</span>;
+0062     fprintf(<span class="string">'Running sequential alignment animation\n'</span>);
+0063     moviefilename = sprintf(<span class="string">'%s-SequentialAlignment'</span>, modelrun);
+0064     [f, p, niterations] = <a href="animatedAlignmentSequential.html" class="code" title="function [f, p, niterations] = animatedAlignmentSequential(animatedmeancurvemean, profile_pre, measures, max_offset, align_wind, nmeasures, moviefilename)">animatedAlignmentSequential</a>(animatedmeancurvemean, unaligned_profile, measures, max_offset, <span class="keyword">...</span>
+0065         align_wind, nmeasures, fullfile(basedir, subfolder, moviefilename));
+0066     toc
+0067     fprintf(<span class="string">'\n'</span>);
+0068 <span class="keyword">elseif</span> runfunction == 4
+0069     tic
+0070     subfolder = <span class="string">'AnimatedPlots'</span>;
+0071     fprintf(<span class="string">'Running concurrent prod distribution animation\n'</span>);
+0072     moviefilename = sprintf(<span class="string">'%s-ProbDistribution'</span>, modelrun);
+0073     [f, p, niterations] = <a href="animatedProbDistConcurrent.html" class="code" title="function [f, p, niterations] = animatedProbDistConcurrent(animated_overall_pdoffset, max_offset, ninterventions, moviefilename)">animatedProbDistConcurrent</a>(animated_overall_pdoffset, max_offset, ninterventions, <span class="keyword">...</span>
+0074         fullfile(basedir, subfolder, moviefilename));
+0075     toc
+0076     fprintf(<span class="string">'\n'</span>);
+0077 <span class="keyword">else</span>
+0078     tic
+0079     fprintf(<span class="string">'Saving prob distributions to a separate matlab file\n'</span>);
+0080     basedir = <span class="string">'./'</span>;
+0081     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0082     outputfilename = sprintf(<span class="string">'%s-PDs.mat'</span>, modelrun);
+0083     save(fullfile(basedir, subfolder, outputfilename), <span class="string">'initial_offsets'</span>, <span class="string">'offsets'</span>, <span class="string">'hstg'</span>, <span class="keyword">...</span>
+0084         <span class="string">'pdoffset'</span>, <span class="string">'overall_hist'</span>, <span class="string">'overall_pdoffset'</span>);
+0085 <span class="keyword">end</span>
+0086     
+0087</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

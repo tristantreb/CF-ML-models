@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of addBreatheRowsForMeasure</title>
+  <meta name="keywords" content="addBreatheRowsForMeasure">
+  <meta name="description" content="addBreatheRowsForMeasure - adds the rows to physdata (and">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; addBreatheRowsForMeasure.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>addBreatheRowsForMeasure
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>addBreatheRowsForMeasure - adds the rows to physdata (and</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> addBreatheRowsForMeasure - adds the rows to physdata (and
+ physdata_deleted) for each raw ingested measures file and recording type</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>	appendDeletedRows - appends a set of deleted measurement rows to the</li><li><a href="createBreatheMeasuresTable.html" class="code" title="function [brphysdata] = createBreatheMeasuresTable(nrows)">createBreatheMeasuresTable</a>	createBreatheMeasuresTable - creates a copy of the physdata</li><li><a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>	getColumnForMeasure - returns the column name from physdata for the</li><li><a href="getColumnForRawBreatheCaptureType.html" class="code" title="function [column] = getColumnForRawBreatheCaptureType(filetype)">getColumnForRawBreatheCaptureType</a>	getColumnForRawBreatheCaptureType - returns the column name for the capture type</li><li><a href="getColumnForRawBreatheMeasure.html" class="code" title="function [column] = getColumnForRawBreatheMeasure(measure)">getColumnForRawBreatheMeasure</a>	getColumnForRawBreatheMeasure - returns the column name from the input</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadbreathedata.html" class="code" title="">loadbreathedata</a>	1st Breathe data processing step and analysis from raw measurements</li><li><a href="loadbreathemeasurementdata.html" class="code" title="">loadbreathemeasurementdata</a>	1st Breathe data processing step and analysis from raw measurements</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)</a>
+0002 
+0003 <span class="comment">% addBreatheRowsForMeasure - adds the rows to physdata (and</span>
+0004 <span class="comment">% physdata_deleted) for each raw ingested measures file and recording type</span>
+0005 
+0006 nmeas = size(measdata, 1);
+0007 fprintf(<span class="string">'Processing %s data\n'</span>, recordingtype);
+0008 <span class="keyword">if</span> nmeas &gt; 0
+0009     mbrphysdata                   = <a href="createBreatheMeasuresTable.html" class="code" title="function [brphysdata] = createBreatheMeasuresTable(nrows)">createBreatheMeasuresTable</a>(nmeas);
+0010     mbrphysdata.SmartCareID       = measdata.ID;
+0011     mbrphysdata.UserName          = measdata.StudyNumber;
+0012     mbrphysdata.Date_TimeRecorded = measdata.DateDt;
+0013     ctcolumn = <a href="getColumnForRawBreatheCaptureType.html" class="code" title="function [column] = getColumnForRawBreatheCaptureType(filetype)">getColumnForRawBreatheCaptureType</a>(filetype);
+0014     mbrphysdata(:, {<span class="string">'CaptureType'</span>}) = measdata(:, {ctcolumn});
+0015     mbrphysdata.RecordingType(:) = {recordingtype};
+0016  
+0017     <span class="comment">% ingest the measurements using column mapping functions</span>
+0018     inputcolname  = <a href="getColumnForRawBreatheMeasure.html" class="code" title="function [column] = getColumnForRawBreatheMeasure(measure)">getColumnForRawBreatheMeasure</a>(recordingtype);
+0019     outputcolname = <a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>(recordingtype);
+0020     mbrphysdata(:, {outputcolname}) = measdata(:, {inputcolname});
+0021     
+0022     <span class="comment">% scale up cough and wellness by a factor of 10 to make consistent with</span>
+0023     <span class="comment">% other studies</span>
+0024     <span class="keyword">if</span> ismember(recordingtype, {<span class="string">'CoughRecording'</span>, <span class="string">'WellnessRecording'</span>})
+0025         mbrphysdata(:, {outputcolname}) = array2table(table2array(mbrphysdata(:, {outputcolname})) * 10);
+0026     <span class="keyword">end</span>
+0027     <span class="comment">% invert cough scale so it is consistent with other subjective scores</span>
+0028     <span class="keyword">if</span> ismember(recordingtype, {<span class="string">'CoughRecording'</span>})
+0029         mbrphysdata(:, {outputcolname}) = array2table(100 - table2array(mbrphysdata(:, {outputcolname})));
+0030     <span class="keyword">end</span>
+0031     <span class="comment">% only include non-null measurements</span>
+0032     <span class="keyword">if</span> ismember(class(table2array(mbrphysdata(:, {outputcolname}))), {<span class="string">'double'</span>})
+0033         <span class="keyword">if</span> delzero
+0034             nullidx = isnan(table2array(mbrphysdata(:, {outputcolname}))) | table2array(mbrphysdata(:, {outputcolname})) == 0;
+0035             delreason = <span class="string">'NULL or Zero'</span>;
+0036             deltext   = <span class="string">'Non-NULL and Non-Zero'</span>;
+0037         <span class="keyword">else</span>
+0038             nullidx = isnan(table2array(mbrphysdata(:, {outputcolname})));
+0039             delreason = <span class="string">'Null'</span>;
+0040             deltext   = <span class="string">'Non-NULL'</span>;
+0041         <span class="keyword">end</span>
+0042     <span class="keyword">elseif</span> ismember(class(table2array(mbrphysdata(:, {outputcolname}))), {<span class="string">'cell'</span>})
+0043         nullidx = ismember(table2array(mbrphysdata(:, {outputcolname})), {<span class="string">'NULL'</span>});
+0044     <span class="keyword">else</span>
+0045         fprintf(<span class="string">'Unknown data type for measurement column\n'</span>);
+0046     <span class="keyword">end</span>
+0047     nonnullmeasurements = sum(~nullidx);
+0048     <span class="keyword">if</span> sum(nullidx) &gt; 0
+0049         physdata_deleted = <a href="appendDeletedRows.html" class="code" title="function [deltable] = appendDeletedRows(delrows, deltable, reason)">appendDeletedRows</a>(mbrphysdata(nullidx, :), physdata_deleted, {sprintf(<span class="string">'%s Measurement'</span>, delreason)});
+0050     <span class="keyword">end</span>
+0051     physdata = [physdata; mbrphysdata(~nullidx,:)];
+0052     fprintf(<span class="string">'%d Raw Measurements, %d %s measurements\n'</span>, nmeas, nonnullmeasurements, deltext);
+0053 <span class="keyword">else</span>
+0054     fprintf(<span class="string">'%d Raw Measurements\n'</span>, nmeas);
+0055 <span class="keyword">end</span>
+0056 
+0057 
+0058 <span class="keyword">end</span>
+0059</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

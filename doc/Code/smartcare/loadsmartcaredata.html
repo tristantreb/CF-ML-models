@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadsmartcaredata</title>
+  <meta name="keywords" content="loadsmartcaredata">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadsmartcaredata.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadsmartcaredata
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="addCalculatedFEV1percentage.html" class="code" title="function [physdataout] = addCalculatedFEV1percentage(physdata,cdPatient)">addCalculatedFEV1percentage</a>	addCalculatedFEV1percentage - adds a column for the calculated FEV1</li><li><a href="analyseAndHandleDateOutliers.html" class="code" title="function [physdata] = analyseAndHandleDateOutliers(physdata, study, doupdates)">analyseAndHandleDateOutliers</a>	analyseAndHandleDateOutliers - function to do the following :-</li><li><a href="analyseOvernightMeasures.html" class="code" title="function [physdataout] = analyseOvernightMeasures(physdata, smartcareID, doupdates, detaillog)">analyseOvernightMeasures</a>	analyseOvernightMeasures - analyses measures recorded between 00:00 and</li><li><a href="correctSmartCareDataAnomalies.html" class="code" title="function [physdataout] = correctSmartCareDataAnomalies(physdata)">correctSmartCareDataAnomalies</a>	correctSmartCareDataAnomalies - looks at various outliers in the measures</li><li><a href="createMeasuresHeatmapWithStudyPeriod.html" class="code" title="function createMeasuresHeatmapWithStudyPeriod(physdata, offset, cdPatient, study)">createMeasuresHeatmapWithStudyPeriod</a>	createMeasuresHeatmapWithStudyPeriod - creates the Patient/Measures</li><li><a href="handleDuplicateMeasures.html" class="code" title="function [physdata] = handleDuplicateMeasures(physdata, study, doupdates, detaillog)">handleDuplicateMeasures</a>	handleDuplicateMeasures -  Analyse and correct for duplicate measures</li><li><a href="loadAndCorrectPatientIDData.html" class="code" title="function [patientid] = loadAndCorrectPatientIDData(patientidfile)">loadAndCorrectPatientIDData</a>	loadPatientIDData - loads patientidfile and corrects for incorrect</li><li><a href="loadAndCorrectSmartCareData.html" class="code" title="function [physdata, physdata_original, offset] = loadAndCorrectSmartCareData(scdatafile,patientid, detaillog)">loadAndCorrectSmartCareData</a>	loadAndCorrectSmartCareData - performs the following</li><li><a href="plotMeasuresByHour.html" class="code" title="function plotMeasuresByHour(physdata, smartcareID, imagefilename, study)">plotMeasuresByHour</a>	plotMeasuresByHour - for each measure, plot a histogram of number of</li><li><a href="printDataDemographics.html" class="code" title="function printDataDemographics(physdata, smartcareID)">printDataDemographics</a>	printDataDemographics - calculates and prints the count, mean, std, min, max</li><li><a href="scaleDaysByPatient.html" class="code" title="function [physdata] = scaleDaysByPatient(physdata,doupdates)">scaleDaysByPatient</a>	scaleDateByPatient - adds a new column to physdata for the scaled datenum</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; clc; close all;
+0002 
+0003 
+0004 tic
+0005 fprintf(<span class="string">'Loading Clinical Data\n'</span>);
+0006 fprintf(<span class="string">'---------------------\n'</span>);
+0007 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0008 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0009 clinicalmatfile = <span class="string">'clinicaldata.mat'</span>;
+0010 fprintf(<span class="string">'Loading Clinical data\n'</span>);
+0011 load(fullfile(basedir, subfolder, clinicalmatfile));
+0012 fprintf(<span class="string">'Done\n'</span>);
+0013 toc
+0014 fprintf(<span class="string">'\n'</span>);
+0015 
+0016 study = <span class="string">'SC'</span>;
+0017 
+0018 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0019 subfolder = <span class="string">'DataFiles'</span>;
+0020 scdatafile = <span class="string">'mydata.csv'</span>;
+0021 patientidfile = <span class="string">'patientidnew.xlsx'</span>;
+0022 detaillog = false;
+0023 doupdates = true;
+0024 
+0025 <span class="comment">% load patient id file + corrections</span>
+0026 patientid = <a href="loadAndCorrectPatientIDData.html" class="code" title="function [patientid] = loadAndCorrectPatientIDData(patientidfile)">loadAndCorrectPatientIDData</a>(fullfile(basedir, subfolder, patientidfile));
+0027 
+0028 <span class="comment">% load SmartCare measurement data + corrections</span>
+0029 [physdata, physdata_original, offset] = <a href="loadAndCorrectSmartCareData.html" class="code" title="function [physdata, physdata_original, offset] = loadAndCorrectSmartCareData(scdatafile,patientid, detaillog)">loadAndCorrectSmartCareData</a>(fullfile(basedir, subfolder, scdatafile), patientid, detaillog);
+0030 
+0031 <span class="comment">% calc and print overall data demographics before data anomaly fixes</span>
+0032 <span class="comment">%printDataDemographics(physdata,0);</span>
+0033 
+0034 physdata = <a href="correctSmartCareDataAnomalies.html" class="code" title="function [physdataout] = correctSmartCareDataAnomalies(physdata)">correctSmartCareDataAnomalies</a>(physdata);
+0035 
+0036 physdata = <a href="addCalculatedFEV1percentage.html" class="code" title="function [physdataout] = addCalculatedFEV1percentage(physdata,cdPatient)">addCalculatedFEV1percentage</a>(physdata, cdPatient);
+0037 
+0038 <span class="comment">% calc and print overall data demographics after data anomaly fixes</span>
+0039 <a href="printDataDemographics.html" class="code" title="function printDataDemographics(physdata, smartcareID)">printDataDemographics</a>(physdata,0);
+0040 
+0041 tic
+0042 <span class="comment">%sort patientid and physdata tables</span>
+0043 patientid = sortrows(patientid,<span class="string">'SmartCareID'</span>,<span class="string">'ascend'</span>);
+0044 physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>);
+0045 
+0046 <span class="comment">% plot histograms of numher of measures recorded by hour for each</span>
+0047 <span class="comment">% measurement</span>
+0048 <a href="plotMeasuresByHour.html" class="code" title="function plotMeasuresByHour(physdata, smartcareID, imagefilename, study)">plotMeasuresByHour</a>(physdata, 0, <span class="string">'measuresbyhourhistograms'</span>, study);
+0049 
+0050 <span class="comment">% analyse overnight measures (activity and non-activity)</span>
+0051 <span class="comment">% update DateNum to prior day for logic contained within the function</span>
+0052 <span class="comment">% (following analysis performed)</span>
+0053 physdata = <a href="analyseOvernightMeasures.html" class="code" title="function [physdataout] = analyseOvernightMeasures(physdata, smartcareID, doupdates, detaillog)">analyseOvernightMeasures</a>(physdata,0, doupdates, detaillog);
+0054 
+0055 physdata_predupehandling = physdata;
+0056 
+0057 <span class="comment">% generate data demographics by patient</span>
+0058 <span class="comment">%generateDataDemographicsByPatientFn(physdata, cdPatient, study);</span>
+0059 
+0060 <span class="comment">% handle duplicates</span>
+0061 physdata = <a href="handleDuplicateMeasures.html" class="code" title="function [physdata] = handleDuplicateMeasures(physdata, study, doupdates, detaillog)">handleDuplicateMeasures</a>(physdata, study, doupdates, detaillog);
+0062 
+0063 <span class="comment">% calc and print overall data demographics after data anomaly fixes</span>
+0064 <a href="printDataDemographics.html" class="code" title="function printDataDemographics(physdata, smartcareID)">printDataDemographics</a>(physdata,0);
+0065 
+0066 <span class="comment">% populate ScaledDateNum with the days from first measurement (by patient)</span>
+0067 physdata = <a href="scaleDaysByPatient.html" class="code" title="function [physdata] = scaleDaysByPatient(physdata,doupdates)">scaleDaysByPatient</a>(physdata, doupdates);
+0068 
+0069 physdata_predateoutlierhandling = physdata;
+0070 
+0071 <span class="comment">% analyse measurement date outliers and handle as appropriate</span>
+0072 physdata = <a href="analyseAndHandleDateOutliers.html" class="code" title="function [physdata] = analyseAndHandleDateOutliers(physdata, study, doupdates)">analyseAndHandleDateOutliers</a>(physdata, study, doupdates);
+0073 
+0074 <a href="createMeasuresHeatmapWithStudyPeriod.html" class="code" title="function createMeasuresHeatmapWithStudyPeriod(physdata, offset, cdPatient, study)">createMeasuresHeatmapWithStudyPeriod</a>(physdata, offset, cdPatient, study);
+0075 
+0076 <span class="comment">% calc and print overall data demographics after data anomaly fixes</span>
+0077 <a href="printDataDemographics.html" class="code" title="function printDataDemographics(physdata, smartcareID)">printDataDemographics</a>(physdata,0);
+0078 
+0079 tic
+0080 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0081 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0082 outputfilename = <span class="string">'smartcaredata.mat'</span>;
+0083 fprintf(<span class="string">'Saving output variables to file %s\n'</span>, outputfilename);
+0084 save(fullfile(basedir, subfolder, outputfilename), <span class="string">'patientid'</span>, <span class="string">'physdata'</span>, <span class="string">'offset'</span>,<span class="string">'physdata_original'</span>, <span class="string">'physdata_predupehandling'</span>, <span class="string">'physdata_predateoutlierhandling'</span>);
+0085 toc</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

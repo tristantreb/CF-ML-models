@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getMeasureTable</title>
+  <meta name="keywords" content="getMeasureTable">
+  <meta name="description" content="returns a table with all data about the specified recording type">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">helperfunctions</a> &gt; getMeasureTable.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/helperfunctions&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>getMeasureTable
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>returns a table with all data about the specified recording type</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [out] = getMeasureTable(brphysdata,recording_type,category) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> returns a table with all data about the specified recording type
+
+ Input: raw data, recording_type, category of the recording type
+ ------
+ there are 17 options for the recording type:
+     'CalorieRecording'
+     'CoughRecording'
+     'FEF2575Recording'
+     'FEV075Recording'
+     'FEV1DivFEV6Recording'
+     'FEV1Recording'
+     'FEV6Recording'
+     'HasColdOrFluRecording'
+     'HasHayFeverRecording'
+     'MinsAsleepRecording'
+     'MinsAwakeRecording'
+     'O2SaturationRecording'
+     'PulseRateRecording'
+     'RestingHRRecording'
+     'TemperatureRecording'
+     'WeightRecording'
+     'WellnessRecording'
+
+ Output: table with all information
+ -------</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/FEV1variability/analyseFEV1Variability.html" class="code" title="">analyseFEV1Variability</a>	analysis of FEV1 variability with moving average manually implemented</li><li><a href="../../../Code/pdm/exploration/exploreInterventions.html" class="code" title="">exploreInterventions</a>	explores the list of interventions</li><li><a href="calcBRFEV1PrctPredicted.html" class="code" title="function FEV1prctpredicted = calcBRFEV1PrctPredicted(brphysdata,cdPatient)">calcBRFEV1PrctPredicted</a>	calculates FEV1 % predicted for each patient with values in Breathe data</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [out] = getMeasureTable(brphysdata,recording_type,category)</a>
+0002 <span class="comment">% returns a table with all data about the specified recording type</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Input: raw data, recording_type, category of the recording type</span>
+0005 <span class="comment">% ------</span>
+0006 <span class="comment">% there are 17 options for the recording type:</span>
+0007 <span class="comment">%     'CalorieRecording'</span>
+0008 <span class="comment">%     'CoughRecording'</span>
+0009 <span class="comment">%     'FEF2575Recording'</span>
+0010 <span class="comment">%     'FEV075Recording'</span>
+0011 <span class="comment">%     'FEV1DivFEV6Recording'</span>
+0012 <span class="comment">%     'FEV1Recording'</span>
+0013 <span class="comment">%     'FEV6Recording'</span>
+0014 <span class="comment">%     'HasColdOrFluRecording'</span>
+0015 <span class="comment">%     'HasHayFeverRecording'</span>
+0016 <span class="comment">%     'MinsAsleepRecording'</span>
+0017 <span class="comment">%     'MinsAwakeRecording'</span>
+0018 <span class="comment">%     'O2SaturationRecording'</span>
+0019 <span class="comment">%     'PulseRateRecording'</span>
+0020 <span class="comment">%     'RestingHRRecording'</span>
+0021 <span class="comment">%     'TemperatureRecording'</span>
+0022 <span class="comment">%     'WeightRecording'</span>
+0023 <span class="comment">%     'WellnessRecording'</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">% Output: table with all information</span>
+0026 <span class="comment">% -------</span>
+0027 
+0028 colnames = {<span class="string">'SmartCareID'</span>,<span class="string">'ScaledDateNum'</span>,<span class="string">'DateNum'</span>,category,<span class="string">'UserName'</span>,<span class="string">'CaptureType'</span>,<span class="string">'Date_TimeRecorded'</span>};
+0029 out = brphysdata(ismember(brphysdata.RecordingType, recording_type),colnames);
+0030 out = renamevars(out,{<span class="string">'SmartCareID'</span>, category},{<span class="string">'ID'</span>, recording_type});
+0031 <span class="keyword">end</span>
+0032</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

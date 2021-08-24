@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of RcreateHeldBackcube</title>
+  <meta name="keywords" content="RcreateHeldBackcube">
+  <meta name="description" content="createHeldBackcube - creates an index array indicating points to be held">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="../index.html">recovery</a> &gt; <a href="index.html">updatedModel</a> &gt; RcreateHeldBackcube.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../../index.html"><img alt="<" border="0" src="../../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery/updatedModel&nbsp;<img alt=">" border="0" src="../../../../right.png"></a></td></tr></table>-->
+
+<h1>RcreateHeldBackcube
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>createHeldBackcube - creates an index array indicating points to be held</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>function [amHeldBackcube] = RcreateHeldBackcube(amIntrDatacube, offset, align_wind, ninterventions, nmeasures, heldbackpct, imputationmode) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> createHeldBackcube - creates an index array indicating points to be held
+ back for imputation (chosen at random)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="../../../../Code/pdm/recovery/runAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist)">runAlignmentModelEMMCRecoveryFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="../../../../Code/pdm/recovery/runFastAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runFastAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist, nameaddendum)">runFastAlignmentModelEMMCRecoveryFcn</a>	fast version with 1 plot (typical profile) + alignment result matfile</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [amHeldBackcube] = RcreateHeldBackcube(amIntrDatacube, offset, align_wind, ninterventions, nmeasures, heldbackpct, imputationmode)</a>
+0002 
+0003 <span class="comment">% createHeldBackcube - creates an index array indicating points to be held</span>
+0004 <span class="comment">% back for imputation (chosen at random)</span>
+0005 
+0006 <span class="comment">% set seed random number generator to a consistent point for</span>
+0007 <span class="comment">% reproduceability</span>
+0008 rng(2);
+0009 
+0010 amHeldBackcube = zeros(ninterventions, align_wind + offset.span-1 + abs(offset.down), nmeasures);
+0011 
+0012 <span class="keyword">if</span> imputationmode ==2
+0013     <span class="keyword">for</span> i = 1:ninterventions
+0014         <span class="keyword">for</span> d = 1:offset.span + align_wind + abs(offset.down)
+0015             <span class="keyword">for</span> m = 1:nmeasures
+0016                 <span class="keyword">if</span> ~isnan(amIntrDatacube(i, d, m))
+0017                     holdback = rand;
+0018                     <span class="keyword">if</span> holdback &lt;= heldbackpct
+0019                         amHeldBackcube(i, d, m) = 1;
+0020                     <span class="keyword">end</span>
+0021                 <span class="keyword">end</span>
+0022             <span class="keyword">end</span>
+0023         <span class="keyword">end</span>
+0024     <span class="keyword">end</span>
+0025 <span class="keyword">end</span>
+0026 <span class="keyword">end</span>
+0027</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

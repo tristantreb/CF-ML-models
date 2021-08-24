@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cointoss</title>
+  <meta name="keywords" content="cointoss">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; cointoss.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cointoss
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 
+0003 <span class="keyword">for</span> b = 1:3
+0004     
+0005     parray = 0;
+0006 
+0007     keepgoing = 1;
+0008     ntosses = b * 10;
+0009     <span class="keyword">while</span> keepgoing
+0010         p = rand;
+0011         nheads = 0;
+0012         ntails = 0;
+0013         pd = makedist(<span class="string">'Binomial'</span>, <span class="string">'n'</span>, 1, <span class="string">'p'</span>, p);
+0014         <span class="keyword">for</span> a = 1:ntosses
+0015             result = random(pd);
+0016             <span class="keyword">if</span> result == 1
+0017                 nheads = nheads + 1;
+0018             <span class="keyword">elseif</span> result == 0
+0019                 ntails = ntails + 1;
+0020             <span class="keyword">else</span>
+0021                 fprintf(<span class="string">'should never get here!!\n'</span>);
+0022             <span class="keyword">end</span>
+0023         <span class="keyword">end</span>
+0024         <span class="keyword">if</span> nheads == ntosses / 2 
+0025             parray = [parray; p];
+0026         <span class="keyword">end</span>
+0027         <span class="keyword">if</span> size(parray,1) == 10000
+0028             keepgoing = 0;
+0029         <span class="keyword">end</span>
+0030         <span class="keyword">if</span> size(parray,1)/1000 == round(size(parray,1)/1000)
+0031             fprintf(<span class="string">'%d\n'</span>, size(parray,1));
+0032         <span class="keyword">end</span>
+0033     <span class="keyword">end</span>
+0034     name = sprintf(<span class="string">'Coin Toss Example - %d Tosses'</span>, b * 10);
+0035     h = histogram(parray,20);
+0036     plotsubfolder = <span class="string">'Plots'</span>;
+0037     <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(h, name, plotsubfolder);
+0038 <span class="keyword">end</span>            
+0039         
+0040         
+0041</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

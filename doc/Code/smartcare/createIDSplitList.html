@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createIDSplitList</title>
+  <meta name="keywords" content="createIDSplitList">
+  <meta name="description" content="createIDSplitList - choose either gender or age to split by and create">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createIDSplitList.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createIDSplitList
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>createIDSplitList - choose either gender or age to split by and create</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [splittbl, splittxt, ntiles, isValid] = createIDSplitList(cdPatient, amInterventions) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> createIDSplitList - choose either gender or age to split by and create 
+ the split table accordingly</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModelEMMCFcnSplit.html" class="code" title="function runAlignmentModelEMMCFcnSplit(amRunParameters)">runAlignmentModelEMMCFcnSplit</a>	function to run the alignment model (EM version) given a set of run</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [splittbl, splittxt, ntiles, isValid] = createIDSplitList(cdPatient, amInterventions)</a>
+0002 
+0003 <span class="comment">% createIDSplitList - choose either gender or age to split by and create</span>
+0004 <span class="comment">% the split table accordingly</span>
+0005 
+0006 isValid = true;
+0007 nsplitmthd = 3;
+0008 ssplitmthd = input(<span class="string">'Choose what to split by (1 = Age, 2 = Gender, 3 = Drug Therapy): '</span>, <span class="string">'s'</span>);
+0009 splitmthd = str2double(ssplitmthd);
+0010 
+0011 <span class="keyword">if</span> (isnan(splitmthd) || splitmthd &lt; 1 || splitmthd &gt; nsplitmthd)
+0012     fprintf(<span class="string">'Invalid choice\n'</span>);
+0013     splittbl = [];
+0014     splittxt  = <span class="string">'N/A'</span>;
+0015     ntiles     = 0;
+0016     isValid    = false;
+0017     <span class="keyword">return</span>;
+0018 <span class="keyword">end</span>
+0019 
+0020 splittbl = outerjoin(amInterventions, cdPatient, <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'ID'</span>}, <span class="keyword">...</span>
+0021     <span class="string">'LeftVariables'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'DrugTherapy'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'Age'</span>, <span class="string">'Sex'</span>}, <span class="string">'Type'</span>, <span class="string">'left'</span>);
+0022 splittbl = sortrows(splittbl, {<span class="string">'SmartCareID'</span>}, <span class="string">'ascend'</span>);
+0023 
+0024 
+0025 <span class="keyword">if</span> splitmthd == 1
+0026     splittbl.NTile(:) = 0;
+0027     <span class="comment">%medage = median(splittbl.Age);</span>
+0028     <span class="comment">%splittbl.NTile(splittbl.Age &lt;= medage) = 1;</span>
+0029     <span class="comment">%splittbl.NTile(splittbl.Age &gt;  medage) = 2;</span>
+0030     splittbl.NTile(splittbl.Age &lt; 6) = 1;
+0031     splittbl.NTile(splittbl.Age &gt;=  6) = 2;
+0032     splittxt = <span class="string">'Age'</span>;
+0033     ntiles = 2;
+0034 <span class="keyword">elseif</span> splitmthd == 2
+0035     splittbl.NTile(:) = 0;
+0036     splittbl.NTile(ismember(splittbl.Sex, <span class="string">'Female'</span>)) = 1;
+0037     splittbl.NTile(ismember(splittbl.Sex, <span class="string">'Male'</span>)) = 2;
+0038     splittxt = <span class="string">'Gender'</span>;
+0039     ntiles = 2;
+0040 <span class="keyword">elseif</span> splitmthd == 3
+0041     splittbl.NTile(:) = 0;
+0042     splittbl.NTile(ismember(splittbl.DrugTherapy, {<span class="string">'None'</span>})) = 1;
+0043     splittbl.NTile(ismember(splittbl.DrugTherapy, {<span class="string">'Ivacaftor'</span>, <span class="string">'Orkambi'</span>, <span class="string">'Symkevi'</span>, <span class="string">'Triple Therapy'</span>})) = 2;
+0044     splittxt = <span class="string">'DrugTherapy'</span>;
+0045     ntiles = 2;
+0046 <span class="keyword">else</span>
+0047     fprintf(<span class="string">'Should never get here'</span>);
+0048     splittbl = [];
+0049     splittxt  = <span class="string">'N/A'</span>;
+0050     ntiles     = 0;
+0051     isValid = false;
+0052 <span class="keyword">end</span>
+0053 
+0054 <span class="keyword">end</span>
+0055</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

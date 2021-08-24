@@ -1,0 +1,322 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of exploreInterventions</title>
+  <meta name="keywords" content="exploreInterventions">
+  <meta name="description" content="explores the list of interventions">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">exploration</a> &gt; exploreInterventions.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/exploration&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>exploreInterventions
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>explores the list of interventions</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> explores the list of interventions
+ 
+ - plot patient enrolment time
+ - plot number of interventions par patient
+ - explore drug therapies (display two tables)
+ - display bar plots of interventions durations
+ - plot the measures profile for each intervention used in the model
+ 
+ 
+ 
+ Input:
+ ------
+ clinical and measurements data
+ BRalignmentmodelinputs_recovery_gap*.mat  uses amInterventions ID, start,
+ stop date, 
+ BRmuNorm.mat                              mu normalisation for mean
+ window - created by running CreateIntrNormDataCube
+
+ Output:
+ -------
+ one plot per patient</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="getDrugTherapyInfo.html" class="code" title="function [Drugsbypatients, historytable] = getDrugTherapyInfo(brDrugTherapy, brPatient)">getDrugTherapyInfo</a>	all information about CFTR modulator therapies is centralised here</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/helperfunctions/barHistogram.html" class="code" title="function barHistogram(data, plottitle, xtitle)">barHistogram</a>	bar plot with interventions grouped by duration</li><li><a href="../../../Code/pdm/helperfunctions/getMeasureTable.html" class="code" title="function [out] = getMeasureTable(brphysdata,recording_type,category)">getMeasureTable</a>	returns a table with all data about the specified recording type</li><li><a href="../../../Code/pdm/recovery/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/smartcare/getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>	getInvertedMeasures - returns an array of measure display names that need</li><li><a href="../../../Code/smartcare/getMeasuresMask.html" class="code" title="function measures = getMeasuresMask(measuresmask, measures)">getMeasuresMask</a>	reset measures mask</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function out = getRouteColor(route)</a></li><li><a href="#_sub2" class="code">function m_idx = mapMeasuresToIndex(m, measures)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% explores the list of interventions</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% - plot patient enrolment time</span>
+0004 <span class="comment">% - plot number of interventions par patient</span>
+0005 <span class="comment">% - explore drug therapies (display two tables)</span>
+0006 <span class="comment">% - display bar plots of interventions durations</span>
+0007 <span class="comment">% - plot the measures profile for each intervention used in the model</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Input:</span>
+0012 <span class="comment">% ------</span>
+0013 <span class="comment">% clinical and measurements data</span>
+0014 <span class="comment">% BRalignmentmodelinputs_recovery_gap*.mat  uses amInterventions ID, start,</span>
+0015 <span class="comment">% stop date,</span>
+0016 <span class="comment">% BRmuNorm.mat                              mu normalisation for mean</span>
+0017 <span class="comment">% window - created by running CreateIntrNormDataCube</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% Output:</span>
+0020 <span class="comment">% -------</span>
+0021 <span class="comment">% one plot per patient</span>
+0022 
+0023 <a href="init.html" class="code" title="">init</a>;
+0024 
+0025 modelinputfile = <span class="string">'BRalignmentmodelinputs_recovery_gap10_datawind20.mat'</span>;
+0026 munormfile = <span class="string">'BRmuNorm.mat'</span>;
+0027 
+0028 <span class="comment">% load amInterventions, amDatacube, measures and count info</span>
+0029 load(fullfile(basedir, subfolder, modelinputfile));
+0030 <span class="comment">% load normmean</span>
+0031 load(fullfile(basedir, subfolder, munormfile));
+0032 
+0033 <span class="comment">% load measures</span>
+0034 [datamatfile, ~, ~] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0035 [brphysdata, broffset, ~] = <a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0036 
+0037 <span class="comment">% load CFTR modulators therapy</span>
+0038 load(fullfile(basedir, subfolder, <span class="string">'breatheclinicaldata.mat'</span>),<span class="string">'brDrugTherapy'</span>, <span class="string">'brPatient'</span>);
+0039 
+0040 load(<span class="string">'/Users/tristan.trebaol/Documents/PDM/Project/MatlabSavedVariables/BRivandmeasures_recovery_gap10.mat'</span>)
+0041 
+0042 <span class="comment">%% explore drug therapies</span>
+0043 <a href="getDrugTherapyInfo.html" class="code" title="function [Drugsbypatients, historytable] = getDrugTherapyInfo(brDrugTherapy, brPatient)">getDrugTherapyInfo</a>(brDrugTherapy, brPatient);
+0044 
+0045 <span class="comment">%% patient enrollment time</span>
+0046 
+0047 <span class="comment">% patient enrolment time</span>
+0048 newest_date = max(datenum(brPatient.PatClinDate));
+0049 idx = ~isnat(brPatient.WithdrawalDate);
+0050 brPatient.TimeEnrolled(idx) = datenum(brPatient.WithdrawalDate(idx)) - datenum(brPatient.StudyDate(idx));
+0051 brPatient.TimeEnrolled(not(idx)) = newest_date - datenum(brPatient.StudyDate(~idx));
+0052 brPatient.TimeEnrolled=brPatient.TimeEnrolled/365.25*12; <span class="comment">% in months</span>
+0053 figure(<span class="string">'DefaultAxesFontSize'</span>,16,<span class="string">'Position'</span>, [1 1 600 300])
+0054 histogram(brPatient.TimeEnrolled,<span class="string">'BinWidth'</span>,3,<span class="string">'FaceColor'</span>,<span class="string">'k'</span>,<span class="string">'FaceAlpha'</span>,0.4,<span class="string">'EdgeColor'</span>,<span class="string">'k'</span>,<span class="string">'LineWidth'</span>,1)
+0055 xticks(0:3:30)
+0056 xlabel(<span class="string">'Enrolment time (months)'</span>)
+0057 ylabel(<span class="string">'Number of participants'</span>)
+0058 saveas(gcf,fullfile(plotfolder,sprintf(<span class="string">'Patient_enrolment_time_from%s_to%s.png'</span>,min(brPatient.PatClinDate),max(brPatient.PatClinDate))));
+0059 close all;
+0060 
+0061 
+0062 <span class="comment">%% display #interventions per patient</span>
+0063 
+0064 IDs = brPatient.ID(brPatient.TimeEnrolled &gt; 0);
+0065 <span class="comment">%nintr = groupcounts(amInterventions,'SmartCareID');</span>
+0066 nintr = groupcounts(ivandmeasurestable,<span class="string">'SmartCareID'</span>);
+0067 <span class="comment">% patient enrolled since &gt; 12 months</span>
+0068 nintr_patient = nintr(ismember(nintr.SmartCareID,IDs),:);
+0069 fprintf(<span class="string">'Proportion of patients with at least one intervention %.2f\n'</span>, size(nintr,1)/size(IDs,1));
+0070 
+0071 nintr = groupcounts(nintr_patient,<span class="string">'GroupCount'</span>);
+0072 nintr(end+1,:) = table( 0, size(unique(brPatient.ID),1) - size(unique(ivandmeasurestable.SmartCareID),1), 0);
+0073 
+0074 figure(<span class="string">'DefaultAxesFontSize'</span>,16,<span class="string">'Position'</span>, [1 1 600 300])
+0075 b = bar(nintr.GroupCount,nintr.GroupCount_1,<span class="string">'FaceColor'</span>,<span class="string">'k'</span>,<span class="string">'FaceAlpha'</span>,0.4,<span class="string">'EdgeColor'</span>,<span class="string">'k'</span>,<span class="string">'LineWidth'</span>,1);
+0076 xlabel(<span class="string">'Number of antibiotic treatments'</span>);
+0077 ylabel(<span class="string">'Number of participants'</span>);
+0078 b.FaceColor = <span class="string">'flat'</span>; b.CData(1,:) = [1 1 1];
+0079 saveas(gcf,fullfile(plotfolder,sprintf(<span class="string">'bar_intrperpatient_before_filter.png'</span>)));
+0080 close all;
+0081 
+0082 <span class="comment">%% display bar plots of interventions durations</span>
+0083 
+0084 figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 1500 600])
+0085 subplot(2,1,1)
+0086 <a href="../../../Code/pdm/helperfunctions/barHistogram.html" class="code" title="function barHistogram(data, plottitle, xtitle)">barHistogram</a>(amInterventions.IVStopDateNum-amInterventions.IVDateNum,<span class="keyword">...</span>
+0087     sprintf(<span class="string">'The %i interventions grouped by duration (post data completeness filter)'</span>,size(amInterventions,1)),<span class="keyword">...</span>
+0088     <span class="string">'Intervention duration (days)'</span>)
+0089 
+0090 <span class="comment">% bonus: same plot for all interventions</span>
+0091 load(fullfile(basedir, subfolder, <span class="string">'BRivandmeasures_recovery_gap10.mat'</span>)); <span class="comment">% note BRivandmeasures_gap*.mat also works</span>
+0092 
+0093 subplot(2,1,2)
+0094 <a href="../../../Code/pdm/helperfunctions/barHistogram.html" class="code" title="function barHistogram(data, plottitle, xtitle)">barHistogram</a>(ivandmeasurestable.IVStopDateNum-ivandmeasurestable.IVDateNum,<span class="keyword">...</span>
+0095     sprintf(<span class="string">'The %i interventions grouped by duration (all interventions included)'</span>,size(ivandmeasurestable,1)),<span class="keyword">...</span>
+0096     <span class="string">'Intervention duration (days)'</span>)
+0097 
+0098 saveas(gcf,fullfile(plotfolder,sprintf(<span class="string">'Bar graph of the interventions duration (%i and %i).png'</span>, size(amInterventions,1), size(ivandmeasurestable,1))));
+0099 close all;
+0100 
+0101 <span class="comment">%% plot the measures profile for each intervention used in the model</span>
+0102 
+0103 <span class="comment">% parameters</span>
+0104 days_prior = 35; <span class="comment">% include mu normalisation window [-35, -25] days</span>
+0105 days_post = 39; <span class="comment">% treatment generally durate 2 weeks, includes day 0</span>
+0106 
+0107 <span class="comment">% TODO % add which Drug Therapy has been started, and if within range, plot it</span>
+0108 
+0109 <span class="comment">% note amInterventions date 0 is study start date, i.e. broffset (not patient start date)</span>
+0110 
+0111 <span class="keyword">for</span> i = 1:ninterventions
+0112     figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 1500 600])
+0113     t = tiledlayout(4,2);
+0114     
+0115     id = amInterventions.SmartCareID(i);
+0116     start = amInterventions.IVDateNum(i);
+0117     stop = amInterventions.IVStopDateNum(i);
+0118     range = start - days_prior : start + days_post;
+0119     
+0120     <span class="comment">% visualize all treatments within range before or after</span>
+0121     start_in_range = amInterventions.IVDateNum(amInterventions.SmartCareID == id);
+0122     stop_in_range = amInterventions.IVStopDateNum(amInterventions.SmartCareID == id);
+0123     route_in_range = string(amInterventions.Route(amInterventions.SmartCareID == id));
+0124     start_in_range(not(ismember(start_in_range, range))) = nan;
+0125     stop_in_range(not(ismember(stop_in_range, range))) = nan;
+0126 
+0127     idx = isnan(start_in_range) &amp; not(isnan(stop_in_range));
+0128     start_in_range(idx) = range(1);
+0129     idx = isnan(stop_in_range) &amp; not(isnan(start_in_range));
+0130     stop_in_range(idx) = range(end);
+0131     
+0132     start_in_range(isnan(start_in_range))=[];
+0133     route_in_range(isnan(stop_in_range)) = [];
+0134     stop_in_range(isnan(stop_in_range))=[];
+0135 
+0136     
+0137     measurestoplot = [&quot;FEV1&quot;, &quot;Wellness&quot;,<span class="keyword">...</span>
+0138             &quot;FEF2575&quot;, &quot;Cough&quot;,<span class="keyword">...</span>
+0139             &quot;PulseRate&quot;,&quot;O2Saturation&quot;,<span class="keyword">...</span>
+0140             &quot;Temperature&quot;,&quot;MinsAsleep&quot;];
+0141 <span class="comment">%     measurestoplot = [&quot;FEV1&quot;, &quot;O2Saturation&quot;,...</span>
+0142 <span class="comment">%             &quot;PulseRate&quot;, &quot;HasColdOrFlu&quot;,...</span>
+0143 <span class="comment">%             &quot;MinsAsleep&quot;,&quot;Wellness&quot;,...</span>
+0144 <span class="comment">%             &quot;MinsAwake&quot;,&quot;Temperature&quot;];</span>
+0145     
+0146     <span class="keyword">for</span> m = <a href="#_sub2" class="code" title="subfunction m_idx = mapMeasuresToIndex(m, measures)">mapMeasuresToIndex</a>(measurestoplot,measures)
+0147         
+0148         nexttile;
+0149         
+0150         <span class="comment">% get raw data</span>
+0151         data = <a href="../../../Code/pdm/helperfunctions/getMeasureTable.html" class="code" title="function [out] = getMeasureTable(brphysdata,recording_type,category)">getMeasureTable</a>(brphysdata,measures.Name{m},measures.Column{m});
+0152         <span class="comment">% get data specific to current intervention</span>
+0153         data = data( ismember( data.ID, id ) &amp; <span class="keyword">...</span>
+0154             ismember( data.DateNum, range ), : );
+0155 
+0156         <span class="comment">% plot</span>
+0157         y = eval(sprintf(<span class="string">'data.%s'</span>,measures.Name{m}));
+0158         plot(data.DateNum-start, y,<span class="keyword">...</span>
+0159             <span class="string">'Color'</span>, [0, 0.65, 1], <span class="keyword">...</span>
+0160             <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="keyword">...</span>
+0161             <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0162             <span class="string">'LineWidth'</span>,1,<span class="keyword">...</span>
+0163             <span class="string">'MarkerSize'</span>,2,<span class="keyword">...</span>
+0164             <span class="string">'MarkerEdgeColor'</span>,<span class="string">'b'</span>,<span class="keyword">...</span>
+0165             <span class="string">'MarkerFaceColor'</span>,<span class="string">'g'</span>);
+0166         hold on
+0167         smoothing_factor=5;
+0168         plot(data.DateNum-start, smooth(y,smoothing_factor),<span class="keyword">...</span>
+0169             <span class="string">'Color'</span>, [0, 0.65, 1], <span class="keyword">...</span>
+0170             <span class="string">'LineStyle'</span>, <span class="string">'-'</span>,<span class="keyword">...</span>
+0171             <span class="string">'LineWidth'</span>,1);
+0172         <span class="keyword">if</span> length(y)&gt;1 &amp;&amp; min(y) ~= max(y)
+0173             ylim([min(y), max(y)]);
+0174         <span class="keyword">end</span>
+0175         yl = ylim;
+0176         <span class="keyword">for</span> j = 1:length(start_in_range)
+0177             startdate = start_in_range(j) - start;
+0178             stopdate = stop_in_range(j) - start;
+0179             route = route_in_range(j);
+0180             fill([startdate stopdate stopdate startdate], <span class="keyword">...</span>
+0181                 [yl(1) yl(1) yl(2) yl(2)], <a href="#_sub1" class="code" title="subfunction out = getRouteColor(route)">getRouteColor</a>(route), <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0182         <span class="keyword">end</span>
+0183         fill([-35 -25 -25 -35], <span class="keyword">...</span>
+0184             [yl(1) yl(1) yl(2) yl(2)], <span class="string">'k'</span>, <span class="string">'FaceAlpha'</span>, <span class="string">'0.04'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0185 
+0186         yline(normmean(i,m))
+0187         hold off
+0188 
+0189         xlim([-days_prior days_post+1])
+0190         xlabel(<span class="string">'Days from study start'</span>)
+0191         ylabel(measures.DisplayName{m})
+0192 
+0193         <span class="comment">% reverse values where necessary</span>
+0194         <span class="keyword">if</span> ismember(measures.DisplayName{m},<a href="../../../Code/smartcare/getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>(study))
+0195             set(gca, <span class="string">'YDir'</span>,<span class="string">'reverse'</span>)
+0196         <span class="keyword">end</span>
+0197     <span class="keyword">end</span>
+0198     <span class="keyword">if</span> length(route_in_range) == 1
+0199         legend(<span class="string">'Values'</span>,<span class="string">'Smoothed curve'</span>, [amInterventions.Route{i} <span class="string">' treatment'</span>],<span class="string">'Meanwindow'</span>,<span class="string">'Normmean'</span>,<span class="string">'Location'</span>,<span class="string">'eastoutside'</span>)
+0200     <span class="keyword">elseif</span> length(route_in_range) == 2
+0201         <span class="keyword">if</span> start_in_range(1) == start
+0202             legend(<span class="string">'Values'</span>,<span class="string">'Smoothed curve'</span>, [amInterventions.Route{i} <span class="string">' treatment'</span>], [amInterventions.Route{i+1} <span class="string">' treatment'</span>],<span class="string">'Meanwindow'</span>,<span class="string">'Normmean'</span>,<span class="string">'Location'</span>,<span class="string">'eastoutside'</span>)
+0203         <span class="keyword">else</span>
+0204             legend(<span class="string">'Values'</span>,<span class="string">'Smoothed curve'</span>, [amInterventions.Route{i-1} <span class="string">' treatment'</span>], [amInterventions.Route{i} <span class="string">' treatment'</span>],<span class="string">'Meanwindow'</span>,<span class="string">'Normmean'</span>,<span class="string">'Location'</span>,<span class="string">'eastoutside'</span>)
+0205         <span class="keyword">end</span>
+0206     <span class="keyword">else</span>
+0207         <span class="keyword">continue</span>;
+0208     <span class="keyword">end</span>
+0209     <span class="comment">% write title</span>
+0210     sgtitle(sprintf(<span class="string">'Intervention %i (from %s to %s), patient %i, smooth %i'</span>, i, datestr(broffset-1+start), datestr(broffset-1+stop), id, smoothing_factor))
+0211     saveas(gcf,fullfile(plotfolder,sprintf(<span class="string">'Intervention%i_ID%i.png'</span>, i, id)))
+0212     close all;
+0213 <span class="keyword">end</span>
+0214 
+0215 <span class="comment">%%</span>
+0216 mm = 22; <span class="comment">% 34</span>
+0217 measures = <a href="../../../Code/smartcare/getMeasuresMask.html" class="code" title="function measures = getMeasuresMask(measuresmask, measures)">getMeasuresMask</a>(mm, measures);
+0218 measures = measures.Index(logical(measures.Mask));
+0219 nmeasures=length(measures);
+0220 
+0221 align_wind = 20;
+0222 i = 1;
+0223 
+0224 r = nan(nmeasures, nmeasures);
+0225 
+0226 <span class="keyword">for</span> x = 1:measures
+0227     <span class="keyword">for</span> y = 1:nmeasures
+0228         X = amIntrDatacube(i,1:align_wind,x)
+0229         r(x,y) = xcorr(amIntrDatacube(i,1:align_wind,x),amIntrDatacube(i,1:align_wind,y));
+0230     <span class="keyword">end</span>
+0231 <span class="keyword">end</span>
+0232 <span class="comment">%% functions</span>
+0233 
+0234 <a name="_sub0" href="#_subfunctions" class="code">function out = getRouteColor(route)</a>
+0235 <span class="comment">% assign the color for the corresponding route</span>
+0236 <span class="keyword">switch</span> route
+0237     <span class="keyword">case</span> <span class="string">'Oral'</span>
+0238         out = [1     0.85  0   ];
+0239     <span class="keyword">case</span> {<span class="string">'IV'</span>, <span class="string">'IVPBO'</span>}
+0240         out = [1     0     0   ];
+0241 <span class="keyword">end</span>
+0242 <span class="keyword">end</span>
+0243 
+0244 <a name="_sub1" href="#_subfunctions" class="code">function m_idx = mapMeasuresToIndex(m, measures)</a>
+0245 <span class="comment">% subsitutes the measure name by its index thans to the &quot;measures&quot; array</span>
+0246 <span class="comment">%</span>
+0247 <span class="comment">% Note: vectorisation is agnostic of the ordering of m, it takes the</span>
+0248 <span class="comment">% ordering of measures. Hence we made this function</span>
+0249 m_idx = zeros(1,length(m));
+0250 <span class="keyword">for</span> i = 1:length(m)
+0251     m_idx(1,i) = measures{ismember(measures.DisplayName, m(i)),<span class="string">'Index'</span>};
+0252 <span class="keyword">end</span>
+0253 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

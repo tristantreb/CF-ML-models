@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calcBRFEV1PrctPredicted</title>
+  <meta name="keywords" content="calcBRFEV1PrctPredicted">
+  <meta name="description" content="calculates FEV1 % predicted for each patient with values in Breathe data">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">helperfunctions</a> &gt; calcBRFEV1PrctPredicted.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/helperfunctions&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>calcBRFEV1PrctPredicted
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>calculates FEV1 % predicted for each patient with values in Breathe data</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function FEV1prctpredicted = calcBRFEV1PrctPredicted(brphysdata,cdPatient) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> calculates FEV1 % predicted for each patient with values in Breathe data
+ 
+ formula: FEV1%Predicted = mean_of_all_FEV1_recordings / CalcPredictedFEV1
+ 
+ Input:
+ ------
+ ID, FEV1 measurement data
+ ID, CalcPredictedFEV1 from cdPatient in the clinical data
+ 
+ Output: table with (ID, Value) with the percentage predicted
+ -------</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="getMeasureTable.html" class="code" title="function [out] = getMeasureTable(brphysdata,recording_type,category)">getMeasureTable</a>	returns a table with all data about the specified recording type</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/exploration/patientDemographics.html" class="code" title="">patientDemographics</a>	create an excel with current BR patient demographics</li><li><a href="../../../Code/pdm/recovery/runSpecificInterventions.html" class="code" title="">runSpecificInterventions</a>	run a model with a manually selected subset of interventions</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% calculates FEV1 % predicted for each patient with values in Breathe data</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% formula: FEV1%Predicted = mean_of_all_FEV1_recordings / CalcPredictedFEV1</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Input:</span>
+0006 <span class="comment">% ------</span>
+0007 <span class="comment">% ID, FEV1 measurement data</span>
+0008 <span class="comment">% ID, CalcPredictedFEV1 from cdPatient in the clinical data</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% Output: table with (ID, Value) with the percentage predicted</span>
+0011 <span class="comment">% -------</span>
+0012 
+0013 <a name="_sub0" href="#_subfunctions" class="code">function FEV1prctpredicted = calcBRFEV1PrctPredicted(brphysdata,cdPatient)</a>
+0014 
+0015 fprintf(<span class="string">'\nCalculating FEV1 percentage predicted'</span>);
+0016 <span class="comment">% -&gt; calculate PercentagePredicted based on brphysdata</span>
+0017 FEV1breathe = <a href="getMeasureTable.html" class="code" title="function [out] = getMeasureTable(brphysdata,recording_type,category)">getMeasureTable</a>(brphysdata,<span class="string">'FEV1Recording'</span>,<span class="string">'FEV'</span>);
+0018 <span class="comment">% calculate true value based on mean</span>
+0019 func = @(x) mean(x);
+0020 FEV1breathe = varfun(func,FEV1breathe,<span class="string">'GroupingVariables'</span>,<span class="string">'ID'</span>,<span class="string">'InputVariables'</span>,<span class="string">'FEV1Recording'</span>);
+0021 <span class="comment">% adds predicted FEV1</span>
+0022 FEV1breathe = outerjoin(FEV1breathe, cdPatient, <span class="string">'Type'</span>, <span class="string">'Left'</span>, <span class="string">'Keys'</span>, <span class="string">'ID'</span>, <span class="string">'RightVariables'</span>, {<span class="string">'CalcPredictedFEV1'</span>});
+0023 <span class="comment">% computes % predicted</span>
+0024 FEV1breathe.PercentagePredicted = FEV1breathe.Fun_FEV1Recording ./ FEV1breathe.CalcPredictedFEV1 * 100;
+0025 FEV1breathe = renamevars(FEV1breathe, <span class="string">'PercentagePredicted'</span>, <span class="string">'Value'</span>);
+0026 FEV1prctpredicted = FEV1breathe(:,{<span class="string">'ID'</span>,<span class="string">'Value'</span>});
+0027 fprintf(<span class="string">' - Done!\n'</span>);
+0028 
+0029 <span class="keyword">end</span>
+0030</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

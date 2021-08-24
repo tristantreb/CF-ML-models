@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cointoss2</title>
+  <meta name="keywords" content="cointoss2">
+  <meta name="description" content="set beta prior parameters">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; cointoss2.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>cointoss2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>set beta prior parameters</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> set beta prior parameters</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">% set beta prior parameters</span>
+0003 a = 10;
+0004 b = 1;
+0005 
+0006 plotsacross = 2;
+0007 plotsdown = 3;
+0008 plottitle = sprintf(<span class="string">'Coin Toss Exercise 2'</span>);
+0009 [fig, pan] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0010 
+0011 <span class="keyword">for</span> scen = 1:1
+0012     
+0013     parray = 0;
+0014 
+0015     keepgoing = 1;
+0016     ntosses = 10;
+0017     <span class="keyword">while</span> keepgoing
+0018         p = betarnd(a,b);
+0019         nheads = 0;
+0020         ntails = 0;
+0021         pd = makedist(<span class="string">'Binomial'</span>, <span class="string">'n'</span>, 1, <span class="string">'p'</span>, p);
+0022         <span class="keyword">for</span> n = 1:ntosses
+0023             result = random(pd);
+0024             <span class="keyword">if</span> result == 1
+0025                 nheads = nheads + 1;
+0026             <span class="keyword">elseif</span> result == 0
+0027                 ntails = ntails + 1;
+0028             <span class="keyword">else</span>
+0029                 fprintf(<span class="string">'should never get here!!\n'</span>);
+0030             <span class="keyword">end</span>
+0031         <span class="keyword">end</span>
+0032         <span class="keyword">if</span> nheads == ntosses / 2 
+0033             parray = [parray; p];
+0034         <span class="keyword">end</span>
+0035         <span class="keyword">if</span> size(parray,1) == 10000
+0036             keepgoing = 0;
+0037         <span class="keyword">end</span>
+0038         <span class="keyword">if</span> size(parray,1)/1000 == round(size(parray,1)/1000)
+0039             fprintf(<span class="string">'%d\n'</span>, size(parray,1));
+0040         <span class="keyword">end</span>
+0041     <span class="keyword">end</span>
+0042     ax(scen) = subplot(plotsdown,plotsacross,scen * 2 - 1,<span class="string">'Parent'</span>,pan);
+0043     histogram(parray,20);
+0044     name = sprintf(<span class="string">'%d Tosses, %d Heads'</span>, scen * 10, round(ntosses/2));
+0045     title(ax(scen), name);
+0046     
+0047     ax2(scen) = subplot(plotsdown,plotsacross,scen * 2,<span class="string">'Parent'</span>,pan);
+0048     x = [0: 0.01: 1];
+0049     y = betapdf(x, a, b);
+0050     line(x, y, <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="string">'Color'</span>, <span class="string">'red'</span>, <span class="string">'LineWidth'</span>, 2);
+0051     y = betapdf(x, ntosses/2, ntosses/2);
+0052     line(x, y, <span class="string">'LineStyle'</span>, <span class="string">'--'</span>, <span class="string">'Color'</span>, <span class="string">'green'</span>, <span class="string">'LineWidth'</span>, 2);
+0053     y = betapdf(x, a + ntosses/2, b + ntosses/2);
+0054     line(x, y, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineWidth'</span>, 2);
+0055     name = sprintf(<span class="string">'Beta Distribution (a=%d, b=%d)'</span>, a + ntosses/2, b + ntosses/2);
+0056     title(ax2(scen), name);
+0057     
+0058 <span class="keyword">end</span>      
+0059 
+0060 <span class="comment">% set beta prior parameters</span>
+0061 a = 1;
+0062 b = 1;
+0063 
+0064 <span class="keyword">for</span> scen = 2:2
+0065     
+0066     parray = 0;
+0067 
+0068     keepgoing = 1;
+0069     ntosses = 19;
+0070     <span class="keyword">while</span> keepgoing
+0071         p = betarnd(a,b);
+0072         nheads = 0;
+0073         ntails = 0;
+0074         pd = makedist(<span class="string">'Binomial'</span>, <span class="string">'n'</span>, 1, <span class="string">'p'</span>, p);
+0075         <span class="keyword">for</span> n = 1:ntosses
+0076             result = random(pd);
+0077             <span class="keyword">if</span> result == 1
+0078                 nheads = nheads + 1;
+0079             <span class="keyword">elseif</span> result == 0
+0080                 ntails = ntails + 1;
+0081             <span class="keyword">else</span>
+0082                 fprintf(<span class="string">'should never get here!!\n'</span>);
+0083             <span class="keyword">end</span>
+0084         <span class="keyword">end</span>
+0085         <span class="keyword">if</span> nheads == 14 
+0086             parray = [parray; p];
+0087         <span class="keyword">end</span>
+0088         <span class="keyword">if</span> size(parray,1) == 10000
+0089             keepgoing = 0;
+0090         <span class="keyword">end</span>
+0091         <span class="keyword">if</span> size(parray,1)/1000 == round(size(parray,1)/1000)
+0092             fprintf(<span class="string">'%d\n'</span>, size(parray,1));
+0093         <span class="keyword">end</span>
+0094     <span class="keyword">end</span>
+0095     ax(scen) = subplot(plotsdown,plotsacross,scen * 2 - 1,<span class="string">'Parent'</span>,pan);
+0096     histogram(parray,20);
+0097     name = sprintf(<span class="string">'%d Tosses, %d Heads'</span>, ntosses, 14);
+0098     title(ax(scen), name);
+0099     
+0100     ax2(scen) = subplot(plotsdown,plotsacross,scen * 2,<span class="string">'Parent'</span>,pan);
+0101     x = [0: 0.01: 1];
+0102     y = betapdf(x, a, b);
+0103     line(x, y, <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="string">'Color'</span>, <span class="string">'red'</span>, <span class="string">'LineWidth'</span>, 2);
+0104     y = betapdf(x, 14, (ntosses-14));
+0105     line(x, y, <span class="string">'LineStyle'</span>, <span class="string">'--'</span>, <span class="string">'Color'</span>, <span class="string">'green'</span>, <span class="string">'LineWidth'</span>, 2);
+0106     y = betapdf(x, a + 14, b + (ntosses-14));
+0107     line(x, y, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineWidth'</span>, 2);
+0108     name = sprintf(<span class="string">'Beta Distribution (a=%d, b=%d)'</span>, a + 14, b + (ntosses-14));
+0109     title(ax2(scen), name);
+0110     ax2(scen).YLim = [0,10];
+0111     
+0112     
+0113 <span class="keyword">end</span>
+0114 
+0115 plotsubfolder = <span class="string">'Plots'</span>;
+0116 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(fig, plottitle, plotsubfolder);
+0117 close(fig);
+0118 
+0119 
+0120 
+0121         
+0122         
+0123</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

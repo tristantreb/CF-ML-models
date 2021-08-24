@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of updateBreatheStudyNumber</title>
+  <meta name="keywords" content="updateBreatheStudyNumber">
+  <meta name="description" content="brPatient.StudyEmail{ismember(brPatient.StudyNumber, '4386')} = 'projectb.4386@gmail.com';">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; updateBreatheStudyNumber.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>updateBreatheStudyNumber
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>brPatient.StudyEmail{ismember(brPatient.StudyNumber, '4386')} = 'projectb.4386@gmail.com';</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">brPatient.StudyEmail{ismember(brPatient.StudyNumber, '4386')} = 'projectb.4386@gmail.com';</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <span class="comment">%brPatient.StudyEmail{ismember(brPatient.StudyNumber, '4386')} = 'projectb.4386@gmail.com';</span>
+0003 
+0004 <span class="comment">%brPatient.StudyNumber = brPatient.StudyEmail;</span>
+0005 
+0006 <span class="comment">% save output files</span>
+0007 tic
+0008 fprintf(<span class="string">'\n'</span>);
+0009 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0010 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0011 outputfilename = <span class="string">'breatheclinicaldata.mat'</span>;
+0012 fprintf(<span class="string">'Saving output variables to file %s\n'</span>, outputfilename);
+0013 save(fullfile(basedir, subfolder,outputfilename), <span class="string">'brPatient'</span>, <span class="string">'brAdmissions'</span>, <span class="string">'brAntibiotics'</span>, <span class="keyword">...</span>
+0014     <span class="string">'brClinicVisits'</span>, <span class="string">'brOtherVisits'</span>, <span class="string">'brUnplannedContact'</span>, <span class="keyword">...</span>
+0015     <span class="string">'brPFT'</span>, <span class="string">'brCRP'</span>, <span class="string">'brHghtWght'</span>, <span class="string">'brMicrobiology'</span>, <span class="string">'brEndStudy'</span>);
+0016 toc</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

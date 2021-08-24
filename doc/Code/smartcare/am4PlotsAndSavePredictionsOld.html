@@ -1,0 +1,255 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of am4PlotsAndSavePredictionsOld</title>
+  <meta name="keywords" content="am4PlotsAndSavePredictionsOld">
+  <meta name="description" content="am4PlotsAndSavePredictions - plots measures prior to">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; am4PlotsAndSavePredictionsOld.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>am4PlotsAndSavePredictionsOld
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>am4PlotsAndSavePredictions - plots measures prior to</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function am4PlotsAndSavePredictions(amInterventions, amDatacube, measures, pdoffset, overall_pdoffset, overall_pdoffset_all, overall_pdoffset_xAL, offsets, meancurvemean, hstg, normmean, ex_start, thisinter, nmeasures, max_offset, align_wind, study, version) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> am4PlotsAndSavePredictions - plots measures prior to
+ treatment with alignment model predictions and overlaid with the mean
+ curve for visual comparison, as well as the histograms showing the 
+ objective function results by measure.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function am4PlotsAndSavePredictions(amInterventions, amDatacube, measures, pdoffset, overall_pdoffset, overall_pdoffset_all, overall_pdoffset_xAL, offsets, meancurvemean, hstg, normmean, ex_start, thisinter, nmeasures, max_offset, align_wind, study, version)</a>
+0002 
+0003 <span class="comment">% am4PlotsAndSavePredictions - plots measures prior to</span>
+0004 <span class="comment">% treatment with alignment model predictions and overlaid with the mean</span>
+0005 <span class="comment">% curve for visual comparison, as well as the histograms showing the</span>
+0006 <span class="comment">% objective function results by measure.</span>
+0007 
+0008 plotsdown = 9;
+0009 plotsacross = 5;
+0010 mpos = [ 1 2 6 7 ; 3 4 8 9 ; 11 12 16 17 ; 13 14 18 19 ; 21 22 26 27 ; 23 24 28 29 ; 31 32 36 37 ; 33 34 38 39];
+0011 hpos = [ 5 ; 10 ; 15 ; 20 ; 25 ; 30 ; 35 ; 40 ; 45 ; 44 ; 43 ; 42 ; 41 ];
+0012 days = [-1 * (max_offset + align_wind): 0];
+0013 
+0014 scid = amInterventions.SmartCareID(thisinter);
+0015 start = amInterventions.IVScaledDateNum(thisinter);
+0016 name = sprintf(<span class="string">'%s_AM%s Exacerbation %d - ID %d Date %s, Offset %d'</span>, study, version, thisinter, scid, datestr(amInterventions.IVStartDate(thisinter),29), offsets(thisinter));
+0017 f = figure(<span class="string">'Name'</span>, name);
+0018 set(gcf, <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="string">'OuterPosition'</span>, [0.45, 0, 0.35, 0.92], <span class="string">'PaperOrientation'</span>, <span class="string">'portrait'</span>, <span class="string">'PaperUnits'</span>, <span class="string">'normalized'</span>,<span class="string">'PaperPosition'</span>,[0, 0, 1, 1], <span class="string">'PaperType'</span>, <span class="string">'a4'</span>);
+0019 p = uipanel(<span class="string">'Parent'</span>,f,<span class="string">'BorderType'</span>,<span class="string">'none'</span>);
+0020 fprintf(<span class="string">'%s - Best Offset = %d\n'</span>, name, offsets(thisinter));
+0021 p.Title = name;
+0022 p.TitlePosition = <span class="string">'centertop'</span>;
+0023 p.FontSize = 12;
+0024 p.FontWeight = <span class="string">'bold'</span>; 
+0025 <span class="keyword">for</span> m = 1:nmeasures
+0026     current = NaN(1,max_offset + align_wind + 1);
+0027     <span class="keyword">for</span> j=0:max_offset + align_wind
+0028         <span class="keyword">if</span> start - j &gt; 0
+0029             current(max_offset + align_wind + 1 - j) = amDatacube(scid, start - j, m);    
+0030         <span class="keyword">end</span>
+0031     <span class="keyword">end</span>
+0032     <span class="keyword">if</span> all(isnan(current))
+0033         <span class="keyword">continue</span>;
+0034     <span class="keyword">end</span>
+0035     subplot(plotsdown, plotsacross, mpos(m,:), <span class="string">'Parent'</span>,p)
+0036     <span class="comment">% plot measurement data</span>
+0037     plot(days, current, <span class="keyword">...</span>
+0038             <span class="string">'Color'</span>, [0, 0.65, 1], <span class="keyword">...</span>
+0039             <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0040             <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0041             <span class="string">'LineWidth'</span>,1, <span class="keyword">...</span>
+0042             <span class="string">'MarkerSize'</span>,2,<span class="keyword">...</span>
+0043             <span class="string">'MarkerEdgeColor'</span>,<span class="string">'b'</span>,<span class="keyword">...</span>
+0044             <span class="string">'MarkerFaceColor'</span>,<span class="string">'g'</span>);
+0045     set(gca,<span class="string">'fontsize'</span>,6);
+0046     xl = [(min(days) + 1) max(days)];
+0047     xlim(xl);
+0048     ydisplaymin = min(min(current * 0.99), min(meancurvemean(1:max_offset + align_wind - 1 - offsets(thisinter), m) + normmean(thisinter, m) * 0.99));
+0049     ydisplaymax = max(max(current * 1.01), max(meancurvemean(1:max_offset + align_wind - 1 - offsets(thisinter), m) + normmean(thisinter, m) * 1.01));
+0050     yl = [ydisplaymin ydisplaymax];
+0051     ylim(yl);
+0052     <span class="keyword">if</span> measures.Mask(m) == 1
+0053         title(measures.DisplayName(m), <span class="string">'FontSize'</span>, 8, <span class="string">'BackgroundColor'</span>, <span class="string">'g'</span>);
+0054     <span class="keyword">else</span>
+0055         title(measures.DisplayName(m),<span class="string">'FontSize'</span>, 8);
+0056     <span class="keyword">end</span>
+0057     <span class="comment">%title(measures.DisplayName{m}, 'FontSize', 8);</span>
+0058     xlabel(<span class="string">'Days Prior'</span>, <span class="string">'FontSize'</span>, 6);
+0059     ylabel(<span class="string">'Measure'</span>, <span class="string">'FontSize'</span>, 6);
+0060     hold on
+0061     <span class="comment">% plot mean curve (actual in dotted line, smoothed in solid line)</span>
+0062     plot([(-1 * (max_offset + align_wind - 1)) + offsets(thisinter): -1], <span class="keyword">...</span>
+0063         meancurvemean(1:max_offset + align_wind - 1 - offsets(thisinter), m) + normmean(thisinter, m), <span class="keyword">...</span>
+0064         <span class="string">'Color'</span>, <span class="string">'red'</span>, <span class="keyword">...</span>
+0065         <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="keyword">...</span>
+0066         <span class="string">'LineWidth'</span>, 1);
+0067     plot([(-1 * (max_offset + align_wind - 1)) + offsets(thisinter): -1], <span class="keyword">...</span>
+0068         smooth(meancurvemean(1:max_offset + align_wind - 1 - offsets(thisinter), m) + normmean(thisinter, m), 5), <span class="keyword">...</span>
+0069         <span class="string">'Color'</span>, <span class="string">'red'</span>, <span class="keyword">...</span>
+0070         <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0071         <span class="string">'LineWidth'</span>, 1);
+0072     <span class="comment">% plot vertical line for predicted exacerbation start</span>
+0073     line( [ex_start + offsets(thisinter) ex_start + offsets(thisinter)] , yl, <span class="keyword">...</span>
+0074         <span class="string">'Color'</span>, <span class="string">'green'</span>, <span class="keyword">...</span>
+0075         <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0076         <span class="string">'LineWidth'</span>, 0.5);
+0077     
+0078     <span class="comment">% plot short vertical line for average exacerbation start indicator</span>
+0079     line( [ex_start ex_start], [yl(1), yl(1) + ((yl(2)-yl(1)) * 0.1)], <span class="keyword">...</span>
+0080         <span class="string">'Color'</span>, <span class="string">'black'</span>, <span class="keyword">...</span>
+0081         <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="keyword">...</span>
+0082         <span class="string">'LineWidth'</span>, 0.5);
+0083     <span class="comment">% plot vertical line indicating treatment start</span>
+0084     line( [0 0] , yl, <span class="keyword">...</span>
+0085         <span class="string">'Color'</span>, <span class="string">'magenta'</span>, <span class="keyword">...</span>
+0086         <span class="string">'LineStyle'</span>,<span class="string">':'</span>, <span class="keyword">...</span>
+0087         <span class="string">'LineWidth'</span>, 0.5);
+0088     line( xl,[normmean(thisinter, m) normmean(thisinter, m)], <span class="keyword">...</span>
+0089         <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="keyword">...</span>
+0090         <span class="string">'LineStyle'</span>, <span class="string">'--'</span>, <span class="keyword">...</span>
+0091         <span class="string">'LineWidth'</span>, 0.5);
+0092     hold off;
+0093 <span class="keyword">end</span>
+0094 
+0095 <span class="comment">% plot the posterior distributions for each measure</span>
+0096 <span class="keyword">for</span> m=1:nmeasures
+0097     subplot(plotsdown, plotsacross, hpos(m,:),<span class="string">'Parent'</span>,p) 
+0098     plot([0:max_offset-1], reshape(pdoffset(m,thisinter,:), [max_offset,1]), <span class="keyword">...</span>
+0099             <span class="string">'Color'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0100             <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0101             <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0102             <span class="string">'LineWidth'</span>, 1, <span class="keyword">...</span>
+0103             <span class="string">'MarkerSize'</span>, 2,<span class="keyword">...</span>
+0104             <span class="string">'MarkerEdgeColor'</span>, <span class="string">'blue'</span>,<span class="keyword">...</span>
+0105             <span class="string">'MarkerFaceColor'</span>, <span class="string">'green'</span>);
+0106     set(gca,<span class="string">'fontsize'</span>,6);
+0107     hold on;
+0108     <span class="keyword">if</span> (max(pdoffset(m,thisinter,:)) &gt; 0.25)
+0109         yl = [0 max(pdoffset(m,thisinter,:))];
+0110     <span class="keyword">else</span>
+0111         yl = [0 0.25];
+0112     <span class="keyword">end</span>
+0113     line( [offsets(thisinter) offsets(thisinter)], yl, <span class="keyword">...</span>
+0114         <span class="string">'Color'</span>, <span class="string">'green'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, 0.5);
+0115     <span class="keyword">if</span> measures.Mask(m) == 1
+0116         title(sprintf(<span class="string">'%s (%.1f)'</span>, measures.DisplayName{m}, hstg(m, thisinter, offsets(thisinter) + 1)), <span class="string">'BackgroundColor'</span>, <span class="string">'g'</span>);
+0117     <span class="keyword">else</span>
+0118         title(sprintf(<span class="string">'%s (%.1f)'</span>, measures.DisplayName{m}, hstg(m, thisinter, offsets(thisinter) + 1)));
+0119     <span class="keyword">end</span>
+0120     xlim([0 max_offset-1]);
+0121     ylim(yl);
+0122     hold off;
+0123 <span class="keyword">end</span>
+0124 
+0125 <span class="comment">% plot the overall posterior distributions</span>
+0126 subplot(plotsdown, plotsacross, hpos(nmeasures + 1,:),<span class="string">'Parent'</span>,p)
+0127 plot([0:max_offset-1], overall_pdoffset(thisinter,:), <span class="keyword">...</span>
+0128     <span class="string">'Color'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0129     <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0130     <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0131     <span class="string">'LineWidth'</span>, 1, <span class="keyword">...</span>
+0132     <span class="string">'MarkerSize'</span>, 2,<span class="keyword">...</span>
+0133     <span class="string">'MarkerEdgeColor'</span>, <span class="string">'blue'</span>,<span class="keyword">...</span>
+0134     <span class="string">'MarkerFaceColor'</span>, <span class="string">'green'</span>);
+0135 set(gca,<span class="string">'fontsize'</span>,6);
+0136 hold on;
+0137 <span class="keyword">if</span> (max(overall_pdoffset(thisinter,:)) &gt; 0.25)
+0138     yl = [0 max(overall_pdoffset(thisinter,:))];
+0139 <span class="keyword">else</span>
+0140     yl = [0 0.25];
+0141 <span class="keyword">end</span>
+0142 line( [offsets(thisinter) offsets(thisinter)] , yl, <span class="keyword">...</span>
+0143     <span class="string">'Color'</span>, <span class="string">'green'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, 0.5);
+0144 title(<span class="string">'Overall'</span>, <span class="string">'BackgroundColor'</span>, <span class="string">'g'</span>);
+0145 xlim([0 max_offset-1]);
+0146 ylim(yl);
+0147 hold off;
+0148 
+0149 subplot(plotsdown, plotsacross, hpos(nmeasures + 2,:),<span class="string">'Parent'</span>,p)
+0150 plot([0:max_offset-1], overall_pdoffset_all(thisinter,:), <span class="keyword">...</span>
+0151     <span class="string">'Color'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0152     <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0153     <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0154     <span class="string">'LineWidth'</span>, 1, <span class="keyword">...</span>
+0155     <span class="string">'MarkerSize'</span>, 2,<span class="keyword">...</span>
+0156     <span class="string">'MarkerEdgeColor'</span>, <span class="string">'blue'</span>,<span class="keyword">...</span>
+0157     <span class="string">'MarkerFaceColor'</span>, <span class="string">'green'</span>);
+0158 set(gca,<span class="string">'fontsize'</span>,6);
+0159 hold on;
+0160 <span class="keyword">if</span> (max(overall_pdoffset_all(thisinter,:)) &gt; 0.25)
+0161     yl = [0 max(overall_pdoffset_all(thisinter,:))];
+0162 <span class="keyword">else</span>
+0163     yl = [0 0.25];
+0164 <span class="keyword">end</span>
+0165 line( [offsets(thisinter) offsets(thisinter)] , yl, <span class="keyword">...</span>
+0166     <span class="string">'Color'</span>, <span class="string">'green'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, 0.5);
+0167 title(<span class="string">'Overall - All'</span>);
+0168 xlim([0 max_offset-1]);
+0169 ylim(yl);
+0170 hold off;
+0171 
+0172 subplot(plotsdown, plotsacross, hpos(nmeasures + 3,:),<span class="string">'Parent'</span>,p)
+0173 plot([0:max_offset-1], overall_pdoffset_xAL(thisinter,:), <span class="keyword">...</span>
+0174     <span class="string">'Color'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0175     <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0176     <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0177     <span class="string">'LineWidth'</span>, 1, <span class="keyword">...</span>
+0178     <span class="string">'MarkerSize'</span>, 2,<span class="keyword">...</span>
+0179     <span class="string">'MarkerEdgeColor'</span>, <span class="string">'blue'</span>,<span class="keyword">...</span>
+0180     <span class="string">'MarkerFaceColor'</span>, <span class="string">'green'</span>);
+0181 set(gca,<span class="string">'fontsize'</span>,6);
+0182 hold on;
+0183 <span class="keyword">if</span> (max(overall_pdoffset_xAL(thisinter,:)) &gt; 0.25)
+0184     yl = [0 max(overall_pdoffset_xAL(thisinter,:))];
+0185 <span class="keyword">else</span>
+0186     yl = [0 0.25];
+0187 <span class="keyword">end</span>
+0188 line( [offsets(thisinter) offsets(thisinter)] , yl, <span class="keyword">...</span>
+0189     <span class="string">'Color'</span>, <span class="string">'green'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, 0.5);
+0190 title(<span class="string">'Overall ex Act/Lung'</span>);
+0191 xlim([0 max_offset-1]);
+0192 ylim(yl);
+0193 hold off;
+0194 
+0195 <span class="comment">% save plot</span>
+0196 basedir = <span class="string">'./'</span>;
+0197 subfolder = <span class="string">'Plots'</span>;
+0198 filename = [name <span class="string">'.png'</span>];
+0199 saveas(f,fullfile(basedir, subfolder, filename));
+0200 filename = [name <span class="string">'.svg'</span>];
+0201 saveas(f,fullfile(basedir, subfolder, filename));
+0202 close(f);
+0203 
+0204 <span class="keyword">end</span>
+0205</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

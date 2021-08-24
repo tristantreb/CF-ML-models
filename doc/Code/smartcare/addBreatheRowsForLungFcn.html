@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of addBreatheRowsForLungFcn</title>
+  <meta name="keywords" content="addBreatheRowsForLungFcn">
+  <meta name="description" content="addBreatheRowsForLungFcn - adds the rows to physdata for Lung Function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; addBreatheRowsForLungFcn.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>addBreatheRowsForLungFcn
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>addBreatheRowsForLungFcn - adds the rows to physdata for Lung Function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [physdata] = addBreatheRowsForLungFcn(physdata, brPatient) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> addBreatheRowsForLungFcn - adds the rows to physdata for Lung Function
+ (in units of % Predicted) from the raw FEV1 (in litres) measurements</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadbreathedata.html" class="code" title="">loadbreathedata</a>	1st Breathe data processing step and analysis from raw measurements</li><li><a href="loadbreathemeasurementdata.html" class="code" title="">loadbreathemeasurementdata</a>	1st Breathe data processing step and analysis from raw measurements</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [physdata] = addBreatheRowsForLungFcn(physdata, brPatient)</a>
+0002 
+0003 <span class="comment">% addBreatheRowsForLungFcn - adds the rows to physdata for Lung Function</span>
+0004 <span class="comment">% (in units of % Predicted) from the raw FEV1 (in litres) measurements</span>
+0005 
+0006 fprintf(<span class="string">'Adding calculated percent predicted FEV1\n'</span>);
+0007 
+0008 temprows = physdata(ismember(physdata.RecordingType, <span class="string">'FEV1Recording'</span>), :);
+0009 temprows = outerjoin(temprows, brPatient, <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'ID'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'CalcPredictedFEV1'</span>}, <span class="string">'Type'</span>, <span class="string">'left'</span>);
+0010 temprows.RecordingType(:) = {<span class="string">'LungFunctionRecording'</span>};
+0011 temprows.CalcFEV1_ = 100 * temprows.FEV ./ temprows.CalcPredictedFEV1;
+0012 temprows.FEV(:) = 0.0;
+0013 temprows.CalcPredictedFEV1 = [];
+0014 
+0015 physdata = [physdata; temprows];
+0016 fprintf(<span class="string">'%d calculated measurements\n'</span>, size(temprows, 1));
+0017 
+0018 <span class="keyword">end</span>
+0019</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

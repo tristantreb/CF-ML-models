@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of populateDerivedColsInMLTables</title>
+  <meta name="keywords" content="populateDerivedColsInMLTables">
+  <meta name="description" content="populateDerivedColsInMLTables - populates the derived columns in the">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; populateDerivedColsInMLTables.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>populateDerivedColsInMLTables
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>populateDerivedColsInMLTables - populates the derived columns in the</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [brPatient, brCRP, brPFT] = populateDerivedColsInMLTables(brPatient, brCRP, brPFT) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> populateDerivedColsInMLTables - populates the derived columns in the
+ relevant tables (that aren't available directly from REDCap</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="calcPredictedFEV1.html" class="code" title="function [predfev1] = calcPredictedFEV1(age, height, sex)">calcPredictedFEV1</a>	calcPredictedFEV1 - returns the predicted fev1 from age (yrs), height (m)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadbreatheclinicalREDCapdata.html" class="code" title="">loadbreatheclinicalREDCapdata</a>	loads Breathe clinical data from REDCap database</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [brPatient, brCRP, brPFT] = populateDerivedColsInMLTables(brPatient, brCRP, brPFT)</a>
+0002 
+0003 <span class="comment">% populateDerivedColsInMLTables - populates the derived columns in the</span>
+0004 <span class="comment">% relevant tables (that aren't available directly from REDCap</span>
+0005 
+0006 
+0007 brPatient.Prior6Mnth               = brPatient.StudyDate - calmonths(6);
+0008 brPatient.Post6Mnth                = brPatient.StudyDate + calmonths(6);
+0009 
+0010 wdrwnidx = ismember(brPatient.ConsentStatus, <span class="string">'Withdrawn'</span>) &amp; brPatient.WithdrawalDate &lt; brPatient.PatClinDate;
+0011 
+0012 brPatient.PatClinDate(wdrwnidx) = brPatient.WithdrawalDate(wdrwnidx);
+0013 
+0014 brPatient.FEV1SetAs             = round(brPatient.PredictedFEV1, 1);
+0015 brPatient.StudyEmail            = brPatient.StudyNumber;
+0016 brPatient.CalcAge               = floor(years(brPatient.StudyDate - brPatient.DOB));
+0017 brPatient.CalcAgeExact          = years(brPatient.StudyDate - brPatient.DOB);
+0018 <span class="keyword">for</span> n = 1:size(brPatient, 1)
+0019     brPatient.CalcPredictedFEV1(n)        = <a href="calcPredictedFEV1.html" class="code" title="function [predfev1] = calcPredictedFEV1(age, height, sex)">calcPredictedFEV1</a>(brPatient.CalcAge(n), brPatient.Height(n), brPatient.Sex(n));
+0020     brPatient.CalcPredictedFEV1OrigAge(n) = <a href="calcPredictedFEV1.html" class="code" title="function [predfev1] = calcPredictedFEV1(age, height, sex)">calcPredictedFEV1</a>(brPatient.Age(n), brPatient.Height(n), brPatient.Sex(n));
+0021 <span class="keyword">end</span>
+0022 brPatient.CalcFEV1SetAs         = round(brPatient.CalcPredictedFEV1, 1);
+0023 brPatient.CalcFEV1SetAsOrigAge  = round(brPatient.CalcPredictedFEV1OrigAge, 1);
+0024 
+0025 brPFT.Units(:)   = {<span class="string">'L'</span>};
+0026 brPFT = outerjoin(brPFT, brPatient, <span class="string">'LeftKeys'</span>, {<span class="string">'ID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'ID'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'FEV1SetAs'</span>, <span class="string">'CalcFEV1SetAs'</span>}, <span class="string">'Type'</span>, <span class="string">'left'</span>);
+0027 brPFT.FEV1_      = 100 * brPFT.FEV1 ./ brPFT.FEV1SetAs;
+0028 brPFT.CalcFEV1_  = 100 * brPFT.FEV1 ./ brPFT.CalcFEV1SetAs;
+0029 brPFT(:, {<span class="string">'FEV1SetAs'</span>, <span class="string">'CalcFEV1SetAs'</span>}) = [];
+0030 
+0031 brCRP.Units(:)     = {<span class="string">'mg/L'</span>};
+0032 brCRP.NumericLevel = brCRP.Level;
+0033 
+0034 <span class="keyword">end</span>
+0035</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

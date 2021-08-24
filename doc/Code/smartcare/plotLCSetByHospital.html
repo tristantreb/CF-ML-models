@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotLCSetByHospital</title>
+  <meta name="keywords" content="plotLCSetByHospital">
+  <meta name="description" content="plotLCSetByHospital - plots barcharts of Latent Curve set by hospital">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; plotLCSetByHospital.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>plotLCSetByHospital
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>plotLCSetByHospital - plots barcharts of Latent Curve set by hospital</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function plotLCSetByHospital(tmpInterventions, plotname, plotsubfolder, tmpnlc) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> plotLCSetByHospital - plots barcharts of Latent Curve set by hospital</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function plotLCSetByHospital(tmpInterventions, plotname, plotsubfolder, tmpnlc)</a>
+0002 
+0003 <span class="comment">% plotLCSetByHospital - plots barcharts of Latent Curve set by hospital</span>
+0004 
+0005 hosplcdata = tmpInterventions(:, {<span class="string">'Hospital'</span>, <span class="string">'LatentCurve'</span>});
+0006 
+0007 barvartext = unique(hosplcdata.Hospital);
+0008 nhosp = size(barvartext, 1);
+0009 
+0010 barvardata = zeros(nhosp, tmpnlc);
+0011 <span class="keyword">for</span> n = 1:nhosp
+0012     <span class="keyword">for</span> i = 1:tmpnlc
+0013         barvardata(n, i) = sum(hosplcdata.LatentCurve == i &amp; ismember(hosplcdata.Hospital, barvartext(n)));
+0014     <span class="keyword">end</span>
+0015 <span class="keyword">end</span>
+0016 
+0017 legendtext = cell(1, tmpnlc);
+0018 <span class="keyword">for</span> i = 1:tmpnlc
+0019     legendtext{i} = sprintf(<span class="string">'Class %d'</span>, i);
+0020 <span class="keyword">end</span>
+0021 plotsdown   = 1; 
+0022 plotsacross = 1;
+0023 widthinch = 8.5;
+0024 heightinch = 4;
+0025 fontname = <span class="string">'Arial'</span>;
+0026 plottitle = sprintf(<span class="string">'%s LCbyHosp'</span>, plotname);
+0027 X = categorical(barvartext);
+0028 X = reordercats(X,barvartext);
+0029 [f, p] = <a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(plottitle, widthinch, heightinch);
+0030 ax = subplot(plotsdown, plotsacross, 1, <span class="string">'Parent'</span>, p);
+0031 bar(ax, X, barvardata, <span class="string">'grouped'</span>);
+0032 xlabel(ax, <span class="string">'Hospital'</span>, <span class="string">'FontSize'</span>, 8);
+0033 ylabel(ax, <span class="string">'Count by class'</span>, <span class="string">'FontSize'</span>, 8);
+0034 legend(ax, legendtext, <span class="string">'FontSize'</span>, 8, <span class="string">'Location'</span>, <span class="string">'eastoutside'</span>);
+0035 
+0036 
+0037 <span class="comment">%for i = 1:nlatentcurves</span>
+0038 <span class="comment">%    ax = subplot(plotsdown, plotsacross, i, 'Parent', p);</span>
+0039 <span class="comment">%    bar(ax, 1:nhosp, barvardata(:, i));</span>
+0040 <span class="comment">%    ax.FontSize = 6;</span>
+0041 <span class="comment">%    ax.FontName = fontname;</span>
+0042 <span class="comment">%    xlabel(ax, 'Hospital', 'FontSize', 8);</span>
+0043 <span class="comment">%    ylabel(ax, sprintf('Count for Class %d', i), 'FontSize', 8);</span>
+0044 <span class="comment">%    %xlim(ax, [0.5, nhosp + 0.5]);</span>
+0045 <span class="comment">%end</span>
+0046 
+0047 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0048 <span class="keyword">if</span> ~exist(fullfile(basedir, plotsubfolder), <span class="string">'dir'</span>)
+0049     mkdir(fullfile(basedir, plotsubfolder));
+0050 <span class="keyword">end</span>
+0051 
+0052 <span class="comment">% save plot</span>
+0053 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0054 <a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, plottitle, plotsubfolder);
+0055 close(f);
+0056 
+0057 
+0058 <span class="keyword">end</span>
+0059</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

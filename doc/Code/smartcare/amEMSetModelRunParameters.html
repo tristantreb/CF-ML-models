@@ -1,0 +1,232 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMSetModelRunParameters</title>
+  <meta name="keywords" content="amEMSetModelRunParameters">
+  <meta name="description" content="amEMSetModelRunParameters - sets the various run parameters for the model">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMSetModelRunParameters.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMSetModelRunParameters
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMSetModelRunParameters - sets the various run parameters for the model</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [study, modelinputsmatfile, datademographicsfile, dataoutliersfile, sigmamethod, mumethod, curveaveragingmethod,smoothingmethod, offsetblockingmethod, measuresmask, runmode, modelrun, imputationmode, confidencemode, printpredictions] = amEMSetModelRunParameters </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMSetModelRunParameters - sets the various run parameters for the model</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="selectModelRunFromList.html" class="code" title="function [modelrun, modelidx, models] = selectModelRunFromList(loadtype)">selectModelRunFromList</a>	selectModelRunFromList - allows you to load the saved variables from a</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModelEM.html" class="code" title="">runAlignmentModelEM</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [study, modelinputsmatfile, datademographicsfile, dataoutliersfile, sigmamethod, mumethod, curveaveragingmethod, </a><span class="keyword">...</span>
+0002     smoothingmethod, offsetblockingmethod, measuresmask, runmode, modelrun, imputationmode, confidencemode, printpredictions] = amEMSetModelRunParameters
+0003 
+0004 <span class="comment">% amEMSetModelRunParameters - sets the various run parameters for the model</span>
+0005 
+0006 studynbr = input(<span class="string">'Enter Study to run for (1 = SmartCare, 2 = TeleMed): '</span>);
+0007 fprintf(<span class="string">'\n'</span>);
+0008 
+0009 <span class="keyword">if</span> studynbr == 1
+0010     study = <span class="string">'SC'</span>;
+0011     modelinputsmatfile = <span class="string">'SCalignmentmodelinputs.mat'</span>;
+0012     datademographicsfile = <span class="string">'SCdatademographicsbypatient.mat'</span>;
+0013     dataoutliersfile = <span class="string">'SCdataoutliers.mat'</span>;
+0014 <span class="keyword">elseif</span> studynbr == 2
+0015     study = <span class="string">'TM'</span>;
+0016     modelinputsmatfile = <span class="string">'TMalignmentmodelinputs.mat'</span>;
+0017     datademographicsfile = <span class="string">'TMdatademographicsbypatient.mat'</span>;
+0018     dataoutliersfile = <span class="string">'TMdataoutliers.mat'</span>;
+0019 <span class="keyword">else</span>
+0020     fprintf(<span class="string">'Invalid choice\n'</span>);
+0021     <span class="keyword">return</span>;
+0022 <span class="keyword">end</span>
+0023 
+0024 fprintf(<span class="string">'Methodology for multiplicative normalisation (sigma)\n'</span>);
+0025 fprintf(<span class="string">'----------------------------------------------------\n'</span>);
+0026 fprintf(<span class="string">'1: Std for Data Window across interventions by measure\n'</span>);
+0027 fprintf(<span class="string">'2: Std across all data by measure\n'</span>);
+0028 fprintf(<span class="string">'3: Std across all data by patient and measure\n'</span>);
+0029 fprintf(<span class="string">'4: Std for each data point in the average curve\n'</span>);
+0030 sigmamethod = input(<span class="string">'Choose methodology (1-4) '</span>);
+0031 fprintf(<span class="string">'\n'</span>);
+0032 <span class="keyword">if</span> sigmamethod &gt; 4
+0033     fprintf(<span class="string">'Invalid choice\n'</span>);
+0034     <span class="keyword">return</span>;
+0035 <span class="keyword">end</span>
+0036 <span class="keyword">if</span> isequal(sigmamethod,<span class="string">''</span>)
+0037     fprintf(<span class="string">'Invalid choice\n'</span>);
+0038     <span class="keyword">return</span>;
+0039 <span class="keyword">end</span>
+0040 
+0041 fprintf(<span class="string">'Methodology for additive normalisation (mu)\n'</span>);
+0042 fprintf(<span class="string">'-------------------------------------------\n'</span>);
+0043 fprintf(<span class="string">'1: Mean for 8 days prior to data window\n'</span>);
+0044 fprintf(<span class="string">'2: Upper Quartile Mean for 20 days prior to data window\n'</span>);
+0045 fprintf(<span class="string">'3: Exclude bottom quartile from Mean for 10 days prior to data window\n'</span>);
+0046 fprintf(<span class="string">'4: Exclude bottom quartile and data outliers from Mean for 10 days prior to data window\n'</span>);
+0047 fprintf(<span class="string">'5: same as 4) but for sequential interventions and not enough data points in mean window, use upper 50%% mean over all patient data\n'</span>);
+0048 mumethod = input(<span class="string">'Choose methodology (1-5) '</span>);
+0049 fprintf(<span class="string">'\n'</span>);
+0050 <span class="keyword">if</span> mumethod &gt; 5
+0051     fprintf(<span class="string">'Invalid choice\n'</span>);
+0052     <span class="keyword">return</span>;
+0053 <span class="keyword">end</span>
+0054 <span class="keyword">if</span> isequal(mumethod,<span class="string">''</span>)
+0055     fprintf(<span class="string">'Invalid choice\n'</span>);
+0056     <span class="keyword">return</span>;
+0057 <span class="keyword">end</span>
+0058 
+0059 fprintf(<span class="string">'Methodology for duration of curve averaging\n'</span>);
+0060 fprintf(<span class="string">'-------------------------------------------\n'</span>);
+0061 fprintf(<span class="string">'1: Just data window (DO NOT USE)\n'</span>);
+0062 fprintf(<span class="string">'2: Data window + data to the left\n'</span>);
+0063 curveaveragingmethod = input(<span class="string">'Choose methodology (1-2) '</span>);
+0064 fprintf(<span class="string">'\n'</span>);
+0065 <span class="keyword">if</span> curveaveragingmethod &gt; 2
+0066     fprintf(<span class="string">'Invalid choice\n'</span>);
+0067     <span class="keyword">return</span>;
+0068 <span class="keyword">end</span>
+0069 <span class="keyword">if</span> isequal(curveaveragingmethod,<span class="string">''</span>)
+0070     fprintf(<span class="string">'Invalid choice\n'</span>);
+0071     <span class="keyword">return</span>;
+0072 <span class="keyword">end</span>
+0073 
+0074 fprintf(<span class="string">'Methodology for smoothing method during curve alignment\n'</span>);
+0075 fprintf(<span class="string">'---------------------------------------------------\n'</span>);
+0076 fprintf(<span class="string">'1: Raw data\n'</span>);
+0077 fprintf(<span class="string">'2: Smoothed data (5 days)\n'</span>);
+0078 smoothingmethod = input(<span class="string">'Choose methodology (1-2) '</span>);
+0079 fprintf(<span class="string">'\n'</span>);
+0080 <span class="keyword">if</span> smoothingmethod &gt; 2
+0081     fprintf(<span class="string">'Invalid choice\n'</span>);
+0082     <span class="keyword">return</span>;
+0083 <span class="keyword">end</span>
+0084 <span class="keyword">if</span> isequal(smoothingmethod,<span class="string">''</span>)
+0085     fprintf(<span class="string">'Invalid choice\n'</span>);
+0086     <span class="keyword">return</span>;
+0087 <span class="keyword">end</span>
+0088 
+0089 fprintf(<span class="string">'Methodology for offset blocking\n'</span>);
+0090 fprintf(<span class="string">'-------------------------------\n'</span>);
+0091 fprintf(<span class="string">'1: Disable offset blocking\n'</span>);
+0092 fprintf(<span class="string">'2: Enable offset blocking ppts (DO NOT USE)\n'</span>);
+0093 offsetblockingmethod = input(<span class="string">'Choose methodology (1-2) '</span>);
+0094 fprintf(<span class="string">'\n'</span>);
+0095 <span class="keyword">if</span> offsetblockingmethod &gt; 2
+0096     fprintf(<span class="string">'Invalid choice\n'</span>);
+0097     <span class="keyword">return</span>;
+0098 <span class="keyword">end</span>
+0099 <span class="keyword">if</span> isequal(offsetblockingmethod,<span class="string">''</span>)
+0100     fprintf(<span class="string">'Invalid choice\n'</span>);
+0101     <span class="keyword">return</span>;
+0102 <span class="keyword">end</span>
+0103 
+0104 fprintf(<span class="string">'Measures to include in alignment calculation\n'</span>);
+0105 fprintf(<span class="string">'--------------------------------------------\n'</span>);
+0106 <span class="comment">%fprintf('1: All\n');</span>
+0107 fprintf(<span class="string">'1: All exceot Activity\n'</span>);
+0108 fprintf(<span class="string">'2: Cough, Lung Function, Wellness\n'</span>);
+0109 fprintf(<span class="string">'3: All except Activity and Lung Function\n'</span>);
+0110 measuresmask = input(<span class="string">'Choose measures (1-3) '</span>);
+0111 fprintf(<span class="string">'\n'</span>);
+0112 <span class="keyword">if</span> measuresmask &gt; 3
+0113     fprintf(<span class="string">'Invalid choice\n'</span>);
+0114     <span class="keyword">return</span>;
+0115 <span class="keyword">end</span>
+0116 <span class="keyword">if</span> isequal(measuresmask,<span class="string">''</span>)
+0117     fprintf(<span class="string">'Invalid choice\n'</span>);
+0118     <span class="keyword">return</span>;
+0119 <span class="keyword">end</span>
+0120 
+0121 fprintf(<span class="string">'Methodology for EM alignment\n'</span>);
+0122 fprintf(<span class="string">'----------------------------\n'</span>);
+0123 fprintf(<span class="string">'4: Uniform start, use prob distribution in alignment\n'</span>);
+0124 fprintf(<span class="string">'5: Uniform start, use point mass of offset in alignment\n'</span>);
+0125 fprintf(<span class="string">'6: Pick start state from other model runs\n'</span>);
+0126 runmode = input(<span class="string">'Choose methodology (1-2) '</span>);
+0127 fprintf(<span class="string">'\n'</span>);
+0128 <span class="keyword">if</span> runmode &lt; 4 || runmode &gt; 6
+0129     fprintf(<span class="string">'Invalid choice\n'</span>);
+0130     <span class="keyword">return</span>;
+0131 <span class="keyword">end</span>
+0132 <span class="keyword">if</span> isequal(runmode,<span class="string">''</span>)
+0133     fprintf(<span class="string">'Invalid choice\n'</span>);
+0134     <span class="keyword">return</span>;
+0135 <span class="keyword">end</span>
+0136 
+0137 <span class="keyword">if</span> runmode == 6
+0138     modelrun = <a href="selectModelRunFromList.html" class="code" title="function [modelrun, modelidx, models] = selectModelRunFromList(loadtype)">selectModelRunFromList</a>(<span class="string">'pd'</span>);
+0139 <span class="keyword">else</span>
+0140     modelrun = <span class="string">''</span>;
+0141 <span class="keyword">end</span>
+0142 
+0143 fprintf(<span class="string">'Run imputation ?\n'</span>);
+0144 fprintf(<span class="string">'----------------\n'</span>);
+0145 fprintf(<span class="string">'1: No\n'</span>);
+0146 fprintf(<span class="string">'2: Yes - with 1%% of data points held back\n'</span>);
+0147 imputationmode = input(<span class="string">'Choose run mode(1-2) '</span>);
+0148 fprintf(<span class="string">'\n'</span>);
+0149 <span class="keyword">if</span> imputationmode &gt; 2
+0150     fprintf(<span class="string">'Invalid choice\n'</span>);
+0151     <span class="keyword">return</span>;
+0152 <span class="keyword">end</span>
+0153 <span class="keyword">if</span> isequal(imputationmode,<span class="string">''</span>)
+0154     fprintf(<span class="string">'Invalid choice\n'</span>);
+0155     <span class="keyword">return</span>;
+0156 <span class="keyword">end</span>
+0157 
+0158 fprintf(<span class="string">'Confidence Bounds mode\n'</span>);
+0159 fprintf(<span class="string">'----------------------\n'</span>);
+0160 fprintf(<span class="string">'1: Contiguous bounds\n'</span>);
+0161 fprintf(<span class="string">'2: Max probability bounds\n'</span>);
+0162 confidencemode = input(<span class="string">'Choose confidence bounds mode(1-2) '</span>);
+0163 fprintf(<span class="string">'\n'</span>);
+0164 <span class="keyword">if</span> confidencemode &gt; 2
+0165     fprintf(<span class="string">'Invalid choice\n'</span>);
+0166     <span class="keyword">return</span>;
+0167 <span class="keyword">end</span>
+0168 <span class="keyword">if</span> isequal(confidencemode,<span class="string">''</span>)
+0169     fprintf(<span class="string">'Invalid choice\n'</span>);
+0170     <span class="keyword">return</span>;
+0171 <span class="keyword">end</span>
+0172 
+0173 fprintf(<span class="string">'\n'</span>);
+0174 printpredictions = input(<span class="string">'Print predictions (1=Yes, 2=No) ? '</span>);
+0175 <span class="keyword">if</span> printpredictions &gt; 2
+0176     fprintf(<span class="string">'Invalid choice\n'</span>);
+0177     <span class="keyword">return</span>;
+0178 <span class="keyword">end</span>
+0179 <span class="keyword">if</span> isequal(printpredictions,<span class="string">''</span>)
+0180     fprintf(<span class="string">'Invalid choice\n'</span>);
+0181     <span class="keyword">return</span>;
+0182 <span class="keyword">end</span>
+0183 
+0184 <span class="keyword">end</span>
+0185</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

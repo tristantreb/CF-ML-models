@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotPointsWithLFit</title>
+  <meta name="keywords" content="plotPointsWithLFit">
+  <meta name="description" content="plotPointsWithLFit - plots a set of points and dates along with linear">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; plotPointsWithLFit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>plotPointsWithLFit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>plotPointsWithLFit - plots a set of points and dates along with linear</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [grad, studydateval] = plotPointsWithLFit(mtable, extbl, ax, yl, p, scid, fromd, tod,exclwind, periodtype, meastype, bestwind, gradtype, twindow, offset) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> plotPointsWithLFit - plots a set of points and dates along with linear
+ fit</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="plotPointsWithLFitLoop.html" class="code" title="function [brIntChkptPat, brIntChkptSum] = plotPointsWithLFitLoop(brIntChkptPat, brIntChkptSum,mdata1, mdata2, excldata, study, meastype, bestwind, gradtype, comptype, period1, period2, twindow, type, cutoffd, plotsubfolder, offset)">plotPointsWithLFitLoop</a>	plotPointsWithLFitLoop loops over all relevant patients and produces</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [grad, studydateval] = plotPointsWithLFit(mtable, extbl, ax, yl, p, scid, fromd, tod, </a><span class="keyword">...</span>
+0002     exclwind, periodtype, meastype, bestwind, gradtype, twindow, offset)
+0003 
+0004 <span class="comment">% plotPointsWithLFit - plots a set of points and dates along with linear</span>
+0005 <span class="comment">% fit</span>
+0006 
+0007 grad = 0;
+0008 studydateval = 0;
+0009 col1 = [0, 0.65, 1];
+0010 col2 = <span class="string">'red'</span>;
+0011 col3 = [0.65 0.65 0.65];
+0012 
+0013 ax.FontSize = 8;
+0014 ax.FontName = <span class="string">'Arial'</span>;
+0015 ax.TickDir = <span class="string">'out'</span>;
+0016     
+0017 pmtbl = mtable((mtable.Date &gt;= fromd) &amp; (mtable.Date &lt; tod), :);
+0018 pextbl = extbl((extbl.StopDate &gt;= fromd) &amp; (extbl.StartDate &lt; tod), :);
+0019 
+0020 fexidx = false(size(pmtbl, 1), 1);
+0021 <span class="keyword">if</span> ismember(gradtype, {<span class="string">'ExIV'</span>})
+0022     fexidx = zeros(size(pmtbl, 1), 1);
+0023     <span class="keyword">for</span> i = 1:size(pextbl, 1) 
+0024         fexidx = fexidx | (pmtbl.Date &gt;= pextbl.StartDate(i) - days(exclwind)) &amp; (pmtbl.Date &lt; pextbl.StopDate(i));    
+0025     <span class="keyword">end</span>
+0026 <span class="keyword">else</span> <span class="comment">% pick best in &lt;bestwind&gt; months</span>
+0027     fexidx = true(size(pmtbl, 1), 1);
+0028     nperiods = ceil(twindow/bestwind);
+0029     <span class="keyword">for</span> n = 1:nperiods
+0030         pidx = (pmtbl.Date &gt;= fromd + calmonths((n-1) * bestwind)) &amp; (pmtbl.Date &lt; fromd + calmonths(n * bestwind));
+0031         <span class="keyword">if</span> sum(pidx) &gt; 0
+0032             [~, i] = max(pmtbl.Amount(pidx));
+0033             tmpidx = true(sum(pidx), 1);
+0034             tmpidx(i) = false;
+0035             fexidx(pidx) = tmpidx;
+0036         <span class="keyword">end</span> 
+0037     <span class="keyword">end</span>
+0038 <span class="keyword">end</span>
+0039 
+0040 <span class="keyword">if</span> size(pmtbl, 1) &gt; 1
+0041     
+0042     <span class="keyword">if</span> sum(fexidx) &gt; 0
+0043         line(ax, pmtbl.Date(fexidx), pmtbl.Amount(fexidx), <span class="keyword">...</span>
+0044                     <span class="string">'Color'</span>, col2, <span class="keyword">...</span>
+0045                     <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0046                     <span class="string">'LineWidth'</span>, 1, <span class="keyword">...</span>
+0047                     <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0048                     <span class="string">'MarkerSize'</span>, 1,<span class="keyword">...</span>
+0049                     <span class="string">'MarkerEdgeColor'</span>, col2, <span class="keyword">...</span>
+0050                     <span class="string">'MarkerFaceColor'</span>, col2);
+0051     <span class="keyword">end</span>  
+0052     
+0053     <span class="keyword">if</span> sum(~fexidx) &gt;= 2
+0054         fmdl = fitlm(pmtbl.DateNum(~fexidx), pmtbl.Amount(~fexidx), <span class="string">'linear'</span>);
+0055         ffit = predict(fmdl, pmtbl.DateNum(~fexidx));
+0056         grad = fmdl.Coefficients.Estimate(2);
+0057         studydateval = predict(fmdl, datenum(fromd) - offset);
+0058 
+0059         line(ax, pmtbl.Date(~fexidx), pmtbl.Amount(~fexidx), <span class="keyword">...</span>
+0060                     <span class="string">'Color'</span>, col1, <span class="keyword">...</span>
+0061                     <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0062                     <span class="string">'LineWidth'</span>, 1, <span class="keyword">...</span>
+0063                     <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0064                     <span class="string">'MarkerSize'</span>, 4,<span class="keyword">...</span>
+0065                     <span class="string">'MarkerEdgeColor'</span>, col1, <span class="keyword">...</span>
+0066                     <span class="string">'MarkerFaceColor'</span>, col1);
+0067 
+0068         line(ax, pmtbl.Date(~fexidx), ffit, <span class="keyword">...</span>
+0069                     <span class="string">'Color'</span>, col3, <span class="keyword">...</span>
+0070                     <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0071                     <span class="string">'LineWidth'</span>, 1, <span class="keyword">...</span>
+0072                     <span class="string">'Marker'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0073                     <span class="string">'MarkerSize'</span>, 2,<span class="keyword">...</span>
+0074                     <span class="string">'MarkerEdgeColor'</span>, col3, <span class="keyword">...</span>
+0075                     <span class="string">'MarkerFaceColor'</span>, col3);
+0076 
+0077     <span class="keyword">end</span>
+0078     
+0079     title(ax, sprintf(<span class="string">'Patient %d (%d): %s %s %s'</span>, p, scid, meastype, periodtype, gradtype));
+0080 
+0081     xl = [fromd, tod];
+0082     xlim(xl);
+0083     ylim(yl);
+0084     xtickangle(ax, 45);
+0085     xlabel(ax, <span class="string">'Date'</span>, <span class="string">'FontSize'</span>, 8);
+0086     ylabel(ax, meastype, <span class="string">'FontSize'</span>, 8);
+0087 <span class="keyword">end</span>
+0088 
+0089 <span class="keyword">end</span>
+0090</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

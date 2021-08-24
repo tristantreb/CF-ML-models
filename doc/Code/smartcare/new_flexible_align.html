@@ -1,0 +1,267 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of new_flexible_align</title>
+  <meta name="keywords" content="new_flexible_align">
+  <meta name="description" content="run_mode = 'new';">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; new_flexible_align.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>new_flexible_align
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>run_mode = 'new';</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [final, plp, plp2, hstg, qualete] = new_flexible_align(normcube, dubiousproblem, max_offset, align_wind, run_mode) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">run_mode = 'new';</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="new_largeroffsetslog.html" class="code" title="">new_largeroffsetslog</a>	</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [] = remove_from_mean( x )</a></li><li><a href="#_sub2" class="code">function [] = add_to_mean( x )</a></li><li><a href="#_sub3" class="code">function [dist] = distance( x , off, updatehistogram)</a></li><li><a href="#_sub4" class="code">function [laus] = best_fit( red )</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [final, plp, plp2, hstg, qualete] = new_flexible_align(normcube, dubiousproblem, max_offset, align_wind, run_mode)</a>
+0002 
+0003 <span class="comment">%run_mode = 'new';</span>
+0004 basedir = <span class="string">'./'</span>;
+0005 subfolder = <span class="string">'Plots'</span>;
+0006 
+0007 model22 = zeros(2,max_offset+align_wind,4);
+0008 plp = zeros(4,max_offset+align_wind);
+0009 plp2 = zeros(4,max_offset+align_wind);
+0010 [a b] = size(dubiousproblem);
+0011 hstg = zeros(4,a,max_offset);
+0012 qualete = 0;
+0013 <span class="keyword">for</span> z=1:a
+0014     <a href="#_sub2" class="code" title="subfunction [] = add_to_mean( x )">add_to_mean</a>(z);
+0015 <span class="keyword">end</span>
+0016 <span class="keyword">for</span> k = 1:4
+0017     <span class="keyword">for</span> dd=1:max_offset+align_wind
+0018         plp(k,dd)=  model22(1,dd,k)/model22(2,dd,k);
+0019     <span class="keyword">end</span>
+0020 <span class="keyword">end</span>
+0021 
+0022 pnt = 1;
+0023 <span class="comment">%</span>
+0024 <span class="comment">%computation</span>
+0025 <span class="comment">%</span>
+0026 cnt = 0;
+0027 ok = 0;
+0028 <span class="keyword">while</span> 1
+0029     <a href="#_sub1" class="code" title="subfunction [] = remove_from_mean( x )">remove_from_mean</a>(pnt);
+0030     <span class="comment">%check safety</span>
+0031     ok = 1;
+0032     <span class="keyword">for</span> i=1:max_offset+align_wind
+0033         <span class="keyword">for</span> j=1:4
+0034             <span class="keyword">if</span> model22(2,i,j) &lt; 3
+0035                 ok = 0;
+0036             <span class="keyword">end</span>
+0037         <span class="keyword">end</span>
+0038     <span class="keyword">end</span>
+0039     <span class="keyword">if</span> ok == 1
+0040         best = <a href="#_sub4" class="code" title="subfunction [laus] = best_fit( red )">best_fit</a>(pnt);
+0041     <span class="keyword">else</span>
+0042         best = dubiousproblem.offset(pnt);
+0043     <span class="keyword">end</span>
+0044     
+0045     <span class="keyword">if</span> best ~= dubiousproblem.offset(pnt)
+0046         dubiousproblem.offset(pnt) = best;
+0047         cnt = cnt+1;
+0048     <span class="keyword">end</span>
+0049     <a href="#_sub2" class="code" title="subfunction [] = add_to_mean( x )">add_to_mean</a>(pnt);
+0050         
+0051     pnt = pnt+1;
+0052     <span class="keyword">if</span> pnt &gt; a
+0053         pnt = pnt - a;
+0054         <span class="keyword">if</span> cnt == 0
+0055            <span class="comment">% disp('DONE');</span>
+0056             <span class="keyword">break</span>;
+0057         <span class="keyword">else</span>
+0058            <span class="comment">%disp(cnt);</span>
+0059             cnt = 0;
+0060         <span class="keyword">end</span>
+0061     <span class="keyword">end</span>
+0062 <span class="keyword">end</span>
+0063 
+0064 <span class="comment">%computing the objective function</span>
+0065 <span class="keyword">for</span> i=1:a
+0066     <a href="#_sub1" class="code" title="subfunction [] = remove_from_mean( x )">remove_from_mean</a>(i);
+0067     qualete = qualete + <a href="#_sub3" class="code" title="subfunction [dist] = distance( x , off, updatehistogram)">distance</a>(i, dubiousproblem.offset(i), 0);
+0068     <a href="#_sub2" class="code" title="subfunction [] = add_to_mean( x )">add_to_mean</a>(i);
+0069 <span class="keyword">end</span>
+0070 
+0071 
+0072 
+0073 final = zeros(1,a);
+0074 <span class="keyword">for</span> u=1:a 
+0075     final(u) = dubiousproblem.offset(u);
+0076 <span class="keyword">end</span>
+0077 
+0078 <span class="keyword">for</span> k = 1:4
+0079     <span class="keyword">for</span> dd=1:max_offset+align_wind
+0080         plp2(k,dd)=  model22(1,dd,k)/model22(2,dd,k);
+0081     <span class="keyword">end</span>
+0082 <span class="keyword">end</span>
+0083 
+0084 f = figure;
+0085 <span class="keyword">if</span> f.Number == 1
+0086     append = <span class="string">'Zero Offset Start'</span>;
+0087 <span class="keyword">else</span>
+0088     append = sprintf(<span class="string">'Random Start %d'</span>, f.Number-1);
+0089 <span class="keyword">end</span>
+0090 <span class="keyword">if</span> run_mode == <span class="string">'new'</span>
+0091     prefix = <span class="string">'New'</span>;
+0092 <span class="keyword">else</span>
+0093     prefix = <span class="string">'Old'</span>;
+0094 <span class="keyword">end</span>
+0095 p = uipanel(<span class="string">'Parent'</span>,f,<span class="string">'BorderType'</span>,<span class="string">'none'</span>); 
+0096 <span class="comment">% p.Title = ['Objective function = ',num2str(qualete)];</span>
+0097 p.Title = sprintf(<span class="string">'%s Data - %s - ErrFcn = %6.1f'</span>, prefix, append, qualete);
+0098 p.TitlePosition = <span class="string">'centertop'</span>; 
+0099 p.FontSize = 16;
+0100 p.FontWeight = <span class="string">'bold'</span>; 
+0101     subplot(3,2,1,<span class="string">'Parent'</span>,p)
+0102         plot([-1*(max_offset+align_wind):-1], plp(1,:), <span class="string">'color'</span>, <span class="string">'blue'</span>)
+0103         xlim([-50 0]);
+0104         ylim([-2.5 0.5])
+0105         hold on;
+0106         plot([-1*(max_offset+align_wind):-1], plp2(1,:), <span class="string">'color'</span>, <span class="string">'red'</span>);
+0107         hold off;
+0108         title(<span class="string">'Activity normalised'</span>)
+0109     subplot(3,2,2,<span class="string">'Parent'</span>,p)
+0110         plot([-1*(max_offset+align_wind):-1], plp(2,:),<span class="string">'color'</span>, <span class="string">'blue'</span>)
+0111         xlim([-50 0]);
+0112         ylim([-2.5 0.5])
+0113         hold on;
+0114         plot([-1*(max_offset+align_wind):-1], plp2(2,:), <span class="string">'color'</span>, <span class="string">'red'</span>);
+0115         hold off;
+0116         title(<span class="string">'Cough normalised'</span>)
+0117     subplot(3,2,3,<span class="string">'Parent'</span>,p)
+0118         plot([-1*(max_offset+align_wind):-1], plp(3,:),<span class="string">'color'</span>, <span class="string">'blue'</span>)
+0119         xlim([-50 0]);
+0120         ylim([-2.5 0.5])
+0121         hold on;
+0122         plot([-1*(max_offset+align_wind):-1], plp2(3,:), <span class="string">'color'</span>, <span class="string">'red'</span>);
+0123         hold off;
+0124         title(<span class="string">'FEV1 normalised'</span>)
+0125     subplot(3,2,4,<span class="string">'Parent'</span>,p)
+0126         plot([-1*(max_offset+align_wind):-1], plp(4,:),<span class="string">'color'</span>, <span class="string">'blue'</span>)
+0127         xlim([-50 0]);
+0128         ylim([-2.5 0.5])
+0129         hold on;
+0130         plot([-1*(max_offset+align_wind):-1], plp2(4,:), <span class="string">'color'</span>, <span class="string">'red'</span>);
+0131         hold off;
+0132         title(<span class="string">'Wellness normalised'</span>)
+0133     subplot(3,2,[5 6],<span class="string">'Parent'</span>,p)
+0134         histogram(final)
+0135         xlim([-0.5 24.5]);
+0136         ylim([0 50]);
+0137         title(<span class="string">'Histogram'</span>)
+0138 
+0139 
+0140 filename = sprintf(<span class="string">'%s Data - %s - Err Function.png'</span>, prefix, append);
+0141 saveas(f,fullfile(basedir, subfolder, filename));
+0142 <span class="comment">%saveas(f,['summary',num2str(num),'.png']);</span>
+0143 
+0144 <a name="_sub1" href="#_subfunctions" class="code">function [] = remove_from_mean( x )</a>
+0145     shift = dubiousproblem.offset(x);
+0146     <span class="keyword">for</span> v=1:max_offset+align_wind-shift
+0147         <span class="keyword">for</span> w = 1:4
+0148             <span class="keyword">if</span> dubiousproblem.Start(x)-v &lt;= 0
+0149                 <span class="keyword">continue</span>;
+0150             <span class="keyword">end</span>
+0151             <span class="keyword">if</span> ~isnan( normcube(dubiousproblem.ID(x),dubiousproblem.Start(x)-v,w))
+0152                 model22(1,(max_offset+align_wind+1)-shift-v,w) = model22(1,(max_offset+align_wind+1)-shift-v,w) - normcube(dubiousproblem.ID(x),dubiousproblem.Start(x)-v,w);
+0153                 model22(2,(max_offset+align_wind+1)-shift-v,w) = model22(2,(max_offset+align_wind+1)-shift-v,w) -1;
+0154             <span class="keyword">end</span>
+0155         <span class="keyword">end</span>
+0156     <span class="keyword">end</span>
+0157     
+0158 <span class="keyword">end</span>
+0159 
+0160 
+0161 
+0162 <a name="_sub2" href="#_subfunctions" class="code">function [] = add_to_mean( x )</a>
+0163     shift = dubiousproblem.offset(x);
+0164     <span class="keyword">for</span> v=1:max_offset+align_wind-shift
+0165         <span class="keyword">for</span> w = 1:4
+0166             <span class="keyword">if</span> dubiousproblem.Start(x)-v &lt;= 0
+0167                 <span class="keyword">continue</span>;
+0168             <span class="keyword">end</span>
+0169             <span class="keyword">if</span> ~isnan( normcube(dubiousproblem.ID(x),dubiousproblem.Start(x)-v,w))
+0170                 model22(1,(max_offset+align_wind+1)-shift-v,w) = model22(1,(max_offset+align_wind+1)-shift-v,w) + normcube(dubiousproblem.ID(x),dubiousproblem.Start(x)-v,w);
+0171                 model22(2,(max_offset+align_wind+1)-shift-v,w) = model22(2,(max_offset+align_wind+1)-shift-v,w) +1;
+0172             <span class="keyword">end</span>
+0173         <span class="keyword">end</span>
+0174     <span class="keyword">end</span>
+0175 <span class="keyword">end</span>
+0176 
+0177 <span class="comment">%calculate the cost of gluing</span>
+0178 <a name="_sub3" href="#_subfunctions" class="code">function [dist] = distance( x , off, updatehistogram)</a>
+0179     dist = 0;
+0180     
+0181     <span class="keyword">for</span> p=1:align_wind
+0182         <span class="keyword">for</span> q=1:4
+0183             <span class="keyword">if</span> dubiousproblem.Start(x)-p &lt;= 0
+0184                 <span class="keyword">continue</span>;
+0185             <span class="keyword">end</span>
+0186             <span class="keyword">if</span> ~isnan(normcube(dubiousproblem.ID(x),dubiousproblem.Start(x)-p,q))
+0187                 dist = dist + ( model22(1,(max_offset+align_wind+1)-p-off,q)/model22(2,(max_offset+align_wind+1)-p-off,q) - normcube(dubiousproblem.ID(x),dubiousproblem.Start(x)-p,q))^2;
+0188                 <span class="keyword">if</span> (updatehistogram == 1)
+0189                     hstg(q,x,off+1) = hstg(q,x,off+1)+( model22(1,(max_offset+align_wind+1)-p-off,q)/model22(2,(max_offset+align_wind+1)-p-off,q) - normcube(dubiousproblem.ID(x),dubiousproblem.Start(x)-p,q))^2;
+0190                     <span class="comment">% fprintf('hstg(%d,%d,%d) = %d \n',q,x,off+1,hstg(q,x,off+1));</span>
+0191                 <span class="keyword">else</span>
+0192                    <span class="comment">%fprintf('calculating distance for %d, %d, %d but not updating hstg\n', x, p, q);</span>
+0193                 <span class="keyword">end</span>
+0194             <span class="keyword">end</span>
+0195         <span class="keyword">end</span>
+0196     <span class="keyword">end</span>
+0197     
+0198 <span class="keyword">end</span>
+0199 
+0200 
+0201 <span class="comment">%compute the best offset</span>
+0202 <a name="_sub4" href="#_subfunctions" class="code">function [laus] = best_fit( red )</a>
+0203     <span class="keyword">for</span> zz=1:4
+0204         <span class="keyword">for</span> qq=1:max_offset
+0205             hstg(zz,red,qq) = 0;
+0206         <span class="keyword">end</span>
+0207     <span class="keyword">end</span>
+0208     laus = 0;
+0209     mini = 1000000;
+0210     <span class="keyword">for</span> r=0:max_offset-1
+0211         curr = <a href="#_sub3" class="code" title="subfunction [dist] = distance( x , off, updatehistogram)">distance</a>(red,r, 1);
+0212         <span class="keyword">if</span> curr &lt; mini
+0213             laus = r;
+0214             mini = curr;
+0215         <span class="keyword">end</span>
+0216     <span class="keyword">end</span>
+0217 <span class="keyword">end</span>
+0218 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

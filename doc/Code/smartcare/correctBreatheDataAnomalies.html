@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of correctBreatheDataAnomalies</title>
+  <meta name="keywords" content="correctBreatheDataAnomalies">
+  <meta name="description" content="correctBreatheDataAnomalies - looks at various outliers in the measures">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; correctBreatheDataAnomalies.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>correctBreatheDataAnomalies
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>correctBreatheDataAnomalies - looks at various outliers in the measures</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [brphysdata, brphysdata_deleted] = correctBreatheDataAnomalies(brphysdata, brphysdata_deleted) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> correctBreatheDataAnomalies - looks at various outliers in the measures
+ and corrects as appropriate.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="findAndDeleteAnomalousMeasures.html" class="code" title="function [brphysdata, brphysdata_deleted] = findAndDeleteAnomalousMeasures(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh)">findAndDeleteAnomalousMeasures</a>	findAndDeleteAnomalousMeasures - finds anomalous values and deletes them</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadbreathedata.html" class="code" title="">loadbreathedata</a>	1st Breathe data processing step and analysis from raw measurements</li><li><a href="loadbreathemeasurementdata.html" class="code" title="">loadbreathemeasurementdata</a>	1st Breathe data processing step and analysis from raw measurements</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [brphysdata, brphysdata_deleted] = correctBreatheDataAnomalies(brphysdata, brphysdata_deleted)</a>
+0002 
+0003 <span class="comment">% correctBreatheDataAnomalies - looks at various outliers in the measures</span>
+0004 <span class="comment">% and corrects as appropriate.</span>
+0005 
+0006 tic
+0007 <span class="comment">% handle anomalies in the data</span>
+0008 fprintf(<span class="string">'Correcting anomalies in the data\n'</span>);
+0009 fprintf(<span class="string">'--------------------------------\n'</span>);
+0010 
+0011 <span class="comment">% Calorie Reading</span>
+0012 recordingtype = <span class="string">'CalorieRecording'</span>;
+0013 lowerthresh = -1;
+0014 upperthresh = 6000;
+0015 [brphysdata, brphysdata_deleted] = <a href="findAndDeleteAnomalousMeasures.html" class="code" title="function [brphysdata, brphysdata_deleted] = findAndDeleteAnomalousMeasures(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh)">findAndDeleteAnomalousMeasures</a>(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh);
+0016 
+0017 <span class="comment">% Lung Function</span>
+0018 recordingtype = <span class="string">'FEV1Recording'</span>;
+0019 lowerthresh = 0.1;
+0020 upperthresh = 6;
+0021 [brphysdata, brphysdata_deleted] = <a href="findAndDeleteAnomalousMeasures.html" class="code" title="function [brphysdata, brphysdata_deleted] = findAndDeleteAnomalousMeasures(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh)">findAndDeleteAnomalousMeasures</a>(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh);
+0022 recordingtype = <span class="string">'FEV6Recording'</span>;
+0023 lowerthresh = 0.2;
+0024 upperthresh = 7;
+0025 [brphysdata, brphysdata_deleted] = <a href="findAndDeleteAnomalousMeasures.html" class="code" title="function [brphysdata, brphysdata_deleted] = findAndDeleteAnomalousMeasures(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh)">findAndDeleteAnomalousMeasures</a>(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh);
+0026 
+0027 <span class="comment">% O2 Saturation</span>
+0028 recordingtype = <span class="string">'O2SaturationRecording'</span>;
+0029 lowerthresh = 70;
+0030 upperthresh = 100;
+0031 [brphysdata, brphysdata_deleted] = <a href="findAndDeleteAnomalousMeasures.html" class="code" title="function [brphysdata, brphysdata_deleted] = findAndDeleteAnomalousMeasures(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh)">findAndDeleteAnomalousMeasures</a>(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh);
+0032 
+0033 <span class="comment">% Pulse Rate (BPM)</span>
+0034 recordingtype = <span class="string">'PulseRateRecording'</span>;
+0035 lowerthresh = 40;
+0036 upperthresh = 200;
+0037 [brphysdata, brphysdata_deleted] = <a href="findAndDeleteAnomalousMeasures.html" class="code" title="function [brphysdata, brphysdata_deleted] = findAndDeleteAnomalousMeasures(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh)">findAndDeleteAnomalousMeasures</a>(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh);
+0038 
+0039 <span class="comment">% Resting HR</span>
+0040 recordingtype = <span class="string">'RestingHRRecording'</span>;
+0041 lowerthresh = 40;
+0042 upperthresh = 120;
+0043 [brphysdata, brphysdata_deleted] = <a href="findAndDeleteAnomalousMeasures.html" class="code" title="function [brphysdata, brphysdata_deleted] = findAndDeleteAnomalousMeasures(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh)">findAndDeleteAnomalousMeasures</a>(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh);
+0044 
+0045 <span class="comment">% Sleep</span>
+0046 recordingtype = <span class="string">'MinsAsleepRecording'</span>;
+0047 lowerthresh = -1;
+0048 upperthresh = 1200;
+0049 [brphysdata, brphysdata_deleted] = <a href="findAndDeleteAnomalousMeasures.html" class="code" title="function [brphysdata, brphysdata_deleted] = findAndDeleteAnomalousMeasures(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh)">findAndDeleteAnomalousMeasures</a>(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh);
+0050 recordingtype = <span class="string">'MinsAwakeRecording'</span>;
+0051 lowerthresh = -1;
+0052 upperthresh = 600;
+0053 [brphysdata, brphysdata_deleted] = <a href="findAndDeleteAnomalousMeasures.html" class="code" title="function [brphysdata, brphysdata_deleted] = findAndDeleteAnomalousMeasures(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh)">findAndDeleteAnomalousMeasures</a>(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh);
+0054 
+0055 <span class="comment">% Temperature Recording</span>
+0056 recordingtype = <span class="string">'TemperatureRecording'</span>;
+0057 lowerthresh = 34;
+0058 upperthresh = 40;
+0059 [brphysdata, brphysdata_deleted] = <a href="findAndDeleteAnomalousMeasures.html" class="code" title="function [brphysdata, brphysdata_deleted] = findAndDeleteAnomalousMeasures(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh)">findAndDeleteAnomalousMeasures</a>(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh);
+0060 
+0061 <span class="comment">% Weight Recording</span>
+0062 recordingtype = <span class="string">'WeightRecording'</span>;
+0063 lowerthresh = 30;
+0064 upperthresh = 120;
+0065 [brphysdata, brphysdata_deleted] = <a href="findAndDeleteAnomalousMeasures.html" class="code" title="function [brphysdata, brphysdata_deleted] = findAndDeleteAnomalousMeasures(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh)">findAndDeleteAnomalousMeasures</a>(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh);
+0066 
+0067 fprintf(<span class="string">'\n'</span>);
+0068 fprintf(<span class="string">'Breathe data now has %d rows\n'</span>, size(brphysdata,1));
+0069 toc
+0070 fprintf(<span class="string">'\n'</span>);
+0071 
+0072 <span class="keyword">end</span>
+0073</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

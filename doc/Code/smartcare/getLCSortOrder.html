@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getLCSortOrder</title>
+  <meta name="keywords" content="getLCSortOrder">
+  <meta name="description" content="getLCSortOrder - returns the latent curve sets sorted from largest">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; getLCSortOrder.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>getLCSortOrder
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>getLCSortOrder - returns the latent curve sets sorted from largest</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function lcsort = getLCSortOrder(amInterventions, nlatentcurves) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> getLCSortOrder - returns the latent curve sets sorted from largest
+ population to smallest</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/recovery/updatedModel/amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery(meancurvemean, meancurvecount, amIntrNormcube, amInterventions, normmean, normstd,measures, offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery</a>	amEMMCPlotSuperimposedAlignedCurves3 - wrapper around the</li><li><a href="../../Code/pdm/recovery/updatedModel/amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery.html" class="code" title="function [wcxpvaltable] = amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery(amInterventions, pmPatients, pmPatientMeasStats, ivandmeasurestable,cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder, ninterventions, nlatentcurves, scenario, randomseed, study)">amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery</a>	amEMMCPlotVariablesVsLatentCurveSet - compact plots of various variables</li><li><a href="amEMMCPlotSuperimposedAlignedCurvesForPaper.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper(meancurvemean, meancurvecount, amIntrNormcube, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper</a>	amEMMCPlotSuperimposedAlignedCurves - wrapper around the</li><li><a href="amEMMCPlotSuperimposedAlignedCurvesForPaper2.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper2(meancurvemean, meancurvecount, amIntrNormcube, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper2</a>	amEMMCPlotSuperimposedAlignedCurves2 - wrapper around the</li><li><a href="amEMMCPlotSuperimposedAlignedCurvesForPaper3.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper3(meancurvemean, meancurvecount, amIntrNormcube, amInterventions, normmean, normstd,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper3</a>	amEMMCPlotSuperimposedAlignedCurves3 - wrapper around the</li><li><a href="amEMMCPlotVariablesVsLatentCurveSetForPaper.html" class="code" title="function [wcxpvaltable] = amEMMCPlotVariablesVsLatentCurveSetForPaper(amInterventions, pmPatients, pmPatientMeasStats, ivandmeasurestable,cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder, ninterventions, nlatentcurves, scenario, randomseed, study)">amEMMCPlotVariablesVsLatentCurveSetForPaper</a>	amEMMCPlotVariablesVsLatentCurveSet - compact plots of various variables</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function lcsort = getLCSortOrder(amInterventions, nlatentcurves)</a>
+0002 
+0003 <span class="comment">% getLCSortOrder - returns the latent curve sets sorted from largest</span>
+0004 <span class="comment">% population to smallest</span>
+0005 
+0006 lccount = zeros(nlatentcurves, 1);
+0007 
+0008 <span class="keyword">for</span> l = 1:nlatentcurves
+0009     lccount(l) = sum(amInterventions.LatentCurve == l);
+0010 <span class="keyword">end</span>
+0011 
+0012 [~, lcsort] = sort(lccount, <span class="string">'descend'</span>);
+0013 
+0014 <span class="keyword">end</span>
+0015</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

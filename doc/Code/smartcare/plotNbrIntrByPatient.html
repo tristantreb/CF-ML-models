@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotNbrIntrByPatient</title>
+  <meta name="keywords" content="plotNbrIntrByPatient">
+  <meta name="description" content="plotNbrIntrByPatient - plots bar chart of number of interventions by">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; plotNbrIntrByPatient.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>plotNbrIntrByPatient
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>plotNbrIntrByPatient - plots bar chart of number of interventions by</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function plotNbrIntrByPatient(physdata, offset, ivandmeasurestable, cdPatient, amInterventions, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> plotNbrIntrByPatient - plots bar chart of number of interventions by
+ patient (for patients with enough data to be analysed)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>	savePlots - saves the figure to png and svp file types in the specified</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runPlotsForPaperEMMC.html" class="code" title="">runPlotsForPaperEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function plotNbrIntrByPatient(physdata, offset, ivandmeasurestable, cdPatient, amInterventions, study)</a>
+0002 
+0003 <span class="comment">% plotNbrIntrByPatient - plots bar chart of number of interventions by</span>
+0004 <span class="comment">% patient (for patients with enough data to be analysed)</span>
+0005 
+0006 goodpattbl = cdPatient(:, {<span class="string">'ID'</span>, <span class="string">'StudyDate'</span>, <span class="string">'PatClinDate'</span>});
+0007 goodpattbl.Properties.VariableNames{<span class="string">'ID'</span>} = <span class="string">'SmartCareID'</span>;
+0008 goodpattbl.StudyDn   = datenum(goodpattbl.StudyDate) - offset + 1;
+0009 goodpattbl.PatClinDn = datenum(goodpattbl.PatClinDate) - offset + 1;
+0010 
+0011 minmeasdn = varfun(@min, physdata(:, {<span class="string">'SmartCareID'</span>, <span class="string">'DateNum'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0012 goodpattbl = outerjoin(goodpattbl, minmeasdn, <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="keyword">...</span>
+0013                         <span class="string">'RightVariables'</span>, {<span class="string">'min_DateNum'</span>}, <span class="string">'Type'</span>, <span class="string">'left'</span>);
+0014 goodpattbl.Properties.VariableNames{<span class="string">'min_DateNum'</span>} = <span class="string">'MeasStart'</span>;
+0015 goodpattbl.StartDate = min(goodpattbl.StudyDn, goodpattbl.MeasStart);
+0016 
+0017 maxmeasdn = varfun(@max, physdata(:, {<span class="string">'SmartCareID'</span>, <span class="string">'DateNum'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0018 goodpattbl = outerjoin(goodpattbl, maxmeasdn, <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="keyword">...</span>
+0019                         <span class="string">'RightVariables'</span>, {<span class="string">'max_DateNum'</span>}, <span class="string">'Type'</span>, <span class="string">'left'</span>);                    
+0020 goodpattbl.Properties.VariableNames{<span class="string">'max_DateNum'</span>} = <span class="string">'MeasEnd'</span>;
+0021 goodpattbl.EndDate = max(goodpattbl.PatClinDn, goodpattbl.MeasEnd);
+0022 
+0023 allintr = varfun(@min, ivandmeasurestable(:, {<span class="string">'SmartCareID'</span>, <span class="string">'IVDateNum'</span>}), <span class="string">'GroupingVariables'</span>, <span class="string">'SmartCareID'</span>);
+0024 allintr.Properties.VariableNames{<span class="string">'GroupCount'</span>} = <span class="string">'NbrAllIntr'</span>;
+0025 goodpattbl = outerjoin(goodpattbl, allintr, <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="keyword">...</span>
+0026                         <span class="string">'RightVariables'</span>, {<span class="string">'NbrAllIntr'</span>}, <span class="string">'Type'</span>, <span class="string">'left'</span>);
+0027 goodpattbl.NbrAllIntr(isnan(goodpattbl.NbrAllIntr)) = 0;                 
+0028 nbrallintr = varfun(@max, goodpattbl(:,{<span class="string">'NbrAllIntr'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'NbrAllIntr'</span>});
+0029 
+0030 predintr = varfun(@min, amInterventions(:, {<span class="string">'SmartCareID'</span>, <span class="string">'IVDateNum'</span>}), <span class="string">'GroupingVariables'</span>, <span class="string">'SmartCareID'</span>);
+0031 predintr.Properties.VariableNames{<span class="string">'GroupCount'</span>} = <span class="string">'NbrPredIntr'</span>;
+0032 goodpattbl = outerjoin(goodpattbl, predintr, <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="keyword">...</span>
+0033                         <span class="string">'RightVariables'</span>, {<span class="string">'NbrPredIntr'</span>}, <span class="string">'Type'</span>, <span class="string">'left'</span>);
+0034 goodpattbl.NbrPredIntr(isnan(goodpattbl.NbrPredIntr)) = 0;                 
+0035 nbrpredintr = varfun(@max, goodpattbl(:,{<span class="string">'NbrPredIntr'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'NbrPredIntr'</span>});
+0036 
+0037 plotsdown   = 2; 
+0038 plotsacross = 1;
+0039 thisplot = 1;
+0040 widthinch = 3.5;
+0041 heightinch = 5.5;
+0042 fontname = <span class="string">'Arial'</span>;
+0043 plottitle = sprintf(<span class="string">'%s - Nbr Intr By Patient For Paper'</span>, study);
+0044 [f, p] = <a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(<span class="string">''</span>, widthinch, heightinch);
+0045 ax = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>, p);
+0046 hold on;
+0047 <span class="keyword">for</span> i = 1:size(nbrallintr, 1)
+0048     b = bar(ax, nbrallintr.NbrAllIntr(i), nbrallintr.GroupCount(i));
+0049     <span class="keyword">if</span> i == 1
+0050         b.FaceColor = [1, 1, 1];
+0051     <span class="keyword">else</span>
+0052         b.FaceColor = [0.6, 0.6, 0.6];
+0053     <span class="keyword">end</span>
+0054 <span class="keyword">end</span>
+0055 ax.FontSize = 6;
+0056 ax.FontName = fontname;
+0057 xlabel(ax, <span class="string">'Number of acute pulmonary exacerbations'</span>, <span class="string">'FontSize'</span>, 8);
+0058 ylabel(ax, <span class="string">'Number of participants'</span>, <span class="string">'FontSize'</span>, 8);
+0059 title(ax, <span class="string">'All Interventions'</span>, sprintf(<span class="string">'p = %d, n = %d'</span>, size(goodpattbl, 1), sum(goodpattbl.NbrAllIntr)), <span class="string">'FontSize'</span>, 8);
+0060 xlim(ax, [-0.6, max(nbrallintr.NbrAllIntr) + 0.6]);
+0061 
+0062 thisplot = 2;
+0063 ax = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>, p);
+0064 hold on;
+0065 <span class="keyword">for</span> i = 1:size(nbrpredintr, 1)
+0066     b = bar(ax, nbrpredintr.NbrPredIntr(i), nbrpredintr.GroupCount(i));
+0067     <span class="keyword">if</span> i == 1
+0068         b.FaceColor = [1, 1, 1];
+0069     <span class="keyword">else</span>
+0070         b.FaceColor = [0.6, 0.6, 0.6];
+0071     <span class="keyword">end</span>
+0072 <span class="keyword">end</span>
+0073 ax.FontSize = 6;
+0074 ax.FontName = fontname;
+0075 xlabel(ax, <span class="string">'Number of acute pulmonary exacerbations'</span>, <span class="string">'FontSize'</span>, 8);
+0076 ylabel(ax, <span class="string">'Number of participants'</span>, <span class="string">'FontSize'</span>, 8);
+0077 title(ax, <span class="string">'Predicted Interventions'</span>, sprintf(<span class="string">'p = %d, n = %d'</span>, size(goodpattbl, 1), sum(goodpattbl.NbrPredIntr)), <span class="string">'FontSize'</span>, 8);
+0078 xlim(ax, [-0.6, max(nbrpredintr.NbrPredIntr) + 0.6]);
+0079 
+0080 <span class="comment">% save plot</span>
+0081 plotsubfolder = sprintf(<span class="string">'Plots/%s'</span>, study);
+0082 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0083 <a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, plottitle, plotsubfolder);
+0084 close(f);
+0085 
+0086 
+0087 <span class="keyword">end</span>
+0088</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadAndCorrectSmartCareData</title>
+  <meta name="keywords" content="loadAndCorrectSmartCareData">
+  <meta name="description" content="loadAndCorrectSmartCareData - performs the following">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadAndCorrectSmartCareData.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadAndCorrectSmartCareData
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>loadAndCorrectSmartCareData - performs the following</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [physdata, physdata_original, offset] = loadAndCorrectSmartCareData(scdatafile,patientid, detaillog) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> loadAndCorrectSmartCareData - performs the following
+       1) loads smartcare data file
+       2) removes dummy entries
+       3) fixes one incorrect UserName
+       4) adds and populates columns for SmartCareID and Days Offset
+       5) removes unwanted columns
+       6) fixes blanks for measures</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadsmartcaredata.html" class="code" title="">loadsmartcaredata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [physdata, physdata_original, offset] = loadAndCorrectSmartCareData(scdatafile,patientid, detaillog)</a>
+0002 
+0003 <span class="comment">% loadAndCorrectSmartCareData - performs the following</span>
+0004 <span class="comment">%       1) loads smartcare data file</span>
+0005 <span class="comment">%       2) removes dummy entries</span>
+0006 <span class="comment">%       3) fixes one incorrect UserName</span>
+0007 <span class="comment">%       4) adds and populates columns for SmartCareID and Days Offset</span>
+0008 <span class="comment">%       5) removes unwanted columns</span>
+0009 <span class="comment">%       6) fixes blanks for measures</span>
+0010 
+0011 tic
+0012 fprintf(<span class="string">'Loading SmartCare data file: %s\n'</span>, scdatafile);
+0013 fprintf(<span class="string">'---------------------------------------\n'</span>);
+0014 physdata = readtable(scdatafile);
+0015 physdata.Properties.Description = <span class="string">'Table containing SmartCare measurement data'</span>;
+0016 physdata_original = physdata;
+0017 fprintf(<span class="string">'SmartCare data has %d rows\n'</span>, size(physdata,1));
+0018 
+0019 <span class="comment">% save memory by defining these columns as categorical</span>
+0020 <span class="comment">%physdata.UserName = categorical(physdata.UserName);</span>
+0021 <span class="comment">%physdata.RecordingType = categorical(physdata.RecordingType);</span>
+0022 
+0023 <span class="comment">% update incorrect StudyID FPH0011 to FPH011</span>
+0024 idx = find(ismember(physdata.UserName, <span class="string">'FPH0011'</span>));
+0025 fprintf(<span class="string">'Updating incorrect StudyID FPH0011 to FPH011 - %d rows\n'</span>, size(idx,1));
+0026 physdata{idx,<span class="string">'UserName'</span>} = {<span class="string">'FPH011'</span>};
+0027 
+0028 <span class="comment">% remove dummy user measurements</span>
+0029 dummies = {<span class="string">'EmemTest'</span>,<span class="string">'PapBen'</span>,<span class="string">'PapworthSummer'</span>,<span class="string">'Ryan007'</span>,<span class="string">'Texas'</span>,<span class="string">'010wessex'</span>,<span class="string">'davetest'</span>,<span class="string">'scguest'</span>};
+0030 idx = find(ismember(physdata.UserName, dummies));
+0031 fprintf(<span class="string">'Removing dummy users - %d rows\n'</span>, size(idx,1));
+0032 physdata(idx,:) = [];
+0033 
+0034 fprintf(<span class="string">'SmartCare data now has %d rows\n'</span>, size(physdata,1));
+0035 toc
+0036 fprintf(<span class="string">'\n'</span>);
+0037 
+0038 tic
+0039 <span class="comment">%add column for SmartCareID and Date offsets</span>
+0040 number = zeros(size(physdata,1),1);
+0041 number = array2table(number);
+0042 number.Properties.VariableNames{1} = <span class="string">'SmartCareID'</span>;
+0043 days = zeros(size(physdata,1),2);
+0044 days = array2table(days);
+0045 days.Properties.VariableNames{1} = <span class="string">'ScaledDateNum'</span>;
+0046 days.Properties.VariableNames{2} = <span class="string">'DateNum'</span>;
+0047 physdata = [number days physdata];
+0048 
+0049 <span class="comment">% day offset - add 1sec to correctly handle measurements taken at exactly</span>
+0050 <span class="comment">% midnight</span>
+0051 minmdate = min(physdata.Date_TimeRecorded);
+0052 offset = datenum(datetime(year(minmdate), month(minmdate), day(minmdate)));
+0053 physdata.DateNum = ceil(datenum(datetime(physdata.Date_TimeRecorded)+seconds(1))-offset);
+0054 
+0055 <span class="comment">%sort patientid file by the ID</span>
+0056 patientid = sortrows(patientid,<span class="string">'SmartCareID'</span>,<span class="string">'ascend'</span>);
+0057 
+0058 fprintf(<span class="string">'Adding SmartCare ID to the data table\n'</span>);
+0059 fprintf(<span class="string">'-------------------------------------\n'</span>);
+0060 totupdates = 0;
+0061 <span class="keyword">for</span> i = 1:size(patientid,1)
+0062     id = patientid.Patient_ID{i};
+0063     scid = patientid.SmartCareID(i);
+0064     idx = find(ismember(physdata.UserID, id));
+0065     <span class="keyword">if</span> detaillog
+0066         fprintf(<span class="string">'Updating SmartCareID %3d for UserID %22s - %4d rows updated\n'</span>, scid, id, size(idx,1));
+0067     <span class="keyword">end</span>
+0068     physdata.SmartCareID(idx) = scid;
+0069     totupdates = totupdates + size(idx,1);
+0070 <span class="keyword">end</span>
+0071 
+0072 fprintf(<span class="string">'Total rows updated = %d\n'</span>, totupdates);
+0073 fprintf(<span class="string">'Rows with no SmartCareID match = %4d\n'</span>, size(physdata,1)-totupdates);
+0074 
+0075 idx = find(physdata.SmartCareID ==0);
+0076 missedids = unique(physdata(idx,<span class="string">'UserID'</span>));
+0077 
+0078 <span class="keyword">if</span> (size(missedids,1) &gt; 0)
+0079     fprintf(<span class="string">'UserIDs not matched are :-\n'</span>);
+0080     <span class="keyword">for</span> i = 1:size(missedids,1)
+0081         fprintf(<span class="string">'%23s\n'</span>, missedids.UserID{i});
+0082     <span class="keyword">end</span>
+0083 <span class="keyword">end</span>
+0084 toc
+0085 fprintf(<span class="string">'\n'</span>);
+0086 
+0087 tic
+0088 <span class="comment">% remove unused information, take a copy first</span>
+0089 <span class="comment">% physdata2 = physdata;</span>
+0090 fprintf(<span class="string">'Trim data table of unneeded data\n'</span>);
+0091 fprintf(<span class="string">'--------------------------------\n'</span>);
+0092 fprintf(<span class="string">'Removing unused columns - UserID, FEV10, Calories, SputumSampleTaken,Activity_Points\n'</span>);
+0093 <span class="comment">%physdata(:,{'UserID','FEV10','Calories','SputumSampleTaken_','Activity_Points'}) = [];</span>
+0094 physdata(:,{<span class="string">'UserID'</span>,<span class="string">'FEV10'</span>,<span class="string">'Calories'</span>,<span class="string">'Activity_Points'</span>}) = [];
+0095 toc
+0096 fprintf(<span class="string">'\n'</span>);
+0097 
+0098 tic
+0099 <span class="comment">% correct for blank entries</span>
+0100 fprintf(<span class="string">'Correcting blank entries\n'</span>);
+0101 fprintf(<span class="string">'------------------------\n'</span>);
+0102 
+0103 <span class="comment">% Activity_Steps - update blanks to zeros</span>
+0104 idx1 = find(ismember(physdata.RecordingType, <span class="string">'ActivityRecording'</span>));
+0105 idx2 = find(isnan(physdata.Activity_Steps));
+0106 idx = intersect(idx1,idx2);
+0107 fprintf(<span class="string">'Updating %4d blank activity measurements to 0\n'</span>, size(idx,1));
+0108 physdata.Activity_Steps(idx) = 0;
+0109 
+0110 <span class="comment">% Cough, Wellness &amp; Sleep Recording - remove blanks</span>
+0111 idx1 = find(ismember(physdata.RecordingType, {<span class="string">'CoughRecording'</span>;<span class="string">'WellnessRecording'</span>;<span class="string">'SleepActivityRecording'</span>}));
+0112 idx2 = find(isnan(physdata.Rating));
+0113 idx = intersect(idx1,idx2);
+0114 fprintf(<span class="string">'Removing %4d blank cough, wellness and sleep measurements\n'</span>, size(idx,1));
+0115 physdata(idx,:) = [];
+0116 
+0117 <span class="comment">% Sputum Sample Recording - remove blanks</span>
+0118 physdata.SputumSampleTaken_l = physdata.SputumSampleTaken_;
+0119 physdata.SputumSampleTaken_i(:) = 0;
+0120 physdata.SputumSampleTaken_ = [];
+0121 physdata.SputumSampleTaken_ = physdata.SputumSampleTaken_i;
+0122 physdata.SputumSampleTaken_i = [];
+0123 
+0124 idx1 = find(ismember(physdata.RecordingType, <span class="string">'SputumSampleRecording'</span>));
+0125 idx2 = find(ismember(physdata.SputumSampleTaken_l,<span class="string">'true'</span>));
+0126 idx = intersect(idx1,idx2);
+0127 physdata.SputumSampleTaken_(idx) = 1;
+0128 idx1 = find(ismember(physdata.RecordingType, <span class="string">'SputumSampleRecording'</span>));
+0129 idx2 = find(~ismember(physdata.SputumSampleTaken_l,<span class="string">'true'</span>));
+0130 
+0131 <span class="comment">% switch these for emem heatmap</span>
+0132 idx = intersect(idx1,idx1);
+0133 <span class="comment">%idx = intersect(idx1,idx2);</span>
+0134 fprintf(<span class="string">'Removing %4d sputum sample measurements\n'</span>, size(idx,1));
+0135 physdata(idx,:) = [];
+0136 
+0137 physdata.SputumSampleTaken_l = [];
+0138 <span class="comment">% comment this out for emem heatmap</span>
+0139 physdata.SputumSampleTaken_ = [];
+0140 
+0141 
+0142 
+0143 
+0144 
+0145 <span class="comment">% Temperature Recording - remove blanks</span>
+0146 idx1 = find(ismember(physdata.RecordingType, <span class="string">'TemperatureRecording'</span>));
+0147 idx2 = find(isnan(physdata.Temp_degC_));
+0148 idx = intersect(idx1,idx2);
+0149 fprintf(<span class="string">'Removing %4d blank temperature measurements\n'</span>, size(idx,1));
+0150 physdata(idx,:) = [];
+0151 
+0152 fprintf(<span class="string">'SmartCare data now has %d rows\n'</span>, size(physdata,1));
+0153 toc
+0154 fprintf(<span class="string">'\n'</span>);
+0155 
+0156 <span class="keyword">end</span>
+0157</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

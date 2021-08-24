@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCAnimatedProbDistConcurrent</title>
+  <meta name="keywords" content="amEMMCAnimatedProbDistConcurrent">
+  <meta name="description" content="amEMMCAnimatedProbDistConcurrent - function to display animated">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCAnimatedProbDistConcurrent.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCAnimatedProbDistConcurrent
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCAnimatedProbDistConcurrent - function to display animated</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [f, p, niterations] = amEMMCAnimatedProbDistConcurrent(animated_overall_pdoffset, max_offset,ninterventions, nlatentcurves, basemoviefilename) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCAnimatedProbDistConcurrent - function to display animated
+ probability distributions through the iterative alignment process,
+ handling multiple sets of latent curves</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="plotProbDistribution.html" class="code" title="function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc)">plotProbDistribution</a>	plotProbDistribution - plots a prob distribution</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [f, p, niterations] = amEMMCAnimatedProbDistConcurrent(animated_overall_pdoffset, max_offset, </a><span class="keyword">...</span>
+0002     ninterventions, nlatentcurves, basemoviefilename)
+0003 
+0004 <span class="comment">% amEMMCAnimatedProbDistConcurrent - function to display animated</span>
+0005 <span class="comment">% probability distributions through the iterative alignment process,</span>
+0006 <span class="comment">% handling multiple sets of latent curves</span>
+0007 
+0008 
+0009 <span class="keyword">for</span> l = 1:nlatentcurves
+0010     
+0011     moviefilename = sprintf(<span class="string">'%s - LC Set %d'</span>, basemoviefilename, l);
+0012     v = VideoWriter(moviefilename, <span class="string">'MPEG-4'</span>);
+0013     open(v);
+0014 
+0015     plotsacross = 10;
+0016     plotsdown = 10;
+0017     <span class="keyword">for</span> niterations = 1:2000
+0018         <span class="keyword">if</span> all(animated_overall_pdoffset(l, :, :, niterations)==0)
+0019             <span class="keyword">break</span>;
+0020         <span class="keyword">end</span>
+0021     <span class="keyword">end</span>
+0022     niterations = niterations - 1;
+0023     days = 0:max_offset - 1;
+0024 
+0025     [f,p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(sprintf(<span class="string">'LC%d Animation of Probability Distributions'</span>, l),<span class="string">'portrait'</span>,<span class="string">'a4'</span>);
+0026 
+0027     <span class="keyword">for</span> a = 1:ninterventions
+0028         ax(a) = subplot(plotsdown, plotsacross, a, <span class="string">'Parent'</span>, p);
+0029         xl = [min(days) max(days)];
+0030         xlim(xl);
+0031         yl = [min(min(min(animated_overall_pdoffset(l, :, :, 1:niterations),[], 4), [], 3)), <span class="keyword">...</span>
+0032               max(max(max(animated_overall_pdoffset(l, :, :, 1:niterations),[], 4), [], 3))];
+0033         ylim(yl);
+0034         title(ax(a), sprintf(<span class="string">'%d'</span>, a));
+0035         [xl, yl] = <a href="plotProbDistribution.html" class="code" title="function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc)">plotProbDistribution</a>(ax(a), max_offset, reshape(animated_overall_pdoffset(l, a, :, 1), [max_offset, 1]), xl, yl, <span class="string">'o'</span>, 0.5, 2.0, <span class="string">'red'</span>, <span class="string">'red'</span>);
+0036 
+0037         an(a) = animatedline(ax(a), days, reshape(animated_overall_pdoffset(l, a, :, 1), [max_offset, 1]), <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'Linewidth'</span>, 0.5, <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="string">'MarkerSize'</span>, 2.0, <span class="string">'MarkerEdgeColor'</span>, <span class="string">'blue'</span>, <span class="string">'MarkerFaceColor'</span>, <span class="string">'blue'</span>); 
+0038     <span class="keyword">end</span>
+0039 
+0040     frame = getframe(f);
+0041     writeVideo(v,frame);
+0042     frame = getframe(f);
+0043     writeVideo(v,frame);
+0044 
+0045     <span class="keyword">for</span> i = 1:niterations
+0046         <span class="keyword">for</span> a = 1:ninterventions
+0047             <span class="comment">%title(ax(a), sprintf('%d - Iteration %2d', a, i));</span>
+0048             p.Title = sprintf(<span class="string">'LC%d Animation of Probability Distributions - Iteration %2d'</span>, l, i);
+0049             clearpoints(an(a));
+0050             addpoints(an(a), days, reshape(animated_overall_pdoffset(l, a, :, i), [max_offset, 1]));
+0051         <span class="keyword">end</span>
+0052         drawnow nocallbacks;
+0053 
+0054         frame = getframe(f);
+0055         writeVideo(v,frame);
+0056         frame = getframe(f);
+0057         writeVideo(v,frame);
+0058     <span class="keyword">end</span>
+0059 
+0060     close(v);
+0061     close(f);
+0062 
+0063 <span class="keyword">end</span>
+0064 
+0065 <span class="keyword">end</span>
+0066 
+0067</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

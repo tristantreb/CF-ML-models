@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCCompareMultipleModelRunsByLCSets</title>
+  <meta name="keywords" content="amEMMCCompareMultipleModelRunsByLCSets">
+  <meta name="description" content="amEMMCCompareMultipleModelRunsByLCSets - compares the the latent curve set populations">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCCompareMultipleModelRunsByLCSets.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCCompareMultipleModelRunsByLCSets
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCCompareMultipleModelRunsByLCSets - compares the the latent curve set populations</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function amEMMCCompareMultipleModelRunsByLCSets(modelrun, modelidx, models) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCCompareMultipleModelRunsByLCSets - compares the the latent curve set populations
+ for multiple model runs</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function amEMMCCompareMultipleModelRunsByLCSets(modelrun, modelidx, models)</a>
+0002 
+0003 <span class="comment">% amEMMCCompareMultipleModelRunsByLCSets - compares the the latent curve set populations</span>
+0004 <span class="comment">% for multiple model runs</span>
+0005 
+0006 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0007 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0008 
+0009 datatable = table(<span class="string">'Size'</span>,[1 3], <span class="keyword">...</span>
+0010     <span class="string">'VariableTypes'</span>, {<span class="string">'double'</span>,   <span class="string">'double'</span>,  <span class="string">'double'</span>}, <span class="keyword">...</span>
+0011     <span class="string">'VariableNames'</span>, {<span class="string">'ModelRun'</span>, <span class="string">'IntrNbr'</span>, <span class="string">'LatentCurve'</span>});
+0012 
+0013 rowtoadd = datatable;
+0014 datatable(1:size(datatable,1),:) = [];
+0015 
+0016 ylabels = {<span class="string">'Dummy'</span>};
+0017 modelrunlist = 0;
+0018 
+0019 
+0020 colors      = [ 0.4, 0.8, 0.2 ];
+0021 colors(2,:) = [ 0, 0, 1 ];
+0022 colors(3,:) = [ 1, 0, 0 ];
+0023 colors(4,:) = [ 1 0 1 ];
+0024 
+0025 <span class="keyword">for</span> midx = modelidx:size(models,1)
+0026     <span class="keyword">if</span> (~isequal(models{midx}, <span class="string">'placeholder'</span>) &amp;&amp; ~contains(models{midx}, <span class="string">'xxx'</span>))
+0027         clear randomseed;
+0028         clear datasmoothmethod;
+0029         clear vshiftmode;
+0030         load(fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>, models{midx})));
+0031         <span class="comment">% for backward compatibility</span>
+0032         <span class="keyword">if</span> (~exist(<span class="string">'randomseed'</span>,<span class="string">'var'</span>))
+0033             randomseed = 0;
+0034         <span class="keyword">end</span>
+0035         <span class="keyword">if</span> (~exist(<span class="string">'datasmoothmethod'</span>,<span class="string">'var'</span>))
+0036             datasmoothmethod = 1;
+0037         <span class="keyword">end</span>
+0038         <span class="keyword">if</span> (~exist(<span class="string">'heldbackpct'</span>,<span class="string">'var'</span>))
+0039             heldbackpct = 0;
+0040         <span class="keyword">end</span>
+0041         <span class="keyword">if</span> (~exist(<span class="string">'intrmode'</span>,<span class="string">'var'</span>))
+0042             intrmode = 1;
+0043         <span class="keyword">end</span>
+0044         <span class="keyword">if</span> (~exist(<span class="string">'scenario'</span>,<span class="string">'var'</span>))
+0045             scenario = <span class="string">''</span>;
+0046         <span class="keyword">end</span>
+0047         <span class="keyword">if</span> (~exist(<span class="string">'vshiftmode'</span>,<span class="string">'var'</span>))
+0048             vshiftmode = 0;
+0049         <span class="keyword">end</span>
+0050        
+0051         modellcs   = amInterventions.LatentCurve;
+0052         
+0053         lcs = 1:nlatentcurves;
+0054         nlcs = zeros(nlatentcurves, 1);
+0055         <span class="keyword">for</span> i = 1:nlatentcurves
+0056             nlcs(i) = sum(modellcs==i);
+0057         <span class="keyword">end</span>
+0058         [~, nlcsidx] = sort(nlcs, <span class="string">'descend'</span>);
+0059         
+0060         rowtoadd.ModelRun = midx;
+0061         
+0062         <span class="keyword">for</span> i = 1:ninterventions
+0063             rowtoadd.IntrNbr = i;
+0064             <span class="comment">%rowtoadd.LatentCurve = modellcs(i);</span>
+0065             rowtoadd.LatentCurve = lcs(nlcsidx==modellcs(i));
+0066             datatable = [datatable ; rowtoadd];
+0067         <span class="keyword">end</span>
+0068         
+0069         modelrunlist = [modelrunlist; midx];
+0070         <span class="comment">%if niterations == 200</span>
+0071         <span class="comment">%    convergeflag = '*';</span>
+0072         <span class="comment">%else</span>
+0073         <span class="comment">%    convergeflag = ' ';</span>
+0074         <span class="comment">%end</span>
+0075         ylabels = [ylabels; sprintf(<span class="string">'mm%dmo%dds%drm%drs%dct%dlm%dvs%dsc%sni%d'</span>, measuresmask, max_offset, <span class="keyword">...</span>
+0076             datasmoothmethod, runmode, randomseed, countthreshold, testlabelmthd, vshiftmode, scenario, niterations)];
+0077     <span class="keyword">end</span>
+0078 <span class="keyword">end</span>
+0079 
+0080 <span class="comment">% remove dummy row</span>
+0081 modelrunlist(1) = [];
+0082 ylabels(1) = [];
+0083 
+0084 labels = [array2table(modelrunlist), array2table(ylabels)];
+0085 labels = sortrows(labels, {<span class="string">'ylabels'</span>}, {<span class="string">'ascend'</span>});
+0086    
+0087 plotsacross = 1;
+0088 plotsdown = 1;
+0089 plottitle = sprintf(<span class="string">'Model Runs %s_gp%d_lm%d_in%d_nl%d(%d-%d) By Latent Curve Set'</span>, mversion, treatgap, testlabelmthd, intrmode, nlatentcurves, modelidx, size(models,1));
+0090 
+0091 [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0092 
+0093 subplot(plotsdown,plotsacross,[1],<span class="string">'Parent'</span>,p);
+0094 h = heatmap(p, datatable, <span class="string">'IntrNbr'</span>, <span class="string">'ModelRun'</span>, <span class="string">'Colormap'</span>, colors(1:max(datatable.LatentCurve),:), <span class="string">'MissingDataColor'</span>, <span class="string">'white'</span>, <span class="keyword">...</span>
+0095     <span class="string">'ColorVariable'</span>,<span class="string">'LatentCurve'</span>,<span class="string">'ColorMethod'</span>,<span class="string">'max'</span>, <span class="string">'MissingDataLabel'</span>, <span class="string">'No data'</span>, <span class="string">'ColorBarVisible'</span>, <span class="string">'off'</span>, <span class="string">'FontSize'</span>, 8);
+0096 h.Title = <span class="string">' '</span>;
+0097 h.FontName = <span class="string">'Monaco'</span>;
+0098 h.FontSize = 6;
+0099 h.XLabel = <span class="string">'Intervention Nbr'</span>;
+0100 h.YLabel = <span class="string">'Model Run'</span>;
+0101 h.YDisplayData = labels.modelrunlist;
+0102 h.YDisplayLabels = labels.ylabels;
+0103 h.CellLabelColor = <span class="string">'none'</span>;
+0104 h.GridVisible = <span class="string">'on'</span>;
+0105 
+0106 plotsubfolder = <span class="string">'Plots'</span>;
+0107 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0108 close(f);
+0109     
+0110 <span class="keyword">end</span>
+0111</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

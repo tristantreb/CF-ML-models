@@ -1,0 +1,313 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of analyseOvernightMeasures</title>
+  <meta name="keywords" content="analyseOvernightMeasures">
+  <meta name="description" content="analyseOvernightMeasures - analyses measures recorded between 00:00 and">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; analyseOvernightMeasures.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>analyseOvernightMeasures
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>analyseOvernightMeasures - analyses measures recorded between 00:00 and</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [physdataout] = analyseOvernightMeasures(physdata, smartcareID, doupdates, detaillog) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> analyseOvernightMeasures - analyses measures recorded between 00:00 and
+ 03:59 to ascertain whether to adjust measurement day to prior day</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="printSmartCareData.html" class="code" title="function printSmartCareData(sc, rowstoshow)">printSmartCareData</a>	printSmartCareData - a convenience function to print formatted output for</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadclimbdata.html" class="code" title="">loadclimbdata</a>	</li><li><a href="loadsmartcaredata.html" class="code" title="">loadsmartcaredata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [physdataout] = analyseOvernightMeasures(physdata, smartcareID, doupdates, detaillog)</a>
+0002 
+0003 <span class="comment">% analyseOvernightMeasures - analyses measures recorded between 00:00 and</span>
+0004 <span class="comment">% 03:59 to ascertain whether to adjust measurement day to prior day</span>
+0005 
+0006 <span class="comment">% first start with non-activity measures</span>
+0007 
+0008 fprintf(<span class="string">'Analysing overnight measures (non-Activity)\n'</span>);
+0009 fprintf(<span class="string">'-------------------------------------------\n'</span>);
+0010 
+0011 tic
+0012 <span class="comment">% index or rows for smartcare id (all or single patient)</span>
+0013 <span class="keyword">if</span> (smartcareID == 0)
+0014     idxs = find(physdata.SmartCareID);
+0015 <span class="keyword">else</span>
+0016     idxs = find(physdata.SmartCareID == smartcareID);
+0017 <span class="keyword">end</span>
+0018 
+0019 <span class="comment">% index rows of all measurment types except ActivityRecording</span>
+0020 idxm = find(~ismember(physdata.RecordingType, <span class="string">'ActivityRecording'</span>));
+0021 
+0022 <span class="comment">% find list of patients who regularly take measurements between 3am and</span>
+0023 <span class="comment">% 4:59am (earlybirds)</span>
+0024 idxe = find(hour(datetime(physdata.Date_TimeRecorded))== 3 | hour(datetime(physdata.Date_TimeRecorded))==4);
+0025 idxe = intersect(idxm, idxe);
+0026 [earlybirds, eI, eJ] = unique(physdata.SmartCareID(idxe));
+0027 ecount = zeros(size(earlybirds,1),1);
+0028 <span class="keyword">for</span> e = 1:size(earlybirds,1)
+0029     ecount(e) = size(find(eJ==e),1);
+0030 <span class="keyword">end</span>
+0031 earlybirds = earlybirds(find(ecount&gt;=10));
+0032 fprintf(<span class="string">'Found %d earlybirds - regularly measure between 03:00-04:59am\n'</span>, size(earlybirds,1));
+0033 
+0034 <span class="comment">% find list of patients who regularly take measurements between 12am and</span>
+0035 <span class="comment">% 1:59am (night owls)</span>
+0036 idxn = find(hour(datetime(physdata.Date_TimeRecorded))== 0 | hour(datetime(physdata.Date_TimeRecorded))==1);
+0037 idxn = intersect(idxm, idxn);
+0038 [nightowls, nI, nJ] = unique(physdata.SmartCareID(idxn));
+0039 ncount = zeros(size(nightowls,1),1);
+0040 <span class="keyword">for</span> n = 1:size(nightowls,1)
+0041     ncount(n) = size(find(nJ==n),1);
+0042 <span class="keyword">end</span>
+0043 nightowls = nightowls(find(ncount&gt;=10));
+0044 fprintf(<span class="string">'Found %d nightowls - regularly measure between 00:00-01:59am\n'</span>, size(nightowls,1));
+0045 toc
+0046 fprintf(<span class="string">'\n'</span>);
+0047 
+0048 <span class="comment">% Commented out the below queries to avoid streams of output. Uncomment to</span>
+0049 <span class="comment">% see the restuls</span>
+0050 
+0051 <span class="comment">%nrowstoshow = 100;</span>
+0052 
+0053 <span class="comment">% then look at early measures (12-1:59am) for early birds</span>
+0054 <span class="comment">%idxe2 = find(hour(datetime(physdata.Date_TimeRecorded))== 0 | hour(datetime(physdata.Date_TimeRecorded))==1);</span>
+0055 <span class="comment">%idx = intersect(idxs,idxe2);</span>
+0056 <span class="comment">%idx = intersect(idxm, idx);</span>
+0057 <span class="comment">%idxe3 = find(ismember(string(physdata.SmartCareID), string(earlybirds)));</span>
+0058 <span class="comment">%idx = intersect(idx, idxe3);</span>
+0059 <span class="comment">%fprintf('Early measures (12-1:59am) for early birds (regularly measure 3-4:59am)\n');</span>
+0060 <span class="comment">%printSmartCareData(sortrows(physdata(idx,:),{'SmartCareID', 'Date_TimeRecorded'}, 'ascend'), nrowstoshow);</span>
+0061 
+0062 <span class="comment">% then look at late measures (3-4:59am) for nightowls</span>
+0063 <span class="comment">%idxn2 = find(hour(datetime(physdata.Date_TimeRecorded))== 3 | hour(datetime(physdata.Date_TimeRecorded))==4);</span>
+0064 <span class="comment">%idx = intersect(idxs,idxn2);</span>
+0065 <span class="comment">%idx = intersect(idxm, idx);</span>
+0066 <span class="comment">%idxn3 = find(ismember(string(physdata.SmartCareID), string(nightowls)));</span>
+0067 <span class="comment">%idx = intersect(idx, idxn3);</span>
+0068 <span class="comment">%fprintf('Late measures (3-4:59am) for nightowls (regularly measure 12-1:59am)\n');</span>
+0069 <span class="comment">%printSmartCareData(sortrows(physdata(idx,:),{'SmartCareID', 'Date_TimeRecorded'}, 'ascend'), nrowstoshow);</span>
+0070 
+0071 <span class="comment">% then look at early measures (12-1:59am) for neither earlybirds or nightowls%</span>
+0072 <span class="comment">%both = [earlybirds;nightowls];</span>
+0073 <span class="comment">%idxe2 = find(hour(datetime(physdata.Date_TimeRecorded))== 0 | hour(datetime(physdata.Date_TimeRecorded))==1);</span>
+0074 <span class="comment">%idx = intersect(idxs,idxe2);</span>
+0075 <span class="comment">%idx = intersect(idxm, idx);</span>
+0076 <span class="comment">%idxe3 = find(~ismember(string(physdata.SmartCareID), string(both)));</span>
+0077 <span class="comment">%idx = intersect(idx, idxe3);</span>
+0078 <span class="comment">%fprintf('Early measures (12-1:59am) for neither earlybirds or nightowls\n');</span>
+0079 <span class="comment">%printSmartCareData(sortrows(physdata(idx,:),{'SmartCareID', 'Date_TimeRecorded'}, 'ascend'), nrowstoshow);</span>
+0080 
+0081 <span class="comment">% then look at late measures (3-4:59am) for neither earlybirds or nightowls</span>
+0082 <span class="comment">%both = [earlybirds;nightowls];</span>
+0083 <span class="comment">%idxe2 = find(hour(datetime(physdata.Date_TimeRecorded))== 3 | hour(datetime(physdata.Date_TimeRecorded))==4);</span>
+0084 <span class="comment">%idx = intersect(idxs,idxe2);</span>
+0085 <span class="comment">%idx = intersect(idxm, idx);</span>
+0086 <span class="comment">%idxe3 = find(~ismember(string(physdata.SmartCareID), string(both)));</span>
+0087 <span class="comment">%idx = intersect(idx, idxe3);</span>
+0088 <span class="comment">%fprintf('Late measures (3-4:59am) for neither earlybirds or nightowls \n');</span>
+0089 <span class="comment">%printSmartCareData(sortrows(physdata(idx,:),{'SmartCareID', 'Date_TimeRecorded'}, 'ascend'), nrowstoshow);</span>
+0090 
+0091 <span class="comment">% then look at 2-2:59am) for early birds</span>
+0092 <span class="comment">%idxe2 = find(hour(datetime(physdata.Date_TimeRecorded))== 2 | hour(datetime(physdata.Date_TimeRecorded))== 2);</span>
+0093 <span class="comment">%idx = intersect(idxs,idxe2);</span>
+0094 <span class="comment">%idx = intersect(idxm, idx);</span>
+0095 <span class="comment">%idxe3 = find(ismember(string(physdata.SmartCareID), string(earlybirds)));</span>
+0096 <span class="comment">%idx = intersect(idx, idxe3);</span>
+0097 <span class="comment">%fprintf('2-2:59am measures for early birds (regularly measure 3-4:59am)\n');</span>
+0098 <span class="comment">%printSmartCareData(sortrows(physdata(idx,:),{'SmartCareID', 'Date_TimeRecorded'}, 'ascend'), nrowstoshow);</span>
+0099 
+0100 <span class="comment">% then look at 2-2:59am for nightowls</span>
+0101 <span class="comment">%idxn2 = find(hour(datetime(physdata.Date_TimeRecorded))== 2 | hour(datetime(physdata.Date_TimeRecorded))==2);</span>
+0102 <span class="comment">%idx = intersect(idxs,idxn2);</span>
+0103 <span class="comment">%idx = intersect(idxm, idx);</span>
+0104 <span class="comment">%idxn3 = find(ismember(string(physdata.SmartCareID), string(nightowls)));</span>
+0105 <span class="comment">%idx = intersect(idx, idxn3);</span>
+0106 <span class="comment">%fprintf('2-2:59am measures for nightowls (regularly measure 12-1:59am)\n');</span>
+0107 <span class="comment">%printSmartCareData(sortrows(physdata(idx,:),{'SmartCareID', 'Date_TimeRecorded'}, 'ascend'), nrowstoshow);</span>
+0108 
+0109 <span class="comment">% then look at 2-2:59am for neither earlybirds or nightowls</span>
+0110 <span class="comment">%both = [earlybirds;nightowls];</span>
+0111 <span class="comment">%idxe2 = find(hour(datetime(physdata.Date_TimeRecorded))== 2 | hour(datetime(physdata.Date_TimeRecorded))==2);</span>
+0112 <span class="comment">%idx = intersect(idxs,idxe2);</span>
+0113 <span class="comment">%idx = intersect(idxm, idx);</span>
+0114 <span class="comment">%idxe3 = find(~ismember(string(physdata.SmartCareID), string(both)));</span>
+0115 <span class="comment">%idx = intersect(idx, idxe3);</span>
+0116 <span class="comment">%fprintf('2-2:59am measures for neither earlybirds or nightowls \n');</span>
+0117 <span class="comment">%printSmartCareData(sortrows(physdata(idx,:),{'SmartCareID', 'Date_TimeRecorded'}, 'ascend'), nrowstoshow);</span>
+0118 <span class="comment">%toc</span>
+0119 <span class="comment">%fprintf('\n');</span>
+0120 
+0121 <span class="comment">% from the above, for non-activity measurements, the only candidates to</span>
+0122 <span class="comment">% shift the date for are those taken between 00:00-00:59am. Do further</span>
+0123 <span class="comment">% anaylsis on these</span>
+0124 
+0125 <span class="comment">% first get all pairs of SmartCareID and DateNum for measurements 00:00-00:59am</span>
+0126 <span class="comment">% (ex-activity measurements)</span>
+0127 idxe2 = find(hour(datetime(physdata.Date_TimeRecorded))== 0);
+0128 idx = intersect(idxs,idxe2);
+0129 idx = intersect(idxm, idx);
+0130 fprintf(<span class="string">'%d non-activity measures taken between 00:00-00:59am\n'</span>, size(idx,1));
+0131 <span class="keyword">if</span> detaillog
+0132     nrowstoshow = 500;
+0133     <a href="printSmartCareData.html" class="code" title="function printSmartCareData(sc, rowstoshow)">printSmartCareData</a>(sortrows(physdata(idx,:),{<span class="string">'SmartCareID'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>), nrowstoshow);
+0134 <span class="keyword">end</span>
+0135 
+0136 tic
+0137 <span class="keyword">if</span> detaillog
+0138     fprintf(<span class="string">'Further analyse measures taken between 00:00-00:59\n'</span>);
+0139     fprintf(<span class="string">'\n'</span>);
+0140 <span class="keyword">end</span>
+0141 midnightto1ammeasures = unique(physdata(idx,{<span class="string">'SmartCareID'</span>,<span class="string">'DateNum'</span>}));
+0142 proposedupdate = zeros(size(midnightto1ammeasures,1),1);
+0143 nupdates = 0;
+0144 <span class="keyword">if</span> detaillog
+0145     fprintf(<span class="string">'           :        :   Prior Day   :   Prior Day   :  Current Day  :  Current Day  :  Proposed\n'</span>);
+0146     fprintf(<span class="string">'  Patient  :  Date  :  02:00-22:59  :  23:00-23:59  :  00:00-00:59  :  02:00-23:59  :   Update \n'</span>);
+0147     fprintf(<span class="string">'  _______  :  ____  :  ___________  :  ___________  :  ___________  :  ___________  :  ________\n'</span>);
+0148 <span class="keyword">end</span>
+0149 
+0150 <span class="keyword">for</span> i = 1:size(midnightto1ammeasures,1)
+0151     scid = midnightto1ammeasures.SmartCareID(i);
+0152     datenum = midnightto1ammeasures.DateNum(i);
+0153     idx1 = find(physdata.SmartCareID == scid);
+0154     cidx2 = find(physdata.DateNum == datenum &amp; hour(datetime(physdata.Date_TimeRecorded)) == 0);
+0155     cidx = intersect(idx1,cidx2);
+0156     cidx = intersect(cidx,idxm);
+0157     sidx2 = find(physdata.DateNum == datenum &amp; hour(datetime(physdata.Date_TimeRecorded)) &gt;= 2);
+0158     sidx = intersect(idx1,sidx2);
+0159     sidx = intersect(sidx,idxm);
+0160     p1idx2 = find(physdata.DateNum == (datenum-1) &amp; hour(datetime(physdata.Date_TimeRecorded)) &gt;=2 &amp; hour(datetime(physdata.Date_TimeRecorded)) &lt; 23);
+0161     p1idx = intersect(idx1,p1idx2);
+0162     p1idx = intersect(p1idx,idxm);
+0163     p2idx2 = find(physdata.DateNum == (datenum-1) &amp; hour(datetime(physdata.Date_TimeRecorded)) == 23);
+0164     p2idx = intersect(idx1,p2idx2);
+0165     p2idx = intersect(p2idx,idxm);
+0166     
+0167     <span class="comment">% update to prior day if no readings for prior day (before 23:00) and</span>
+0168     <span class="comment">% either readings on prior day after 23:00 or readings later the same</span>
+0169     <span class="comment">% day</span>
+0170     <span class="keyword">if</span> (size(p1idx,1)==0 &amp; (size(p2idx,1) &gt;=1 | size(sidx,1) &gt;=1))
+0171         proposedupdate(i) = 1;
+0172         <span class="keyword">if</span> doupdates
+0173             physdata.DateNum(cidx) = physdata.DateNum(cidx) - 1;
+0174             nupdates = nupdates + size(cidx,1);
+0175         <span class="keyword">end</span>
+0176     <span class="keyword">end</span>
+0177     <span class="keyword">if</span> detaillog   
+0178         fprintf(<span class="string">'    %3d        %3d         %3d             %3d             %3d             %3d             %1d\n'</span>, scid, datenum, size(p1idx,1), size(p2idx,1), size(cidx,1), size(sidx,1), proposedupdate(i));
+0179     <span class="keyword">end</span>
+0180 <span class="keyword">end</span>
+0181 <span class="keyword">if</span> doupdates
+0182     fprintf(<span class="string">'\n'</span>);
+0183     fprintf(<span class="string">'Updated a total of %3d overnight non-activity measures to the prior day\n'</span>, nupdates);
+0184     fprintf(<span class="string">'\n'</span>);
+0185 <span class="keyword">end</span>
+0186 toc
+0187 fprintf(<span class="string">'\n'</span>);
+0188 
+0189 <span class="comment">% now look at activity measures</span>
+0190 
+0191 fprintf(<span class="string">'Analysing overnight measures (Activity)\n'</span>);
+0192 fprintf(<span class="string">'-------------------------------------------\n'</span>);
+0193 
+0194 idxa = find(ismember(physdata.RecordingType, <span class="string">'ActivityRecording'</span>));
+0195 
+0196 idxa2 = find(hour(datetime(physdata.Date_TimeRecorded)) &gt;= 3 &amp; hour(datetime(physdata.Date_TimeRecorded)) &lt;= 5);
+0197 idx = intersect(idxa, idxa2);
+0198 idx = intersect(idxs,idx);
+0199 
+0200 fprintf(<span class="string">'%d activity measures taken between 03:00-05:59am\n'</span>, size(idx,1));
+0201 <span class="keyword">if</span> detaillog
+0202     nrowstoshow = 200;
+0203     <a href="printSmartCareData.html" class="code" title="function printSmartCareData(sc, rowstoshow)">printSmartCareData</a>(sortrows(physdata(idx,:),{<span class="string">'SmartCareID'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>), nrowstoshow);
+0204 <span class="keyword">end</span>
+0205 
+0206 tic
+0207 <span class="keyword">if</span> detaillog
+0208     fprintf(<span class="string">'Further analyse measures taken between 00:00-05:59\n'</span>);
+0209     fprintf(<span class="string">'\n'</span>);
+0210 <span class="keyword">end</span>
+0211 overnightactivitymeasures = unique(physdata(idx,{<span class="string">'SmartCareID'</span>,<span class="string">'DateNum'</span>}));
+0212 proposedupdateact = zeros(size(overnightactivitymeasures,1),1);
+0213 
+0214 <span class="keyword">if</span> detaillog
+0215     fprintf(<span class="string">'           :        :   Activity    :   Activity    :   Activity    :   Activity    :  NonActivity\n'</span>);
+0216     fprintf(<span class="string">'           :        :   Prior Day   :  Prior Curr   :  Current Day  :  Current Day  :  Prior Curr \n'</span>);
+0217     fprintf(<span class="string">'  Patient  :  Date  :  02:00-22:59  :  23:00-02:59  :  03:00-05:59  :  06:00-23:59  :  23:00-05:59\n'</span>);
+0218     fprintf(<span class="string">'  _______  :  ____  :  ___________  :  ___________  :  ___________  :  ___________  :  ___________\n'</span>);
+0219 <span class="keyword">end</span>
+0220 
+0221 <span class="keyword">for</span> i = 1:size(overnightactivitymeasures,1)
+0222     scid = overnightactivitymeasures.SmartCareID(i);
+0223     datenum = overnightactivitymeasures.DateNum(i);
+0224     idx1 = find(physdata.SmartCareID == scid);
+0225     cidx2 = find(physdata.DateNum == datenum &amp; hour(datetime(physdata.Date_TimeRecorded)) &gt;= 3 &amp; hour(datetime(physdata.Date_TimeRecorded)) &lt;= 5);
+0226     cidx = intersect(idx1,cidx2);
+0227     cidx = intersect(cidx,idxa);
+0228     sidx2 = find(physdata.DateNum == datenum &amp; hour(datetime(physdata.Date_TimeRecorded)) &gt;= 6);
+0229     sidx = intersect(idx1,sidx2);
+0230     sidx = intersect(sidx,idxa);
+0231     p1idx2 = find(physdata.DateNum == (datenum-1) &amp; hour(datetime(physdata.Date_TimeRecorded)) &gt;=2 &amp; hour(datetime(physdata.Date_TimeRecorded)) &lt; 23);
+0232     p1idx = intersect(idx1,p1idx2);
+0233     p1idx = intersect(p1idx,idxa);
+0234     p2idx2 = find((physdata.DateNum == (datenum-1) &amp; hour(datetime(physdata.Date_TimeRecorded)) == 23) | (physdata.DateNum == datenum &amp; hour(datetime(physdata.Date_TimeRecorded)) &lt;= 2));
+0235     p2idx = intersect(idx1,p2idx2);
+0236     p2idx = intersect(p2idx,idxa);
+0237     nidx2 = find((physdata.DateNum == (datenum-1) &amp; hour(datetime(physdata.Date_TimeRecorded)) == 23) | (physdata.DateNum == datenum &amp; hour(datetime(physdata.Date_TimeRecorded)) &lt;= 5));
+0238     nidx = intersect(idx1,nidx2);
+0239     nidx = intersect(nidx,idxm);
+0240     
+0241     <span class="keyword">if</span> detaillog
+0242         <span class="comment">%fprintf('    %3d        %3d         %3d             %3d             %3d             %3d             %3d            %1d\n', ...</span>
+0243         <span class="comment">%    scid, datenum, size(p1idx,1), size(p2idx,1), size(cidx,1), size(sidx,1), size(nidx,1), proposedupdateact(i));</span>
+0244         fprintf(<span class="string">'    %3d        %3d         %3d             %3d             %3d             %3d             %3d\n'</span>, <span class="keyword">...</span>
+0245             scid, datenum, size(p1idx,1), size(p2idx,1), size(cidx,1), size(sidx,1), size(nidx,1));
+0246     <span class="keyword">end</span>
+0247 <span class="keyword">end</span>
+0248 toc
+0249 fprintf(<span class="string">'\n'</span>);
+0250 
+0251 <span class="keyword">if</span> doupdates
+0252     tic
+0253     fprintf(<span class="string">'Updating Date offset for Activity measures 00:00-05:59\n'</span>);
+0254     fprintf(<span class="string">'------------------------------------------------------\n'</span>);
+0255     idx2 = find(hour(datetime(physdata.Date_TimeRecorded))&lt;6);
+0256     idx = intersect(idxa,idx2);
+0257     fprintf(<span class="string">'Updating %4d date offsets to prior day for activity measures between 00:00 and 05:59\n'</span>, size(idx,1));
+0258     physdata.DateNum(idx) = physdata.DateNum(idx) - 1;
+0259     toc
+0260     fprintf(<span class="string">'\n'</span>); 
+0261 <span class="keyword">end</span>
+0262 
+0263 physdataout = physdata;
+0264 <span class="keyword">end</span>
+0265</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

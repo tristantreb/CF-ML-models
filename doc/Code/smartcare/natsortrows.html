@@ -1,0 +1,338 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of natsortrows</title>
+  <meta name="keywords" content="natsortrows">
+  <meta name="description" content="Natural-order / alphanumeric sort the rows of a cell array or string array.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; natsortrows.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>natsortrows
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Natural-order / alphanumeric sort the rows of a cell array or string array.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [Y,ndx,dbg] = natsortrows(X,rgx,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Natural-order / alphanumeric sort the rows of a cell array or string array.
+
+ (c) 2014-2021 Stephen Cobeldick
+
+ Sort text by character code and by number value.
+ SORTROWS &lt;col&gt; input is supported, to select columns to sort by.
+
+%% Example:
+ &gt;&gt; X = {'x2','10';'x10','0';'x1','0';'x2','2'};
+ &gt;&gt; sortrows(X) % Wrong numeric order:
+ ans =
+     'x1'     '0'
+     'x10'    '0'
+     'x2'     '10'
+     'x2'     '2'
+ &gt;&gt; natsortrows(X)
+ ans =
+     'x1'     '0'
+     'x2'     '2'
+     'x2'     '10'
+     'x10'    '0'
+
+%% Syntax:
+  Y = natsortrows(X)
+  Y = natsortrows(X,rgx)
+  Y = natsortrows(X,rgx,&lt;options&gt;)
+ [Y,ndx,dbg] = natsortrows(X,...)
+
+ To sort the elements of a string/cell array use NATSORT (File Exchange 34464)
+ To sort any file-names or folder-names use NATSORTFILES (File Exchange 47434)
+
+% File Dependency %%
+
+ NATSORTROWS requires the function NATSORT (File Exchange 34464). Extra
+ optional arguments are passed directly to NATSORT. See NATSORT for case-
+ sensitivity, sort direction, number substring matching, and other options.
+
+% Examples %%
+
+ &gt;&gt; A = {'B','2','X';'A','100','X';'B','10','X';'A','2','Y';'A','20','X'};
+ &gt;&gt; sortrows(A) % wrong number order:
+ ans =
+    'A'  '100'  'X'
+    'A'    '2'  'Y'
+    'A'   '20'  'X'
+    'B'   '10'  'X'
+    'B'    '2'  'X'
+ &gt;&gt; natsortrows(A)
+ ans =
+    'A'    '2'  'Y'
+    'A'   '20'  'X'
+    'A'  '100'  'X'
+    'B'    '2'  'X'
+    'B'   '10'  'X'
+ &gt;&gt; natsortrows(A,[],'descend')
+ ans =
+     'B'    '10'     'X'
+     'B'    '2'      'X'
+     'A'    '100'    'X'
+     'A'    '20'     'X'
+     'A'    '2'      'Y'
+
+ &gt;&gt; sortrows(A,[2,-3]) % Wrong number order:
+ ans =
+    'B'   '10'  'X'
+    'A'  '100'  'X'
+    'A'    '2'  'Y'
+    'B'    '2'  'X'
+    'A'   '20'  'X'
+ &gt;&gt; natsortrows(A,[],[2,-3])
+ ans =
+    'A'    '2'  'Y'
+    'B'    '2'  'X'
+    'B'   '10'  'X'
+    'A'   '20'  'X'
+    'A'  '100'  'X'
+
+ &gt;&gt; B = {'ABCD';'3e45';'67.8';'+Inf';'-12';'+9';'NaN'};
+ &gt;&gt; sortrows(B) % wrong number order:
+ ans =
+    '+9'
+    '+Inf'
+    '-12'
+    '3e45'
+    '67.8'
+    'ABCD'
+    'NaN'
+ &gt;&gt; natsortrows(B,'[-+]?(NaN|Inf|\d+\.?\d*(E[-+]?\d+)?)')
+ ans =
+    '-12'
+    '+9'
+    '67.8'
+    '3e45'
+    '+Inf'
+    'NaN'
+    'ABCD'
+
+% Input and Output Arguments %%
+
+%% Inputs (**=default):
+ X   = Array of size MxN, with atomic rows to be sorted. Can be a string
+       array, or a cell array of character row vectors, or a categorical
+       array, or any other array type supported by NATSORT.
+ rgx = Optional regular expression to match number substrings.
+     = [] uses the default regular expression '\d+'** to match integers.
+ &lt;options&gt; can be supplied in any order:
+     = SORTROWS &lt;col&gt; argument is supported: a numeric vector where
+       each integer specifies which column of X to sort by, and
+       negative integers indicate that the sort order is descending.
+     = all remaining options are passed directly to NATSORT.
+
+%% Outputs:
+ Y   = Array X with rows sorted into alphanumeric order.
+ ndx = NumericVector, size Mx1. Row indices such that Y = X(ndx,:).
+ dbg = CellVectorOfCellArrays, size 1xN. Each cell contains the debug cell array
+       for one column of input X. Helps debug the regular expression (see NATSORT).
+
+ See also SORT SORTROWS <a href="natsort.html" class="code" title="function [Y,ndx,dbg] = natsort(X,rgx,varargin)">NATSORT</a> NATSORTFILES CELLSTR REGEXP IREGEXP SSCANF</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="natsort.html" class="code" title="function [Y,ndx,dbg] = natsort(X,rgx,varargin)">natsort</a>	Natural-order / alphanumeric sort strings or character vectors or categorical.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Y,ndx,dbg] = natsortrows(X,rgx,varargin)</a>
+0002 <span class="comment">% Natural-order / alphanumeric sort the rows of a cell array or string array.</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% (c) 2014-2021 Stephen Cobeldick</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Sort text by character code and by number value.</span>
+0007 <span class="comment">% SORTROWS &lt;col&gt; input is supported, to select columns to sort by.</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%%% Example:</span>
+0010 <span class="comment">% &gt;&gt; X = {'x2','10';'x10','0';'x1','0';'x2','2'};</span>
+0011 <span class="comment">% &gt;&gt; sortrows(X) % Wrong numeric order:</span>
+0012 <span class="comment">% ans =</span>
+0013 <span class="comment">%     'x1'     '0'</span>
+0014 <span class="comment">%     'x10'    '0'</span>
+0015 <span class="comment">%     'x2'     '10'</span>
+0016 <span class="comment">%     'x2'     '2'</span>
+0017 <span class="comment">% &gt;&gt; natsortrows(X)</span>
+0018 <span class="comment">% ans =</span>
+0019 <span class="comment">%     'x1'     '0'</span>
+0020 <span class="comment">%     'x2'     '2'</span>
+0021 <span class="comment">%     'x2'     '10'</span>
+0022 <span class="comment">%     'x10'    '0'</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%%% Syntax:</span>
+0025 <span class="comment">%  Y = natsortrows(X)</span>
+0026 <span class="comment">%  Y = natsortrows(X,rgx)</span>
+0027 <span class="comment">%  Y = natsortrows(X,rgx,&lt;options&gt;)</span>
+0028 <span class="comment">% [Y,ndx,dbg] = natsortrows(X,...)</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">% To sort the elements of a string/cell array use NATSORT (File Exchange 34464)</span>
+0031 <span class="comment">% To sort any file-names or folder-names use NATSORTFILES (File Exchange 47434)</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%% File Dependency %%</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">% NATSORTROWS requires the function NATSORT (File Exchange 34464). Extra</span>
+0036 <span class="comment">% optional arguments are passed directly to NATSORT. See NATSORT for case-</span>
+0037 <span class="comment">% sensitivity, sort direction, number substring matching, and other options.</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">%% Examples %%</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">% &gt;&gt; A = {'B','2','X';'A','100','X';'B','10','X';'A','2','Y';'A','20','X'};</span>
+0042 <span class="comment">% &gt;&gt; sortrows(A) % wrong number order:</span>
+0043 <span class="comment">% ans =</span>
+0044 <span class="comment">%    'A'  '100'  'X'</span>
+0045 <span class="comment">%    'A'    '2'  'Y'</span>
+0046 <span class="comment">%    'A'   '20'  'X'</span>
+0047 <span class="comment">%    'B'   '10'  'X'</span>
+0048 <span class="comment">%    'B'    '2'  'X'</span>
+0049 <span class="comment">% &gt;&gt; natsortrows(A)</span>
+0050 <span class="comment">% ans =</span>
+0051 <span class="comment">%    'A'    '2'  'Y'</span>
+0052 <span class="comment">%    'A'   '20'  'X'</span>
+0053 <span class="comment">%    'A'  '100'  'X'</span>
+0054 <span class="comment">%    'B'    '2'  'X'</span>
+0055 <span class="comment">%    'B'   '10'  'X'</span>
+0056 <span class="comment">% &gt;&gt; natsortrows(A,[],'descend')</span>
+0057 <span class="comment">% ans =</span>
+0058 <span class="comment">%     'B'    '10'     'X'</span>
+0059 <span class="comment">%     'B'    '2'      'X'</span>
+0060 <span class="comment">%     'A'    '100'    'X'</span>
+0061 <span class="comment">%     'A'    '20'     'X'</span>
+0062 <span class="comment">%     'A'    '2'      'Y'</span>
+0063 <span class="comment">%</span>
+0064 <span class="comment">% &gt;&gt; sortrows(A,[2,-3]) % Wrong number order:</span>
+0065 <span class="comment">% ans =</span>
+0066 <span class="comment">%    'B'   '10'  'X'</span>
+0067 <span class="comment">%    'A'  '100'  'X'</span>
+0068 <span class="comment">%    'A'    '2'  'Y'</span>
+0069 <span class="comment">%    'B'    '2'  'X'</span>
+0070 <span class="comment">%    'A'   '20'  'X'</span>
+0071 <span class="comment">% &gt;&gt; natsortrows(A,[],[2,-3])</span>
+0072 <span class="comment">% ans =</span>
+0073 <span class="comment">%    'A'    '2'  'Y'</span>
+0074 <span class="comment">%    'B'    '2'  'X'</span>
+0075 <span class="comment">%    'B'   '10'  'X'</span>
+0076 <span class="comment">%    'A'   '20'  'X'</span>
+0077 <span class="comment">%    'A'  '100'  'X'</span>
+0078 <span class="comment">%</span>
+0079 <span class="comment">% &gt;&gt; B = {'ABCD';'3e45';'67.8';'+Inf';'-12';'+9';'NaN'};</span>
+0080 <span class="comment">% &gt;&gt; sortrows(B) % wrong number order:</span>
+0081 <span class="comment">% ans =</span>
+0082 <span class="comment">%    '+9'</span>
+0083 <span class="comment">%    '+Inf'</span>
+0084 <span class="comment">%    '-12'</span>
+0085 <span class="comment">%    '3e45'</span>
+0086 <span class="comment">%    '67.8'</span>
+0087 <span class="comment">%    'ABCD'</span>
+0088 <span class="comment">%    'NaN'</span>
+0089 <span class="comment">% &gt;&gt; natsortrows(B,'[-+]?(NaN|Inf|\d+\.?\d*(E[-+]?\d+)?)')</span>
+0090 <span class="comment">% ans =</span>
+0091 <span class="comment">%    '-12'</span>
+0092 <span class="comment">%    '+9'</span>
+0093 <span class="comment">%    '67.8'</span>
+0094 <span class="comment">%    '3e45'</span>
+0095 <span class="comment">%    '+Inf'</span>
+0096 <span class="comment">%    'NaN'</span>
+0097 <span class="comment">%    'ABCD'</span>
+0098 <span class="comment">%</span>
+0099 <span class="comment">%% Input and Output Arguments %%</span>
+0100 <span class="comment">%</span>
+0101 <span class="comment">%%% Inputs (**=default):</span>
+0102 <span class="comment">% X   = Array of size MxN, with atomic rows to be sorted. Can be a string</span>
+0103 <span class="comment">%       array, or a cell array of character row vectors, or a categorical</span>
+0104 <span class="comment">%       array, or any other array type supported by NATSORT.</span>
+0105 <span class="comment">% rgx = Optional regular expression to match number substrings.</span>
+0106 <span class="comment">%     = [] uses the default regular expression '\d+'** to match integers.</span>
+0107 <span class="comment">% &lt;options&gt; can be supplied in any order:</span>
+0108 <span class="comment">%     = SORTROWS &lt;col&gt; argument is supported: a numeric vector where</span>
+0109 <span class="comment">%       each integer specifies which column of X to sort by, and</span>
+0110 <span class="comment">%       negative integers indicate that the sort order is descending.</span>
+0111 <span class="comment">%     = all remaining options are passed directly to NATSORT.</span>
+0112 <span class="comment">%</span>
+0113 <span class="comment">%%% Outputs:</span>
+0114 <span class="comment">% Y   = Array X with rows sorted into alphanumeric order.</span>
+0115 <span class="comment">% ndx = NumericVector, size Mx1. Row indices such that Y = X(ndx,:).</span>
+0116 <span class="comment">% dbg = CellVectorOfCellArrays, size 1xN. Each cell contains the debug cell array</span>
+0117 <span class="comment">%       for one column of input X. Helps debug the regular expression (see NATSORT).</span>
+0118 <span class="comment">%</span>
+0119 <span class="comment">% See also SORT SORTROWS NATSORT NATSORTFILES CELLSTR REGEXP IREGEXP SSCANF</span>
+0120 
+0121 <span class="comment">%% Input Wrangling %%</span>
+0122 <span class="comment">%</span>
+0123 assert(ndims(X)&lt;3,<span class="keyword">...</span>
+0124     <span class="string">'SC:natsortrows:X:NotMatrix'</span>,<span class="keyword">...</span>
+0125     <span class="string">'First input &lt;X&gt; must be a matrix (2D).'</span>) <span class="comment">%#ok&lt;ISMAT&gt;</span>
+0126 <span class="comment">%</span>
+0127 <span class="keyword">if</span> nargin&gt;1
+0128     varargin = [{rgx},varargin];
+0129 <span class="keyword">end</span>
+0130 <span class="comment">%</span>
+0131 <span class="comment">%% Columns to Sort %%</span>
+0132 <span class="comment">%</span>
+0133 [nmr,nmc] = size(X);
+0134 ndx = 1:nmr;
+0135 drn = {<span class="string">'descend'</span>,<span class="string">'ascend'</span>};
+0136 dbg = {};
+0137 isn = cellfun(@isnumeric,varargin);
+0138 isn(1) = false; <span class="comment">% rgx</span>
+0139 <span class="comment">%</span>
+0140 <span class="keyword">if</span> any(isn)
+0141     assert(nnz(isn)&lt;2,<span class="keyword">...</span>
+0142         <span class="string">'SC:natsortrows:col:Overspecified'</span>,<span class="keyword">...</span>
+0143         <span class="string">'The &lt;col&gt; input is over-specified (only one numeric input is allowed).'</span>)
+0144     col = varargin{isn};
+0145     assert(isvector(col)&amp;&amp;isreal(col)&amp;&amp;all(~mod(col,1))&amp;&amp;all(col)&amp;&amp;all(abs(col)&lt;=nmc),<span class="keyword">...</span>
+0146         <span class="string">'SC:natsortrows:col:IndexMismatch'</span>,<span class="keyword">...</span>
+0147         <span class="string">'The &lt;col&gt; input must be a vector of column indices into the first input &lt;X&gt;.'</span>)
+0148     sgn = (3+sign(col))/2;
+0149     idc = abs(col);
+0150 <span class="keyword">else</span>
+0151     idc = 1:nmc;
+0152 <span class="keyword">end</span>
+0153 <span class="comment">%</span>
+0154 <span class="comment">%% Sort Columns %%</span>
+0155 <span class="comment">%</span>
+0156 <span class="keyword">for</span> k = numel(idc):-1:1
+0157     <span class="keyword">if</span> any(isn)
+0158         varargin{isn} = drn{sgn(k)};
+0159     <span class="keyword">end</span>
+0160     <span class="keyword">if</span> nargout&lt;3 <span class="comment">% faster:</span>
+0161         [~,ids] = <a href="natsort.html" class="code" title="function [Y,ndx,dbg] = natsort(X,rgx,varargin)">natsort</a>(X(ndx,idc(k)),varargin{:});
+0162     <span class="keyword">else</span> <span class="comment">% for debugging:</span>
+0163         [~,ids,tmp] = <a href="natsort.html" class="code" title="function [Y,ndx,dbg] = natsort(X,rgx,varargin)">natsort</a>(X(ndx,idc(k)),varargin{:});
+0164         [~,idd] = sort(ndx);
+0165         dbg{idc(k)} = tmp(idd,:);
+0166     <span class="keyword">end</span>
+0167     ndx = ndx(ids);
+0168 <span class="keyword">end</span>
+0169 <span class="comment">%</span>
+0170 ndx = ndx(:);
+0171 Y = X(ndx,:);
+0172 <span class="comment">%</span>
+0173 <span class="keyword">end</span>
+0174 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%natsortrows</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

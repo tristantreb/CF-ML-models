@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of savePlot</title>
+  <meta name="keywords" content="savePlot">
+  <meta name="description" content="savePlots - saves the figure to png and svp file types">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; savePlot.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>savePlot
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>savePlots - saves the figure to png and svp file types</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function savePlot(f, name) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> savePlots - saves the figure to png and svp file types</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="am4PlotAndSaveAlignedCurves.html" class="code" title="function am4PlotAndSaveAlignedCurves(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets,measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, plotname, ex_start, sigmamethod)">am4PlotAndSaveAlignedCurves</a>	am4PlotAndSaveAlignedCurves - plots the curves pre and post alignment for</li><li><a href="am4PlotsAndSavePredictions.html" class="code" title="function am4PlotsAndSavePredictions(amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset,overall_pdoffset_all, overall_pdoffset_xAL, hstg, overall_hist, overall_hist_all, overall_hist_xAL, offsets,meancurvemean, normmean, ex_start, thisinter, nmeasures, max_offset, align_wind, study, version)">am4PlotsAndSavePredictions</a>	am4PlotsAndSavePredictions - plots measures prior to</li><li><a href="am4VisualiseAlignmentDetail.html" class="code" title="function [sorted_interventions, max_points] = am4VisualiseAlignmentDetail(amIntrCube, amInterventions,meancurvemean, meancurvecount, meancurvestd, offsets, measures, min_offset, max_offset, align_wind,nmeasures, run_type, study, ex_start, version, curveaveragingmethod)">am4VisualiseAlignmentDetail</a>	am4VisualiseAlignmentDetail - creates a plot of horizontal bars showing</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function savePlot(f, name)</a>
+0002 
+0003 <span class="comment">% savePlots - saves the figure to png and svp file types</span>
+0004 
+0005 <span class="comment">% save plot</span>
+0006 basedir = <span class="string">'./'</span>;
+0007 subfolder = <span class="string">'Plots'</span>;
+0008 filename = [name <span class="string">'.png'</span>];
+0009 saveas(f,fullfile(basedir, subfolder, filename));
+0010 filename = [name <span class="string">'.svg'</span>];
+0011 saveas(f,fullfile(basedir, subfolder, filename));
+0012 
+0013 <span class="keyword">end</span>
+0014</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

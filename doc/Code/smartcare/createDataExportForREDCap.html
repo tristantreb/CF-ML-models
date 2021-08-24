@@ -1,0 +1,393 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createDataExportForREDCap</title>
+  <meta name="keywords" content="createDataExportForREDCap">
+  <meta name="description" content="createDataExportForREDCap.m - a script that takes current clinical data">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createDataExportForREDCap.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createDataExportForREDCap
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>createDataExportForREDCap.m - a script that takes current clinical data</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> createDataExportForREDCap.m - a script that takes current clinical data
+ and converts it into the format for importing into REDCap. To be used in
+ the once-off data conversion. Thereafter all clinical data will be
+ managed in the REDCap project database (and the loading of clinical data 
+ will have to be ammended to come from there rather than the spreadsheets</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createREDCapDataTable.html" class="code" title="function [REDCapData] = createREDCapDataTable(nrows)">createREDCapDataTable</a>	createREDCapDataTable - creates the table corresponding to the REDCap</li><li><a href="getLatestBreatheDatesForHosp.html" class="code" title="function [clinprocdate, patientmasterdate, isValid] = getLatestBreatheDatesForHosp(hosp)">getLatestBreatheDatesForHosp</a>	getLatestBreatheDatesForHosp - convenience function to centralise getting the</li><li><a href="getListOfBreatheHospitals.html" class="code" title="function [hosplist] = getListOfBreatheHospitals()">getListOfBreatheHospitals</a>	getListOfBreatheHospitals - returns a table containing the acronyms</li><li><a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="loadPatientMasterFileForHosp.html" class="code" title="function [hosppatientmaster] = loadPatientMasterFileForHosp(study, hosprow, patientmasterdate)">loadPatientMasterFileForHosp</a>	loadPatientMasterFileForHosp - convenience function to load the patient</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% createDataExportForREDCap.m - a script that takes current clinical data</span>
+0002 <span class="comment">% and converts it into the format for importing into REDCap. To be used in</span>
+0003 <span class="comment">% the once-off data conversion. Thereafter all clinical data will be</span>
+0004 <span class="comment">% managed in the REDCap project database (and the loading of clinical data</span>
+0005 <span class="comment">% will have to be ammended to come from there rather than the spreadsheets</span>
+0006 
+0007 clear; close all; clc;
+0008 
+0009 study = <span class="string">'BR'</span>;
+0010 
+0011 fprintf(<span class="string">'Creating the clinical data conversion files for REDCap (csv format)\n'</span>);
+0012 fprintf(<span class="string">'One file per hospital to allow imports to assign the data to the correct data access group by hospital\n'</span>)
+0013 fprintf(<span class="string">'\n'</span>);
+0014 
+0015 brhosp = <a href="getListOfBreatheHospitals.html" class="code" title="function [hosplist] = getListOfBreatheHospitals()">getListOfBreatheHospitals</a>();
+0016 
+0017 <span class="comment">%[patientmaster] = loadPatientMasterFileForAllHosp(study, brhosp);</span>
+0018 
+0019 
+0020 <span class="comment">% load the clinical data and patient master file</span>
+0021 tic
+0022 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0023 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0024 [~, clinicalmatfile, ~] = <a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0025 [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP, <span class="keyword">...</span>
+0026     cdClinicVisits, cdOtherVisits, ~, cdHghtWght, ~, ~, cdUnplannedContact] = <a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0027 toc
+0028 fprintf(<span class="string">'\n'</span>);
+0029 
+0030 <span class="comment">% load the codes and labels for the drop down lists to convert current</span>
+0031 <span class="comment">% values back to the equivalent codes.</span>
+0032 subfolder = <span class="string">'DataFiles/BR/REDCapData'</span>;
+0033 ddfile    = <span class="string">'DropDownLookUpValuesAllActual.xlsx'</span>;
+0034 outputfolder = <span class="string">'ExcelFiles/REDCapData'</span>;
+0035 <span class="keyword">if</span> ~exist(fullfile(basedir, outputfolder), <span class="string">'dir'</span>)
+0036     mkdir(fullfile(basedir, outputfolder));
+0037 <span class="keyword">end</span>
+0038 
+0039 ddantibiotics  = readtable(fullfile(basedir, subfolder, ddfile), <span class="string">'Sheet'</span>, <span class="string">'Antibiotics'</span>);
+0040 ddcfgene       = readtable(fullfile(basedir, subfolder, ddfile), <span class="string">'Sheet'</span>, <span class="string">'CFGene'</span>);
+0041 ddmicrobiology = readtable(fullfile(basedir, subfolder, ddfile), <span class="string">'Sheet'</span>, <span class="string">'Microbiology'</span>);
+0042 dddrugtherapy  = readtable(fullfile(basedir, subfolder, ddfile), <span class="string">'Sheet'</span>, <span class="string">'DrugTherapy'</span>);
+0043 ddclinicvisit  = readtable(fullfile(basedir, subfolder, ddfile), <span class="string">'Sheet'</span>, <span class="string">'ClinicVisit'</span>);
+0044 ddothervisit   = readtable(fullfile(basedir, subfolder, ddfile), <span class="string">'Sheet'</span>, <span class="string">'OtherVisit'</span>);
+0045 ddunplanned    = readtable(fullfile(basedir, subfolder, ddfile), <span class="string">'Sheet'</span>, <span class="string">'UnplannedContact'</span>);
+0046 
+0047 completecode = 2;
+0048 defaultval   = 999;
+0049 
+0050 <span class="comment">% start REDCap study_id at 101</span>
+0051 study_id = 101;
+0052 
+0053 <span class="keyword">for</span> h = 1:size(brhosp, 1)
+0054     <span class="comment">% get latest clinical date for hospital and set correct source directory</span>
+0055     fprintf(<span class="string">'Loading for %s\n'</span>, brhosp.Name{h});
+0056     
+0057     [~, hosppatmastdate] = <a href="getLatestBreatheDatesForHosp.html" class="code" title="function [clinprocdate, patientmasterdate, isValid] = getLatestBreatheDatesForHosp(hosp)">getLatestBreatheDatesForHosp</a>(brhosp.Acronym{h});
+0058     [hosppatmaster] = <a href="loadPatientMasterFileForHosp.html" class="code" title="function [hosppatientmaster] = loadPatientMasterFileForHosp(study, hosprow, patientmasterdate)">loadPatientMasterFileForHosp</a>(study, brhosp(h, :), hosppatmastdate);
+0059 
+0060     <span class="comment">% create the (initially empty) output table</span>
+0061     [hospREDCapData] = <a href="createREDCapDataTable.html" class="code" title="function [REDCapData] = createREDCapDataTable(nrows)">createREDCapDataTable</a>(0);
+0062     
+0063     hospPatient = cdPatient(ismember(cdPatient.Hospital, brhosp.Acronym{h}), :);
+0064     npatients = size(hospPatient, 1);
+0065 
+0066     tic
+0067     <span class="keyword">for</span> i = 1:npatients
+0068         
+0069         oldid = hospPatient.ID(i);
+0070         study_nbr = lower(hospPatient.StudyNumber{i});
+0071         
+0072         fprintf(<span class="string">'Patient %3d:%32s (prev %3d):'</span>, study_id, study_nbr, oldid);
+0073         
+0074         <span class="comment">% 1) patient_info instrument</span>
+0075         nrows = 1;
+0076         fprintf(<span class="string">'PatientInfo(%d)..'</span>, nrows);
+0077         [phrcd] = <a href="createREDCapDataTable.html" class="code" title="function [REDCapData] = createREDCapDataTable(nrows)">createREDCapDataTable</a>(1);
+0078         phrcd.study_id         = study_id;
+0079         phrcd.hospital         = hospPatient.Hospital{i};
+0080         phrcd.study_number     = cellstr(study_nbr);
+0081         phrcd.study_date       = cellstr(datestr(hospPatient.StudyDate(i), 24));
+0082         phrcd.patclindate      = cellstr(datestr(hospPatient.PatClinDate(i), 24));
+0083         phrcd.dob              = cellstr(datestr(hospPatient.DOB(i), 24));
+0084         phrcd.age              = cellstr(num2str(hospPatient.Age(i)));
+0085         phrcd.gender           = hospPatient.Sex(i);
+0086         phrcd.heightcm         = cellstr(num2str(hospPatient.Height(i)));
+0087         phrcd.weightkg         = cellstr(num2str(hospPatient.Weight(i)));
+0088         phrcd.predfev1ltr      = cellstr(num2str(hospPatient.PredictedFEV1(i)));
+0089         phrcd.cfgene1          = cellstr(num2str(ddcfgene.Value(ismember(ddcfgene.Label, hospPatient.CFGene1(i)))));
+0090         phrcd.cfgene2          = cellstr(num2str(ddcfgene.Value(ismember(ddcfgene.Label, hospPatient.CFGene2(i)))));
+0091         phrcd.patient_comments = hospPatient.GeneralComments(i);
+0092         phrcd.consent_status   = hosppatmaster.ConsentStatus(hosppatmaster.ID == hospPatient.ID(i));
+0093         <span class="keyword">if</span> ~isnat(hosppatmaster.ConsentDate(hosppatmaster.ID == hospPatient.ID(i)))
+0094             phrcd.consent_date{1}  = datestr(hosppatmaster.ConsentDate(hosppatmaster.ID == hospPatient.ID(i)), 24);
+0095         <span class="keyword">else</span>
+0096             phrcd.consent_date{1} = <span class="string">''</span>;
+0097         <span class="keyword">end</span>    
+0098         <span class="keyword">if</span> ~isnat(hosppatmaster.WithdrawalDate(hosppatmaster.ID == hospPatient.ID(i)))
+0099             phrcd.withdrawal_date{1} = datestr(hosppatmaster.WithdrawalDate(hosppatmaster.ID == hospPatient.ID(i)), 24);
+0100         <span class="keyword">else</span>
+0101             phrcd.withdrawal_date{1} = <span class="string">''</span>;
+0102         <span class="keyword">end</span>
+0103         phrcd.partition_key    = hosppatmaster.PartitionKey(hosppatmaster.ID == hospPatient.ID(i));
+0104         phrcd.patient_info_complete{1} = num2str(completecode);
+0105         
+0106         [hospREDCapData] = [hospREDCapData ; phrcd];
+0107         
+0108         <span class="comment">% 2) drug_therapy instrument</span>
+0109         patDT = cdDrugTherapy(cdDrugTherapy.ID == oldid, :);
+0110         nrows = size(patDT, 1);
+0111         fprintf(<span class="string">'DT(%d)..'</span>, nrows);
+0112         <span class="keyword">if</span> nrows &gt; 0
+0113             [phrcd] = <a href="createREDCapDataTable.html" class="code" title="function [REDCapData] = createREDCapDataTable(nrows)">createREDCapDataTable</a>(nrows);
+0114             phrcd.study_id(:)      = study_id;
+0115             phrcd.redcap_repeat_instrument(:) = cellstr(<span class="string">'drug_therapy'</span>);
+0116             phrcd.redcap_repeat_instance(:) = cellstr(num2str((1:nrows)'));
+0117             patDT = outerjoin(patDT, dddrugtherapy, <span class="string">'LeftKeys'</span>, {<span class="string">'DrugTherapyType'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'Label'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'Value'</span>}, <span class="string">'Type'</span>, <span class="string">'Left'</span>);
+0118             patDT.Value(isnan(patDT.Value)) = defaultval;
+0119             patDT = sortrows(patDT, {<span class="string">'DrugTherapyStartDate'</span>}, {<span class="string">'ascend'</span>});
+0120             <span class="keyword">if</span> size(patDT, 1) ~= nrows
+0121                 fprintf(<span class="string">'**** unexpected values not in lookup ****\n'</span>)
+0122                 <span class="keyword">return</span>;
+0123             <span class="keyword">end</span>
+0124             phrcd.dt_name          = cellstr(num2str(patDT.Value));
+0125             phrcd.dt_start_date(:) = cellstr(datestr(patDT.DrugTherapyStartDate, 24));
+0126             <span class="comment">%phrcd.dt_stop_date(:)  = cellstr(datestr(patDT.DrugTherapyStopDate, 24)); % no stop date currently stored - need to manually populate in REDCap</span>
+0127             phrcd.dt_comments(:)   = patDT.DrugTherapyComment;
+0128             phrcd.drug_therapy_complete(:) = cellstr(num2str(completecode));
+0129             
+0130             [hospREDCapData] = [hospREDCapData ; phrcd];
+0131         <span class="keyword">end</span>
+0132         
+0133         <span class="comment">% 3) antibiotics instrument</span>
+0134         patAB = cdAntibiotics(cdAntibiotics.ID == oldid, :);
+0135         nrows = size(patAB, 1);
+0136         fprintf(<span class="string">'ABs(%3d)..'</span>, nrows);
+0137         <span class="keyword">if</span> nrows &gt; 0
+0138             [phrcd] = <a href="createREDCapDataTable.html" class="code" title="function [REDCapData] = createREDCapDataTable(nrows)">createREDCapDataTable</a>(nrows);
+0139             phrcd.study_id(:)      = study_id;
+0140             phrcd.redcap_repeat_instrument(:) = cellstr(<span class="string">'antibiotics'</span>);
+0141             phrcd.redcap_repeat_instance(:) = cellstr(num2str((1:nrows)'));
+0142             patAB = outerjoin(patAB, ddantibiotics, <span class="string">'LeftKeys'</span>, {<span class="string">'AntibioticName'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'Label'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'Value'</span>}, <span class="string">'Type'</span>, <span class="string">'Left'</span>);
+0143             patAB.Value(isnan(patAB.Value)) = defaultval;
+0144             patAB = sortrows(patAB, {<span class="string">'StartDate'</span>}, {<span class="string">'ascend'</span>});
+0145             <span class="keyword">if</span> size(patAB, 1) ~= nrows
+0146                 fprintf(<span class="string">'**** unexpected values not in lookup ****\n'</span>)
+0147                 <span class="keyword">return</span>;
+0148             <span class="keyword">end</span>
+0149             phrcd.ab_name          = cellstr(num2str(patAB.Value));
+0150             phrcd.ab_route         = patAB.Route;
+0151             phrcd.ab_homeiv_s      = patAB.HomeIV_s;
+0152             phrcd.ab_start_date(:) = cellstr(datestr(patAB.StartDate, 24));
+0153             phrcd.ab_stop_date(:)  = cellstr(datestr(patAB.StopDate, 24));
+0154             <span class="comment">% phrcd.ab_elective - not currently stored, will need to be manually populated in REDCap</span>
+0155             phrcd.ab_comments(:)   = patAB.Comments;
+0156             phrcd.antibiotics_complete(:) = cellstr(num2str(completecode));
+0157             
+0158             [hospREDCapData] = [hospREDCapData ; phrcd];
+0159         <span class="keyword">end</span>
+0160         
+0161         <span class="comment">% 4) admissions instrument</span>
+0162         patAD = cdAdmissions(cdAdmissions.ID == oldid, :);
+0163         nrows = size(patAD, 1);
+0164         fprintf(<span class="string">'ADs(%3d)..'</span>, nrows);
+0165         <span class="keyword">if</span> nrows &gt; 0
+0166             [phrcd] = <a href="createREDCapDataTable.html" class="code" title="function [REDCapData] = createREDCapDataTable(nrows)">createREDCapDataTable</a>(nrows);
+0167             phrcd.study_id(:)      = study_id;
+0168             phrcd.redcap_repeat_instrument(:) = cellstr(<span class="string">'admissions'</span>);
+0169             phrcd.redcap_repeat_instance(:) = cellstr(num2str((1:nrows)'));
+0170             phrcd.ad_start_date(:) = cellstr(datestr(patAD.Admitted, 24));
+0171             phrcd.ad_stop_date(:)  = cellstr(datestr(patAD.Discharge, 24));
+0172             phrcd.ad_comments(:)   = patAD.Comments;
+0173             phrcd.admissions_complete(:) = cellstr(num2str(completecode));
+0174             
+0175             [hospREDCapData] = [hospREDCapData ; phrcd];
+0176         <span class="keyword">end</span>
+0177         
+0178         <span class="comment">% 5) clinic visits instrument</span>
+0179         patCV = cdClinicVisits(cdClinicVisits.ID == oldid, :);
+0180         nrows = size(patCV, 1);
+0181         fprintf(<span class="string">'CVs(%3d)..'</span>, nrows);
+0182         <span class="keyword">if</span> nrows &gt; 0
+0183             [phrcd] = <a href="createREDCapDataTable.html" class="code" title="function [REDCapData] = createREDCapDataTable(nrows)">createREDCapDataTable</a>(nrows);
+0184             phrcd.study_id(:)      = study_id;
+0185             phrcd.redcap_repeat_instrument(:) = cellstr(<span class="string">'clinic_visits'</span>);
+0186             phrcd.redcap_repeat_instance(:) = cellstr(num2str((1:nrows)'));
+0187             patCV = outerjoin(patCV, ddclinicvisit, <span class="string">'LeftKeys'</span>, {<span class="string">'Location'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'Label'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'Value'</span>}, <span class="string">'Type'</span>, <span class="string">'Left'</span>);
+0188             patCV.Value(isnan(patCV.Value)) = defaultval;
+0189             patCV = sortrows(patCV, {<span class="string">'AttendanceDate'</span>}, {<span class="string">'ascend'</span>});
+0190             <span class="keyword">if</span> size(patCV, 1) ~= nrows
+0191                 fprintf(<span class="string">'**** unexpected values not in lookup ****\n'</span>)
+0192                 <span class="keyword">return</span>;
+0193             <span class="keyword">end</span>
+0194             phrcd.cv_location           = cellstr(num2str(patCV.Value));
+0195             phrcd.cv_attendance_date(:) = cellstr(datestr(patCV.AttendanceDate, 24));
+0196             phrcd.cv_comments(:)        = patCV.Comments;
+0197             phrcd.clinic_visits_complete(:) = cellstr(num2str(completecode));
+0198             
+0199             [hospREDCapData] = [hospREDCapData ; phrcd];
+0200         <span class="keyword">end</span>
+0201         
+0202         <span class="comment">% 6) other visits instrument</span>
+0203         patOV = cdOtherVisits(cdOtherVisits.ID == oldid, :);
+0204         nrows = size(patOV, 1);
+0205         fprintf(<span class="string">'OVs(%3d)..'</span>, nrows);
+0206         <span class="keyword">if</span> nrows &gt; 0
+0207             [phrcd] = <a href="createREDCapDataTable.html" class="code" title="function [REDCapData] = createREDCapDataTable(nrows)">createREDCapDataTable</a>(nrows);
+0208             phrcd.study_id(:)      = study_id;
+0209             phrcd.redcap_repeat_instrument(:) = cellstr(<span class="string">'other_visits'</span>);
+0210             phrcd.redcap_repeat_instance(:) = cellstr(num2str((1:nrows)'));
+0211             patOV = outerjoin(patOV, ddothervisit, <span class="string">'LeftKeys'</span>, {<span class="string">'VisitType'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'Label'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'Value'</span>}, <span class="string">'Type'</span>, <span class="string">'Left'</span>);
+0212             patOV.Value(isnan(patOV.Value)) = defaultval;
+0213             patOV = sortrows(patOV, {<span class="string">'AttendanceDate'</span>}, {<span class="string">'ascend'</span>});
+0214             <span class="keyword">if</span> size(patOV, 1) ~= nrows
+0215                 fprintf(<span class="string">'**** unexpected values not in lookup ****\n'</span>)
+0216                 <span class="keyword">return</span>;
+0217             <span class="keyword">end</span>
+0218             phrcd.ov_visit_type         = cellstr(num2str(patOV.Value));
+0219             phrcd.ov_attendance_date(:) = cellstr(datestr(patOV.AttendanceDate, 24));
+0220             phrcd.ov_comments(:)        = patOV.Comments;
+0221             phrcd.other_visits_complete(:) = cellstr(num2str(completecode));
+0222             
+0223             [hospREDCapData] = [hospREDCapData ; phrcd];
+0224         <span class="keyword">end</span>
+0225         
+0226         <span class="comment">% 7) unplanned contacts instrument</span>
+0227         patUP = cdUnplannedContact(cdUnplannedContact.ID == oldid, :);
+0228         nrows = size(patUP, 1);
+0229         fprintf(<span class="string">'UCs(%3d)..'</span>, nrows);
+0230         <span class="keyword">if</span> nrows &gt; 0
+0231             [phrcd] = <a href="createREDCapDataTable.html" class="code" title="function [REDCapData] = createREDCapDataTable(nrows)">createREDCapDataTable</a>(nrows);
+0232             phrcd.study_id(:)      = study_id;
+0233             phrcd.redcap_repeat_instrument(:) = cellstr(<span class="string">'unplanned_contact'</span>);
+0234             phrcd.redcap_repeat_instance(:) = cellstr(num2str((1:nrows)'));
+0235             patUP = outerjoin(patUP, ddunplanned, <span class="string">'LeftKeys'</span>, {<span class="string">'TypeOfContact'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'Label'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'Value'</span>}, <span class="string">'Type'</span>, <span class="string">'Left'</span>);
+0236             patUP.Value(isnan(patUP.Value)) = defaultval;
+0237             patUP = sortrows(patUP, {<span class="string">'ContactDate'</span>}, {<span class="string">'ascend'</span>});
+0238             <span class="keyword">if</span> size(patUP, 1) ~= nrows
+0239                 fprintf(<span class="string">'**** unexpected values not in lookup ****\n'</span>)
+0240                 <span class="keyword">return</span>;
+0241             <span class="keyword">end</span>
+0242             phrcd.up_type_of_contact    = cellstr(num2str(patUP.Value));
+0243             phrcd.up_contact_date(:)    = cellstr(datestr(patUP.ContactDate, 24));
+0244             phrcd.up_comments(:)        = patUP.Comments;
+0245             phrcd.unplanned_contact_complete(:) = cellstr(num2str(completecode));
+0246             
+0247             [hospREDCapData] = [hospREDCapData ; phrcd];
+0248         <span class="keyword">end</span>
+0249         
+0250         <span class="comment">% 8) crp instrument</span>
+0251         patCRP = cdCRP(cdCRP.ID == oldid, :);
+0252         nrows = size(patCRP, 1);
+0253         fprintf(<span class="string">'CRPs(%3d)..'</span>, nrows);
+0254         <span class="keyword">if</span> nrows &gt; 0
+0255             [phrcd] = <a href="createREDCapDataTable.html" class="code" title="function [REDCapData] = createREDCapDataTable(nrows)">createREDCapDataTable</a>(nrows);
+0256             phrcd.study_id(:)      = study_id;
+0257             phrcd.redcap_repeat_instrument(:) = cellstr(<span class="string">'crps'</span>);
+0258             phrcd.redcap_repeat_instance(:) = cellstr(num2str((1:nrows)'));
+0259             phrcd.crp_date(:)      = cellstr(datestr(patCRP.CRPDate, 24));
+0260             phrcd.crp_level(:)     = cellstr(num2str(patCRP.NumericLevel));
+0261             phrcd.crp_comments(:)  = patCRP.Comments;
+0262             phrcd.crps_complete(:) = cellstr(num2str(completecode));
+0263             
+0264             [hospREDCapData] = [hospREDCapData ; phrcd];
+0265         <span class="keyword">end</span>
+0266         
+0267         <span class="comment">% 9) pft instrument</span>
+0268         patPFT = cdPFT(cdPFT.ID == oldid, :);
+0269         nrows = size(patPFT, 1);
+0270         fprintf(<span class="string">'PFTs(%3d)..'</span>, nrows);
+0271         <span class="keyword">if</span> nrows &gt; 0
+0272             [phrcd] = <a href="createREDCapDataTable.html" class="code" title="function [REDCapData] = createREDCapDataTable(nrows)">createREDCapDataTable</a>(nrows);
+0273             phrcd.study_id(:)      = study_id;
+0274             phrcd.redcap_repeat_instrument(:) = cellstr(<span class="string">'pfts'</span>);
+0275             phrcd.redcap_repeat_instance(:) = cellstr(num2str((1:nrows)'));
+0276             phrcd.pft_date(:)      = cellstr(datestr(patPFT.LungFunctionDate, 24));
+0277             phrcd.pft_fev1(:)      = cellstr(num2str(patPFT.FEV1));
+0278             phrcd.pft_comments(:)  = patPFT.Comments;
+0279             phrcd.pfts_complete(:) = cellstr(num2str(completecode));
+0280             
+0281             [hospREDCapData] = [hospREDCapData ; phrcd];
+0282         <span class="keyword">end</span>
+0283         
+0284         <span class="comment">% 10) microbiology instrument</span>
+0285         patMB = cdMicrobiology(cdMicrobiology.ID == oldid, :);
+0286         nrows = size(patMB, 1);
+0287         fprintf(<span class="string">'MB(%3d)..'</span>, nrows);
+0288         <span class="keyword">if</span> nrows &gt; 0
+0289             [phrcd] = <a href="createREDCapDataTable.html" class="code" title="function [REDCapData] = createREDCapDataTable(nrows)">createREDCapDataTable</a>(nrows);
+0290             phrcd.study_id(:)      = study_id;
+0291             phrcd.redcap_repeat_instrument(:) = cellstr(<span class="string">'microbiology'</span>);
+0292             phrcd.redcap_repeat_instance(:) = cellstr(num2str((1:nrows)'));
+0293             patMB = outerjoin(patMB, ddmicrobiology, <span class="string">'LeftKeys'</span>, {<span class="string">'Microbiology'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'Label'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'Value'</span>}, <span class="string">'Type'</span>, <span class="string">'Left'</span>);
+0294             patMB.Value(isnan(patMB.Value)) = defaultval;
+0295             patMB = sortrows(patMB, {<span class="string">'DateMicrobiology'</span>}, {<span class="string">'ascend'</span>});
+0296             <span class="keyword">if</span> size(patMB, 1) ~= nrows
+0297                 fprintf(<span class="string">'**** unexpected values not in lookup ****\n'</span>)
+0298                 <span class="keyword">return</span>;
+0299             <span class="keyword">end</span>
+0300             phrcd.mb_name        = cellstr(num2str(patMB.Value));
+0301             <span class="keyword">for</span> d = 1:nrows
+0302                 <span class="keyword">if</span> ~isnat(patMB.DateMicrobiology(d))
+0303                     phrcd.mb_date(d) = cellstr(datestr(patMB.DateMicrobiology(d), 24));
+0304                 <span class="keyword">else</span>
+0305                     phrcd.mb_date(d) = cellstr(<span class="string">''</span>);
+0306                 <span class="keyword">end</span>
+0307             <span class="keyword">end</span>
+0308             phrcd.mb_comments(:) = patMB.Comments;
+0309             phrcd.microbiology_complete(:) = cellstr(num2str(completecode));
+0310             
+0311             [hospREDCapData] = [hospREDCapData ; phrcd];
+0312         <span class="keyword">end</span>
+0313         
+0314         <span class="comment">% 11) weight instrument</span>
+0315         patWT = cdHghtWght(cdHghtWght.ID == oldid, :);
+0316         patWT.Weight(isnan(patWT.Weight)) = 0;
+0317         nrows = size(patWT, 1);
+0318         fprintf(<span class="string">'Wght(%3d)..'</span>, nrows);
+0319         <span class="keyword">if</span> nrows &gt; 0
+0320             [phrcd] = <a href="createREDCapDataTable.html" class="code" title="function [REDCapData] = createREDCapDataTable(nrows)">createREDCapDataTable</a>(nrows);
+0321             phrcd.study_id(:)      = study_id;
+0322             phrcd.redcap_repeat_instrument(:) = cellstr(<span class="string">'weight'</span>);
+0323             phrcd.redcap_repeat_instance(:) = cellstr(num2str((1:nrows)'));
+0324             phrcd.hw_meas_date(:) = cellstr(datestr(patWT.MeasDate, 24));
+0325             phrcd.hw_weight(:)    = cellstr(num2str(patWT.Weight));
+0326             phrcd.hw_comments(:)  = patWT.Comments;
+0327             phrcd.weight_complete(:) = cellstr(num2str(completecode));
+0328             
+0329             [hospREDCapData] = [hospREDCapData ; phrcd];
+0330         <span class="keyword">end</span>
+0331         
+0332         fprintf(<span class="string">'\n'</span>);
+0333         study_id = study_id + 1;
+0334         
+0335     <span class="keyword">end</span>
+0336     
+0337     hospfilename = sprintf(<span class="string">'%s-REDCapData.csv'</span>, brhosp.Acronym{h});
+0338     writetable(hospREDCapData, fullfile(basedir, outputfolder, hospfilename));
+0339     
+0340 <span class="keyword">end</span>
+0341 
+0342</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

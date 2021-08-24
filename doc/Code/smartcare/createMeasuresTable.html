@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createMeasuresTable</title>
+  <meta name="keywords" content="createMeasuresTable">
+  <meta name="description" content="creates the measures table">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createMeasuresTable.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createMeasuresTable
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>creates the measures table</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [measures, nmeasures] = createMeasuresTable(physdata) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> creates the measures table
+
+ Input:
+ ------
+ physdata      measurements data
+ 
+ Output:
+ -------
+ nmeasures     #recording types
+ measures      table template of size (nmeasures, 7) with AlignWindStd, 
+   OvervallStd, Mask columns to be populated during alignment model execution</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>	getColumnForMeasure - returns the column name from physdata for the</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/recovery/createAlignmentModelInputsRecovery.html" class="code" title="">createAlignmentModelInputsRecovery</a>	creates the inputs for the model</li><li><a href="createAlignmentModelInputs.html" class="code" title="">createAlignmentModelInputs</a>	creates the inputs for the model</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [measures, nmeasures] = createMeasuresTable(physdata)</a>
+0002 
+0003 <span class="comment">% creates the measures table</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Input:</span>
+0006 <span class="comment">% ------</span>
+0007 <span class="comment">% physdata      measurements data</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Output:</span>
+0010 <span class="comment">% -------</span>
+0011 <span class="comment">% nmeasures     #recording types</span>
+0012 <span class="comment">% measures      table template of size (nmeasures, 7) with AlignWindStd,</span>
+0013 <span class="comment">%   OvervallStd, Mask columns to be populated during alignment model execution</span>
+0014 
+0015 nmeasures = size(unique(physdata.RecordingType), 1);
+0016 
+0017 measures = table(<span class="string">'Size'</span>,[nmeasures 4], <span class="string">'VariableTypes'</span>, {<span class="string">'double'</span>, <span class="string">'cell'</span>, <span class="string">'cell'</span>, <span class="string">'cell'</span>} ,<span class="string">'VariableNames'</span>, {<span class="string">'Index'</span>, <span class="string">'Name'</span>, <span class="string">'DisplayName'</span>, <span class="string">'Column'</span>});
+0018 measures.Index = [1:nmeasures]';
+0019 measures.Name = unique(physdata.RecordingType);
+0020 measures.DisplayName = replace(measures.Name, <span class="string">'Recording'</span>, <span class="string">''</span>);
+0021 <span class="comment">%for i = 1:size(measures, 1)</span>
+0022 <span class="comment">%    idx = find(isstrprop(measures.DisplayName{i},'upper'));</span>
+0023 <span class="comment">%    if size(idx, 2) &gt; 1</span>
+0024 <span class="comment">%        measures.DisplayName{i} = sprintf('%s %s', extractBefore(measures.DisplayName{i}, idx(2)), extractAfter(measures.DisplayName{i}, idx(2) - 1));</span>
+0025 <span class="comment">%    end</span>
+0026 <span class="comment">%end</span>
+0027 measures.AlignWindStd = zeros(nmeasures, 1); <span class="comment">% populate during model execution</span>
+0028 measures.OverallStd = zeros(nmeasures, 1); <span class="comment">% populate during model execution</span>
+0029 measures.Mask = zeros(nmeasures, 1); <span class="comment">% populate during model execution</span>
+0030 
+0031 <span class="keyword">for</span> i = 1:size(measures,1)
+0032      measures.Column(i) = cellstr(<a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>(measures.Name{i}));
+0033 <span class="keyword">end</span>
+0034 
+0035 
+0036 <span class="keyword">end</span>
+0037</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

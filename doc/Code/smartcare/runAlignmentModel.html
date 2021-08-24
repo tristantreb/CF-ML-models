@@ -1,0 +1,215 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of runAlignmentModel</title>
+  <meta name="keywords" content="runAlignmentModel">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; runAlignmentModel.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>runAlignmentModel
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amAlignCurves.html" class="code" title="function [offsets, profile_pre, profile_post, hstg, qual] = amAlignCurves(amNormcube, amInterventions, measures, max_offset, align_wind, nmeasures, ninterventions, run_type, detaillog)">amAlignCurves</a>	alignCurves = function to align measurement curves prior to intervention</li><li><a href="amPlotAndSaveAlignedCurves.html" class="code" title="function amPlotAndSaveAlignedCurves(profile_pre, profile_post, offsets, qual, measures, max_offset, align_wind, nmeasures, run_type)">amPlotAndSaveAlignedCurves</a>	amPlotAndSaveAlignedCurves - plots the curves pre and post alignment for</li><li><a href="amPlotsAndSaveMeasuresVsMeanCurve.html" class="code" title="function amPlotsAndSaveMeasuresVsMeanCurve(amInterventions, amNormcube, measures, demographicstable, best_profile_post, best_histogram, best_offsets, problower, probupper, ex_start, thisinter, nmeasures, max_offset, align_wind)">amPlotsAndSaveMeasuresVsMeanCurve</a>	amPlotsAndSaveMeasuresvsMeanCurve - plots (normalised) measures prior to</li><li><a href="amPlotsAndSavePredictions.html" class="code" title="function amPlotsAndSavePredictions(amInterventions, amDatacube, measures, demographicstable, best_histogram, best_offsets, problower, probupper, ex_start, thisinter, nmeasures, max_offset, align_wind)">amPlotsAndSavePredictions</a>	amPlotsAndSavePredictions - plots measures prior to</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; close all; clc;
+0002 
+0003 tic
+0004 basedir = <span class="string">'./'</span>;
+0005 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0006 modelinputsmatfile = <span class="string">'alignmentmodelinputs.mat'</span>;
+0007 datademographicsfile = <span class="string">'datademographicsbypatient.mat'</span>;
+0008 fprintf(<span class="string">'Loading Alignment Model Inputs data\n'</span>);
+0009 load(fullfile(basedir, subfolder, modelinputsmatfile));
+0010 fprintf(<span class="string">'Loading datademographics by patient\n'</span>);
+0011 load(fullfile(basedir, subfolder, datademographicsfile));
+0012 toc
+0013 
+0014 detaillog = true;
+0015 max_offset = 30; <span class="comment">% should not be greater than ex_start (set lower down) as this implies intervention before exacerbation !</span>
+0016 align_wind = 20;
+0017 
+0018 <span class="comment">% remove temperature readings as insufficient datapoints for a number of</span>
+0019 <span class="comment">% the interventions</span>
+0020 <span class="comment">%idx = ismember(measures.DisplayName, {'Temperature'});</span>
+0021 <span class="comment">%idx = ismember(measures.DisplayName, {'Temperature', 'Activity', 'LungFunction', 'O2Saturation', 'PulseRate', 'SleepActivity', 'Weight'});</span>
+0022 idx = ismember(measures.DisplayName, {<span class="string">'Temperature'</span>, <span class="string">'Wellness'</span>, <span class="string">'Activity'</span>, <span class="string">'LungFunction'</span>, <span class="string">'O2Saturation'</span>, <span class="string">'PulseRate'</span>, <span class="string">'SleepActivity'</span>, <span class="string">'Weight'</span>});
+0023 <span class="comment">%idx = ismember(measures.DisplayName, {'Temperature', 'Activity', 'O2Saturation', 'PulseRate', 'SleepActivity', 'Weight'});</span>
+0024 <span class="comment">%idx = ismember(measures.DisplayName, {'Temperature', 'Activity', 'Cough', 'LungFunction', 'SleepActivity', 'Wellness'});</span>
+0025 
+0026 
+0027 amDatacube(:,:,measures.Index(idx)) = [];
+0028 amNormcube(:,:,measures.Index(idx)) = [];
+0029 measures(idx,:) = [];
+0030 nmeasures = size(measures,1);
+0031 measures.Index = [1:nmeasures]';
+0032 unaligned_profile = zeros(nmeasures, max_offset+align_wind);
+0033 problower = zeros(ninterventions, 1);
+0034 probupper = zeros(ninterventions, 1);
+0035 
+0036 tic
+0037 fprintf(<span class="string">'Running alignment with zero offset start\n'</span>);
+0038 <span class="keyword">for</span> i=1:size(amInterventions,1)
+0039         amInterventions.Offset(i) = 0;
+0040 <span class="keyword">end</span>
+0041 best_initial_offsets = amInterventions.Offset;
+0042 
+0043 run_type = <span class="string">'Zero Offset Start'</span>;
+0044 [best_offsets, best_profile_pre, best_profile_post, best_histogram, best_qual] = <a href="amAlignCurves.html" class="code" title="function [offsets, profile_pre, profile_post, hstg, qual] = amAlignCurves(amNormcube, amInterventions, measures, max_offset, align_wind, nmeasures, ninterventions, run_type, detaillog)">amAlignCurves</a>(amNormcube, amInterventions, measures, max_offset, align_wind, nmeasures, ninterventions, run_type, detaillog);
+0045 fprintf(<span class="string">'%s - ErrFcn = %7.4f\n'</span>, run_type, best_qual);
+0046 <span class="comment">% save the zero offset pre-profile to unaligned_profile so all plots show a</span>
+0047 <span class="comment">% consistent unaligned curve as the pre-profile.</span>
+0048 unaligned_profile = best_profile_pre;
+0049 <span class="comment">% plot and save aligned curves (pre and post)</span>
+0050 <a href="amPlotAndSaveAlignedCurves.html" class="code" title="function amPlotAndSaveAlignedCurves(profile_pre, profile_post, offsets, qual, measures, max_offset, align_wind, nmeasures, run_type)">amPlotAndSaveAlignedCurves</a>(unaligned_profile, best_profile_post, best_offsets, best_qual, measures, max_offset, align_wind, nmeasures, run_type)
+0051 toc
+0052 fprintf(<span class="string">'\n'</span>);
+0053 
+0054 fprintf(<span class="string">'Running alignment with random offset start\n'</span>);
+0055 niterations = 500;
+0056 <span class="comment">%niterations = 0;</span>
+0057 <span class="keyword">for</span> j=1:niterations
+0058     tic
+0059     <span class="keyword">for</span> i=1:ninterventions
+0060         amInterventions.Offset(i) = floor(rand * max_offset);
+0061     <span class="keyword">end</span>
+0062     initial_offsets = amInterventions.Offset;
+0063     run_type = sprintf(<span class="string">'Random Offset Start %d'</span>, j);
+0064     [offsets, profile_pre, profile_post, histogram, qual] = <a href="amAlignCurves.html" class="code" title="function [offsets, profile_pre, profile_post, hstg, qual] = amAlignCurves(amNormcube, amInterventions, measures, max_offset, align_wind, nmeasures, ninterventions, run_type, detaillog)">amAlignCurves</a>(amNormcube, amInterventions, measures, max_offset, align_wind, nmeasures, ninterventions, run_type, detaillog);
+0065     fprintf(<span class="string">'%s - ErrFcn = %7.4f\n'</span>, run_type, qual);
+0066     <span class="keyword">if</span> qual &lt; best_qual
+0067         <span class="comment">% plot and save aligned curves (pre and post) if the result is best</span>
+0068         <span class="comment">% so far</span>
+0069         <a href="amPlotAndSaveAlignedCurves.html" class="code" title="function amPlotAndSaveAlignedCurves(profile_pre, profile_post, offsets, qual, measures, max_offset, align_wind, nmeasures, run_type)">amPlotAndSaveAlignedCurves</a>(unaligned_profile, profile_post, offsets, qual, measures, max_offset, align_wind, nmeasures, run_type)
+0070         fprintf(<span class="string">'Best so far is random start %d\n'</span>, j);
+0071         best_offsets = offsets;
+0072         best_initial_offsets = initial_offsets;
+0073         best_profile_pre = profile_pre;
+0074         best_profile_post = profile_post;
+0075         best_histogram = histogram;
+0076         best_qual = qual; 
+0077     <span class="keyword">end</span>
+0078     toc
+0079 <span class="keyword">end</span>
+0080 fprintf(<span class="string">'\n'</span>);
+0081 
+0082 tic
+0083 basedir = <span class="string">'./'</span>;
+0084 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0085 outputfilename = sprintf(<span class="string">'alignmentmodelresults-obj%d.mat'</span>, round(best_qual*10000));
+0086 fprintf(<span class="string">'Saving alignment model results to file %s\n'</span>, outputfilename);
+0087 fprintf(<span class="string">'\n'</span>);
+0088 save(fullfile(basedir, subfolder, outputfilename), <span class="string">'best_initial_offsets'</span>, <span class="string">'best_offsets'</span>, <span class="string">'best_profile_pre'</span>, <span class="string">'best_profile_post'</span>, <span class="string">'unaligned_profile'</span>, <span class="string">'best_histogram'</span>, <span class="string">'best_qual'</span>);
+0089 
+0090 ex_start = input(<span class="string">'Look at best start and enter exacerbation start: '</span>);
+0091 toc
+0092 fprintf(<span class="string">'\n'</span>);
+0093 
+0094 tic
+0095 <span class="comment">% calculate overall lower and upper bound 75% confidence levels</span>
+0096 fprintf(<span class="string">'Calculate overall lower and upper bound 75%% confidence levels'</span>);
+0097 hstgorig = best_histogram;
+0098 hstgorig(isnan(hstgorig)) = 0;
+0099 agghstg = zeros(ninterventions, max_offset);
+0100 <span class="keyword">for</span> j = 1:ninterventions
+0101         agghstg(j,:) = sum(hstgorig(:, j, :),1);
+0102         normconst = norm(reshape(agghstg(j, :),[1 max_offset]),inf);
+0103         <span class="keyword">if</span> normconst == 0
+0104             normconst = 1;
+0105         <span class="keyword">end</span>
+0106         agghstg(j,:) = agghstg(j,:) / normconst;
+0107 <span class="keyword">end</span>
+0108 agghstg = 1 - agghstg;
+0109 agghstg = agghstg ./ sum(agghstg,2);
+0110 
+0111 <span class="comment">%probthreshold = 0.75;</span>
+0112 <span class="comment">% changed to 1s.d on normal distribution</span>
+0113 probthreshold = 0.6827;
+0114 cumprob = 0;
+0115 <span class="keyword">for</span> j = 1:ninterventions
+0116     problower(j) = best_offsets(j);
+0117     probupper(j) = best_offsets(j);
+0118     <span class="keyword">for</span> i = 0:max_offset - 1
+0119         <span class="keyword">if</span> best_offsets(j) + i &gt;= max_offset
+0120             probupper(j) = max_offset - 1;
+0121         <span class="keyword">else</span>
+0122             probupper(j) = best_offsets(j) + i;
+0123         <span class="keyword">end</span>
+0124         <span class="keyword">if</span> best_offsets(j) - i &lt;= 0
+0125             problower(j) = 0;
+0126         <span class="keyword">else</span>
+0127             problower(j) = best_offsets(j) - i;
+0128         <span class="keyword">end</span>
+0129         cumprob = sum(agghstg(j,problower(j)+1:probupper(j)+1),2);
+0130         <span class="keyword">if</span> cumprob &gt;= probthreshold
+0131             fprintf(<span class="string">'For intervention %2d: best_offset %2d 75%% confidence levels are lower = %2d upper = %2d\n'</span>, j, best_offsets(j), problower(j), probupper(j));
+0132             <span class="keyword">break</span>;
+0133         <span class="keyword">end</span>  
+0134     <span class="keyword">end</span>
+0135 <span class="keyword">end</span>
+0136 
+0137 tic
+0138 basedir = <span class="string">'./'</span>;
+0139 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0140 outputfilename = sprintf(<span class="string">'alignmentmodelresults-obj%d.mat'</span>, round(best_qual*10000));
+0141 fprintf(<span class="string">'Saving alignment model results to file %s\n'</span>, outputfilename);
+0142 fprintf(<span class="string">'\n'</span>);
+0143 save(fullfile(basedir, subfolder, outputfilename), <span class="string">'best_initial_offsets'</span>, <span class="string">'best_offsets'</span>, <span class="string">'best_profile_pre'</span>, <span class="string">'best_profile_post'</span>, <span class="keyword">...</span>
+0144     <span class="string">'unaligned_profile'</span>, <span class="string">'best_histogram'</span>, <span class="string">'best_qual'</span>, <span class="string">'ex_start'</span>, <span class="string">'agghstg'</span>, <span class="string">'problower'</span>, <span class="string">'probupper'</span>);
+0145 
+0146 
+0147 <span class="comment">% do l_1 normalisation of the histogram to obtain posterior probabilities,</span>
+0148 <span class="comment">% person x feature fixed</span>
+0149 <span class="keyword">for</span> m=1:nmeasures
+0150     <span class="keyword">for</span> j=1:ninterventions
+0151         best_histogram(m, j, :) = best_histogram(m, j, :) / norm(reshape(best_histogram(m, j, :),[1 max_offset]),inf);
+0152     <span class="keyword">end</span>
+0153 <span class="keyword">end</span>
+0154 toc
+0155 fprintf(<span class="string">'\n'</span>);
+0156 
+0157 tic
+0158 fprintf(<span class="string">'Plotting prediction results\n'</span>);
+0159 <span class="comment">%for i=1:ninterventions</span>
+0160 <span class="keyword">for</span> i = 42:44
+0161     <a href="amPlotsAndSavePredictions.html" class="code" title="function amPlotsAndSavePredictions(amInterventions, amDatacube, measures, demographicstable, best_histogram, best_offsets, problower, probupper, ex_start, thisinter, nmeasures, max_offset, align_wind)">amPlotsAndSavePredictions</a>(amInterventions, amDatacube, measures, demographicstable, best_histogram, best_offsets, problower, probupper, ex_start, i, nmeasures, max_offset, align_wind);
+0162     <a href="amPlotsAndSaveMeasuresVsMeanCurve.html" class="code" title="function amPlotsAndSaveMeasuresVsMeanCurve(amInterventions, amNormcube, measures, demographicstable, best_profile_post, best_histogram, best_offsets, problower, probupper, ex_start, thisinter, nmeasures, max_offset, align_wind)">amPlotsAndSaveMeasuresVsMeanCurve</a>(amInterventions, amNormcube, measures, demographicstable, best_profile_post, best_histogram, best_offsets, problower, probupper, ex_start, i, nmeasures, max_offset, align_wind)
+0163 
+0164 <span class="keyword">end</span>
+0165 toc
+0166 fprintf(<span class="string">'\n'</span>);
+0167 
+0168</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

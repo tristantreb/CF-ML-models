@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of compareMultipleModelRunToTestData</title>
+  <meta name="keywords" content="compareMultipleModelRunToTestData">
+  <meta name="description" content="compareMultipleModelRunToTestData - compares the output of multiple model runs to">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; compareMultipleModelRunToTestData.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>compareMultipleModelRunToTestData
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>compareMultipleModelRunToTestData - compares the output of multiple model runs to</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function compareMultipleModelRunToTestData(amLabelledInterventions, modelrun, modelidx, models) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> compareMultipleModelRunToTestData - compares the output of multiple model runs to
+ the labelled test data (but doesn't plot results)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runModelUtilityFunctions.html" class="code" title="">runModelUtilityFunctions</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function compareMultipleModelRunToTestData(amLabelledInterventions, modelrun, modelidx, models)</a>
+0002 
+0003 <span class="comment">% compareMultipleModelRunToTestData - compares the output of multiple model runs to</span>
+0004 <span class="comment">% the labelled test data (but doesn't plot results)</span>
+0005 
+0006 amLabelledInterventions = [array2table([1:size(amLabelledInterventions,1)]'), amLabelledInterventions];
+0007 amLabelledInterventions.Properties.VariableNames{<span class="string">'Var1'</span>} = <span class="string">'InterNbr'</span>;
+0008 
+0009 testidx = amLabelledInterventions.IncludeInTestSet==<span class="string">'Y'</span>;
+0010 
+0011 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0012 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0013 
+0014 datatable = table(<span class="string">'Size'</span>,[1 3], <span class="keyword">...</span>
+0015     <span class="string">'VariableTypes'</span>, {<span class="string">'double'</span>,   <span class="string">'double'</span>,     <span class="string">'double'</span>}, <span class="keyword">...</span>
+0016     <span class="string">'VariableNames'</span>, {<span class="string">'ModelRun'</span>, <span class="string">'TestSetNbr'</span>, <span class="string">'Count'</span>});
+0017 
+0018 rowtoadd = datatable;
+0019 datatable(1:size(datatable,1),:) = [];
+0020 ylabels = {<span class="string">'Dummy'</span>};
+0021 modelrunlist = 0;
+0022 qualityscore = 0;
+0023 
+0024 <span class="keyword">for</span> midx = modelidx:size(models,1)
+0025     <span class="keyword">if</span> (~isequal(models{midx}, <span class="string">'placeholder'</span>) &amp;&amp; ~contains(models{midx}, <span class="string">'xxx'</span>))
+0026         load(fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>, models{midx})));
+0027         
+0028         temp = hsv;
+0029         brightness = .9;
+0030         colors(1,:) = temp(20,:) .* brightness;
+0031         
+0032         <span class="comment">%for i = 2:12</span>
+0033         <span class="comment">%    colors(i,:)  = temp(13 - (i-1),:)  .* brightness;</span>
+0034         <span class="comment">%end</span>
+0035         <span class="comment">%for i = 13:max_offset - 1</span>
+0036         <span class="comment">%    colors(i,:)  = temp(1,:)  .* brightness;</span>
+0037         <span class="comment">%end</span>
+0038         <span class="keyword">for</span> i = 2:15
+0039             colors(i,:)  = temp(16 - (i-1),:)  .* brightness;
+0040         <span class="keyword">end</span>
+0041         <span class="keyword">for</span> i = 16:max_offset - 1
+0042             colors(i,:)  = temp(1,:)  .* brightness;
+0043         <span class="keyword">end</span>
+0044         
+0045         modeloffsets = amInterventions.Offset(testidx);
+0046         testset = amLabelledInterventions(testidx,:);
+0047         testsetsize = size(testset,1);
+0048         testset_ex_start = testset.ExStart(1);
+0049 
+0050         diff_ex_start = testset_ex_start - ex_start;
+0051 
+0052         matchidx = ((ex_start + modeloffsets &gt;= (testset.LowerBound1)) &amp; (ex_start + modeloffsets &lt;= (testset.UpperBound1))) | <span class="keyword">...</span>
+0053                    ((ex_start + modeloffsets &gt;= (testset.LowerBound2)) &amp; (ex_start + modeloffsets &lt;= (testset.UpperBound2)));
+0054         <span class="keyword">if</span> diff_ex_start &lt; 0
+0055             matchidx2 = (modeloffsets &gt;= max_offset + diff_ex_start) &amp; ((testset.UpperBound1 - testset_ex_start == max_offset - 1) | (testset.UpperBound2 - testset_ex_start == max_offset - 1)) ;
+0056         <span class="keyword">elseif</span> diff_ex_start &gt; 0
+0057             matchidx2 = (modeloffsets &lt;= min_offset + diff_ex_start) &amp; ((testset.LowerBound1 - testset_ex_start == min_offset)     | (testset.LowerBound2 - testset_ex_start == min_offset)) ;
+0058         <span class="keyword">else</span>
+0059             matchidx2 = (modeloffsets == -10);
+0060         <span class="keyword">end</span>
+0061         matchidx = matchidx | matchidx2;
+0062 
+0063         fprintf(<span class="string">'For model %s%d: %s:\n'</span>, mversion, midx, models{midx});
+0064         fprintf(<span class="string">'%2d of %2d results match labelled test data, '</span>, sum(matchidx), testsetsize); 
+0065         rowtoadd.ModelRun = midx;
+0066         
+0067         <span class="keyword">for</span> i = 1:size(testset,1)
+0068             rowtoadd.TestSetNbr = testset.InterNbr(i);
+0069             <span class="keyword">if</span> matchidx(i)
+0070                 rowtoadd.Count = 0;
+0071             <span class="keyword">else</span>
+0072                 dist1 = min(abs(testset.LowerBound1(i) - (ex_start + modeloffsets(i))), abs(testset.LowerBound2(i) - (ex_start + modeloffsets(i))));
+0073                 dist2 = min(abs(testset.UpperBound1(i) - (ex_start + modeloffsets(i))), abs(testset.UpperBound2(i) - (ex_start + modeloffsets(i))));
+0074                 dist = min(dist1, dist2);
+0075                 rowtoadd.Count = dist;
+0076             <span class="keyword">end</span>
+0077             <span class="comment">%fprintf('For intervention %2d, Match = %d, Dist = %d\n', testset.InterNbr(i), matchidx(i), rowtoadd.Count);</span>
+0078             datatable = [datatable ; rowtoadd];
+0079         <span class="keyword">end</span>
+0080         
+0081         fprintf(<span class="string">'Quality score = %d\n'</span>, sum(datatable.Count(datatable.ModelRun==midx)));
+0082         fprintf(<span class="string">'\n'</span>);
+0083         modelrunlist = [modelrunlist; midx];
+0084         qualityscore = [qualityscore; sum(datatable.Count(datatable.ModelRun==midx))];
+0085         ylabels = [ylabels; sprintf(<span class="string">'%2d (%2d:%3d)'</span>, midx, sum(matchidx), sum(datatable.Count(datatable.ModelRun==midx)))];
+0086     <span class="keyword">end</span>
+0087 <span class="keyword">end</span>
+0088 
+0089 <span class="comment">% remove dummy row</span>
+0090 modelrunlist(1) = [];
+0091 qualityscore(1) = [];
+0092 ylabels(1) = [];
+0093 
+0094 labelsandquality = [array2table(modelrunlist), array2table(ylabels), array2table(qualityscore)];
+0095 <span class="comment">%labelsandquality = sortrows(labelsandquality, {'qualityscore', 'modelrunlist'}, {'ascend', 'ascend'});</span>
+0096 
+0097 plotsacross = 1;
+0098 plotsdown = 1;
+0099 plottitle = sprintf(<span class="string">'Model Run Results %s(%d-%d) vs Labelled Test Data'</span>, mversion, modelidx, size(models,1));
+0100 
+0101 [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0102 
+0103 subplot(plotsdown,plotsacross,[1],<span class="string">'Parent'</span>,p);
+0104 h = heatmap(p, datatable, <span class="string">'TestSetNbr'</span>, <span class="string">'ModelRun'</span>, <span class="string">'Colormap'</span>, colors(1:max(datatable.Count),:), <span class="string">'MissingDataColor'</span>, <span class="string">'white'</span>, <span class="keyword">...</span>
+0105     <span class="string">'ColorVariable'</span>,<span class="string">'Count'</span>,<span class="string">'ColorMethod'</span>,<span class="string">'max'</span>, <span class="string">'MissingDataLabel'</span>, <span class="string">'No data'</span>, <span class="string">'ColorBarVisible'</span>, <span class="string">'on'</span>, <span class="string">'FontSize'</span>, 8);
+0106 h.Title = <span class="string">' '</span>;
+0107 h.FontName = <span class="string">'Monaco'</span>;
+0108 h.FontSize = 6;
+0109 h.XLabel = <span class="string">'Intervention Nbr'</span>;
+0110 h.YLabel = <span class="string">'Model Run'</span>;
+0111 h.YDisplayData = labelsandquality.modelrunlist;
+0112 h.YDisplayLabels = labelsandquality.ylabels;
+0113 h.CellLabelColor = <span class="string">'none'</span>;
+0114 h.GridVisible = <span class="string">'on'</span>;
+0115 
+0116 plotsubfolder = <span class="string">'Plots'</span>;
+0117 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0118 close(f);
+0119 <span class="keyword">end</span>
+0120</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

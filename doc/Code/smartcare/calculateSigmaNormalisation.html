@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calculateSigmaNormalisation</title>
+  <meta name="keywords" content="calculateSigmaNormalisation">
+  <meta name="description" content="calculateSigmaNormalisation - populates an array of ninterventions by">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; calculateSigmaNormalisation.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>calculateSigmaNormalisation
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>calculateSigmaNormalisation - populates an array of ninterventions by</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [normstd] = calculateSigmaNormalisation(amInterventions, measures, demographicstable, ninterventions, nmeasures, sigmamethod, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> calculateSigmaNormalisation - populates an array of ninterventions by
+ nmeasures with the multiplicative normalisation (sigma) values</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>	getColumnForMeasure - returns the column name from physdata for the</li><li><a href="getExNormMeasures.html" class="code" title="function [exnormmeasarray] = getExNormMeasures(study)">getExNormMeasures</a>	getExNormMeasures - returns an array of measure display names that need</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/recovery/createIntrNormDataCube.html" class="code" title="function createIntrNormDataCube(amRunParameters)">createIntrNormDataCube</a>	create the array with the normalised data for each intervention</li><li><a href="../../Code/pdm/recovery/runAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist)">runAlignmentModelEMMCRecoveryFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="../../Code/pdm/recovery/runFastAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runFastAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist, nameaddendum)">runFastAlignmentModelEMMCRecoveryFcn</a>	fast version with 1 plot (typical profile) + alignment result matfile</li><li><a href="runAlignmentModelEM.html" class="code" title="">runAlignmentModelEM</a>	</li><li><a href="runAlignmentModelEMFcn.html" class="code" title="function runAlignmentModelEMFcn(amRunParameters)">runAlignmentModelEMFcn</a>	function to run the alignment model (EM version) given a set of run</li><li><a href="runAlignmentModelEMFcnFEV1Split.html" class="code" title="function runAlignmentModelEMFcnFEV1Split(amRunParameters)">runAlignmentModelEMFcnFEV1Split</a>	function to run the alignment model (EM version) given a set of run</li><li><a href="runAlignmentModelEMMCFcn.html" class="code" title="function runAlignmentModelEMMCFcn(amRunParameters)">runAlignmentModelEMMCFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="runAlignmentModelEMMCFcnSplit.html" class="code" title="function runAlignmentModelEMMCFcnSplit(amRunParameters)">runAlignmentModelEMMCFcnSplit</a>	function to run the alignment model (EM version) given a set of run</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [normstd] = calculateSigmaNormalisation(amInterventions, measures, demographicstable, ninterventions, nmeasures, sigmamethod, study)</a>
+0002 
+0003 <span class="comment">% calculateSigmaNormalisation - populates an array of ninterventions by</span>
+0004 <span class="comment">% nmeasures with the multiplicative normalisation (sigma) values</span>
+0005 
+0006 exnormmeas   = <a href="getExNormMeasures.html" class="code" title="function [exnormmeasarray] = getExNormMeasures(study)">getExNormMeasures</a>(study);
+0007 
+0008 normstd = zeros(ninterventions, nmeasures);
+0009 <span class="keyword">for</span> i = 1:ninterventions
+0010     <span class="keyword">for</span> m = 1:nmeasures
+0011         <span class="comment">% this code block is for measures that should be normalised</span>
+0012         <span class="keyword">if</span> ~ismember(measures.DisplayName(m), exnormmeas)
+0013             <span class="keyword">if</span> sigmamethod == 1
+0014                 normstd(i,m) = measures.AlignWindStd(m);
+0015             <span class="keyword">elseif</span> sigmamethod == 2
+0016                 normstd(i,m) = measures.OverallStd(m);
+0017             <span class="keyword">elseif</span> (sigmamethod == 3) || (sigmamethod == 4)
+0018                 scid = amInterventions.SmartCareID(i);
+0019                 column = <a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>(measures.Name{m});
+0020                 ddcolumn = sprintf(<span class="string">'Fun_%s'</span>,column);
+0021                 <span class="keyword">if</span> size(find(demographicstable.SmartCareID == scid &amp; ismember(demographicstable.RecordingType, measures.Name{m})),1) == 0
+0022                     fprintf(<span class="string">'Intervention %d: Could not find std for patient %d and measure %d so using overall std for measure instead\n'</span>, i, scid, m);
+0023                     normstd(i,m) = measures.OverallStd(m);
+0024                 <span class="keyword">else</span>
+0025                     normstd(i,m) = demographicstable{demographicstable.SmartCareID == scid &amp; ismember(demographicstable.RecordingType, measures.Name{m}),{ddcolumn}}(2);
+0026                     <span class="keyword">if</span> normstd(i,m) == 0
+0027                         fprintf(<span class="string">'Intervention %d: Zero std for patient %d and measure %d so using overall std for measure instead\n'</span>, i, scid, m);
+0028                         normstd(i,m) = measures.OverallStd(m);
+0029                     <span class="keyword">end</span>
+0030                 <span class="keyword">end</span>
+0031             <span class="keyword">else</span> 
+0032                 <span class="comment">%shouldn't get here...</span>
+0033                 fprintf(<span class="string">'Should never get to this branch of code\n'</span>);
+0034             <span class="keyword">end</span>
+0035         <span class="keyword">else</span>
+0036             <span class="comment">% for measures excluded from normalisation, set to unit</span>
+0037             <span class="comment">% variance</span>
+0038             normstd(i,m) = 1;
+0039         <span class="keyword">end</span>
+0040     <span class="keyword">end</span>
+0041 <span class="keyword">end</span>
+0042 
+0043 <span class="keyword">end</span>
+0044</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

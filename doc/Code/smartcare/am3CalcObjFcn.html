@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of am3CalcObjFcn</title>
+  <meta name="keywords" content="am3CalcObjFcn">
+  <meta name="description" content="am3CalcObjFcn - calculates residual sum of squares distance for points in">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; am3CalcObjFcn.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>am3CalcObjFcn
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>am3CalcObjFcn - calculates residual sum of squares distance for points in</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [dist, hstg] = am3CalcObjFcn(meancurvesum, meancurvecount, meancurvestd, amDatacube, amInterventions, measuresmask, normstd, hstg, currinter, curroffset, max_offset, align_wind, nmeasures, update_histogram, sigmamethod) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> am3CalcObjFcn - calculates residual sum of squares distance for points in
+ curve vs meancurve incorporating offset</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="am3AlignCurves.html" class="code" title="function [offsets, profile_pre, profile_post, count_post, std_post, hstg, qual] = am3AlignCurves(amDatacube, amInterventions, measures, normstd, max_offset, align_wind, nmeasures, ninterventions, run_type, detaillog, curveaveragingmethod, sigmamethod)">am3AlignCurves</a>	am3AlignCurves = function to align measurement curves prior to intervention</li><li><a href="am3BestFit.html" class="code" title="function [better_offset, hstg] = am3BestFit(meancurvesum, meancurvecount, meancurvestd, amDatacube, amInterventions, measuresmask, normstd, hstg, currinter, max_offset, align_wind, nmeasures, sigmamethod)">am3BestFit</a>	am3BestFit - calculates the offset for an intervention by minimising the</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [dist, hstg] = am3CalcObjFcn(meancurvesum, meancurvecount, meancurvestd, amDatacube, amInterventions, measuresmask, normstd, hstg, currinter, curroffset, max_offset, align_wind, nmeasures, update_histogram, sigmamethod)</a>
+0002 
+0003 <span class="comment">% am3CalcObjFcn - calculates residual sum of squares distance for points in</span>
+0004 <span class="comment">% curve vs meancurve incorporating offset</span>
+0005 
+0006 dist = 0;
+0007 scid   = amInterventions.SmartCareID(currinter);
+0008 start = amInterventions.IVScaledDateNum(currinter);
+0009 
+0010 <span class="keyword">if</span> (update_histogram == 1)
+0011     <span class="keyword">for</span> m = 1:nmeasures
+0012         hstg(m, currinter, curroffset + 1) = 0;
+0013     <span class="keyword">end</span>
+0014 <span class="keyword">end</span>
+0015 
+0016 <span class="keyword">for</span> i = 1:align_wind
+0017     <span class="keyword">for</span> m = 1:nmeasures
+0018         <span class="keyword">if</span> start - i &lt;= 0
+0019             <span class="keyword">continue</span>;
+0020         <span class="keyword">end</span>
+0021         <span class="keyword">if</span> ~isnan(amDatacube(scid, start - i, m))
+0022             <span class="keyword">if</span> sigmamethod == 4
+0023                 thisdist = ( (meancurvesum((max_offset + align_wind + 1) - i - curroffset, m)/ meancurvecount((max_offset + align_wind + 1) - i - curroffset, m) <span class="keyword">...</span>
+0024                     - amDatacube(scid, start - i, m)) ^ 2 ) / (2 * (meancurvestd((max_offset + align_wind + 1) - i - curroffset, m) ^ 2) ) ;
+0025             <span class="keyword">else</span>
+0026                 thisdist = ( (meancurvesum((max_offset + align_wind + 1) - i - curroffset, m)/ meancurvecount((max_offset + align_wind + 1) - i - curroffset, m) <span class="keyword">...</span>
+0027                     - amDatacube(scid, start - i, m)) ^ 2 ) / (2 * (normstd(scid, m) ^ 2 ) ) ;
+0028             <span class="keyword">end</span>
+0029             <span class="comment">% add measures mask here to only include in the total for</span>
+0030             <span class="comment">% subset of measures.</span>
+0031             <span class="keyword">if</span> measuresmask(m) == 1
+0032                 dist = dist + thisdist;
+0033             <span class="keyword">end</span>
+0034             
+0035             <span class="keyword">if</span> (update_histogram == 1)
+0036                 hstg(m, currinter, curroffset + 1) = hstg(m, currinter, curroffset + 1) + thisdist;
+0037             <span class="keyword">end</span>
+0038         <span class="keyword">end</span>
+0039     <span class="keyword">end</span>
+0040 <span class="keyword">end</span>
+0041 
+0042 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

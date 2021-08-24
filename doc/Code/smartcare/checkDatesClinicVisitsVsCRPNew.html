@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of checkDatesClinicVisitsVsCRPNew</title>
+  <meta name="keywords" content="checkDatesClinicVisitsVsCRPNew">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; checkDatesClinicVisitsVsCRPNew.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>checkDatesClinicVisitsVsCRPNew
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>	gets the patient offset table</li><li><a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clc; clear; close all;
+0002 
+0003 
+0004 tic
+0005 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0006 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0007 
+0008 [studynbr, study, studyfullname] = <a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
+0009 [datamatfile, clinicalmatfile, demographicsmatfile] = <a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0010 [physdata, offset] = <a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0011 [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP, <span class="keyword">...</span>
+0012     cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght] = <a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0013 
+0014 fprintf(<span class="string">'\n'</span>);
+0015 
+0016 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0017 subfolder = <span class="string">'ExcelFiles'</span>;
+0018 outputfilename = sprintf(<span class="string">'%s-ClinicVisitsVsCRP.xlsx'</span>, study);
+0019 residualsheet = <span class="string">'CRPWithNoClinicAdmissionAB'</span>;
+0020 
+0021 tic
+0022 <span class="comment">% get patients with enough data</span>
+0023 patientoffsets = <a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>(physdata);
+0024 patientoffsets.Properties.VariableNames{<span class="string">'SmartCareID'</span>} = <span class="string">'ID'</span>;
+0025 
+0026 <span class="comment">% sort by SmartCareID and StartDate</span>
+0027 cdCRP = sortrows(cdCRP, {<span class="string">'Hospital'</span>,<span class="string">'ID'</span>,<span class="string">'CRPDate'</span>}, <span class="string">'ascend'</span>);
+0028 cdAdmissions = sortrows(cdAdmissions, {<span class="string">'Hospital'</span>,<span class="string">'ID'</span>,<span class="string">'Admitted'</span>}, <span class="string">'ascend'</span>);
+0029 cdAntibiotics = sortrows(cdAntibiotics, {<span class="string">'Hospital'</span>,<span class="string">'ID'</span>,<span class="string">'StartDate'</span>}, <span class="string">'ascend'</span>);
+0030 cdClinicVisits = sortrows(cdClinicVisits, {<span class="string">'Hospital'</span>,<span class="string">'ID'</span>,<span class="string">'AttendanceDate'</span>},<span class="string">'ascend'</span>);
+0031 cdOtherVisits = sortrows(cdOtherVisits, {<span class="string">'Hospital'</span>,<span class="string">'ID'</span>,<span class="string">'AttendanceDate'</span>},<span class="string">'ascend'</span>);
+0032 
+0033 cdCRP = innerjoin(cdCRP, patientoffsets);
+0034 
+0035 residualtable = table(<span class="string">'Size'</span>,[1 7], <span class="keyword">...</span>
+0036     <span class="string">'VariableTypes'</span>, {<span class="string">'string(56)'</span>, <span class="string">'string(8)'</span>, <span class="string">'int32'</span>,       <span class="string">'string(20)'</span>,  <span class="string">'int32'</span>, <span class="string">'datetime'</span>, <span class="string">'int32'</span>}, <span class="keyword">...</span>
+0037     <span class="string">'VariableNames'</span>, {<span class="string">'RowType'</span>,    <span class="string">'Hospital'</span>,  <span class="string">'SmartCareID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'CRPID'</span>, <span class="string">'CRPDate'</span>,  <span class="string">'CRPLevel'</span>});
+0038 rowtoadd = residualtable;
+0039 residualtable(1,:) = [];
+0040 matchcount = 0;
+0041 
+0042 <span class="keyword">for</span> i = 1:size(cdCRP,1)
+0043     scid = cdCRP.ID(i);
+0044     crpdate = cdCRP.CRPDate(i);
+0045     
+0046     rowtoadd.SmartCareID = scid;
+0047     rowtoadd.Hospital = cdCRP.Hospital{i};
+0048     rowtoadd.StudyNumber = cdCRP.StudyNumber{i};
+0049     <span class="comment">%rowtoadd.CRPID = cdCRP.CRPID(i);</span>
+0050     rowtoadd.CRPDate = crpdate;
+0051     rowtoadd.CRPLevel = cdCRP.NumericLevel(i);
+0052     
+0053     idx = find(cdAdmissions.ID == scid &amp; (cdAdmissions.Admitted-days(7)) &lt;= crpdate &amp; cdAdmissions.Discharge &gt;= crpdate);
+0054     idx2 = find(cdAntibiotics.ID == scid &amp; ismember(cdAntibiotics.Route, {<span class="string">'IV'</span>}) &amp; cdAntibiotics.StartDate &lt;= crpdate &amp; cdAntibiotics.StopDate &gt;= crpdate);
+0055     idx3 = find(cdClinicVisits.ID == scid &amp; cdClinicVisits.AttendanceDate == crpdate);
+0056     idx4 = find(cdOtherVisits.ID == scid &amp; cdOtherVisits.AttendanceDate == crpdate);
+0057     
+0058     <span class="keyword">if</span> (size(idx,1) ==0 &amp; size(idx2,1)==0 &amp; size(idx3,1)==0 &amp; size(idx4,1)==0)
+0059         rowtoadd.RowType = <span class="string">'*** CRP with no Clinic Visit/Admission/IV Antibiotic ***'</span>;
+0060         fprintf(<span class="string">'%56s  :  Hospital %8s  Patient ID %3d  :  CRP ID %3d  CRP Date  %11s  CRP Level  %3d\n'</span>, <span class="keyword">...</span><span class="comment"> </span>
+0061             rowtoadd.RowType, rowtoadd.Hospital, rowtoadd.SmartCareID, rowtoadd.CRPID, datestr(rowtoadd.CRPDate,1), rowtoadd.CRPLevel);
+0062         residualtable = [residualtable; rowtoadd];
+0063     <span class="keyword">else</span>
+0064         rowtoadd.RowType = <span class="string">'Ok - CRP during Clinic Visit/Admission/IV Antibiotic'</span>;
+0065         matchcount = matchcount + 1;
+0066         fprintf(<span class="string">'%56s  :  Hospital %8s  Patient ID %3d  :  CRP ID %3d  CRP Date  %11s  CRP Level  %3d\n'</span>, <span class="keyword">...</span><span class="comment"> </span>
+0067             rowtoadd.RowType, rowtoadd.Hospital, rowtoadd.SmartCareID, rowtoadd.CRPID, datestr(rowtoadd.CRPDate,1), rowtoadd.CRPLevel);
+0068     <span class="keyword">end</span>
+0069 <span class="keyword">end</span>
+0070 
+0071 toc
+0072 fprintf(<span class="string">'\n'</span>);
+0073 
+0074 fprintf(<span class="string">'Completeness check - %3d rows missing\n'</span>, size(cdCRP,1) - size(residualtable,1) - matchcount);
+0075 fprintf(<span class="string">'\n'</span>);
+0076 
+0077 tic
+0078 fprintf(<span class="string">'Saving results\n'</span>);
+0079 
+0080 writetable(residualtable,  fullfile(basedir, subfolder,outputfilename), <span class="string">'Sheet'</span>, residualsheet);
+0081 toc
+0082 fprintf(<span class="string">'\n'</span>);</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

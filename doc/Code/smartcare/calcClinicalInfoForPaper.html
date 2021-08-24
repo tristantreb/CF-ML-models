@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calcClinicalInfoForPaper</title>
+  <meta name="keywords" content="calcClinicalInfoForPaper">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; calcClinicalInfoForPaper.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>calcClinicalInfoForPaper
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>	selectTreatmentGap - enter the gap between the end of a treatment and the</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; close all; clc;
+0002 
+0003 <span class="comment">% load relevant data</span>
+0004 [studynbr, study, studyfullname] = <a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
+0005 chosentreatgap = <a href="selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>();
+0006 
+0007 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0008 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0009 [datamatfile, clinicalmatfile, demographicsmatfile] = <a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0010 [physdata, offset] = <a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0011 [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP, <span class="keyword">...</span>
+0012     cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght] = <a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0013 
+0014 tic
+0015 fprintf(<span class="string">'Loading datademographics by patient\n'</span>);
+0016 load(fullfile(basedir, subfolder, demographicsmatfile));
+0017 toc
+0018 
+0019 tic
+0020 ivandmeasuresfile = sprintf(<span class="string">'%sivandmeasures_gap%d.mat'</span>, study, chosentreatgap);
+0021 fprintf(<span class="string">'Loading iv treatment and measures prior data\n'</span>);
+0022 load(fullfile(basedir, subfolder, ivandmeasuresfile));
+0023 toc
+0024 
+0025 
+0026 <span class="comment">% calcuate clinical pft baseline info</span>
+0027 temp = cdPFT(:,{<span class="string">'ID'</span>, <span class="string">'FEV1'</span>});
+0028 temp2 = varfun(@mean, temp, <span class="string">'GroupingVariables'</span>, {<span class="string">'ID'</span>});
+0029 temp3 = outerjoin(cdPatient, temp2, <span class="string">'LeftKeys'</span>, <span class="string">'ID'</span>, <span class="string">'RightKeys'</span>, <span class="string">'ID'</span>, <span class="string">'RightVariables'</span>, {<span class="string">'GroupCount'</span>, <span class="string">'mean_FEV1'</span>});
+0030 <span class="comment">%temp3.PercentPredicted = 100 * (temp3.mean_FEV1 ./temp3.CalcPredictedFEV1);</span>
+0031 temp3.PercentPredicted = 100 * (temp3.mean_FEV1 ./temp3.CalcFEV1SetAs);
+0032 
+0033 fprintf(<span class="string">'Total patients                 = %3d\n'</span>, size(cdPatient, 1));
+0034 fprintf(<span class="string">'Patients with no clinical PFTs = %3d ******\n'</span>, sum(isnan(temp3.PercentPredicted)));
+0035 fprintf(<span class="string">'Updating %3d patients with home PFTs\n'</span>, sum(isnan(temp3.PercentPredicted)));
+0036 temp3.PercentPredicted(isnan(temp3.PercentPredicted)) = demographicstable.Fun_FEV1_(ismember(demographicstable.RecordingType, {<span class="string">'LungFunctionRecording'</span>}) &amp; ismember(demographicstable.SmartCareID, temp3.ID(isnan(temp3.PercentPredicted))),1);
+0037 
+0038 fprintf(<span class="string">'Patients with clinical PFTs    = %3d\n'</span>, sum(~isnan(temp3.PercentPredicted)));
+0039 fprintf(<span class="string">'# patients &lt; 40                = %3d (%.0f)\n'</span>, sum(temp3.PercentPredicted &lt; 40), 100 * sum(temp3.PercentPredicted &lt; 40) / size(cdPatient, 1));
+0040 fprintf(<span class="string">'# patients &gt;= 40 &amp; &lt; 70        = %3d (%.0f)\n'</span>, sum(temp3.PercentPredicted &gt;= 40 &amp; temp3.PercentPredicted &lt; 70), 100 * sum(temp3.PercentPredicted &gt;= 40 &amp; temp3.PercentPredicted &lt; 70) / size(cdPatient, 1));
+0041 fprintf(<span class="string">'# patients &gt;= 70 &amp; &lt; 90        = %3d (%.0f)\n'</span>, sum(temp3.PercentPredicted &gt;= 70 &amp; temp3.PercentPredicted &lt; 90), 100 * sum(temp3.PercentPredicted &gt;= 70 &amp; temp3.PercentPredicted &lt; 90) / size(cdPatient, 1));
+0042 fprintf(<span class="string">'# patients &gt;= 90               = %3d (%.0f)\n'</span>, sum(temp3.PercentPredicted &gt;= 90), 100 * sum(temp3.PercentPredicted &gt;= 90) / size(cdPatient, 1));
+0043 
+0044 fprintf(<span class="string">'\n'</span>);
+0045 fprintf(<span class="string">'Overall Study mean /std) = %.3f, %.3f\n'</span>, mean(temp3.PercentPredicted), std(temp3.PercentPredicted));
+0046 
+0047 
+0048 <span class="comment">% also calc actual dates by center</span>
+0049 temp4 = cdPatient(:, {<span class="string">'Hospital'</span>, <span class="string">'StudyDate'</span>});
+0050 temp4.StudyEndDate = temp4.StudyDate + 183;
+0051 demofunc = @(x)[min(x) max(x)];
+0052 temp5 = varfun(demofunc, temp4, <span class="string">'GroupingVariables'</span>, {<span class="string">'Hospital'</span>});
+0053 temp5.Fun_StudyDate(:,2) = [];
+0054 temp5.Fun_StudyEndDate(:,1) = [];
+0055 
+0056 fprintf(<span class="string">'\n'</span>);
+0057 fprintf(<span class="string">'Overall study dates: From %11s To %11s\n'</span>, datestr(min(temp5.Fun_StudyDate), 1), datestr(max(temp5.Fun_StudyEndDate), 1));
+0058 
+0059 fprintf(<span class="string">'By Hospital :\n'</span>);
+0060 temp5
+0061 
+0062 <span class="comment">% calculate patient demographics - eg histogram # of interventions per patient</span>
+0063 
+0064 
+0065 temp6 = ivandmeasurestable(:, {<span class="string">'SmartCareID'</span>, <span class="string">'IVDateNum'</span>});
+0066 temp7 = varfun(@min, temp6, <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0067 temp7.min_IVDateNum = [];
+0068 temp8 = outerjoin(cdPatient(:, {<span class="string">'ID'</span>}), temp7(:, {<span class="string">'SmartCareID'</span>, <span class="string">'GroupCount'</span>}), <span class="string">'LeftKeys'</span>, {<span class="string">'ID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'GroupCount'</span>});
+0069 temp8.GroupCount(isnan(temp8.GroupCount)) = 0;
+0070 
+0071 histogram(temp8.GroupCount, <span class="string">'Orientation'</span>, <span class="string">'horizontal'</span>, <span class="string">'LineWidth'</span>, 1);
+0072</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

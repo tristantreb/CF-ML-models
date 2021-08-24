@@ -1,0 +1,387 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of visualiseMeasuresForPaperFcn</title>
+  <meta name="keywords" content="visualiseMeasuresForPaperFcn">
+  <meta name="description" content="visualiseMeasuresForPaperFcn - plots clinical and home measures">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; visualiseMeasuresForPaperFcn.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>visualiseMeasuresForPaperFcn
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>visualiseMeasuresForPaperFcn - plots clinical and home measures</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function visualiseMeasuresForPaperFcn(physdata, offset, cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits,cdCRP, cdPFT, cdNewMeds, measures, nmeasures, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> visualiseMeasuresForPaperFcn - plots clinical and home measures</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="addCommaFormat.html" class="code" title="function [str] = addCommaFormat(num)">addCommaFormat</a>	</li><li><a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="formatDisplayMeasure.html" class="code" title="function [displaynameformatted] = formatDisplayMeasure(displaymeasure)">formatDisplayMeasure</a>	formatDisplayMeasure - adds final formatting for displaying measure name</li><li><a href="getColourForMeasure.html" class="code" title="function [smcolour, rwcolour] = getColourForMeasure(displaymeasure)">getColourForMeasure</a>	getColorForMeasure - returns the RGB value of the colour for a given</li><li><a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>	getColumnForMeasure - returns the column name from physdata for the</li><li><a href="getGroupedIVTreatmentDates.html" class="code" title="function [groupedtreatmentdates] = getGroupedIVTreatmentDates(abset)">getGroupedIVTreatmentDates</a>	getGroupedIVTreatmentDates - gets the start and end dates for a batch of</li><li><a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>	gets the patient offset table</li><li><a href="getUnitsForMeasure.html" class="code" title="function [units] = getUnitsForMeasure(displaymeasure)">getUnitsForMeasure</a>	getUnitsForMeasure - returns the units for a given measure</li><li><a href="plotFillArea.html" class="code" title="function plotFillArea(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillArea</a>	plotFillArea - plots a shaded area on the graph (eg for confidence bounds</li><li><a href="plotFillAreaForPaper.html" class="code" title="function plotFillAreaForPaper(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillAreaForPaper</a>	plotFillAreaForPaper - plots a shaded area on the graph</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li><li><a href="setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>	setMinYDisplayRangeForMeasure - sets the minimum range for Y axis for</li><li><a href="setTicks.html" class="code" title="function [ticks] = setTicks(minval, maxval, nticks)">setTicks</a>	setTicks - create an array of ticks for a plot axis</li><li><a href="setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>	setYDisplayRange - function to scale y axis of plots appropriately</li><li><a href="xb25mean.html" class="code" title="function y = xb25mean(x)">xb25mean</a>	xb25mean - returns the mean of the data points excluding the bottom 25% in x (sorted by</li><li><a href="xb25std.html" class="code" title="function y = xb25std(x)">xb25std</a>	xb25std - returns the std of the data points excluding the bottom 25% in x (sorted by</li><li><a href="xu25mean.html" class="code" title="function y = xu25mean(x)">xu25mean</a>	xu25mean - returns the mean of the data points excluding the upper 25% in x (sorted by</li><li><a href="xu25std.html" class="code" title="function y = xu25std(x)">xu25std</a>	xu25std - returns the std of the data points excluding the upper 25% in x (sorted by</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function visualiseMeasuresForPaperFcn(physdata, offset, cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits, </a><span class="keyword">...</span>
+0002     cdCRP, cdPFT, cdNewMeds, measures, nmeasures, study)
+0003 
+0004 <span class="comment">% visualiseMeasuresForPaperFcn - plots clinical and home measures</span>
+0005 
+0006 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0007 subfolder = sprintf(<span class="string">'Plots/%s'</span>, study);
+0008 <span class="keyword">if</span> ~exist(strcat(basedir, subfolder), <span class="string">'dir'</span>)
+0009     mkdir(strcat(basedir, subfolder));
+0010 <span class="keyword">end</span>
+0011 
+0012 patientoffsets = <a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>(physdata);
+0013 patientlist = unique(physdata.SmartCareID);
+0014 
+0015 clinpghght = 3.5;
+0016 clinpgwdth = 6;
+0017 measpghght = 9;
+0018 measpgwdth = 6;
+0019 
+0020 <span class="keyword">for</span> pat = 1:size(patientlist,1)
+0021     scid       = patientlist(pat);
+0022     <span class="keyword">if</span> ismember(scid, [78, 133])
+0023         tic
+0024 
+0025         fprintf(<span class="string">'Visualising measures for patient %d\n'</span>, scid);
+0026         poffset    = patientoffsets.PatientOffset(patientoffsets.SmartCareID == scid);
+0027         hospital   = cdPatient.Hospital{cdPatient.ID == scid};
+0028         spstart    = cdPatient.StudyDate(cdPatient.ID == scid);
+0029         spstartdn  = datenum(spstart) - offset - poffset + 1;
+0030         <span class="comment">%spend      = cdPatient.StudyDate(cdPatient.ID == scid)+days(183);</span>
+0031         spenddn    = spstartdn + 183;
+0032         <span class="comment">%hmstart    = min(physdata.Date_TimeRecorded(physdata.SmartCareID == scid));</span>
+0033         hmstartdn  = min(physdata.ScaledDateNum(physdata.SmartCareID == scid));
+0034         <span class="comment">%hmend      = max(physdata.Date_TimeRecorded(physdata.SmartCareID == scid));</span>
+0035         hmenddn    = max(physdata.ScaledDateNum(physdata.SmartCareID == scid));
+0036         orkstart   = cdNewMeds.StartDate(cdNewMeds.ID == scid &amp; ismember(lower(cdNewMeds.Drugs), {<span class="string">'orkambi'</span>}));
+0037         orkstartdn = datenum(orkstart) - offset - poffset + 1;
+0038         ivastart   = cdNewMeds.StartDate(cdNewMeds.ID == scid &amp; ismember(lower(cdNewMeds.Drugs), {<span class="string">'ivacaftor'</span>}));
+0039         ivastartdn = datenum(ivastart) - offset - poffset + 1;
+0040 
+0041         imagefilename = sprintf(<span class="string">'%s - Participant Clinical Measures - ID %d Hosp %s'</span>, study, scid, hospital);
+0042         [f, p] = <a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(<span class="string">''</span>, clinpgwdth, clinpghght);
+0043 
+0044         plotsacross = 1;
+0045         plotsdown = 3;
+0046         fontsize = 10;
+0047         ylabelposmult = 1.3;
+0048 
+0049         <span class="comment">%daysfrom = min(spstartdn, hmstartdn);</span>
+0050         daysfrom = 0;
+0051         daysto   = max(spenddn, hmenddn);
+0052         xl = [daysfrom daysto];
+0053         yl = [0 4];
+0054 
+0055         <span class="comment">% plot events</span>
+0056         ax = subplot(plotsdown, plotsacross, 1,<span class="string">'Parent'</span>, p);
+0057         hold on;
+0058         ax.FontSize = fontsize;
+0059         <span class="comment">%ylabeltext = 'Clinic Visits ({\color{green}g}), Admissions ({\color{magenta}m}), IV Antibiotics ({\color{red}r}) and Oral Antibiotics ({\color{cyan}c})';</span>
+0060         ylabeltext = <span class="string">'Events'</span>;
+0061         ylabel(ylabeltext, <span class="string">'Position'</span>,[0 yl(2) * ylabelposmult], <span class="string">'VerticalAlignment'</span>, <span class="string">'top'</span>, <span class="string">'HorizontalAlignment'</span>, <span class="string">'left'</span>, <span class="string">'Rotation'</span>, 0);
+0062         ax.YTick = [0.5, 1.5, 2.5, 3.5];
+0063         ax.YTickLabel = {<span class="string">'IV antibiotics'</span>, <span class="string">'Oral antibiotics'</span>, <span class="string">'Admissions'</span>, <span class="string">'Clinic visits'</span>};
+0064         ax.XTickLabel = <span class="string">''</span>;
+0065         ax.XColor = <span class="string">'white'</span>;
+0066         ax.TickDir = <span class="string">'out'</span>;
+0067         xlim(xl);
+0068         ylim(yl);
+0069 
+0070         linewidth = 10;
+0071 
+0072         cvset     = cdClinicVisits(cdClinicVisits.ID == scid,:);
+0073         cvset.AttendanceDatedn = datenum(cvset.AttendanceDate) - offset - poffset + 1;
+0074         <span class="keyword">for</span> a = 1:size(cvset,1)
+0075             line(ax, [cvset.AttendanceDatedn(a) cvset.AttendanceDatedn(a) + 1], [3.5, 3.5], <span class="string">'Color'</span>, <span class="string">'green'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, linewidth);
+0076         <span class="keyword">end</span>
+0077         admset    = cdAdmissions(cdAdmissions.ID == scid,:);
+0078         admset.Admitteddn = datenum(admset.Admitted) - offset - poffset + 1;
+0079         admset.Dischargedn = datenum(admset.Discharge) - offset - poffset + 1;
+0080         <span class="comment">%admdates = unique([admset.Admitteddn ; admset.Dischargedn]);</span>
+0081         <span class="keyword">for</span> a = 1:size(admset,1)
+0082             line(ax, [admset.Admitteddn(a) admset.Dischargedn(a)], [2.5, 2.5], <span class="string">'Color'</span>, <span class="string">'magenta'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, linewidth);
+0083         <span class="keyword">end</span>
+0084         oralabset = cdAntibiotics(cdAntibiotics.ID == scid &amp; ismember(cdAntibiotics.Route, {<span class="string">'Oral'</span>}),:);
+0085         oralabset.Startdn = datenum(oralabset.StartDate) - offset - poffset + 1;
+0086         oralabset.Stopdn = datenum(oralabset.StopDate) - offset - poffset + 1;
+0087         <span class="keyword">for</span> a = 1:size(oralabset,1)
+0088             line(ax, [oralabset.Startdn(a) oralabset.Stopdn(a)], [1.5, 1.5], <span class="string">'Color'</span>, <span class="string">'cyan'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, linewidth);
+0089         <span class="keyword">end</span>
+0090         ivabset   = cdAntibiotics(cdAntibiotics.ID == scid &amp; ismember(cdAntibiotics.Route, {<span class="string">'IV'</span>}),:);
+0091         ivabset.Startdn = datenum(ivabset.StartDate) - offset - poffset + 1;
+0092         ivabset.Stopdn = datenum(ivabset.StopDate) - offset - poffset + 1;
+0093         ivabgroupeddates = <a href="getGroupedIVTreatmentDates.html" class="code" title="function [groupedtreatmentdates] = getGroupedIVTreatmentDates(abset)">getGroupedIVTreatmentDates</a>(ivabset);
+0094         ivabgroupeddates.Startdn = datenum(ivabgroupeddates.StartDate) - offset - poffset + 1;
+0095         ivabgroupeddates.Stopdn = datenum(ivabgroupeddates.StopDate) - offset - poffset + 1;
+0096         <span class="comment">%ivabdates = unique([ivabgroupeddates.Startdn ; ivabgroupeddates.Stopdn]);</span>
+0097         <span class="keyword">for</span> a = 1:size(ivabset,1)
+0098             line(ax, [ivabset.Startdn(a) ivabset.Stopdn(a)], [0.5, 0.5], <span class="string">'Color'</span>, <span class="string">'red'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, linewidth);
+0099         <span class="keyword">end</span>
+0100         
+0101         <span class="comment">%if size(orkstartdn, 1) ~= 0</span>
+0102         <span class="comment">%    plotFillAreaForPaper(ax, orkstartdn, orkstartdn + 1, yl(1), yl(2), [0.729, 0.333, 0.827], '0.2', 'none');</span>
+0103         <span class="comment">%end</span>
+0104         <span class="comment">%if size(ivastartdn, 1) ~= 0</span>
+0105         <span class="comment">%    plotFillAreaForPaper(ax, ivastartdn, ivastartdn + 1, yl(1), yl(2), [0.824, 0.412, 0.118], '0.2', 'none');</span>
+0106         <span class="comment">%end</span>
+0107         <span class="comment">%for a = 1:size(ivabgroupeddates, 1)</span>
+0108         <span class="comment">%    wdth = 30 / xl(2);</span>
+0109         <span class="comment">%    hght = 0.2;</span>
+0110         <span class="comment">%    midxratio = ((ivabgroupeddates.Stopdn(a) + ivabgroupeddates.Startdn(a)) / 2) / xl(2);</span>
+0111         <span class="comment">%    xstart = midxratio - (wdth / 2);</span>
+0112         <span class="comment">%</span>
+0113         <span class="comment">%    dim = [xstart, 1 - hght, wdth, hght];</span>
+0114         <span class="comment">%    annotation(f, 'textbox', 'String', 'iv Antibiotics', 'LineStyle', 'none', 'HorizontalAlignment', 'center', 'FontSize', 8, 'Color', [0, 0, 0]);</span>
+0115         <span class="comment">%    plotFillAreaForPaper(ax, ivabgroupeddates.Startdn(a), ivabgroupeddates.Stopdn(a), ...</span>
+0116         <span class="comment">%        yl(1), yl(2), 'red', '0.1', 'none');</span>
+0117         <span class="comment">%end</span>
+0118         hold off;
+0119 
+0120         <span class="comment">% plot CRP levels</span>
+0121         pcrp = cdCRP(cdCRP.ID == scid,:);
+0122         pcrp.ScaledDateNum = datenum(pcrp.CRPDate) - offset - poffset + 1;
+0123         rangelimit = <a href="setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>(<span class="string">'ClinicalCRP'</span>);
+0124         <span class="keyword">if</span> size(pcrp,1) &gt; 0
+0125             yl = <a href="setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>(0, max(pcrp.NumericLevel), rangelimit);
+0126         <span class="keyword">else</span>
+0127             yl = [0, rangelimit];
+0128         <span class="keyword">end</span>
+0129         ax = subplot(plotsdown, plotsacross, 2,<span class="string">'Parent'</span>, p);
+0130         displaymeasure = <span class="string">'Clinical CRP'</span>;
+0131         units = <a href="getUnitsForMeasure.html" class="code" title="function [units] = getUnitsForMeasure(displaymeasure)">getUnitsForMeasure</a>(displaymeasure);
+0132         ylabeltext = sprintf(<span class="string">'%s (%s)'</span>, <a href="formatDisplayMeasure.html" class="code" title="function [displaynameformatted] = formatDisplayMeasure(displaymeasure)">formatDisplayMeasure</a>(displaymeasure), units);
+0133         ylabel(ylabeltext, <span class="string">'Position'</span>,[0 yl(2) * ylabelposmult], <span class="string">'VerticalAlignment'</span>, <span class="string">'top'</span>, <span class="string">'HorizontalAlignment'</span>, <span class="string">'left'</span>, <span class="string">'Rotation'</span>, 0);
+0134         ax.FontSize = fontsize;
+0135         ax.XTickLabel = <span class="string">''</span>;
+0136         ax.XColor = <span class="string">'white'</span>;
+0137         ax.TickDir = <span class="string">'out'</span>;
+0138         xlim(xl);
+0139         ylim(yl);
+0140         hold on;
+0141         <span class="keyword">if</span> size(pcrp,1) &gt; 0
+0142             thiscolour = <a href="getColourForMeasure.html" class="code" title="function [smcolour, rwcolour] = getColourForMeasure(displaymeasure)">getColourForMeasure</a>(displaymeasure);
+0143             plot(ax, pcrp.ScaledDateNum,pcrp.NumericLevel, <span class="keyword">...</span>
+0144                 <span class="string">'Color'</span>, thiscolour, <span class="keyword">...</span>
+0145                 <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0146                 <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0147                 <span class="string">'LineWidth'</span>,1, <span class="keyword">...</span>
+0148                 <span class="string">'MarkerSize'</span>,2, <span class="keyword">...</span>
+0149                 <span class="string">'MarkerEdgeColor'</span>, thiscolour, <span class="keyword">...</span>
+0150                 <span class="string">'MarkerFaceColor'</span>, thiscolour);
+0151         <span class="keyword">end</span>
+0152         <span class="keyword">for</span> a = 1:size(ivabgroupeddates, 1)
+0153             <a href="plotFillAreaForPaper.html" class="code" title="function plotFillAreaForPaper(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillAreaForPaper</a>(ax, ivabgroupeddates.Startdn(a), ivabgroupeddates.Stopdn(a), <span class="keyword">...</span>
+0154                 yl(1), yl(2), <span class="string">'red'</span>, <span class="string">'0.1'</span>, <span class="string">'none'</span>);
+0155         <span class="keyword">end</span>
+0156         <span class="keyword">if</span> size(orkstartdn, 1) ~= 0
+0157             <a href="plotFillAreaForPaper.html" class="code" title="function plotFillAreaForPaper(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillAreaForPaper</a>(ax, orkstartdn, orkstartdn + 1, yl(1), yl(2), [0.729, 0.333, 0.827], <span class="string">'0.2'</span>, <span class="string">'none'</span>);
+0158         <span class="keyword">end</span>
+0159         <span class="keyword">if</span> size(ivastartdn, 1) ~= 0
+0160             <a href="plotFillAreaForPaper.html" class="code" title="function plotFillAreaForPaper(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillAreaForPaper</a>(ax, ivastartdn, ivastartdn + 1, yl(1), yl(2), [0.824, 0.412, 0.118], <span class="string">'0.2'</span>, <span class="string">'none'</span>);
+0161         <span class="keyword">end</span>
+0162         hold off;
+0163 
+0164         <span class="comment">% plot clinical lung function</span>
+0165         ppft = cdPFT(cdPFT.ID == scid,:);
+0166         ppft.ScaledDateNum = datenum(ppft.LungFunctionDate) - offset - poffset + 1;
+0167         rangelimit = <a href="setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>(<span class="string">'ClinicalFEV1'</span>);
+0168         <span class="keyword">if</span> size(ppft,1) &gt; 0
+0169             yl = <a href="setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>(0, max(ppft.CalcFEV1_), rangelimit);
+0170         <span class="keyword">else</span>
+0171             yl = [0, rangelimit];
+0172         <span class="keyword">end</span>
+0173         ax = subplot(plotsdown, plotsacross, 3,<span class="string">'Parent'</span>, p);
+0174         displaymeasure = <span class="string">'Clinical FEV1'</span>;
+0175         units = <a href="getUnitsForMeasure.html" class="code" title="function [units] = getUnitsForMeasure(displaymeasure)">getUnitsForMeasure</a>(displaymeasure);
+0176         ylabeltext = sprintf(<span class="string">'%s (%s)'</span>, <a href="formatDisplayMeasure.html" class="code" title="function [displaynameformatted] = formatDisplayMeasure(displaymeasure)">formatDisplayMeasure</a>(displaymeasure), units);
+0177         ylabel(ylabeltext, <span class="string">'Position'</span>,[0, yl(1) + ((yl(2) - yl(1)) * ylabelposmult)], <span class="string">'VerticalAlignment'</span>, <span class="string">'top'</span>, <span class="string">'HorizontalAlignment'</span>, <span class="string">'left'</span>, <span class="string">'Rotation'</span>, 0);
+0178         ax.FontSize = fontsize;
+0179         ax.TickDir = <span class="string">'out'</span>;
+0180         xlabel(ax, <span class="string">'Days since start of study'</span>);
+0181         xlim(xl);
+0182         ylim(yl);
+0183         hold on;
+0184         <span class="keyword">if</span> size(ppft,1) &gt; 0
+0185             thiscolour = <a href="getColourForMeasure.html" class="code" title="function [smcolour, rwcolour] = getColourForMeasure(displaymeasure)">getColourForMeasure</a>(displaymeasure);
+0186             plot(ax, ppft.ScaledDateNum, ppft.CalcFEV1_, <span class="keyword">...</span>
+0187                 <span class="string">'Color'</span>, thiscolour, <span class="keyword">...</span>
+0188                 <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0189                 <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0190                 <span class="string">'LineWidth'</span>,1,<span class="keyword">...</span>
+0191                 <span class="string">'MarkerSize'</span>,2,<span class="keyword">...</span>
+0192                 <span class="string">'MarkerEdgeColor'</span>, thiscolour,<span class="keyword">...</span>
+0193                 <span class="string">'MarkerFaceColor'</span>, thiscolour);
+0194 
+0195         <span class="keyword">end</span>
+0196         <span class="keyword">for</span> a = 1:size(ivabgroupeddates, 1)
+0197             <a href="plotFillAreaForPaper.html" class="code" title="function plotFillAreaForPaper(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillAreaForPaper</a>(ax, ivabgroupeddates.Startdn(a), ivabgroupeddates.Stopdn(a), <span class="keyword">...</span>
+0198                 yl(1), yl(2), <span class="string">'red'</span>, <span class="string">'0.1'</span>, <span class="string">'none'</span>);
+0199         <span class="keyword">end</span>
+0200         <span class="keyword">if</span> size(orkstartdn, 1) ~= 0
+0201             <a href="plotFillAreaForPaper.html" class="code" title="function plotFillAreaForPaper(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillAreaForPaper</a>(ax, orkstartdn, orkstartdn + 1, yl(1), yl(2), [0.729, 0.333, 0.827], <span class="string">'0.2'</span>, <span class="string">'none'</span>);
+0202         <span class="keyword">end</span>
+0203         <span class="keyword">if</span> size(ivastartdn, 1) ~= 0
+0204             <a href="plotFillAreaForPaper.html" class="code" title="function plotFillAreaForPaper(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillAreaForPaper</a>(ax, ivastartdn, ivastartdn + 1, yl(1), yl(2), [0.824, 0.412, 0.118], <span class="string">'0.2'</span>, <span class="string">'none'</span>);
+0205         <span class="keyword">end</span>
+0206         hold off;
+0207 
+0208         <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, imagefilename, subfolder);
+0209         <a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, imagefilename, subfolder);
+0210         close(f);
+0211         fprintf(<span class="string">'Next Page\n'</span>);
+0212 
+0213         plotsacross = 1;
+0214         plotsdown = 9;
+0215         plotsperpage = plotsacross * plotsdown;
+0216 
+0217         <span class="comment">% remove unwanted measures</span>
+0218         <span class="comment">%measures(ismember(measures.Name, {'ActivityRecording', 'TemperatureRecording', 'WeightRecording'}), :) = [];</span>
+0219         <span class="comment">%nmeasures = size(measures, 1);</span>
+0220 
+0221         page = 1;
+0222         npages = ceil(nmeasures / plotsperpage);
+0223 
+0224         filenameprefix = sprintf(<span class="string">'%s - Participant Home Measures - ID %d Hosp %s'</span>, study, scid, hospital);
+0225         imagefilename = sprintf(<span class="string">'%s - Page %d of %d'</span>, filenameprefix, page, npages);
+0226         [f, p] = <a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(<span class="string">''</span>, measpgwdth,  measpghght);
+0227         
+0228         <span class="keyword">for</span> m = 1:nmeasures
+0229             tablemeasure = measures.Name{m};
+0230             column = <a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>(tablemeasure);
+0231             scdata = physdata(physdata.SmartCareID == scid &amp; ismember(physdata.RecordingType, tablemeasure), :);
+0232             scdata = scdata(:, {<span class="string">'SmartCareID'</span>,<span class="string">'ScaledDateNum'</span> <span class="string">'Date_TimeRecorded'</span>, column});
+0233             scdata.Properties.VariableNames{column} = <span class="string">'Measurement'</span>;
+0234             
+0235             rangelimit = <a href="setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>(tablemeasure);
+0236             <span class="keyword">if</span> size(scdata,1) &gt; 0
+0237                 yl = <a href="setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>(min(scdata.Measurement), max(scdata.Measurement), rangelimit);
+0238             <span class="keyword">else</span>
+0239                 yl = [0, rangelimit];
+0240             <span class="keyword">end</span>
+0241 
+0242             ax = subplot(plotsdown, plotsacross, m - (page - 1) * plotsperpage,<span class="string">'Parent'</span>,p);
+0243             displaymeasure = measures.DisplayName{m};
+0244             units = <a href="getUnitsForMeasure.html" class="code" title="function [units] = getUnitsForMeasure(displaymeasure)">getUnitsForMeasure</a>(displaymeasure);
+0245             [smcolour, rwcolour] = <a href="getColourForMeasure.html" class="code" title="function [smcolour, rwcolour] = getColourForMeasure(displaymeasure)">getColourForMeasure</a>(displaymeasure);
+0246             ylabeltext = sprintf(<span class="string">'%s (%s)'</span>, <a href="formatDisplayMeasure.html" class="code" title="function [displaynameformatted] = formatDisplayMeasure(displaymeasure)">formatDisplayMeasure</a>(displaymeasure), units);
+0247             ylabel(ylabeltext, <span class="string">'Position'</span>,[0 yl(1) + ((yl(2) - yl(1)) * ylabelposmult)], <span class="string">'VerticalAlignment'</span>, <span class="string">'top'</span>, <span class="string">'HorizontalAlignment'</span>, <span class="string">'left'</span>, <span class="string">'Rotation'</span>, 0);
+0248             ax.FontSize = fontsize;
+0249             yticks = <a href="setTicks.html" class="code" title="function [ticks] = setTicks(minval, maxval, nticks)">setTicks</a>(yl(1), yl(2), 3);
+0250             ax.YTick = yticks;
+0251             ax.YTickLabel = <a href="addCommaFormat.html" class="code" title="function [str] = addCommaFormat(num)">addCommaFormat</a>(yticks);
+0252             ax.TickDir = <span class="string">'out'</span>;
+0253             <span class="keyword">if</span> m == nmeasures
+0254                 xlabel(ax, <span class="string">'Days since start of study'</span>);
+0255             <span class="keyword">else</span>
+0256                 ax.XTickLabel = <span class="string">''</span>;
+0257                 ax.XColor = <span class="string">'white'</span>;
+0258             <span class="keyword">end</span>
+0259             xlim(xl);
+0260             ylim(yl);
+0261                 
+0262             <span class="keyword">if</span> size(scdata,1) &gt; 0
+0263                 hold on;
+0264             
+0265                 actx = find(~isnan(scdata.Measurement));
+0266                 acty = scdata.Measurement(~isnan(scdata.Measurement));
+0267                 fullx = (1:size(scdata.Measurement));
+0268                 fully = interp1(actx, acty, fullx, <span class="string">'linear'</span>);
+0269             
+0270                 plot(ax, scdata.ScaledDateNum, fully, <span class="keyword">...</span>
+0271                     <span class="string">'Color'</span>, rwcolour, <span class="keyword">...</span>
+0272                     <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0273                     <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0274                     <span class="string">'LineWidth'</span>,1, <span class="keyword">...</span>
+0275                     <span class="string">'MarkerSize'</span>,2, <span class="keyword">...</span>
+0276                     <span class="string">'MarkerEdgeColor'</span>, rwcolour, <span class="keyword">...</span>
+0277                     <span class="string">'MarkerFaceColor'</span>, rwcolour);
+0278 
+0279                 plot(ax, scdata.ScaledDateNum, movmean(fully, 4, <span class="string">'omitnan'</span>), <span class="keyword">...</span>
+0280                     <span class="string">'Color'</span>, smcolour, <span class="keyword">...</span>
+0281                     <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0282                     <span class="string">'Marker'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0283                     <span class="string">'LineWidth'</span>, 1.5);
+0284 
+0285                 <span class="keyword">for</span> a = 1:size(ivabgroupeddates, 1)
+0286                     <a href="plotFillAreaForPaper.html" class="code" title="function plotFillAreaForPaper(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillAreaForPaper</a>(ax, ivabgroupeddates.Startdn(a), ivabgroupeddates.Stopdn(a), <span class="keyword">...</span>
+0287                         yl(1), yl(2), <span class="string">'red'</span>, <span class="string">'0.1'</span>, <span class="string">'none'</span>);
+0288                 <span class="keyword">end</span>
+0289                 <span class="keyword">if</span> size(orkstartdn, 1) ~= 0
+0290                     <a href="plotFillAreaForPaper.html" class="code" title="function plotFillAreaForPaper(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillAreaForPaper</a>(ax, orkstartdn, orkstartdn + 1, yl(1), yl(2), [0.729, 0.333, 0.827], <span class="string">'0.2'</span>, <span class="string">'none'</span>);
+0291                 <span class="keyword">end</span>
+0292                 <span class="keyword">if</span> size(ivastartdn, 1) ~= 0
+0293                     <a href="plotFillAreaForPaper.html" class="code" title="function plotFillAreaForPaper(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillAreaForPaper</a>(ax, ivastartdn, ivastartdn + 1, yl(1), yl(2), [0.824, 0.412, 0.118], <span class="string">'0.2'</span>, <span class="string">'none'</span>);
+0294                 <span class="keyword">end</span>
+0295 
+0296                 <span class="comment">% use exclude upper quartile mean/std for pulse rate,</span>
+0297                 <span class="comment">% otherwise use exclude bottom quartile mean/std</span>
+0298                 <span class="keyword">if</span> ismember(displaymeasure, {<span class="string">'PulseRate'</span>})
+0299                     mmean = <a href="xu25mean.html" class="code" title="function y = xu25mean(x)">xu25mean</a>(scdata.Measurement(~isnan(scdata.Measurement)));
+0300                     mstd  = <a href="xu25std.html" class="code" title="function y = xu25std(x)">xu25std</a>(scdata.Measurement(~isnan(scdata.Measurement)));
+0301                 <span class="keyword">else</span>
+0302                     mmean = <a href="xb25mean.html" class="code" title="function y = xb25mean(x)">xb25mean</a>(scdata.Measurement(~isnan(scdata.Measurement)));
+0303                     mstd  = <a href="xb25std.html" class="code" title="function y = xb25std(x)">xb25std</a>(scdata.Measurement(~isnan(scdata.Measurement)));
+0304                 <span class="keyword">end</span>
+0305                 <a href="plotFillArea.html" class="code" title="function plotFillArea(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillArea</a>(ax, xl(1), xl(2), <span class="keyword">...</span>
+0306                     mmean - (0.5 * mstd), mmean + (0.5 * mstd), [0.4, 0.4, 0.4], <span class="string">'0.2'</span>, <span class="string">'none'</span>);
+0307                 line(xl, [mmean mmean] , <span class="string">'Color'</span>, [0.4, 0.4, 0.4], <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, .5)
+0308                 hold off;
+0309                 
+0310             <span class="keyword">else</span>
+0311                 ax.YTickLabel = <span class="string">''</span>;
+0312                 <span class="comment">%ax.YColor = 'white';</span>
+0313             <span class="keyword">end</span>
+0314 
+0315             <span class="keyword">if</span> round(a/plotsperpage) == a/plotsperpage
+0316                 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, imagefilename, subfolder);
+0317                 <a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, imagefilename, subfolder);
+0318                 close(f);
+0319                 clear(<span class="string">'f'</span>);
+0320                 page = page + 1;
+0321                 <span class="keyword">if</span> page &lt;= npages
+0322                     fprintf(<span class="string">'Next Page\n'</span>);
+0323                     imagefilename = sprintf(<span class="string">'%s - Page %d of %d'</span>, filenameprefix, page, npages);
+0324                     [f, p] = <a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(<span class="string">''</span>, measpgwdth,  measpghght);
+0325                 <span class="keyword">end</span>
+0326             <span class="keyword">end</span>
+0327         <span class="keyword">end</span>
+0328 
+0329         <span class="keyword">if</span> exist(<span class="string">'f'</span>, <span class="string">'var'</span>)
+0330             <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, imagefilename, subfolder);
+0331             <a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, imagefilename, subfolder);
+0332             close(f);
+0333         <span class="keyword">end</span>
+0334 
+0335         toc
+0336     <span class="keyword">end</span>
+0337 <span class="keyword">end</span>
+0338 
+0339     
+0340</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

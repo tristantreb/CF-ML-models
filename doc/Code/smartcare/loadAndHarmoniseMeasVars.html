@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadAndHarmoniseMeasVars</title>
+  <meta name="keywords" content="loadAndHarmoniseMeasVars">
+  <meta name="description" content="loadAndHarmoniseMeasVars - loads raw measurement variables and standardises">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadAndHarmoniseMeasVars.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadAndHarmoniseMeasVars
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> loadAndHarmoniseMeasVars - loads raw measurement variables and standardises
+ their naming</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/FEV1variability/analyseFEV1Variability.html" class="code" title="">analyseFEV1Variability</a>	analysis of FEV1 variability with moving average manually implemented</li><li><a href="../../Code/pdm/FEV1variability/analyseFEV1Variability_old.html" class="code" title="">analyseFEV1Variability_old</a>	analysis of FEV1 variability with smoothing spline and movmean</li><li><a href="../../Code/pdm/FEV1variability/plotFEV1profiles.html" class="code" title="">plotFEV1profiles</a>	plot FEV1 profiles with modulators and treatments</li><li><a href="../../Code/pdm/FEV1variability/plotMonthlyBehaviour.html" class="code" title="">plotMonthlyBehaviour</a>	plots monthly evolution of biomarkers</li><li><a href="../../Code/pdm/exploration/createHeatMapInterventions.html" class="code" title="">createHeatMapInterventions</a>	plot heatmap with  #measurements per day for all interventions</li><li><a href="../../Code/pdm/exploration/exploreInterventions.html" class="code" title="">exploreInterventions</a>	explores the list of interventions</li><li><a href="../../Code/pdm/exploration/patientCommitment.html" class="code" title="">patientCommitment</a>	Insights about the amount of FEV1 recordings per patient across the study</li><li><a href="../../Code/pdm/exploration/patientDemographics.html" class="code" title="">patientDemographics</a>	create an excel with current BR patient demographics</li><li><a href="../../Code/pdm/exploration/plotPatientProfiles.html" class="code" title="">plotPatientProfiles</a>	plot a profile of each measures for each patient over the whole enrolment period</li><li><a href="../../Code/pdm/recovery/checkBreatheTreatmentsVsSelectMeasuresPost.html" class="code" title="">checkBreatheTreatmentsVsSelectMeasuresPost</a>	creates list of oral & IV treatments for recovery study</li><li><a href="../../Code/pdm/recovery/createAlignmentModelInputsRecovery.html" class="code" title="">createAlignmentModelInputsRecovery</a>	creates the inputs for the model</li><li><a href="../../Code/pdm/recovery/runSpecificInterventions.html" class="code" title="">runSpecificInterventions</a>	run a model with a manually selected subset of interventions</li><li><a href="EmemLungFunctionComparison.html" class="code" title="">EmemLungFunctionComparison</a>	</li><li><a href="JosieQuery.html" class="code" title="">JosieQuery</a>	</li><li><a href="PrePostAnalysisPatientEligibilityScript.html" class="code" title="">PrePostAnalysisPatientEligibilityScript</a>	</li><li><a href="calcClinicalInfoForPaper.html" class="code" title="">calcClinicalInfoForPaper</a>	</li><li><a href="checkBreatheClinicalVsHomeFEV1Measures.html" class="code" title="">checkBreatheClinicalVsHomeFEV1Measures</a>	</li><li><a href="checkBreatheClinicalVsHomeWeightMeasures.html" class="code" title="">checkBreatheClinicalVsHomeWeightMeasures</a>	</li><li><a href="checkBreatheTreatmentsVsSelectMeasuresPrior.html" class="code" title="">checkBreatheTreatmentsVsSelectMeasuresPrior</a>	creates list of oral & IV treatments</li><li><a href="checkClimbCalculatedClinicalVsHomeFEV1Measures.html" class="code" title="">checkClimbCalculatedClinicalVsHomeFEV1Measures</a>	</li><li><a href="checkClinicalVsHomeWeightMeasures.html" class="code" title="">checkClinicalVsHomeWeightMeasures</a>	</li><li><a href="checkDatesAdmissionsVsAntibiotics.html" class="code" title="">checkDatesAdmissionsVsAntibiotics</a>	</li><li><a href="checkDatesClinicVisitsVsCRPNew.html" class="code" title="">checkDatesClinicVisitsVsCRPNew</a>	</li><li><a href="checkDatesClinicVisitsVsPFTNew.html" class="code" title="">checkDatesClinicVisitsVsPFTNew</a>	</li><li><a href="checkDatesIVTreatmentsVsMeasurementDate.html" class="code" title="">checkDatesIVTreatmentsVsMeasurementDate</a>	</li><li><a href="checkDatesIVTreatmentsVsPatientStudyDate.html" class="code" title="">checkDatesIVTreatmentsVsPatientStudyDate</a>	</li><li><a href="checkIVTreatmentsVsMeasuresPriorNew.html" class="code" title="">checkIVTreatmentsVsMeasuresPriorNew</a>	creates list of oral & IV treatments</li><li><a href="checkStudyDateVsFirstMeasurementDate.html" class="code" title="">checkStudyDateVsFirstMeasurementDate</a>	</li><li><a href="createAlignmentModelInputs.html" class="code" title="">createAlignmentModelInputs</a>	creates the inputs for the model</li><li><a href="createBreatheInterimCheckpointStats.html" class="code" title="">createBreatheInterimCheckpointStats</a>	</li><li><a href="createBreathePrePostStats.html" class="code" title="">createBreathePrePostStats</a>	</li><li><a href="createClinMeasPredExcelDataByPatient.html" class="code" title="">createClinMeasPredExcelDataByPatient</a>	</li><li><a href="extractClinicalAndHomeFEV1Measures.html" class="code" title="">extractClinicalAndHomeFEV1Measures</a>	</li><li><a href="runPlotsForPaperEMMC.html" class="code" title="">runPlotsForPaperEMMC</a>	</li><li><a href="visualiseExacerbationTimeline.html" class="code" title="">visualiseExacerbationTimeline</a>	</li><li><a href="visualiseMeasures.html" class="code" title="">visualiseMeasures</a>	</li><li><a href="visualisePatientSummary.html" class="code" title="">visualisePatientSummary</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)</a>
+0002 
+0003 <span class="comment">% loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</span>
+0004 <span class="comment">% their naming</span>
+0005 
+0006 tic
+0007 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0008 fprintf(<span class="string">'Loading %s Study Measurement data\n'</span>, study);
+0009 <span class="comment">%physdata_original = [];</span>
+0010 
+0011 <span class="keyword">if</span> ismember(study, <span class="string">'SC'</span>)
+0012     load(fullfile(basedir, subfolder, datamatfile), <span class="string">'physdata'</span>, <span class="string">'physdata_predateoutlierhandling'</span>, <span class="string">'offset'</span>);
+0013 <span class="keyword">elseif</span> ismember(study, <span class="string">'TM'</span>)
+0014     load(fullfile(basedir, subfolder, datamatfile), <span class="string">'tmphysdata'</span>, <span class="string">'tmoffset'</span>, <span class="string">'tmphysdata_predateoutlierhandling'</span>);
+0015     physdata       = tmphysdata;
+0016     offset         = tmoffset;
+0017     physdata_predateoutlierhandling = tmphysdata_predateoutlierhandling;
+0018 <span class="keyword">elseif</span> ismember(study, <span class="string">'CL'</span>)
+0019     load(fullfile(basedir, subfolder, datamatfile), <span class="string">'clphysdata'</span>, <span class="string">'cloffset'</span>, <span class="string">'clphysdata_predateoutlierhandling'</span>);
+0020     physdata       = clphysdata;
+0021     offset         = cloffset;
+0022     physdata_predateoutlierhandling = clphysdata_predateoutlierhandling;
+0023 <span class="keyword">elseif</span> ismember(study, <span class="string">'BR'</span>)
+0024     load(fullfile(basedir, subfolder, datamatfile), <span class="string">'brphysdata'</span>, <span class="string">'broffset'</span>, <span class="string">'brphysdata_predateoutlierhandling'</span>);
+0025     physdata       = brphysdata;
+0026     offset         = broffset;
+0027     physdata_predateoutlierhandling = brphysdata_predateoutlierhandling;
+0028 <span class="keyword">end</span>
+0029 toc
+0030 
+0031 <span class="keyword">end</span>
+0032</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

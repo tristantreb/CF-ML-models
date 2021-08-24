@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getColumnForRawClimbMeasure</title>
+  <meta name="keywords" content="getColumnForRawClimbMeasure">
+  <meta name="description" content="getColumnForRawClimbMeasure - returns the column name from the input">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; getColumnForRawClimbMeasure.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>getColumnForRawClimbMeasure
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>getColumnForRawClimbMeasure - returns the column name from the input</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [column] = getColumnForRawClimbMeasure(measure) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> getColumnForRawClimbMeasure - returns the column name from the input
+ files for project climbe measurement data</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadclimbdata.html" class="code" title="">loadclimbdata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [column] = getColumnForRawClimbMeasure(measure)</a>
+0002 
+0003 <span class="comment">% getColumnForRawClimbMeasure - returns the column name from the input</span>
+0004 <span class="comment">% files for project climbe measurement data</span>
+0005 
+0006 <span class="keyword">switch</span> measure
+0007     <span class="keyword">case</span> <span class="string">'ActivityRecording'</span>
+0008         column = <span class="string">'Steps'</span>;
+0009     <span class="keyword">case</span> {<span class="string">'AppetiteRecording'</span>, <span class="string">'BreathlessnessRecording'</span>, <span class="string">'CoughRecording'</span>,<span class="string">'SleepActivityRecording'</span>, <span class="string">'SputumVolumeRecording'</span>, <span class="string">'TirednessRecording'</span>, <span class="string">'WellnessRecording'</span>}
+0010         column = <span class="string">'Rating'</span>;
+0011     <span class="keyword">case</span> {<span class="string">'FEV1Recording'</span>, <span class="string">'LungFunctionRecording'</span>}
+0012         column = <span class="string">'FEV1'</span>;
+0013     <span class="keyword">case</span> <span class="string">'O2SaturationRecording'</span>
+0014         column = <span class="string">'O2Saturation'</span>;
+0015     <span class="keyword">case</span> <span class="string">'PulseRateRecording'</span>
+0016         column = <span class="string">'Pulse_BPM_'</span>;
+0017     <span class="keyword">case</span> <span class="string">'RespiratoryRateRecording'</span>
+0018         column = <span class="string">'BreathsPerMinute'</span>;
+0019     <span class="keyword">case</span> <span class="string">'SleepDisturbanceRecording'</span>
+0020         column = <span class="string">'NumberOfDisturbances'</span>;
+0021     <span class="keyword">case</span> <span class="string">'SputumColorRecording'</span>
+0022         column = <span class="string">'Colour'</span>;
+0023     <span class="keyword">case</span> <span class="string">'TemperatureRecording'</span>
+0024         column = <span class="string">'Temp_degC_'</span>;
+0025     <span class="keyword">case</span> <span class="string">'WeightRecording'</span>
+0026         column = <span class="string">'WeightInKg'</span>;
+0027     <span class="keyword">otherwise</span>
+0028         column = <span class="string">''</span>;
+0029 <span class="keyword">end</span>
+0030 
+0031 <span class="keyword">end</span>
+0032</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

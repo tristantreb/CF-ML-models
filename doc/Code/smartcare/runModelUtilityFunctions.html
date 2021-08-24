@@ -1,0 +1,268 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of runModelUtilityFunctions</title>
+  <meta name="keywords" content="runModelUtilityFunctions">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; runModelUtilityFunctions.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>runModelUtilityFunctions
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMPlotAndSaveAlignedCurvesBasic.html" class="code" title="function amEMPlotAndSaveAlignedCurvesBasic(profile_pre, meancurvemean, offsets,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder)">amEMPlotAndSaveAlignedCurvesBasic</a>	amEMPlotAndSaveAlignedCurvesBasic - plots the curves pre and post alignment for</li><li><a href="amEMPlotsAndSavePredictions.html" class="code" title="function amEMPlotsAndSavePredictions(amInterventions, amIntrDatacube, measures, pdoffset,overall_pdoffset, hstg, overall_hist, meancurvemean, normmean, normstd, isOutlier,ex_start, thisinter, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder)">amEMPlotsAndSavePredictions</a>	amEMPlotsAndSavePredictions - plots measures prior to</li><li><a href="animatedAlignmentConcurrent.html" class="code" title="function [f, p, niterations] = animatedAlignmentConcurrent(animatedmeancurvemean, animatedoffsets, animated_overall_pdoffset,profile_pre, measures, max_offset, align_wind, nmeasures, ninterventions, runmode, moviefilename)">animatedAlignmentConcurrent</a>	animatedALingmentConcurrent - function to display animated curve</li><li><a href="animatedAlignmentSequential.html" class="code" title="function [f, p, niterations] = animatedAlignmentSequential(animatedmeancurvemean, profile_pre, measures, max_offset, align_wind, nmeasures, moviefilename)">animatedAlignmentSequential</a>	</li><li><a href="animatedProbDistConcurrent.html" class="code" title="function [f, p, niterations] = animatedProbDistConcurrent(animated_overall_pdoffset, max_offset, ninterventions, moviefilename)">animatedProbDistConcurrent</a>	animatedALingmentConcurrent - function to display animated curve</li><li><a href="calcExStartFromTestLabels.html" class="code" title="function ex_start = calcExStartFromTestLabels(amLabelledInterventions, amInterventions,overall_pdoffset, max_offset, plotsubfolder, modelrun, countthresh)">calcExStartFromTestLabels</a>	calcExStartFromTestLabels - derives the ex_start date for a given</li><li><a href="compareModelRunToTestData.html" class="code" title="function compareModelRunToTestData(amLabelledInterventions, amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset,hstg, overall_hist, meancurvemean, normmean, normstd, ex_start, nmeasures, ninterventions, min_offset, max_offset,align_wind, study, mversion, modelrun, modelidx)">compareModelRunToTestData</a>	compareModelRunToTestData - compares the output of a chosen model run to</li><li><a href="compareModelRuns.html" class="code" title="function compareModelRuns(modelrun1, modelidx1, modelrun2, modelidx2)">compareModelRuns</a>	</li><li><a href="compareMultipleModelRunResults.html" class="code" title="function [modeliterations, modeloffsets] = compareMultipleModelRunResults(modelrun, modelidx, models, basedir, subfolder)">compareMultipleModelRunResults</a>	compareMultipleModelRunResults - compares the results of multiple model</li><li><a href="compareMultipleModelRunToTestData.html" class="code" title="function compareMultipleModelRunToTestData(amLabelledInterventions, modelrun, modelidx, models)">compareMultipleModelRunToTestData</a>	compareMultipleModelRunToTestData - compares the output of multiple model runs to</li><li><a href="createLabelledInterventions.html" class="code" title="function [amLabelledInterventions] = createLabelledInterventions(amIntrDatacube, amLabelledInterventions,pdoffset, overall_pdoffset, interfrom, interto, measures, normmean, max_offset, align_wind, ex_start,study, nmeasures)">createLabelledInterventions</a>	createLabelledInterventions - plots measurement data and asks for lower</li><li><a href="plotLabelledInterventions.html" class="code" title="function plotLabelledInterventions(amIntrDatacube, amInterventions, amLabelledInterventions,pdoffset, overall_pdoffset, measures, normmean, max_offset, align_wind, ex_start,study, nmeasures)">plotLabelledInterventions</a>	plotLabelledInterventions - plots all the labelled test data</li><li><a href="selectModelRunFromList.html" class="code" title="function [modelrun, modelidx, models] = selectModelRunFromList(loadtype)">selectModelRunFromList</a>	selectModelRunFromList - allows you to load the saved variables from a</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; close all; clc;
+0002 
+0003 <span class="comment">% other models to potentially add</span>
+0004 <span class="comment">% sig4 version (although zero offset start is infinity</span>
+0005 <span class="comment">% vEM with bet random start from 3 or 4</span>
+0006 
+0007 fprintf(<span class="string">'Choose function to run\n'</span>);
+0008 fprintf(<span class="string">'----------------------\n'</span>);
+0009 fprintf(<span class="string">' 1: Run prediction plots\n'</span>);
+0010 fprintf(<span class="string">' 2: Run alignment animation (concurrent)\n'</span>);
+0011 fprintf(<span class="string">' 3: Run alignment animation (sequential)\n'</span>);
+0012 fprintf(<span class="string">' 4: Run prod dist animation (concurrent)\n'</span>);
+0013 fprintf(<span class="string">' 5: Extract and save prob distributions\n'</span>);
+0014 fprintf(<span class="string">' 6: Label exacerbation plots for test data\n'</span>);
+0015 fprintf(<span class="string">' 7: Compare results to another model run\n'</span>);
+0016 fprintf(<span class="string">' 8: Compare results to labelled test data and plot results\n'</span>);
+0017 fprintf(<span class="string">' 9: &lt;placeholder for Dragos new option\n'</span>);
+0018 fprintf(<span class="string">'10: Compare results for multiple model runs to labelled test data\n'</span>);
+0019 fprintf(<span class="string">'11: Compare results for multiple model runs\n'</span>);
+0020 fprintf(<span class="string">'12: Plot simplified aligned curves\n'</span>);
+0021 fprintf(<span class="string">'13: Plot Test Labels\n'</span>);
+0022 fprintf(<span class="string">'14: Calc Ex Start from Test Labels\n'</span>);
+0023 fprintf(<span class="string">'\n'</span>);
+0024 runfunction = input(<span class="string">'Choose function (1-14) '</span>);
+0025 
+0026 fprintf(<span class="string">'\n'</span>);
+0027 
+0028 <span class="keyword">if</span> runfunction &gt; 14
+0029     fprintf(<span class="string">'Invalid choice\n'</span>);
+0030     <span class="keyword">return</span>;
+0031 <span class="keyword">end</span>
+0032 <span class="keyword">if</span> isequal(runfunction,<span class="string">''</span>)
+0033     fprintf(<span class="string">'Invalid choice\n'</span>);
+0034     <span class="keyword">return</span>;
+0035 <span class="keyword">end</span>
+0036 
+0037 [modelrun, modelidx, models] = <a href="selectModelRunFromList.html" class="code" title="function [modelrun, modelidx, models] = selectModelRunFromList(loadtype)">selectModelRunFromList</a>(<span class="string">''</span>);
+0038 
+0039 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0040 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0041 fprintf(<span class="string">'Loading output from model run\n'</span>);
+0042 load(fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>, modelrun)));
+0043 
+0044 <span class="comment">% default some variables for backward compatibility with prior versions</span>
+0045 <span class="keyword">if</span> exist(<span class="string">'animated_overall_pdoffset'</span>, <span class="string">'var'</span>) == 0
+0046     animated_overall_pdoffset = 0;
+0047 <span class="keyword">end</span>
+0048 <span class="keyword">if</span> exist(<span class="string">'isOutlier'</span>, <span class="string">'var'</span>) == 0
+0049     isOutlier = zeros(ninterventions, align_wind, nmeasures, max_offset);
+0050 <span class="keyword">end</span>
+0051     
+0052 <span class="keyword">if</span> runfunction == 1
+0053     tic
+0054     subfolder = <span class="string">'Plots'</span>;
+0055     fprintf(<span class="string">'Plotting prediction results\n'</span>);
+0056     <span class="keyword">for</span> i=1:ninterventions
+0057         <a href="amEMPlotsAndSavePredictions.html" class="code" title="function amEMPlotsAndSavePredictions(amInterventions, amIntrDatacube, measures, pdoffset,overall_pdoffset, hstg, overall_hist, meancurvemean, normmean, normstd, isOutlier,ex_start, thisinter, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder)">amEMPlotsAndSavePredictions</a>(amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset, <span class="keyword">...</span>
+0058             hstg, overall_hist, meancurvemean, normmean, normstd, isOutlier, ex_start, i, nmeasures, <span class="keyword">...</span>
+0059             max_offset, align_wind, plotname, sigmamethod);
+0060     <span class="keyword">end</span>
+0061     toc
+0062     fprintf(<span class="string">'\n'</span>);
+0063 <span class="keyword">elseif</span> runfunction == 2
+0064     tic
+0065     subfolder = <span class="string">'AnimatedPlots'</span>;
+0066     fprintf(<span class="string">'Running concurrent alignment animation\n'</span>);
+0067     moviefilename = sprintf(<span class="string">'%s-ConcurrentAlignment'</span>, modelrun);
+0068     [f, p, niterations] = <a href="animatedAlignmentConcurrent.html" class="code" title="function [f, p, niterations] = animatedAlignmentConcurrent(animatedmeancurvemean, animatedoffsets, animated_overall_pdoffset,profile_pre, measures, max_offset, align_wind, nmeasures, ninterventions, runmode, moviefilename)">animatedAlignmentConcurrent</a>(animatedmeancurvemean, animatedoffsets, animated_overall_pdoffset, <span class="keyword">...</span>
+0069         unaligned_profile, measures, max_offset, align_wind, nmeasures, ninterventions, runmode, fullfile(basedir, subfolder, moviefilename));
+0070     toc
+0071     fprintf(<span class="string">'\n'</span>);
+0072 <span class="keyword">elseif</span> runfunction == 3
+0073     tic
+0074     subfolder = <span class="string">'AnimatedPlots'</span>;
+0075     fprintf(<span class="string">'Running sequential alignment animation\n'</span>);
+0076     moviefilename = sprintf(<span class="string">'%s-SequentialAlignment'</span>, modelrun);
+0077     [f, p, niterations] = <a href="animatedAlignmentSequential.html" class="code" title="function [f, p, niterations] = animatedAlignmentSequential(animatedmeancurvemean, profile_pre, measures, max_offset, align_wind, nmeasures, moviefilename)">animatedAlignmentSequential</a>(animatedmeancurvemean, unaligned_profile, measures, max_offset, <span class="keyword">...</span>
+0078         align_wind, nmeasures, fullfile(basedir, subfolder, moviefilename));
+0079     toc
+0080     fprintf(<span class="string">'\n'</span>);
+0081 <span class="keyword">elseif</span> runfunction == 4
+0082     tic
+0083     fprintf(<span class="string">'Running concurrent prod distribution animation\n'</span>);
+0084     subfolder = <span class="string">'AnimatedPlots'</span>;
+0085     moviefilename = sprintf(<span class="string">'%s-ProbDistribution'</span>, modelrun);
+0086     [f, p, niterations] = <a href="animatedProbDistConcurrent.html" class="code" title="function [f, p, niterations] = animatedProbDistConcurrent(animated_overall_pdoffset, max_offset, ninterventions, moviefilename)">animatedProbDistConcurrent</a>(animated_overall_pdoffset, max_offset, ninterventions, <span class="keyword">...</span>
+0087         fullfile(basedir, subfolder, moviefilename));
+0088     toc
+0089     fprintf(<span class="string">'\n'</span>);
+0090 <span class="keyword">elseif</span> runfunction == 5
+0091     tic
+0092     fprintf(<span class="string">'Saving prob distributions to a separate matlab file\n'</span>);
+0093     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0094     outputfilename = sprintf(<span class="string">'%s-PDs.mat'</span>, modelrun);
+0095     save(fullfile(basedir, subfolder, outputfilename), <span class="string">'initial_offsets'</span>, <span class="string">'offsets'</span>, <span class="string">'hstg'</span>, <span class="keyword">...</span>
+0096         <span class="string">'pdoffset'</span>, <span class="string">'overall_hist'</span>, <span class="string">'overall_pdoffset'</span>);
+0097 <span class="keyword">elseif</span> runfunction == 6
+0098     fprintf(<span class="string">'Labelling exacerbation start on measurement plots to create test data set\n'</span>);
+0099     fprintf(<span class="string">'1: Run from scratch\n'</span>);
+0100     fprintf(<span class="string">'2: Continue from partway through\n'</span>);
+0101     fprintf(<span class="string">'3: Update a single intervention\n'</span>);
+0102     
+0103     labelmode = input(<span class="string">'Select mode to run (1-3) ? '</span>);
+0104     
+0105     <span class="keyword">if</span> labelmode &gt; 3
+0106         fprintf(<span class="string">'Invalid choice\n'</span>);
+0107         <span class="keyword">return</span>;
+0108     <span class="keyword">end</span>
+0109     <span class="keyword">if</span> isequal(labelmode,<span class="string">''</span>)
+0110         fprintf(<span class="string">'Invalid choice\n'</span>);
+0111         <span class="keyword">return</span>;
+0112     <span class="keyword">end</span>
+0113     
+0114     <span class="keyword">if</span> labelmode == 1
+0115         fprintf(<span class="string">'Creating new labelled test data file\n'</span>);
+0116         amLabelledInterventions = amInterventions;
+0117         amLabelledInterventions.Offset(:)            = 0;
+0118         amLabelledInterventions.IncludeInTestSet(:)  = <span class="string">'N'</span>;
+0119         amLabelledInterventions.ExStart(:)           = ex_start;
+0120         amLabelledInterventions.LowerBound1(:)       = 0;
+0121         amLabelledInterventions.UpperBound1(:)       = 0;
+0122         amLabelledInterventions.LowerBound2(:)       = 0;
+0123         amLabelledInterventions.UpperBound2(:)       = 0;
+0124         interfrom = 1;
+0125         interto = ninterventions;
+0126     <span class="keyword">elseif</span> labelmode == 2
+0127         fprintf(<span class="string">'Loading latest labelled test data file\n'</span>);
+0128         inputfilename = sprintf(<span class="string">'%s_LabelledInterventions.mat'</span>, study);
+0129         load(fullfile(basedir, subfolder, inputfilename));
+0130         interfrom = input(<span class="string">'Enter intervention to restart from ? '</span>);
+0131         <span class="keyword">if</span> interfrom &lt; 2 || interfrom &gt; ninterventions 
+0132             fprintf(<span class="string">'Invalid choice\n'</span>);
+0133             <span class="keyword">return</span>;
+0134         <span class="keyword">end</span>
+0135         <span class="keyword">if</span> isequal(interfrom,<span class="string">''</span>)
+0136             fprintf(<span class="string">'Invalid choice\n'</span>);
+0137             <span class="keyword">return</span>;
+0138         <span class="keyword">end</span>
+0139         interto = ninterventions;
+0140     <span class="keyword">else</span>
+0141         fprintf(<span class="string">'Loading latest labelled test data file\n'</span>);
+0142         inputfilename = sprintf(<span class="string">'%s_LabelledInterventions.mat'</span>, study);
+0143         load(fullfile(basedir, subfolder, inputfilename));
+0144         interfrom = input(<span class="string">'Enter intervention to update ? '</span>);
+0145         <span class="keyword">if</span> interfrom &lt; 1 || interfrom &gt; ninterventions 
+0146             fprintf(<span class="string">'Invalid choice\n'</span>);
+0147             <span class="keyword">return</span>;
+0148         <span class="keyword">end</span>
+0149         <span class="keyword">if</span> isequal(interfrom,<span class="string">''</span>)
+0150             fprintf(<span class="string">'Invalid choice\n'</span>);
+0151             <span class="keyword">return</span>;
+0152         <span class="keyword">end</span>
+0153         interto = interfrom;
+0154     <span class="keyword">end</span>
+0155 
+0156     [amLabelledInterventions] = <a href="createLabelledInterventions.html" class="code" title="function [amLabelledInterventions] = createLabelledInterventions(amIntrDatacube, amLabelledInterventions,pdoffset, overall_pdoffset, interfrom, interto, measures, normmean, max_offset, align_wind, ex_start,study, nmeasures)">createLabelledInterventions</a>(amIntrDatacube, amLabelledInterventions, pdoffset, overall_pdoffset, <span class="keyword">...</span>
+0157         interfrom, interto, measures, normmean, max_offset, align_wind, ex_start, study, nmeasures);
+0158     
+0159     fprintf(<span class="string">'Saving labelled interventions to a separate matlab file\n'</span>);
+0160     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0161     outputfilename = sprintf(<span class="string">'%s_LabelledInterventions%s.mat'</span>, study, datestr(clock(),30));
+0162     save(fullfile(basedir, subfolder, outputfilename), <span class="string">'amLabelledInterventions'</span>);
+0163     outputfilename = sprintf(<span class="string">'%s_LabelledInterventions.mat'</span>, study);
+0164     save(fullfile(basedir, subfolder, outputfilename), <span class="string">'amLabelledInterventions'</span>);
+0165 <span class="keyword">elseif</span> runfunction == 7
+0166     fprintf(<span class="string">'Comparing results to another model run\n'</span>);
+0167     fprintf(<span class="string">'\n'</span>);
+0168     fprintf(<span class="string">'Select second model to compare\n'</span>);
+0169     fprintf(<span class="string">'\n'</span>);
+0170     [modelrun2, modelidx2] = <a href="selectModelRunFromList.html" class="code" title="function [modelrun, modelidx, models] = selectModelRunFromList(loadtype)">selectModelRunFromList</a>(<span class="string">''</span>);
+0171     <a href="compareModelRuns.html" class="code" title="function compareModelRuns(modelrun1, modelidx1, modelrun2, modelidx2)">compareModelRuns</a>(modelrun, modelidx, modelrun2, modelidx2);
+0172 <span class="keyword">elseif</span> runfunction == 8
+0173     fprintf(<span class="string">'Comparing results to the labelled test data\n'</span>);
+0174     fprintf(<span class="string">'\n'</span>);
+0175     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0176     testdatafilename = sprintf(<span class="string">'%s_LabelledInterventions.mat'</span>, study);
+0177     load(fullfile(basedir, subfolder, testdatafilename));
+0178     <a href="compareModelRunToTestData.html" class="code" title="function compareModelRunToTestData(amLabelledInterventions, amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset,hstg, overall_hist, meancurvemean, normmean, normstd, ex_start, nmeasures, ninterventions, min_offset, max_offset,align_wind, study, mversion, modelrun, modelidx)">compareModelRunToTestData</a>(amLabelledInterventions, amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset, hstg, overall_hist, <span class="keyword">...</span>
+0179         meancurvemean, normmean, normstd, ex_start, nmeasures, ninterventions, min_offset, max_offset, align_wind, study, mversion, modelrun, modelidx);
+0180 <span class="keyword">elseif</span> runfunction == 9
+0181     fprintf(<span class="string">'&lt;placeholder for Dragos new option&gt;\n'</span>);
+0182 <span class="keyword">elseif</span> runfunction == 10
+0183     fprintf(<span class="string">'Comparing results of multiple model runs to the labelled test data\n'</span>);
+0184     fprintf(<span class="string">'\n'</span>);
+0185     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0186     testdatafilename = sprintf(<span class="string">'%s_LabelledInterventions.mat'</span>, study);
+0187     load(fullfile(basedir, subfolder, testdatafilename));
+0188     <a href="compareMultipleModelRunToTestData.html" class="code" title="function compareMultipleModelRunToTestData(amLabelledInterventions, modelrun, modelidx, models)">compareMultipleModelRunToTestData</a>(amLabelledInterventions, modelrun, modelidx, models);
+0189 <span class="keyword">elseif</span> runfunction == 11
+0190     fprintf(<span class="string">'Comparing results of multiple model runs\n'</span>);
+0191     fprintf(<span class="string">'\n'</span>);
+0192     [modeliterations, modeloffsets] = <a href="compareMultipleModelRunResults.html" class="code" title="function [modeliterations, modeloffsets] = compareMultipleModelRunResults(modelrun, modelidx, models, basedir, subfolder)">compareMultipleModelRunResults</a>(modelrun, modelidx, models, basedir, subfolder);
+0193 <span class="keyword">elseif</span> runfunction == 12
+0194     fprintf(<span class="string">'Plotting simplified aligned curves\n'</span>);
+0195     fprintf(<span class="string">'\n'</span>);
+0196     run_type = <span class="string">'Best Alignment'</span>;
+0197     <a href="amEMPlotAndSaveAlignedCurvesBasic.html" class="code" title="function amEMPlotAndSaveAlignedCurvesBasic(profile_pre, meancurvemean, offsets,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder)">amEMPlotAndSaveAlignedCurvesBasic</a>(unaligned_profile, meancurvemean, offsets, <span class="keyword">...</span>
+0198     measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder);
+0199 <span class="keyword">elseif</span> runfunction == 13
+0200     fprintf(<span class="string">'Loading latest labelled test data file\n'</span>);
+0201     inputfilename = sprintf(<span class="string">'%s_LabelledInterventions.mat'</span>, study);
+0202     load(fullfile(basedir, subfolder, inputfilename));
+0203     fprintf(<span class="string">'Plotting labelled test data\n'</span>);
+0204     fprintf(<span class="string">'\n'</span>);
+0205     <a href="plotLabelledInterventions.html" class="code" title="function plotLabelledInterventions(amIntrDatacube, amInterventions, amLabelledInterventions,pdoffset, overall_pdoffset, measures, normmean, max_offset, align_wind, ex_start,study, nmeasures)">plotLabelledInterventions</a>(amIntrDatacube, amInterventions, amLabelledInterventions, <span class="keyword">...</span>
+0206     pdoffset, overall_pdoffset, measures, normmean, max_offset, align_wind, ex_start, <span class="keyword">...</span>
+0207     study, nmeasures)  
+0208 <span class="keyword">elseif</span> runfunction == 14
+0209     fprintf(<span class="string">'Loading latest labelled test data file\n'</span>);
+0210     inputfilename = sprintf(<span class="string">'%s_LabelledInterventions.mat'</span>, study);
+0211     load(fullfile(basedir, subfolder, inputfilename));
+0212     fprintf(<span class="string">'Calculating Ex_Start from Test Labels and Offsets\n'</span>);
+0213     fprintf(<span class="string">'\n'</span>);
+0214     derived_ex_start = <a href="calcExStartFromTestLabels.html" class="code" title="function ex_start = calcExStartFromTestLabels(amLabelledInterventions, amInterventions,overall_pdoffset, max_offset, plotsubfolder, modelrun, countthresh)">calcExStartFromTestLabels</a>(amLabelledInterventions, amInterventions, <span class="keyword">...</span>
+0215         overall_pdoffset, max_offset, modelrun, modelrun);
+0216 <span class="keyword">else</span>
+0217     fprintf(<span class="string">'Should not get here....\n'</span>);
+0218 <span class="keyword">end</span>
+0219     
+0220 
+0221</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadAndCorrectPatientIDData</title>
+  <meta name="keywords" content="loadAndCorrectPatientIDData">
+  <meta name="description" content="loadPatientIDData - loads patientidfile and corrects for incorrect">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadAndCorrectPatientIDData.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadAndCorrectPatientIDData
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>loadPatientIDData - loads patientidfile and corrects for incorrect</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [patientid] = loadAndCorrectPatientIDData(patientidfile) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> loadPatientIDData - loads patientidfile and corrects for incorrect 
+ Patient_ID fields</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadsmartcaredata.html" class="code" title="">loadsmartcaredata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [patientid] = loadAndCorrectPatientIDData(patientidfile)</a>
+0002 
+0003 <span class="comment">% loadPatientIDData - loads patientidfile and corrects for incorrect</span>
+0004 <span class="comment">% Patient_ID fields</span>
+0005 
+0006 tic
+0007 fprintf(<span class="string">'Loading Patient ID file: %s\n'</span>, patientidfile);
+0008 fprintf(<span class="string">'---------------------------------------\n'</span>);
+0009 patientid = readtable(patientidfile);
+0010 patientid.Properties.Description = <span class="string">'Table containing mapping of UserID to SmartCareID'</span>;
+0011 patientid.Properties.VariableNames{3} = <span class="string">'SmartCareID'</span>;
+0012 fprintf(<span class="string">'Patient ID data has %d rows\n'</span>, size(patientid,1));
+0013 
+0014 badids = table({<span class="string">'TKpptiCA5cASNKU0VSmx4'</span> ;<span class="string">'Cujq-NEcld_Keu_W1-Nw5'</span> ; <span class="string">'Q0Wf614z94DSTy6nXjyw7'</span>;<span class="string">'0HeWh64M_zc5U512xqzAs4'</span>;<span class="string">'1au5biSTt0bNWgfl0Wltr5'</span>}, <span class="keyword">...</span><span class="comment"> </span>
+0015                {<span class="string">'-TKpptiCA5cASNKU0VSmx4'</span>;<span class="string">'-Cujq-NEcld_Keu_W1-Nw5'</span>;<span class="string">'-Q0Wf614z94DSTy6nXjyw7'</span>;<span class="string">'0HeWh64M_zc5U5l2xqzAs4'</span>;<span class="string">'1au5biSTt0bNWgfI0WItr5'</span>}, <span class="keyword">...</span>
+0016                <span class="string">'VariableNames'</span>, {<span class="string">'Patient_ID'</span>,<span class="string">'Correct_ID'</span>});
+0017 idx = find(ismember(patientid(:,<span class="string">'Patient_ID'</span>), badids(:,<span class="string">'Patient_ID'</span>)));
+0018 fprintf(<span class="string">'Updating incorrect Patient IDs - %d rows\n'</span>, size(idx,1));
+0019 <span class="keyword">for</span> i = 1:size(idx,1)
+0020     patientid.Patient_ID{idx(i)} = badids.Correct_ID{i};
+0021 <span class="keyword">end</span>
+0022 
+0023 <span class="comment">% hard code this one as it had a trailing ' at the end of the id causing</span>
+0024 <span class="comment">% mismatches - no longer needed, fixed in input s/s</span>
+0025 <span class="comment">%fprintf('Updating incorrect Patient ID: h503el8mUI5hP-fwcnonk6 \n');</span>
+0026 <span class="comment">%patientid.Patient_ID{23} = 'h503el8mUI5hP-fwcnonk6';</span>
+0027 <span class="comment">%toc</span>
+0028 
+0029 fprintf(<span class="string">'\n'</span>);
+0030 
+0031 <span class="keyword">end</span>
+0032</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

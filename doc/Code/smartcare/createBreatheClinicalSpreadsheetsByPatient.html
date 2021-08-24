@@ -1,0 +1,238 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createBreatheClinicalSpreadsheetsByPatient</title>
+  <meta name="keywords" content="createBreatheClinicalSpreadsheetsByPatient">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createBreatheClinicalSpreadsheetsByPatient.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createBreatheClinicalSpreadsheetsByPatient
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createBreatheClinicalTables.html" class="code" title="function [brPatient, brDrugTherapy, brAdmissions, brAntibiotics, brClinicVisits, brOtherVisits, brUnplannedContact,brCRP, brPFT, brMicrobiology, brHghtWght, brEndStudy] = createBreatheClinicalTables(nrows)">createBreatheClinicalTables</a>	createBreatheClinicalTables - creates all the clinical</li><li><a href="getLatestBreatheDatesForHosp.html" class="code" title="function [clinprocdate, patientmasterdate, isValid] = getLatestBreatheDatesForHosp(hosp)">getLatestBreatheDatesForHosp</a>	getLatestBreatheDatesForHosp - convenience function to centralise getting the</li><li><a href="loadPatientMasterFileForHosp.html" class="code" title="function [hosppatientmaster] = loadPatientMasterFileForHosp(study, hosprow, patientmasterdate)">loadPatientMasterFileForHosp</a>	loadPatientMasterFileForHosp - convenience function to load the patient</li><li><a href="selectHospital.html" class="code" title="function [hosprow, isValid] = selectHospital()">selectHospital</a>	selectHospital - choose which hospital to run for</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; clc; close all;
+0002 
+0003 tic
+0004 fprintf(<span class="string">'Loading Breathe Clinical Data\n'</span>);
+0005 fprintf(<span class="string">'-----------------------------\n'</span>);
+0006 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0007 mssubfolder = <span class="string">'MatlabSavedVariables'</span>;
+0008 clinicalmatfile = <span class="string">'breatheclinicaldata.mat'</span>;
+0009 load(fullfile(basedir, mssubfolder, clinicalmatfile));
+0010 fprintf(<span class="string">'Done\n'</span>);
+0011 toc
+0012 fprintf(<span class="string">'\n'</span>);
+0013 
+0014 study = <span class="string">'BR'</span>;
+0015 
+0016 <span class="comment">% get list of Project Breathe hospitals</span>
+0017 <span class="comment">%brhosp = getListOfBreatheHospitals();</span>
+0018 
+0019 <span class="comment">% select hospital to run for</span>
+0020 [hosprow, isValid] = <a href="selectHospital.html" class="code" title="function [hosprow, isValid] = selectHospital()">selectHospital</a>();
+0021 <span class="keyword">if</span> ~isValid
+0022     <span class="keyword">return</span>
+0023 <span class="keyword">end</span>
+0024 fprintf(<span class="string">'\n'</span>);
+0025 
+0026 <span class="keyword">for</span> h = 1:size(hosprow, 1)
+0027     tic
+0028     fprintf(<span class="string">'Creating patient clinical files for %s\n'</span>, hosprow.Name{h});
+0029     fprintf(<span class="string">'\n'</span>);
+0030     
+0031     [clindate, hosppatmastdate] = <a href="getLatestBreatheDatesForHosp.html" class="code" title="function [clinprocdate, patientmasterdate, isValid] = getLatestBreatheDatesForHosp(hosp)">getLatestBreatheDatesForHosp</a>(hosprow.Acronym{h});
+0032     outputfolder = sprintf(<span class="string">'DataFiles/%s/ClinicalData/%s/%sUpd'</span>, study, hosprow.Acronym{h}, clindate);
+0033     <span class="keyword">if</span> ~exist(fullfile(basedir, outputfolder), <span class="string">'dir'</span>)
+0034         mkdir(fullfile(basedir, outputfolder));
+0035     <span class="keyword">end</span>
+0036     
+0037     [hosppatmaster] = <a href="loadPatientMasterFileForHosp.html" class="code" title="function [hosppatientmaster] = loadPatientMasterFileForHosp(study, hosprow, patientmasterdate)">loadPatientMasterFileForHosp</a>(study, hosprow(h, :), hosppatmastdate);
+0038     toc
+0039     fprintf(<span class="string">'\n'</span>);
+0040 
+0041     <span class="comment">% filter brPatient for records by hospital</span>
+0042     hospPatient = brPatient(ismember(brPatient.Hospital, hosprow.Acronym{h}), :);
+0043     npatients = size(hospPatient, 1);
+0044 
+0045     tic
+0046     <span class="keyword">for</span> i = 1:npatients
+0047         hospital    = hospPatient.Hospital{i};
+0048         studynbr    = lower(hospPatient.StudyNumber{i});
+0049         <span class="comment">% need to store the original scid assigned for the first batch of</span>
+0050         <span class="comment">% spreadsheets created after switching to the patient master file</span>
+0051         <span class="comment">% should be able to switch back to exclusively using the</span>
+0052         <span class="comment">% patientmaster scid once they've all been recreated</span>
+0053         oldscid     = hospPatient.ID(i);
+0054         scid        = hosppatmaster.ID(ismember(hosppatmaster.StudyNumber, studynbr));
+0055         consentstatus = hosppatmaster.ConsentStatus{hosppatmaster.ID == scid};
+0056         <span class="keyword">if</span> upper(consentstatus(1)) == <span class="string">'Y'</span> || upper(consentstatus(1)) == <span class="string">'W'</span>
+0057             patclindate = hospPatient.PatClinDate(i);
+0058             filename    = sprintf(<span class="string">'PBClinData-%3d-%s-%s-%s.xlsx'</span>, scid, hospital, studynbr, datestr(patclindate, <span class="string">'yyyymmdd'</span>));
+0059             fprintf(<span class="string">'Creating file %s\n'</span>, filename);    
+0060 
+0061             <span class="comment">% can change these back to use scid once we've done the switch</span>
+0062             <span class="comment">% over</span>
+0063             tmpPatient          = hospPatient(hospPatient.ID == oldscid, :);
+0064             tmpPatient.ID(1)    = scid;
+0065             tmpPatient.StudyNumber{1} = lower(tmpPatient.StudyNumber{1});
+0066             tmpPatient.StudyEmail{1}  = lower(tmpPatient.StudyNumber{1});
+0067             tmpDrugTherapy      = brDrugTherapy(brDrugTherapy.ID == oldscid, :);
+0068             tmpAntibiotics      = brAntibiotics(brAntibiotics.ID == oldscid, :);
+0069             tmpAdmissions       = brAdmissions(brAdmissions.ID == oldscid, :);
+0070             tmpClinicVisits     = brClinicVisits(brClinicVisits.ID == oldscid, :);
+0071             tmpOtherVisits      = brOtherVisits(brOtherVisits.ID == oldscid, :);
+0072             tmpUnplannedContact = brUnplannedContact(brUnplannedContact.ID == oldscid, :);
+0073             tmpCRP              = brCRP(brCRP.ID == oldscid, :);
+0074             tmpPFT              = brPFT(brPFT.ID == oldscid, :);
+0075             tmpMicrobiology     = brMicrobiology(brMicrobiology.ID == oldscid, :);
+0076             tmpHghtWght         = brHghtWght(brHghtWght.ID == oldscid, :);
+0077 
+0078             <span class="comment">% remove unwanted columns</span>
+0079             tmpPatient(:, {<span class="string">'FEV1SetAs'</span>, <span class="string">'CalcAge'</span>, <span class="string">'CalcAgeExact'</span>, <span class="string">'CalcPredictedFEV1'</span>, <span class="keyword">...</span>
+0080                 <span class="string">'CalcPredictedFEV1OrigAge'</span>, <span class="string">'CalcFEV1SetAs'</span>, <span class="string">'CalcFEV1SetAsOrigAge'</span>}) = [];
+0081             tmpDrugTherapy(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>})               = [];
+0082             tmpAntibiotics(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>})               = [];
+0083             tmpAdmissions(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>})                = [];
+0084             tmpClinicVisits(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>})              = [];
+0085             tmpOtherVisits(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>})               = [];
+0086             tmpUnplannedContact(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>})          = [];
+0087             tmpCRP(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>, <span class="string">'NumericLevel'</span>})       = [];
+0088             tmpPFT(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>, <span class="string">'FEV1_'</span>, <span class="string">'CalcFEV1_'</span>}) = [];
+0089             tmpMicrobiology(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>})              = [];
+0090             tmpHghtWght(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>})                  = [];
+0091 
+0092             writetable(tmpPatient          , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'Patient'</span>           );
+0093             writetable(tmpDrugTherapy      , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'DrugTherapy'</span>       );
+0094             writetable(tmpAntibiotics      , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'Antibiotics'</span>       );
+0095             writetable(tmpAdmissions       , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'Admissions'</span>        );
+0096             writetable(tmpClinicVisits     , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'ClinicVisits'</span>      );
+0097             writetable(tmpOtherVisits      , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'OtherVisits'</span>       );
+0098             writetable(tmpUnplannedContact , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'UnplannedContacts'</span> );
+0099             writetable(tmpCRP              , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'CRPs'</span>              );
+0100             writetable(tmpPFT              , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'PFTs'</span>              );
+0101             writetable(tmpMicrobiology     , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'Microbiology'</span>      );
+0102             writetable(tmpHghtWght         , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'HeightWeight'</span>      );
+0103             
+0104         <span class="keyword">elseif</span> upper(consentstatus(1)) == <span class="string">'P'</span> 
+0105             fprintf(<span class="string">'Skipping patient %d(%s) as consent not yet given\n'</span>, scid, studynbr);
+0106             <span class="keyword">continue</span>;
+0107         <span class="keyword">else</span>
+0108             fprintf(<span class="string">'**** Unknown consent status for patient %d(%s) ****\n'</span>, scid, studynbr);
+0109             <span class="keyword">return</span>;
+0110         <span class="keyword">end</span>
+0111     <span class="keyword">end</span>
+0112     
+0113     
+0114 
+0115     <span class="comment">% now create stub spreadsheets for any new patients.</span>
+0116     newpats = hosppatmaster(~ismember(hosppatmaster.StudyNumber, lower(hospPatient.StudyNumber)), :);
+0117     [tmpPatient, tmpDrugTherapy, tmpAdmissions, tmpAntibiotics, tmpClinicVisits, tmpOtherVisits, tmpUnplannedContact, <span class="keyword">...</span>
+0118         tmpCRP, tmpPFT, tmpMicrobiology, tmpHghtWght, ~] = <a href="createBreatheClinicalTables.html" class="code" title="function [brPatient, brDrugTherapy, brAdmissions, brAntibiotics, brClinicVisits, brOtherVisits, brUnplannedContact,brCRP, brPFT, brMicrobiology, brHghtWght, brEndStudy] = createBreatheClinicalTables(nrows)">createBreatheClinicalTables</a>(1);
+0119     
+0120     <span class="comment">% remove unwanted columns and the row where a table has a numeric</span>
+0121     <span class="comment">% column</span>
+0122     tmpPatient(:, {<span class="string">'FEV1SetAs'</span>, <span class="string">'CalcAge'</span>, <span class="string">'CalcAgeExact'</span>, <span class="string">'CalcPredictedFEV1'</span>, <span class="keyword">...</span>
+0123         <span class="string">'CalcPredictedFEV1OrigAge'</span>, <span class="string">'CalcFEV1SetAs'</span>, <span class="string">'CalcFEV1SetAsOrigAge'</span>}) = [];
+0124     tmpDrugTherapy(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>})               = [];
+0125     tmpAntibiotics(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>})               = [];
+0126     tmpAdmissions(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>})                = [];
+0127     tmpClinicVisits(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>})              = [];
+0128     tmpOtherVisits(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>})               = [];
+0129     tmpUnplannedContact(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>})          = [];
+0130     tmpCRP(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>, <span class="string">'NumericLevel'</span>})       = [];
+0131     tmpPFT(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>, <span class="string">'FEV1_'</span>, <span class="string">'CalcFEV1_'</span>}) = [];
+0132     tmpMicrobiology(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>})              = [];
+0133     tmpHghtWght(:, {<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>})                  = [];
+0134     
+0135     tmpPFT(1, :)      = [];
+0136     tmpCRP(1, :)      = [];
+0137     tmpHghtWght(1, :) = [];
+0138     
+0139     <span class="comment">%if npatients == 0</span>
+0140     <span class="comment">%    scid = hosprow.StartID;</span>
+0141     <span class="comment">%else</span>
+0142     <span class="comment">%    scid = scid + 1;</span>
+0143     <span class="comment">%end</span>
+0144     
+0145     hospital = hosprow.Acronym{1};
+0146     
+0147     <span class="keyword">for</span> p = 1:size(newpats, 1)
+0148         studynbr = newpats.StudyNumber{p};
+0149         scid = newpats.ID(p);
+0150         consentstatus = hosppatmaster.ConsentStatus{hosppatmaster.ID == scid};
+0151         <span class="keyword">if</span> upper(consentstatus(1)) == <span class="string">'Y'</span>
+0152             filename = sprintf(<span class="string">'PBClinData-%3d-%s-%s-%s.xlsx'</span>, scid, hospital, studynbr, clindate);
+0153             fprintf(<span class="string">'Creating file %s\n'</span>, filename);
+0154 
+0155             tmpPatient.ID          = scid;
+0156             tmpPatient.Hospital    = hospital;
+0157             tmpPatient.StudyNumber = studynbr;
+0158             tmpPatient.StudyEmail  = studynbr;
+0159 
+0160             writetable(tmpPatient          , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'Patient'</span>           );
+0161             writetable(tmpDrugTherapy      , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'DrugTherapy'</span>       );
+0162             writetable(tmpAntibiotics      , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'Antibiotics'</span>       );
+0163             writetable(tmpAdmissions       , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'Admissions'</span>        );
+0164             writetable(tmpClinicVisits     , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'ClinicVisits'</span>      );
+0165             writetable(tmpOtherVisits      , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'OtherVisits'</span>       );
+0166             writetable(tmpUnplannedContact , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'UnplannedContacts'</span> );
+0167             writetable(tmpCRP              , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'CRPs'</span>              );
+0168             writetable(tmpPFT              , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'PFTs'</span>              );
+0169             writetable(tmpMicrobiology     , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'Microbiology'</span>      );
+0170             writetable(tmpHghtWght         , fullfile(basedir, outputfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'HeightWeight'</span>      );
+0171 
+0172             <span class="comment">%scid = scid + 1;</span>
+0173    
+0174         <span class="keyword">elseif</span> upper(consentstatus(1)) == <span class="string">'P'</span> 
+0175             fprintf(<span class="string">'Skipping patient %d(%s) as consent not yet given\n'</span>, scid, studynbr);
+0176             <span class="keyword">continue</span>;
+0177         <span class="keyword">elseif</span> upper(consentstatus(1)) == <span class="string">'W'</span>
+0178             fprintf(<span class="string">'Skipping patient %d(%s) as they have withdrawn\n'</span>, scid, studynbr);
+0179             <span class="keyword">continue</span>;
+0180         <span class="keyword">else</span>
+0181             fprintf(<span class="string">'**** Unknown consent status for patient %d(%s) ****\n'</span>, scid, studynbr);
+0182             <span class="keyword">return</span>;
+0183         <span class="keyword">end</span>
+0184     <span class="keyword">end</span>
+0185 
+0186     toc
+0187     fprintf(<span class="string">'\n'</span>);
+0188 <span class="keyword">end</span>
+0189 
+0190 
+0191</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

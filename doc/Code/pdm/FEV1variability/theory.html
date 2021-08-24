@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of theory</title>
+  <meta name="keywords" content="theory">
+  <meta name="description" content="% confidence interval coefficients for the sample's standard deviation">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">FEV1variability</a> &gt; theory.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/FEV1variability&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>theory
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>% confidence interval coefficients for the sample's standard deviation</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">% confidence interval coefficients for the sample's standard deviation
+ CI = [coef_down * SD, coef_up * SD]
+ there is 95% chance that this interval contains the true sample's std
+ CIs look at the reliability of the estimation procedure, not</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%% confidence interval coefficients for the sample's standard deviation</span>
+0002 <span class="comment">% CI = [coef_down * SD, coef_up * SD]</span>
+0003 <span class="comment">% there is 95% chance that this interval contains the true sample's std</span>
+0004 <span class="comment">% CIs look at the reliability of the estimation procedure, not</span>
+0005 
+0006 <span class="comment">% assumption: normal distribution</span>
+0007 
+0008 alpha = 0.05;
+0009 n = [2,3,5,10,25,50,70,100,200,500,1000]';
+0010 std_coef_down = sqrt((n-1)./chi2inv(1-alpha/2,n-1));
+0011 std_coef_up = sqrt((n-1)./chi2inv(alpha/2,n-1));
+0012 diff_std_coef_down = [diff(std_coef_down).*100; nan];
+0013 diff_std_ci_up = [diff(std_coef_up).*100; nan];
+0014 disp(table(n,std_coef_down,diff_std_coef_down,std_coef_up,diff_std_ci_up));
+0015 
+0016 <span class="comment">% after 25, the diff is quite low</span>
+0017 
+0018 <span class="comment">%% for sample's mean</span>
+0019 
+0020 <span class="comment">% samples come from a normal distribution</span>
+0021 
+0022 <span class="comment">% clarify for sample mean when we don't know the sample's std</span>
+0023 <span class="comment">% known std dev: CI = mean +/- std(x)/sqrt(n)*1.96</span>
+0024 <span class="comment">% unknown std dev use the Student's distribution</span>
+0025 
+0026 <span class="comment">% how is it possible that the CI is based on the sample's population and</span>
+0027 <span class="comment">% independant from the global population?</span>
+0028 
+0029 <span class="comment">% why in stats 30 is significative to make statistics? works only for mean</span>
+0030 
+0031 <span class="comment">% chebyshev inequality assumptions</span>
+0032 <span class="comment">% CI assumptions</span>
+0033 <span class="comment">% t test, z test</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

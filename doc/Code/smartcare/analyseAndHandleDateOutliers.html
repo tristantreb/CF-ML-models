@@ -1,0 +1,350 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of analyseAndHandleDateOutliers</title>
+  <meta name="keywords" content="analyseAndHandleDateOutliers">
+  <meta name="description" content="analyseAndHandleDateOutliers - function to do the following :-">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; analyseAndHandleDateOutliers.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>analyseAndHandleDateOutliers
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>analyseAndHandleDateOutliers - function to do the following :-</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [physdata] = analyseAndHandleDateOutliers(physdata, study, doupdates) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> analyseAndHandleDateOutliers - function to do the following :-
+
+ 1) visualise heatmaps of patients and measures - all patients, 
+ 2) removes outlier measures (long gap before active study period or
+    sporadic measures after active study period
+ 3) deletes rows for patients with &lt; 40 days duration or &lt; 35 days of
+    multiple measurement days
+ 4) recreate heatmaps at various points and observe results</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createHeatmapOfPatientsAndMeasures.html" class="code" title="function [f] = createHeatmapOfPatientsAndMeasures(patientmeasures, colors, title)">createHeatmapOfPatientsAndMeasures</a>	createHeatmapOfPatientsAndMeasures - given a table of SmartCareID's and</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="scaleDaysByPatient.html" class="code" title="function [physdata] = scaleDaysByPatient(physdata,doupdates)">scaleDaysByPatient</a>	scaleDateByPatient - adds a new column to physdata for the scaled datenum</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadclimbdata.html" class="code" title="">loadclimbdata</a>	</li><li><a href="loadsmartcaredata.html" class="code" title="">loadsmartcaredata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [physdata] = analyseAndHandleDateOutliers(physdata, study, doupdates)</a>
+0002 
+0003 <span class="comment">% analyseAndHandleDateOutliers - function to do the following :-</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% 1) visualise heatmaps of patients and measures - all patients,</span>
+0006 <span class="comment">% 2) removes outlier measures (long gap before active study period or</span>
+0007 <span class="comment">%    sporadic measures after active study period</span>
+0008 <span class="comment">% 3) deletes rows for patients with &lt; 40 days duration or &lt; 35 days of</span>
+0009 <span class="comment">%    multiple measurement days</span>
+0010 <span class="comment">% 4) recreate heatmaps at various points and observe results</span>
+0011 
+0012 tic
+0013 
+0014 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0015 subfolder = sprintf(<span class="string">'Plots/%s'</span>, study);
+0016 <span class="keyword">if</span> ~exist(strcat(basedir, subfolder), <span class="string">'dir'</span>)
+0017     mkdir(strcat(basedir, subfolder));
+0018 <span class="keyword">end</span>
+0019 baseplottitle = sprintf(<span class="string">'%s-Heatmap of Patient Measures'</span>, study);
+0020 
+0021 
+0022 fprintf(<span class="string">'Analysing and Handling Date Outliers in the Measurement data\n'</span>);
+0023 fprintf(<span class="string">'------------------------------------------------------------\n'</span>);
+0024 fprintf(<span class="string">'%s data has %d rows\n'</span>, study, size(physdata, 1));
+0025 fprintf(<span class="string">'Data for %d patients\n'</span>, size(unique(physdata.SmartCareID), 1));
+0026 fprintf(<span class="string">'\n'</span>);
+0027 
+0028 <span class="comment">% ensure physdata is sorted correctly</span>
+0029 physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'DateNum'</span>, <span class="string">'RecordingType'</span>}, <span class="string">'ascend'</span>);
+0030 
+0031 <span class="comment">% for emem heatmap</span>
+0032 <span class="comment">%idx = ismember(physdata.RecordingType, 'SleepActivityRecording');</span>
+0033 <span class="comment">%physdata(idx, :) = [];</span>
+0034 
+0035 <span class="comment">% create colormap</span>
+0036 temp = hsv(64);
+0037 <span class="keyword">if</span> ismember(study, {<span class="string">'SC'</span>, <span class="string">'TM'</span>})
+0038     colors(1,:)  = [0 0 0];     <span class="comment">% black for no measures</span>
+0039     colors(2,:)  = temp(4,:);
+0040     colors(3,:)  = temp(6,:);
+0041     colors(4,:)  = temp(8,:);
+0042     colors(5,:)  = temp(10,:);
+0043     colors(6,:)  = temp(12,:);
+0044     colors(7,:)  = temp(14,:);
+0045     colors(8,:)  = temp(16,:);
+0046     colors(9,:)  = temp(18,:);
+0047 <span class="keyword">elseif</span> ismember(study, {<span class="string">'CL'</span>})
+0048     colors(1,:)  = [0 0 0];     <span class="comment">% black for no measures</span>
+0049     colors(2,:)  = temp(4,:);
+0050     colors(3,:)  = temp(6,:);
+0051     colors(4,:)  = temp(7,:);
+0052     colors(5,:)  = temp(8,:);
+0053     colors(6,:)  = temp(9,:);
+0054     colors(7,:)  = temp(10,:);
+0055     colors(8,:)  = temp(11,:);
+0056     colors(9,:)  = temp(12,:);
+0057     colors(10,:)  = temp(13,:);
+0058     colors(11,:)  = temp(14,:);
+0059     colors(12,:)  = temp(15,:);
+0060     colors(13,:)  = temp(16,:);
+0061     colors(14,:)  = temp(17,:);
+0062     colors(15,:)  = temp(18,:);
+0063 <span class="keyword">elseif</span> ismember(study, {<span class="string">'BR'</span>})
+0064     colors(1,:)  = [0 0 0];     <span class="comment">% black for no measures</span>
+0065     colors(2,:)  = temp(4,:);
+0066     colors(3,:)  = temp(5,:);
+0067     colors(4,:)  = temp(6,:);
+0068     colors(5,:)  = temp(7,:);
+0069     colors(6,:)  = temp(8,:);
+0070     colors(7,:)  = temp(9,:);
+0071     colors(8,:)  = temp(10,:);
+0072     colors(9,:)  = temp(11,:);
+0073     colors(10,:)  = temp(12,:);
+0074     colors(11,:)  = temp(13,:);
+0075     colors(12,:)  = temp(14,:);
+0076     colors(13,:)  = temp(15,:);
+0077     colors(14,:)  = temp(16,:);
+0078     colors(15,:)  = temp(17,:);
+0079     colors(16,:)  = temp(18,:);
+0080     colors(17,:)  = temp(19,:);
+0081     colors(18,:)  = temp(20,:);
+0082     colors(19,:)  = temp(21,:);
+0083 <span class="keyword">else</span>
+0084     fprintf(<span class="string">'**** Unknown Study ****'</span>);
+0085     <span class="keyword">return</span>;
+0086 <span class="keyword">end</span>
+0087 
+0088 filenameappend = <span class="string">'PreDateOutlierHandling'</span>;
+0089 fullfilename = sprintf(<span class="string">'%s-HeatmapAllPatients-%s'</span>, study, filenameappend);
+0090 <span class="comment">%fullfilename = strcat('HeatmapAllPatients', filenameappend);</span>
+0091 plottitle = baseplottitle;
+0092 
+0093 <span class="comment">% create heatmap for all patients and measures</span>
+0094 fprintf(<span class="string">'Creating heatmap for all patients\n'</span>);
+0095 f1 = <a href="createHeatmapOfPatientsAndMeasures.html" class="code" title="function [f] = createHeatmapOfPatientsAndMeasures(patientmeasures, colors, title)">createHeatmapOfPatientsAndMeasures</a>(physdata(:,{<span class="string">'SmartCareID'</span>,<span class="string">'ScaledDateNum'</span>}), colors, plottitle);
+0096 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f1, fullfilename, subfolder);
+0097 close(f1);
+0098 
+0099 toc
+0100 fprintf(<span class="string">'\n'</span>);
+0101 
+0102 <span class="keyword">if</span> ismember(study, {<span class="string">'SC'</span>, <span class="string">'TM'</span>}) 
+0103     tic
+0104     <span class="comment">% handle outlier measurements</span>
+0105     fprintf(<span class="string">'Handling outlier date measurements across all patients\n'</span>);
+0106     pdcountmtable = varfun(@max, physdata(:, {<span class="string">'SmartCareID'</span>,<span class="string">'ScaledDateNum'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'ScaledDateNum'</span>});
+0107     fdeltable = physdata(1:1,{<span class="string">'SmartCareID'</span>,<span class="string">'ScaledDateNum'</span>});
+0108     ldeltable = physdata(1:1,{<span class="string">'SmartCareID'</span>,<span class="string">'ScaledDateNum'</span>});
+0109     rowtoadd = fdeltable;
+0110     rowtoadd.SmartCareID = 0;
+0111     rowtoadd.ScaledDateNum = 0;
+0112     fdeltable = [];
+0113     ldeltable = [];
+0114 
+0115     allpatients = unique(physdata.SmartCareID);
+0116     <span class="keyword">for</span> i = 1:size(allpatients,1)
+0117         scid = allpatients(i);
+0118         idx = find(pdcountmtable.SmartCareID == scid);
+0119         outlier = true;
+0120         a = 1;
+0121         <span class="keyword">while</span> (outlier == true &amp; (a+8) &lt; size(idx,1))
+0122             firstdate = pdcountmtable.ScaledDateNum(idx(a));
+0123             firstcount = pdcountmtable.GroupCount(idx(a));
+0124             next5date = pdcountmtable.ScaledDateNum(idx(a+8));
+0125             <span class="keyword">if</span> (next5date - firstdate &gt; 12 | firstcount == 1)
+0126                 rowtoadd.SmartCareID = scid;
+0127                 rowtoadd.ScaledDateNum = firstdate;
+0128                 fdeltable = [fdeltable;rowtoadd];
+0129                 a = a+1;
+0130             <span class="keyword">else</span>
+0131                 outlier = false;
+0132             <span class="keyword">end</span>
+0133         <span class="keyword">end</span>
+0134         outlier = true;
+0135         a = size(idx,1);
+0136         <span class="keyword">while</span> (outlier == true &amp; a-10 &gt; 0)
+0137             lastdate = pdcountmtable.ScaledDateNum(idx(a));
+0138             lastcount = pdcountmtable.GroupCount(idx(a));
+0139             prev10date = pdcountmtable.ScaledDateNum(idx(a-10));
+0140             <span class="keyword">if</span> (lastdate - prev10date &gt; 16 | lastcount == 1)
+0141                 rowtoadd.SmartCareID = scid;
+0142                 rowtoadd.ScaledDateNum = lastdate;
+0143                 ldeltable = [ldeltable;rowtoadd];
+0144                 a = a-1;
+0145             <span class="keyword">else</span>
+0146                 outlier = false;
+0147             <span class="keyword">end</span>
+0148         <span class="keyword">end</span>        
+0149     <span class="keyword">end</span>
+0150 
+0151     <span class="keyword">if</span> doupdates
+0152         fidx = [];
+0153         lidx = [];
+0154         <span class="keyword">for</span> i = 1:size(fdeltable,1)
+0155             idx = find(physdata.SmartCareID == fdeltable.SmartCareID(i) &amp; physdata.ScaledDateNum == fdeltable.ScaledDateNum(i));
+0156             fidx = [fidx;idx];
+0157         <span class="keyword">end</span>
+0158         <span class="keyword">for</span> i = 1:size(ldeltable,1)
+0159             idx = find(physdata.SmartCareID == ldeltable.SmartCareID(i) &amp; physdata.ScaledDateNum == ldeltable.ScaledDateNum(i));
+0160             lidx = [lidx;idx];
+0161         <span class="keyword">end</span>
+0162         fprintf(<span class="string">'Removing %4d outlier first measures for %2d patients\n'</span>, size(fidx,1), size(unique(fdeltable.SmartCareID),1));
+0163         fprintf(<span class="string">'Removing %4d outlier last  measures for %2d patients\n'</span>, size(lidx,1), size(unique(ldeltable.SmartCareID),1));
+0164         idx = [fidx;lidx];
+0165         physdata(idx,:) = [];
+0166         fprintf(<span class="string">'%s data now has %d rows\n'</span>, study, size(physdata, 1));
+0167         fprintf(<span class="string">'Data for %d patients\n'</span>, size(unique(physdata.SmartCareID), 1));
+0168     <span class="keyword">end</span>
+0169     toc
+0170     fprintf(<span class="string">'\n'</span>);
+0171     
+0172     tic
+0173     <span class="comment">% recalc ScaledDateNum with the days from first measurement (by patient)</span>
+0174     physdata = <a href="scaleDaysByPatient.html" class="code" title="function [physdata] = scaleDaysByPatient(physdata,doupdates)">scaleDaysByPatient</a>(physdata, doupdates);
+0175 
+0176     filenameappend = <span class="string">'PostOutlierDateHandling'</span>;
+0177     fullfilename = sprintf(<span class="string">'%s-HeatmapAllPatients-%s'</span>, study, filenameappend);
+0178     <span class="comment">%fullfilename = strcat('HeatmapAllPatients', filenameappend);</span>
+0179     plottitle = sprintf(<span class="string">'%s - Post Date Outliers'</span>, baseplottitle);
+0180 
+0181     <span class="comment">% re-create heatmap for all patients and measures</span>
+0182     fprintf(<span class="string">'Re-creating heatmap for all patients\n'</span>);
+0183     f2 = <a href="createHeatmapOfPatientsAndMeasures.html" class="code" title="function [f] = createHeatmapOfPatientsAndMeasures(patientmeasures, colors, title)">createHeatmapOfPatientsAndMeasures</a>(physdata(:,{<span class="string">'SmartCareID'</span>,<span class="string">'ScaledDateNum'</span>}), colors, plottitle);
+0184     <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f2, fullfilename, subfolder);
+0185     close(f2);
+0186     
+0187     toc
+0188     fprintf(<span class="string">'\n'</span>);
+0189 <span class="keyword">end</span>
+0190 
+0191 tic
+0192 <span class="comment">% handling short duration patients (&lt; 40 day duration of measures</span>
+0193 <span class="comment">% or &lt;= 35 total days of more than 1 measurement)</span>
+0194 fprintf(<span class="string">'Handling short duration patients (&lt; 40 day duration of measures or &lt;= 35 total days of more than 1 measurement)\n'</span>);
+0195 
+0196 <span class="comment">% create heatmap for short duration patients</span>
+0197 fprintf(<span class="string">'Creating heatmap for short duration patients\n'</span>);
+0198 pmaxdtable = varfun(@max, physdata(:,{<span class="string">'SmartCareID'</span>, <span class="string">'ScaledDateNum'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0199 sdidx = find(pmaxdtable.max_ScaledDateNum &lt;40);
+0200 shortdurationpatients = unique(pmaxdtable.SmartCareID(sdidx));
+0201 sdpidx = find(ismember(physdata.SmartCareID, shortdurationpatients));
+0202 pdcountmtable = varfun(@max, physdata(:, {<span class="string">'SmartCareID'</span>,<span class="string">'ScaledDateNum'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'ScaledDateNum'</span>});
+0203 pcountdtable = varfun(@max, pdcountmtable(:, {<span class="string">'SmartCareID'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0204 pcountdtable2m = varfun(@max, pdcountmtable(pdcountmtable.GroupCount&gt;1, {<span class="string">'SmartCareID'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0205 pcountdtable2m.Properties.VariableNames{<span class="string">'GroupCount'</span>} = <span class="string">'MultipleMeasuresDayCount'</span>;
+0206 pcountdtable = innerjoin(pcountdtable,pcountdtable2m);
+0207 
+0208 fewdayspatients = pcountdtable.SmartCareID(find(pcountdtable.MultipleMeasuresDayCount &lt;= 35));
+0209 sdpidx = find(ismember(physdata.SmartCareID, unique([shortdurationpatients ; fewdayspatients])));
+0210 
+0211 filenameappend = <span class="string">'PostOutlierDateHandling'</span>;
+0212 shortfilename = sprintf(<span class="string">'%s-HeatmapShortDurationPatients-%s'</span>, study, filenameappend);
+0213 <span class="comment">%shortfilename = strcat('HeatmapShortDurationPatients', filenameappend);</span>
+0214 plottitle = sprintf(<span class="string">'%s - Short Duration Patients'</span>, baseplottitle);
+0215 
+0216 f3 = <a href="createHeatmapOfPatientsAndMeasures.html" class="code" title="function [f] = createHeatmapOfPatientsAndMeasures(patientmeasures, colors, title)">createHeatmapOfPatientsAndMeasures</a>(physdata(sdpidx,{<span class="string">'SmartCareID'</span>,<span class="string">'ScaledDateNum'</span>}), colors, plottitle);
+0217 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f3, shortfilename, subfolder);
+0218 close(f3);
+0219 
+0220 <span class="keyword">if</span> doupdates
+0221     <span class="comment">% remove all measures for patients with &lt; 40 days duration or &lt;= 35 total days of more than 1 measurement</span>
+0222     fprintf(<span class="string">'Removing %4d measures for %2d patients with &lt; 40 days duration or &lt;= 35 total days of more than 1 measurement\n'</span>, <span class="keyword">...</span>
+0223         size(sdpidx,1), size(unique([shortdurationpatients ; fewdayspatients]),1));
+0224     physdata(sdpidx,:) = [];
+0225     fprintf(<span class="string">'%s data now has %d rows\n'</span>, study, size(physdata, 1));
+0226     fprintf(<span class="string">'Data for %d patients\n'</span>, size(unique(physdata.SmartCareID), 1));
+0227 <span class="keyword">end</span>
+0228 toc
+0229 fprintf(<span class="string">'\n'</span>);
+0230 
+0231 tic
+0232 filenameappend = <span class="string">'PostShortDurationHandling'</span>;
+0233 fullfilename = sprintf(<span class="string">'%s-HeatmapAllPatients-%s'</span>, study, filenameappend);
+0234 <span class="comment">%fullfilename = strcat('HeatmapAllPatients', filenameappend);</span>
+0235 plottitle = sprintf(<span class="string">'%s - Post Short Duration'</span>, baseplottitle);
+0236 
+0237 <span class="comment">% re-create heatmap for all patients and measures</span>
+0238 fprintf(<span class="string">'Re-creating heatmap for all patients\n'</span>);
+0239 f4 = <a href="createHeatmapOfPatientsAndMeasures.html" class="code" title="function [f] = createHeatmapOfPatientsAndMeasures(patientmeasures, colors, title)">createHeatmapOfPatientsAndMeasures</a>(physdata(:,{<span class="string">'SmartCareID'</span>,<span class="string">'ScaledDateNum'</span>}), colors, plottitle);
+0240 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f4, fullfilename, subfolder);
+0241 close(f4);
+0242 
+0243 
+0244 toc
+0245 fprintf(<span class="string">'\n'</span>);
+0246 
+0247 <span class="keyword">if</span> ismember(study, {<span class="string">'SC'</span>, <span class="string">'TM'</span>, <span class="string">'BR'</span>}) 
+0248     tic
+0249     <span class="comment">% add handling for 'sparse' patients here</span>
+0250     fprintf(<span class="string">'Handline patients with sparse measurements\n'</span>);
+0251     pdcountmtable = varfun(@max, physdata(:, {<span class="string">'SmartCareID'</span>,<span class="string">'ScaledDateNum'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'ScaledDateNum'</span>});
+0252     pcountdtable = varfun(@max, pdcountmtable(:, {<span class="string">'SmartCareID'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0253     pcountdtable.Properties.VariableNames{<span class="string">'GroupCount'</span>} = <span class="string">'DayCount'</span>;
+0254     pmaxdtable = varfun(@max, physdata(:,{<span class="string">'SmartCareID'</span>, <span class="string">'ScaledDateNum'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0255     pmaxdtable.Properties.VariableNames{<span class="string">'GroupCount'</span>} = <span class="string">'MeasureCount'</span>;
+0256     pdensitymtable = innerjoin(pmaxdtable,pcountdtable);
+0257 
+0258     pcountdtable2m = varfun(@max, pdcountmtable(pdcountmtable.GroupCount&gt;1, {<span class="string">'SmartCareID'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0259     pcountdtable2m.Properties.VariableNames{<span class="string">'GroupCount'</span>} = <span class="string">'MultipleMeasuresDayCount'</span>;
+0260     pdensitymtable = innerjoin(pdensitymtable,pcountdtable2m);
+0261 
+0262     pdensitymtable.Density = pdensitymtable.DayCount./pdensitymtable.max_ScaledDateNum;
+0263     pdensitymtable.MultipleMeasuresDensity = pdensitymtable.MultipleMeasuresDayCount./pdensitymtable.max_ScaledDateNum;
+0264 
+0265     lowdensityidx = find(pdensitymtable.MultipleMeasuresDensity &lt; 0.5);
+0266     lowdensitypatients = pdensitymtable.SmartCareID(lowdensityidx);
+0267     delidx = find(ismember(physdata.SmartCareID, lowdensitypatients));
+0268 
+0269     <span class="keyword">if</span> doupdates
+0270         <span class="comment">% remove all measures for patients with low density of multiple measurement days</span>
+0271         fprintf(<span class="string">'Removing %4d measures for %2d patients with low density of multiple measurement days\n'</span>, <span class="keyword">...</span>
+0272             size(delidx,1), size(lowdensitypatients,1));
+0273         physdata(delidx,:) = [];
+0274         fprintf(<span class="string">'%s data now has %d rows\n'</span>, study, size(physdata, 1));
+0275         fprintf(<span class="string">'Data for %d patients\n'</span>, size(unique(physdata.SmartCareID), 1));
+0276     <span class="keyword">end</span>
+0277     toc
+0278     fprintf(<span class="string">'\n'</span>);
+0279     
+0280 <span class="keyword">end</span>
+0281 
+0282 
+0283 <span class="comment">% re-create heatmap for all patients and measures</span>
+0284 tic
+0285 fullfilename = sprintf(<span class="string">'%s-HeatmapAllPatients-Final'</span>, study);
+0286 plottitle = sprintf(<span class="string">'%s - Final'</span>, baseplottitle);
+0287 fprintf(<span class="string">'Re-creating heatmap for all patients\n'</span>);
+0288 f5 = <a href="createHeatmapOfPatientsAndMeasures.html" class="code" title="function [f] = createHeatmapOfPatientsAndMeasures(patientmeasures, colors, title)">createHeatmapOfPatientsAndMeasures</a>(physdata(:,{<span class="string">'SmartCareID'</span>,<span class="string">'ScaledDateNum'</span>}), colors, plottitle);
+0289 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f5, fullfilename, subfolder);
+0290 close(f5);
+0291 
+0292 toc
+0293 fprintf(<span class="string">'\n'</span>);
+0294 
+0295 <span class="keyword">end</span>
+0296</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

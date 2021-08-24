@@ -1,0 +1,284 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of patientCommitment</title>
+  <meta name="keywords" content="patientCommitment">
+  <meta name="description" content="Insights about the amount of FEV1 recordings per patient across the study">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">exploration</a> &gt; patientCommitment.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/exploration&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>patientCommitment
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>Insights about the amount of FEV1 recordings per patient across the study</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Insights about the amount of FEV1 recordings per patient across the study</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/helperfunctions/cleanDrugTherapyNamings.html" class="code" title="function out = cleanDrugTherapyNamings(str_array)">cleanDrugTherapyNamings</a>	useful only for pre-REDCAP update datasets</li><li><a href="../../../Code/pdm/helperfunctions/getStableIdx.html" class="code" title="function [idx2keep, days_t, days_m] = getStableIdx(patient, FEVdata,treatments_table, nprior_t, npost_t, modulators_table, npost_m, filter)">getStableIdx</a>	filters indexes corresponding to patient's stable days</li><li><a href="../../../Code/pdm/recovery/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/smartcare/cleanDrugTherapyNamings.html" class="code" title="function out = cleanDrugTherapyNamings(str_array)">cleanDrugTherapyNamings</a>	inputs: array, output: array with cleaned drugtherapy names</li><li><a href="../../../Code/smartcare/getLatestBreatheMeasDate.html" class="code" title="function [measdate] = getLatestBreatheMeasDate()">getLatestBreatheMeasDate</a>	getLatestBreatheMeasDate - convenience function to centralise getting the</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% Insights about the amount of FEV1 recordings per patient across the study</span>
+0002 
+0003 <a href="init.html" class="code" title="">init</a>;
+0004 
+0005 <span class="comment">% load measures</span>
+0006 [datamatfile, ~, ~] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0007 [brphysdata, broffset, ~] = <a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0008 load(fullfile(basedir, subfolder, <span class="string">'breatheclinicaldata.mat'</span>),<span class="string">'brPatient'</span>);
+0009 
+0010 <span class="comment">%% load patient brPatient files</span>
+0011 brPatient = [readtable(<span class="string">'../../DataFiles/BR/PatientbrPatientFiles/PBPatientbrPatientCDF20210305.xlsx'</span>); <span class="keyword">...</span>
+0012     readtable(<span class="string">'../../DataFiles/BR/PatientbrPatientFiles/PBPatientbrPatientPAP20210315.xlsx'</span>)];
+0013 brPatient  = brPatient(:,[1 4 6 7]);
+0014 <span class="comment">% note: brPatient 20210315 contains 266 patients</span>
+0015 <span class="comment">% latest date</span>
+0016 maxStudyDate = datenum(<a href="../../../Code/smartcare/getLatestBreatheMeasDate.html" class="code" title="function [measdate] = getLatestBreatheMeasDate()">getLatestBreatheMeasDate</a>,<span class="string">'yyyymmdd'</span>) - broffset;
+0017 
+0018 <span class="comment">%% extract FEV signal</span>
+0019 
+0020 <span class="comment">% bluetooth recordings</span>
+0021 <span class="comment">% FEV1 data</span>
+0022 <span class="comment">% mask for rows with FEV1 as recording type</span>
+0023 i = ismember(brphysdata(:,5).(1), {<span class="string">'FEV1Recording'</span>        });
+0024 <span class="comment">% extract SmartCareID, DateNum, FEV1</span>
+0025 dataFEV1 = table2array(brphysdata(i,[1 3 8]));
+0026 
+0027 <span class="comment">% FEV6</span>
+0028 i = ismember(brphysdata(:,5).(1), {<span class="string">'FEV6Recording'</span>        });
+0029 dataFEV6 = table2array(brphysdata(i,[1 3 8]));
+0030 
+0031 <span class="comment">% O2_saturation</span>
+0032 i = ismember(brphysdata(:,5).(1), {<span class="string">'O2SaturationRecording'</span>        });
+0033 dataO2_saturation = table2array(brphysdata(i,[1 3 10]));
+0034 
+0035 <span class="comment">% weight</span>
+0036 i = ismember(brphysdata(:,5).(1), {<span class="string">'WeightRecording'</span>        });
+0037 dataweight = table2array(brphysdata(i,[1 3 9]));
+0038 
+0039 <span class="comment">% manual recording</span>
+0040 <span class="comment">% wellness</span>
+0041 i = ismember(brphysdata(:,5).(1), {<span class="string">'WellnessRecording'</span>        });
+0042 datawellness = table2array(brphysdata(i,[1 3 14]));
+0043 
+0044 <span class="comment">% cough</span>
+0045 i = ismember(brphysdata(:,5).(1), {<span class="string">'CoughRecording'</span>        });
+0046 datacough = table2array(brphysdata(i,[1 3 14]));
+0047 
+0048 <span class="comment">% temperature</span>
+0049 i = ismember(brphysdata(:,5).(1), {<span class="string">'TemperatureRecording'</span>        });
+0050 datatemperature = table2array(brphysdata(i,[1 3 12]));
+0051 
+0052 <span class="comment">% automatic recordings</span>
+0053 <span class="comment">% Calories</span>
+0054 i = ismember(brphysdata(:,5).(1), {<span class="string">'CalorieRecording'</span>        });
+0055 datacalories = table2array(brphysdata(i,[1 3 13]));
+0056 
+0057 <span class="comment">% resting_heart_rate</span>
+0058 i = ismember(brphysdata(:,5).(1), {<span class="string">'RestingHRRecording'</span>        });
+0059 dataresting_heart_rate = table2array(brphysdata(i,[1 3 11]));
+0060 
+0061 clear i
+0062 
+0063 <span class="comment">%% specific code for fevAnalysis</span>
+0064 p_filter=1; <span class="comment">% activate fevAnalysis</span>
+0065 
+0066 <span class="keyword">if</span> p_filter == 1
+0067     <span class="comment">% load treatments</span>
+0068     load(fullfile(basedir, subfolder, <span class="string">'BRivandmeasures_recovery_gap10.mat'</span>));
+0069     <span class="comment">% load CFTR modulators therapy</span>
+0070     load(fullfile(basedir, subfolder, <span class="string">'breatheclinicaldata.mat'</span>));<span class="comment">%,'brDrugTherapy');</span>
+0071 
+0072     <span class="comment">% clean modulators tables</span>
+0073     brDrugTherapy.DrugTherapyType = <a href="../../../Code/pdm/helperfunctions/cleanDrugTherapyNamings.html" class="code" title="function out = cleanDrugTherapyNamings(str_array)">cleanDrugTherapyNamings</a>(brDrugTherapy.DrugTherapyType);
+0074     <span class="comment">% adds columns with serial date num</span>
+0075     brDrugTherapy.DateNum = datenum(brDrugTherapy.DrugTherapyStartDate) - broffset;
+0076 
+0077     n_prior_t = 30; <span class="comment">% days prior to treatment start</span>
+0078     n_post_t = 15; <span class="comment">% days post treatment end</span>
+0079     n_post_m = 15; <span class="comment">% days after modulator therapy start</span>
+0080     
+0081     <span class="comment">% remove patient 601, 621 578 (erroneous behavior)</span>
+0082     patients_erroneous = [221,201,178]; 
+0083     dataFEV1 = dataFEV1(~ismember(dataFEV1(:,1), patients_erroneous),:);
+0084 <span class="keyword">end</span>
+0085 
+0086 <span class="comment">%% build array with id, seniority and commitment</span>
+0087 
+0088 <span class="comment">% enter the data type you want to use</span>
+0089 type = &quot;FEV1&quot;;
+0090 data = eval(&quot;data&quot;+type);
+0091 
+0092 patients = unique(data(:,1));
+0093 commitment = nan(length(patients),6);
+0094 mask_stable_data = zeros(length(data(:,1)),1);
+0095 
+0096 <span class="keyword">for</span> i = 1:length(patients)
+0097     <span class="comment">% patient id</span>
+0098     commitment(i,1) = patients(i);
+0099      
+0100     <span class="comment">% create mask</span>
+0101     <span class="keyword">if</span> p_filter == 1
+0102         <span class="comment">% mask revealing patient data during stable period - specific to</span>
+0103         <span class="comment">% fevModel2</span>
+0104         [mask, days_t, days_m]  = <a href="../../../Code/pdm/helperfunctions/getStableIdx.html" class="code" title="function [idx2keep, days_t, days_m] = getStableIdx(patient, FEVdata,treatments_table, nprior_t, npost_t, modulators_table, npost_m, filter)">getStableIdx</a>(patients(i), data, <span class="keyword">...</span>
+0105             ivandmeasurestable, n_prior_t, n_post_t, <span class="keyword">...</span>
+0106             brDrugTherapy, n_post_m, <span class="keyword">...</span>
+0107             p_filter);
+0108         mask_stable_data = mask_stable_data | mask;
+0109     <span class="keyword">else</span>
+0110         <span class="comment">% mask revealing patient's values</span>
+0111         mask = data(:,1) == patients(i);
+0112     <span class="keyword">end</span>
+0113     
+0114     <span class="keyword">if</span> sum(mask) == 0 <span class="comment">% if no points after filter</span>
+0115         minDate = nan; maxDate = nan;
+0116     <span class="keyword">else</span>
+0117         
+0118         <span class="comment">% get minDate</span>
+0119         <span class="comment">% if no study start date for patient</span>
+0120         <span class="keyword">if</span> isnat(brPatient.StudyDate(brPatient.ID == patients(i)))
+0121             <span class="comment">%  look at consent date</span>
+0122             <span class="keyword">if</span> isnat(brPatient.ConsentDate(brPatient.ID == patients(i)))
+0123                 <span class="comment">% if no consent date, take overall study start date</span>
+0124                 minDate = 0;
+0125             <span class="keyword">else</span> <span class="comment">% else take consent date</span>
+0126                 minDate = datenum(brPatient.ConsentDate(brPatient.ID == patients(i))) - broffset;
+0127             <span class="keyword">end</span>
+0128         <span class="keyword">else</span> <span class="comment">% else take study start date</span>
+0129             minDate = datenum(brPatient.StudyDate(brPatient.ID == patients(i))) - broffset;
+0130         <span class="keyword">end</span>
+0131         
+0132         <span class="comment">% get maxDate</span>
+0133         <span class="keyword">if</span> isnat(brPatient.WithdrawalDate(brPatient.ID == patients(i)))
+0134             <span class="comment">% if no withdrawal, take current maxDate</span>
+0135             maxDate = maxStudyDate;
+0136         <span class="keyword">else</span> <span class="comment">% else take withdrawal date</span>
+0137             maxDate = datenum(brPatient.WithdrawalDate(brPatient.ID == patients(i)) - broffset);
+0138         <span class="keyword">end</span>
+0139     <span class="keyword">end</span>
+0140     
+0141     commitment(i,2) = minDate;
+0142     commitment(i,3) = maxDate;
+0143     
+0144     <span class="comment">% measurements' count</span>
+0145     commitment(i,4) = size(data(mask,:),1);
+0146     
+0147     <span class="comment">% commitment: measurements' count / theoritical max in %</span>
+0148     <span class="keyword">if</span> p_filter == 1 
+0149         <span class="comment">% remove unstable dates that are outisde from the enrollment time</span>
+0150         days_t = days_t(ismember(days_t, minDate:maxDate)); 
+0151         days_m = days_m(ismember(days_m, minDate:maxDate));
+0152         <span class="comment">% compute number of unstable days</span>
+0153         n_unstable_days = length(days_t) + length(days_m);
+0154         <span class="comment">% divide data by theoretical max time interval</span>
+0155         commitment(i,6) = 100 * commitment(i,4) / (maxDate - minDate + 1 - n_unstable_days);
+0156     <span class="keyword">else</span>
+0157         commitment(i,6) = 100 * commitment(i,4) / (maxDate - minDate + 1);
+0158     <span class="keyword">end</span>
+0159     
+0160     <span class="comment">% measurement' count in % over total #measurements</span>
+0161     commitment(i,5) = commitment(i,4) * 100 / length(data(:,1));
+0162 <span class="keyword">end</span>
+0163 clear i
+0164 
+0165 <span class="comment">% plot patient commitment</span>
+0166 threshold=50;
+0167 
+0168 figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 500 300])
+0169 histogram(commitment(:,6),10)
+0170 hold on
+0171 histogram(commitment(commitment(:,4)&gt;threshold,6),10,<span class="string">'BinLimit'</span>,[0,100])
+0172 title(sprintf(<span class="string">'Commitment to %s recording'</span>,strrep(type,&quot;_&quot;,&quot; &quot;)),  <span class="keyword">...</span>
+0173     [<span class="string">' mean: '</span> num2str(mean(commitment(:,6),<span class="string">'omitnan'</span>),2), <span class="string">'%, median: '</span> num2str(median(commitment(:,6),<span class="string">'omitnan'</span>),2) <span class="string">'%, '</span> <span class="keyword">...</span>
+0174     num2str(sum(commitment(:,4))) <span class="string">' measurements, '</span> num2str(sum(commitment(:,4)~=0)) <span class="string">' patients'</span>])<span class="comment">% out of ' num2str(length(unique(brphysdata.SmartCareID)))])</span>
+0175 xlabel(&quot;Density of measurements over stable enrolment period <span class="comment">%&quot;)</span>
+0176 ylabel(<span class="string">'Number of patients'</span>)
+0177 legend(<span class="string">'all measurements'</span>, [<span class="string">' &gt; '</span> num2str(threshold) <span class="string">' measurements per patient'</span>])
+0178 grid(<span class="string">'on'</span>)
+0179 hold off
+0180 
+0181 saveas(gcf,fullfile(plotfolder,sprintf(<span class="string">'patientCommitment%s.png'</span>,type)))
+0182 close all
+0183 <span class="comment">%% Create table with evolution of data count each 6 months - unused</span>
+0184 
+0185 days_span = 364/2; <span class="comment">% 6 months window</span>
+0186 
+0187 <span class="comment">% create 6 months date span from maxDate</span>
+0188 day_span = minDate:days_span:maxDate; 
+0189 day_span(1)=[];
+0190 day_span(end+1)=maxDate;
+0191 
+0192 t = table;
+0193 
+0194 <span class="keyword">for</span> i = 1:length(day_span)-1
+0195     <span class="comment">% filter data over the selected interval</span>
+0196     f_data = commitment(commitment(:,2) &lt; day_span(i),:);
+0197 
+0198     <span class="comment">% # months from study start</span>
+0199     t.MonthsFromStart(i) = convertCharsToStrings([num2str((i-1)*6) <span class="string">'-'</span> num2str(i*6)]);
+0200     <span class="comment">% patient count</span>
+0201     t.PatientCount(i) = size(f_data,1);
+0202     <span class="comment">% commitment levels</span>
+0203     t.Commitment0to25(i) = 100*sum(0 &lt;= f_data(:,6) &amp; f_data(:,6) &lt; 25)/size(f_data,1);
+0204     t.Commitment25to50(i) = 100*sum(25 &lt;= f_data(:,6) &amp; f_data(:,6) &lt; 50)/size(f_data,1);
+0205     t.Commitment50to75(i) = 100*sum(50 &lt;= f_data(:,6) &amp; f_data(:,6) &lt; 75)/size(f_data,1);
+0206     t.Commitment75to100(i) = 100*sum(75 &lt;= f_data(:,6) &amp; f_data(:,6) &lt; 100)/size(f_data,1);
+0207 <span class="keyword">end</span>
+0208 <span class="comment">%% find percentage of patients and measurements corresponding to a density threshold</span>
+0209 
+0210 idx = commitment(:,6)&gt;=30; <span class="comment">% idx patients over D% density of measurements</span>
+0211 <span class="comment">%idx = data(:,4)&gt;50; % idx patients over 50 measurements count</span>
+0212 
+0213 prct_patients = 100*sum(idx)/220<span class="comment">%length(data(:,1))*100;</span>
+0214 
+0215 prct_measurements = 100*sum(commitment(idx,4))/sum(commitment(:,4)) <span class="comment">% all measurements: %length(FEVdata);%</span>
+0216 
+0217 <span class="comment">%% investigate data completeness - unused</span>
+0218 
+0219 patients_FEV1 = unique(dataFEV1(:,1));
+0220 patients_FEV6 = unique(dataFEV6(:,1));
+0221 patients_calories = unique(dataCalories(:,1));
+0222 patients_wellness = unique(dataWellness(:,1));
+0223 
+0224 <span class="comment">% patients with fev1 but no calories</span>
+0225 patients_FEV1(not(ismember(patients_FEV1,patients_calories)))
+0226 
+0227 <span class="comment">% patients with calories but no fev1</span>
+0228 patients_calories(not(ismember(patients_calories,patients_FEV1)))
+0229 
+0230 <span class="comment">% patients with fev1 but no wellness</span>
+0231 patients_FEV1(not(ismember(patients_FEV1,patients_wellness)))
+0232 
+0233 <span class="comment">% patients with wellness but no calories</span>
+0234 patients_wellness(not(ismember(patients_wellness,patients_calories)))
+0235 
+0236 <span class="comment">% patients with fev1 but no fev6</span>
+0237 patients_FEV1(not(ismember(patients_FEV1,patients_FEV6)))</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

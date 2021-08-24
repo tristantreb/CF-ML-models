@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of checkDatesClinicVisitsVsPFTNew</title>
+  <meta name="keywords" content="checkDatesClinicVisitsVsPFTNew">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; checkDatesClinicVisitsVsPFTNew.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>checkDatesClinicVisitsVsPFTNew
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>	gets the patient offset table</li><li><a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clc; clear; close all;
+0002 
+0003 tic
+0004 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0005 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0006 
+0007 [studynbr, study, studyfullname] = <a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
+0008 [datamatfile, clinicalmatfile, demographicsmatfile] = <a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0009 [physdata, offset] = <a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0010 [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP, <span class="keyword">...</span>
+0011     cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght] = <a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0012 
+0013 fprintf(<span class="string">'\n'</span>);
+0014 
+0015 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0016 subfolder = <span class="string">'ExcelFiles'</span>;
+0017 outputfilename = sprintf(<span class="string">'%s-ClinicVisitsVsPFT.xlsx'</span>, study);
+0018 residualsheet = <span class="string">'PFTWithNoClinicAdmissionAB'</span>;
+0019 
+0020 tic
+0021 <span class="comment">% get patients with enough data</span>
+0022 patientoffsets = <a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>(physdata);
+0023 patientoffsets.Properties.VariableNames{<span class="string">'SmartCareID'</span>} = <span class="string">'ID'</span>;
+0024 
+0025 <span class="comment">% sort by Hospital, SmartCareID and Date</span>
+0026 cdPFT = sortrows(cdPFT, {<span class="string">'Hospital'</span>,<span class="string">'ID'</span>,<span class="string">'LungFunctionDate'</span>}, <span class="string">'ascend'</span>);
+0027 cdClinicVisits = sortrows(cdClinicVisits, {<span class="string">'Hospital'</span>,<span class="string">'ID'</span>,<span class="string">'AttendanceDate'</span>},<span class="string">'ascend'</span>);
+0028 cdOtherVisits = sortrows(cdOtherVisits, {<span class="string">'Hospital'</span>,<span class="string">'ID'</span>,<span class="string">'AttendanceDate'</span>},<span class="string">'ascend'</span>);
+0029 cdAdmissions = sortrows(cdAdmissions, {<span class="string">'Hospital'</span>,<span class="string">'ID'</span>,<span class="string">'Admitted'</span>}, <span class="string">'ascend'</span>);
+0030 cdAntibiotics = sortrows(cdAntibiotics, {<span class="string">'Hospital'</span>,<span class="string">'ID'</span>,<span class="string">'StartDate'</span>}, <span class="string">'ascend'</span>);
+0031 
+0032 cdPFT = innerjoin(cdPFT, patientoffsets);
+0033 
+0034 residualtable = table(<span class="string">'Size'</span>,[1 10], <span class="keyword">...</span>
+0035     <span class="string">'VariableTypes'</span>, {<span class="string">'string(56)'</span>, <span class="string">'string(8)'</span>, <span class="string">'int32'</span>,       <span class="string">'string(20)'</span>,  <span class="string">'int32'</span>,          <span class="string">'datetime'</span>,         <span class="string">'double'</span>, <span class="string">'int32'</span>, <span class="string">'double'</span>, <span class="string">'int32'</span>}, <span class="keyword">...</span>
+0036     <span class="string">'VariableNames'</span>, {<span class="string">'RowType'</span>,    <span class="string">'Hospital'</span>,  <span class="string">'SmartCareID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'LungFunctionID'</span>, <span class="string">'LungFunctionDate'</span>, <span class="string">'FEV1'</span>,   <span class="string">'FEV1_'</span>,  <span class="string">'FVC1'</span>,   <span class="string">'FVC1_'</span>, });
+0037 rowtoadd = residualtable;
+0038 residualtable(1,:) = [];
+0039 matchcount = 0;
+0040 
+0041 <span class="keyword">for</span> i = 1:size(cdPFT,1)
+0042     scid = cdPFT.ID(i);
+0043     pftdate = cdPFT.LungFunctionDate(i);
+0044     
+0045     rowtoadd.SmartCareID = scid;
+0046     rowtoadd.Hospital = cdPFT.Hospital{i};
+0047     rowtoadd.StudyNumber = cdPFT.StudyNumber{i};
+0048     <span class="comment">%rowtoadd.LungFunctionID = cdPFT.LungFunctionID(i);</span>
+0049     rowtoadd.LungFunctionDate = pftdate;
+0050     rowtoadd.FEV1  = cdPFT.FEV1(i);
+0051     rowtoadd.FEV1_ = cdPFT.FEV1_(i);
+0052     <span class="comment">%rowtoadd.FVC1  = cdPFT.FVC1(i);</span>
+0053     <span class="comment">%rowtoadd.FVC1_ = cdPFT.FVC1_(i);</span>
+0054     
+0055     idx =  find(cdAdmissions.ID == scid &amp; (cdAdmissions.Admitted-days(7)) &lt;= pftdate &amp; cdAdmissions.Discharge &gt;= pftdate);
+0056     idx2 = find(cdAntibiotics.ID == scid &amp; ismember(cdAntibiotics.Route, {<span class="string">'IV'</span>}) &amp; cdAntibiotics.StartDate &lt;= pftdate &amp; cdAntibiotics.StopDate &gt;= pftdate);
+0057     idx3 = find(cdClinicVisits.ID == scid &amp; cdClinicVisits.AttendanceDate == pftdate);
+0058     idx4 = find(cdOtherVisits.ID == scid &amp; cdOtherVisits.AttendanceDate == pftdate);
+0059     
+0060     <span class="keyword">if</span> (size(idx,1) ==0 &amp; size(idx2,1)==0 &amp; size(idx3,1)==0 &amp; size(idx4,1)==0)
+0061         rowtoadd.RowType = <span class="string">'*** PFT with no Clinic Visit/Admission/IV Antibiotic ***'</span>;
+0062         fprintf(<span class="string">'%56s  :  Hospital %8s  Patient ID %3d  :  LungFunction ID %3d  LungFunction Date  %11s  FEV1 %1.2f  FEV1_ %3.0f  FVC1 %1.2f  FVC1_ %3.0f\n'</span>, <span class="keyword">...</span><span class="comment"> </span>
+0063             rowtoadd.RowType, rowtoadd.Hospital, rowtoadd.SmartCareID, rowtoadd.LungFunctionID, datestr(rowtoadd.LungFunctionDate,1), rowtoadd.FEV1, <span class="keyword">...</span>
+0064             rowtoadd.FEV1_, rowtoadd.FVC1, rowtoadd.FVC1_);
+0065         residualtable = [residualtable; rowtoadd];
+0066     <span class="keyword">else</span>
+0067         rowtoadd.RowType = <span class="string">'Ok - PFT with Clinic Visit/Admission/IV Antibiotic'</span>;
+0068         matchcount = matchcount + 1;
+0069         fprintf(<span class="string">'%56s  :  Hospital %8s  Patient ID %3d  :  LungFunction ID %3d  LungFunction Date  %11s  FEV1 %1.2f  FEV1_ %3.0f  FVC1 %1.2f  FVC1_ %3.0f\n'</span>, <span class="keyword">...</span><span class="comment"> </span>
+0070             rowtoadd.RowType, rowtoadd.Hospital, rowtoadd.SmartCareID, rowtoadd.LungFunctionID, datestr(rowtoadd.LungFunctionDate,1), rowtoadd.FEV1, <span class="keyword">...</span>
+0071             rowtoadd.FEV1_, rowtoadd.FVC1, rowtoadd.FVC1_);
+0072     <span class="keyword">end</span>
+0073 <span class="keyword">end</span>
+0074 
+0075 toc
+0076 fprintf(<span class="string">'\n'</span>);
+0077 
+0078 fprintf(<span class="string">'Completeness check - %3d rows missing\n'</span>, size(cdPFT,1) - size(residualtable,1) - matchcount);
+0079 fprintf(<span class="string">'\n'</span>);
+0080 
+0081 tic
+0082 fprintf(<span class="string">'Saving results\n'</span>);
+0083 
+0084 writetable(residualtable,  fullfile(basedir, subfolder,outputfilename), <span class="string">'Sheet'</span>, residualsheet);
+0085 toc
+0086 fprintf(<span class="string">'\n'</span>);</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

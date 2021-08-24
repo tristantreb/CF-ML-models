@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of selectStudy</title>
+  <meta name="keywords" content="selectStudy">
+  <meta name="description" content="selectStudy - choose which study to run for">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; selectStudy.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>selectStudy
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>selectStudy - choose which study to run for</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [studynbr, study, studyfullname] = selectStudy() </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> selectStudy - choose which study to run for</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/exploration/plotPatientProfiles.html" class="code" title="">plotPatientProfiles</a>	plot a profile of each measures for each patient over the whole enrolment period</li><li><a href="../../Code/pdm/recovery/checkBreatheTreatmentsVsSelectMeasuresPost.html" class="code" title="">checkBreatheTreatmentsVsSelectMeasuresPost</a>	creates list of oral & IV treatments for recovery study</li><li><a href="../../Code/pdm/recovery/findDataAnomaliesRecovery.html" class="code" title="">findDataAnomaliesRecovery</a>	highlight data anomalies to be optionnaly excluded prior to run the alignment model</li><li><a href="EmemLungFunctionComparison.html" class="code" title="">EmemLungFunctionComparison</a>	</li><li><a href="JosieQuery.html" class="code" title="">JosieQuery</a>	</li><li><a href="calcClinicalInfoForPaper.html" class="code" title="">calcClinicalInfoForPaper</a>	</li><li><a href="checkBreatheTreatmentsVsSelectMeasuresPrior.html" class="code" title="">checkBreatheTreatmentsVsSelectMeasuresPrior</a>	creates list of oral & IV treatments</li><li><a href="checkClinicalVsHomeWeightMeasures.html" class="code" title="">checkClinicalVsHomeWeightMeasures</a>	</li><li><a href="checkDatesAdmissionsVsAntibiotics.html" class="code" title="">checkDatesAdmissionsVsAntibiotics</a>	</li><li><a href="checkDatesClinicVisitsVsCRPNew.html" class="code" title="">checkDatesClinicVisitsVsCRPNew</a>	</li><li><a href="checkDatesClinicVisitsVsPFTNew.html" class="code" title="">checkDatesClinicVisitsVsPFTNew</a>	</li><li><a href="checkDatesIVTreatmentsVsMeasurementDate.html" class="code" title="">checkDatesIVTreatmentsVsMeasurementDate</a>	</li><li><a href="checkDatesIVTreatmentsVsPatientStudyDate.html" class="code" title="">checkDatesIVTreatmentsVsPatientStudyDate</a>	</li><li><a href="checkIVTreatmentsVsMeasuresPriorNew.html" class="code" title="">checkIVTreatmentsVsMeasuresPriorNew</a>	creates list of oral & IV treatments</li><li><a href="checkStudyDateVsFirstMeasurementDate.html" class="code" title="">checkStudyDateVsFirstMeasurementDate</a>	</li><li><a href="createAlignmentModelInputs.html" class="code" title="">createAlignmentModelInputs</a>	creates the inputs for the model</li><li><a href="createClinMeasPredExcelDataByPatient.html" class="code" title="">createClinMeasPredExcelDataByPatient</a>	</li><li><a href="extractClinicalAndHomeFEV1Measures.html" class="code" title="">extractClinicalAndHomeFEV1Measures</a>	</li><li><a href="findDataAnomalies.html" class="code" title="">findDataAnomalies</a>	highlight data anomalies to be optionnaly excluded prior to run the alignment model</li><li><a href="plotAlignedCurveComparison.html" class="code" title="">plotAlignedCurveComparison</a>	</li><li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li><li><a href="runPlotsForPaperEMMC.html" class="code" title="">runPlotsForPaperEMMC</a>	</li><li><a href="visualiseExacerbationTimeline.html" class="code" title="">visualiseExacerbationTimeline</a>	</li><li><a href="visualiseMeasures.html" class="code" title="">visualiseMeasures</a>	</li><li><a href="visualisePatientSummary.html" class="code" title="">visualisePatientSummary</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [studynbr, study, studyfullname] = selectStudy()</a>
+0002 
+0003 <span class="comment">% selectStudy - choose which study to run for</span>
+0004 
+0005 nstudies = 4;
+0006 
+0007 sstudynbr = input(<span class="string">'Enter Study to run for (1 = SmartCare, 2 = TeleMed, 3 = Climb, 4 = Breathe): '</span>, <span class="string">'s'</span>);
+0008 
+0009 studynbr = str2double(sstudynbr);
+0010 
+0011 <span class="keyword">if</span> (isnan(studynbr) || studynbr &lt; 1 || studynbr &gt; nstudies)
+0012     fprintf(<span class="string">'Invalid choice\n'</span>);
+0013     studynbr = -1;
+0014     study = <span class="string">'**'</span>;
+0015     <span class="keyword">return</span>;
+0016 <span class="keyword">end</span>
+0017 
+0018 
+0019 <span class="keyword">if</span> studynbr == 1
+0020     study = <span class="string">'SC'</span>;
+0021     studyfullname = <span class="string">'SmartCare'</span>;
+0022 <span class="keyword">elseif</span> studynbr == 2
+0023     study = <span class="string">'TM'</span>;
+0024     studyfullname = <span class="string">'TeleMed'</span>;
+0025 <span class="keyword">elseif</span> studynbr == 3
+0026     study = <span class="string">'CL'</span>;
+0027     studyfullname = <span class="string">'Climb'</span>;
+0028 <span class="keyword">elseif</span> studynbr == 4
+0029     study = <span class="string">'BR'</span>;
+0030     studyfullname = <span class="string">'Breathe'</span>;
+0031 <span class="keyword">end</span>
+0032 
+0033 
+0034 <span class="keyword">end</span>
+0035</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

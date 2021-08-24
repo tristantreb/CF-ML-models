@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCPlotFEV1VsLatentCurveSet</title>
+  <meta name="keywords" content="amEMMCPlotFEV1VsLatentCurveSet">
+  <meta name="description" content="amEMMCPlotFEV1VsLatentCurveSet - plots the robust FEV1 max vs the latent">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCPlotFEV1VsLatentCurveSet.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCPlotFEV1VsLatentCurveSet
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCPlotFEV1VsLatentCurveSet - plots the robust FEV1 max vs the latent</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function amEMMCPlotFEV1VsLatentCurveSet(amInterventions, initial_latentcurve, pmPatientMeasStats,measures, plotname, plotsubfolder, nlatentcurves) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCPlotFEV1VsLatentCurveSet - plots the robust FEV1 max vs the latent
+ curve set allocated from the model run</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function amEMMCPlotFEV1VsLatentCurveSet(amInterventions, initial_latentcurve, pmPatientMeasStats, </a><span class="keyword">...</span>
+0002         measures, plotname, plotsubfolder, nlatentcurves)
+0003     
+0004 <span class="comment">% amEMMCPlotFEV1VsLatentCurveSet - plots the robust FEV1 max vs the latent</span>
+0005 <span class="comment">% curve set allocated from the model run</span>
+0006 
+0007 plotsacross = 1;
+0008 plotsdown   = 2;
+0009 pointsize = 36;
+0010 <span class="keyword">if</span> nlatentcurves == 2
+0011     cmap = [0, 1, 0 ; 0, 0, 1 ];
+0012 <span class="keyword">elseif</span> nlatentcurves == 3
+0013     cmap = [0, 1, 0 ; 0, 0, 1 ; 1, 0, 0 ];
+0014 <span class="keyword">else</span>
+0015     fprintf(<span class="string">'Add more colours to the palette\n'</span>);
+0016 <span class="keyword">end</span>
+0017 
+0018 plottitle = sprintf(<span class="string">'%s - FEV1 vs Latent Curve Set'</span>, plotname);
+0019 [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0020 colormap(f, cmap);
+0021 
+0022 amInterventions.InitialLC = initial_latentcurve;
+0023 
+0024 mfev1idx  = measures.Index(ismember(measures.DisplayName, <span class="string">'LungFunction'</span>));
+0025 fev1max  = pmPatientMeasStats(pmPatientMeasStats.MeasureIndex == mfev1idx, {<span class="string">'PatientNbr'</span>, <span class="string">'Study'</span>, <span class="string">'ID'</span>, <span class="string">'RobustMax'</span>});
+0026 fev1max = sortrows(fev1max, {<span class="string">'Study'</span>, <span class="string">'ID'</span>}, <span class="string">'ascend'</span>);
+0027 lc = innerjoin(amInterventions, fev1max, <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'ID'</span>}, <span class="string">'LeftVariables'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'LatentCurve'</span>, <span class="string">'InitialLC'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'RobustMax'</span>});
+0028 
+0029 thisplot    = 1;
+0030 ax = subplot(plotsdown,plotsacross,thisplot,<span class="string">'Parent'</span>,p);
+0031 scatter(ax, lc.InitialLC, lc.RobustMax, pointsize, lc.InitialLC, <span class="string">'MarkerFaceAlpha'</span>, 0.3);
+0032 title(ax, <span class="string">'Initial State'</span>, <span class="string">'FontSize'</span>, 8);
+0033 xlim(ax, [0 nlatentcurves + 1]);
+0034 xlabel(ax, <span class="string">'Latent Curve Set'</span>);
+0035 ylabel(ax, <span class="string">'Patient FEV1 Robust Max'</span>);
+0036 
+0037 thisplot = thisplot + 1; 
+0038 ax = subplot(plotsdown,plotsacross,thisplot,<span class="string">'Parent'</span>,p);
+0039 scatter(ax, lc.LatentCurve, lc.RobustMax, pointsize, lc.LatentCurve, <span class="string">'MarkerFaceAlpha'</span>, 0.3);
+0040 title(ax, <span class="string">'Final State'</span>, <span class="string">'FontSize'</span>, 8);
+0041 xlim(ax, [0 nlatentcurves + 1]);
+0042 xlabel(ax, <span class="string">'Latent Curve Set'</span>);
+0043 ylabel(ax, <span class="string">'Patient FEV1 Robust Max'</span>);
+0044 
+0045 <span class="comment">% save plot</span>
+0046 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0047 close(f);
+0048 
+0049 <span class="keyword">end</span>
+0050</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

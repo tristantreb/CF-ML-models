@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of printDataDemographics</title>
+  <meta name="keywords" content="printDataDemographics">
+  <meta name="description" content="printDataDemographics - calculates and prints the count, mean, std, min, max">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; printDataDemographics.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>printDataDemographics
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>printDataDemographics - calculates and prints the count, mean, std, min, max</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function printDataDemographics(physdata, smartcareID) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> printDataDemographics - calculates and prints the count, mean, std, min, max
+ by measure for the smart care data - either overall (if smartcareID = 0) or 
+ by patient (if smartcareID ~=0)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>	getColumnForMeasure - returns the column name from physdata for the</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadbreathedata.html" class="code" title="">loadbreathedata</a>	1st Breathe data processing step and analysis from raw measurements</li><li><a href="loadbreathemeasurementdata.html" class="code" title="">loadbreathemeasurementdata</a>	1st Breathe data processing step and analysis from raw measurements</li><li><a href="loadclimbdata.html" class="code" title="">loadclimbdata</a>	</li><li><a href="loadsmartcaredata.html" class="code" title="">loadsmartcaredata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function printDataDemographics(physdata, smartcareID)</a>
+0002 
+0003 <span class="comment">% printDataDemographics - calculates and prints the count, mean, std, min, max</span>
+0004 <span class="comment">% by measure for the smart care data - either overall (if smartcareID = 0) or</span>
+0005 <span class="comment">% by patient (if smartcareID ~=0)</span>
+0006 
+0007 tic
+0008 fprintf(<span class="string">'Calculate basic data demographics\n'</span>);
+0009 fprintf(<span class="string">'---------------------------------\n'</span>);
+0010 
+0011 <span class="keyword">if</span> (smartcareID == 0)
+0012     idx1 = physdata.SmartCareID &gt;= 0;
+0013 <span class="keyword">else</span>
+0014     idx1 = physdata.SmartCareID == smartcareID;
+0015 <span class="keyword">end</span>
+0016 
+0017 measures = unique(physdata.RecordingType);
+0018 <span class="keyword">for</span> i = 1:size(measures,1)
+0019     m = measures{i};
+0020     idx2 = ismember(physdata.RecordingType, m);
+0021     idx = idx1 &amp; idx2;
+0022     count = sum(idx);
+0023     colname = <a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>(m);
+0024     <span class="keyword">if</span> ismember(class(table2array(physdata(:, {colname}))), {<span class="string">'double'</span>})
+0025         data  = table2array(physdata(idx, colname));
+0026         mmean = mean(data);
+0027         mstd  = std(data);
+0028         mmin  = min(data);
+0029         mmax  = max(data);
+0030         fprintf(<span class="string">'Measure %25s has %5d measurements, with mean %8.2f, std %8.2f, min %8.2f, max %8.2f\n'</span>, m, count, mmean, mstd, mmin, mmax);
+0031     <span class="keyword">else</span>
+0032         muniquevals = unique(physdata(idx, colname));
+0033         fprintf(<span class="string">'Measure %25s has %5d measurements, with %d unique valuea\n'</span>, m, count, size(muniquevals, 1));
+0034     <span class="keyword">end</span>
+0035 <span class="keyword">end</span>
+0036 toc
+0037 fprintf(<span class="string">'\n'</span>);
+0038 
+0039 <span class="keyword">end</span>
+0040</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

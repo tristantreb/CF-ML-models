@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of generateDataDemographicsByPatientFn</title>
+  <meta name="keywords" content="generateDataDemographicsByPatientFn">
+  <meta name="description" content="generateDataDemographicsByPatientFn - function that creates data">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; generateDataDemographicsByPatientFn.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>generateDataDemographicsByPatientFn
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>generateDataDemographicsByPatientFn - function that creates data</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function generateDataDemographicsByPatientFn(physdata, cdPatient, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> generateDataDemographicsByPatientFn - function that creates data
+ demographics by patient and stores matlab variables and creates an excel
+ file of results</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="mid50max.html" class="code" title="function y = mid50max(x)">mid50max</a>	mid50std - returns the std of the mid 50% data points in x (sorted by</li><li><a href="mid50mean.html" class="code" title="function y = mid50mean(x)">mid50mean</a>	mid50mean - returns the mean of the mid 50% data points in x (sorted by</li><li><a href="mid50min.html" class="code" title="function y = mid50min(x)">mid50min</a>	mid50std - returns the std of the mid 50% data points in x (sorted by</li><li><a href="mid50std.html" class="code" title="function y = mid50std(x)">mid50std</a>	mid50std - returns the std of the mid 50% data points in x (sorted by</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li><li><a href="xb25max.html" class="code" title="function y = xb25max(x)">xb25max</a>	xb25max - returns the std of the data points excluding the bottom 25% in x (sorted by</li><li><a href="xb25mean.html" class="code" title="function y = xb25mean(x)">xb25mean</a>	xb25mean - returns the mean of the data points excluding the bottom 25% in x (sorted by</li><li><a href="xb25min.html" class="code" title="function y = xb25min(x)">xb25min</a>	xb25min - returns the min of the data points excluding the bottom 25% in x (sorted by</li><li><a href="xb25std.html" class="code" title="function y = xb25std(x)">xb25std</a>	xb25std - returns the std of the data points excluding the bottom 25% in x (sorted by</li><li><a href="xu25max.html" class="code" title="function y = xu25max(x)">xu25max</a>	xu25max - returns the max of the data points excluding the upper 25% in x (sorted by</li><li><a href="xu25mean.html" class="code" title="function y = xu25mean(x)">xu25mean</a>	xu25mean - returns the mean of the data points excluding the upper 25% in x (sorted by</li><li><a href="xu25min.html" class="code" title="function y = xu25min(x)">xu25min</a>	xu25min - returns the min of the data points excluding the upper 25% in x (sorted by</li><li><a href="xu25std.html" class="code" title="function y = xu25std(x)">xu25std</a>	xu25std - returns the std of the data points excluding the upper 25% in x (sorted by</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="generateDataDemographicsByPatientScript.html" class="code" title="">generateDataDemographicsByPatientScript</a>	</li><li><a href="loadbreathedata.html" class="code" title="">loadbreathedata</a>	1st Breathe data processing step and analysis from raw measurements</li><li><a href="loadbreathemeasurementdata.html" class="code" title="">loadbreathemeasurementdata</a>	1st Breathe data processing step and analysis from raw measurements</li><li><a href="loadclimbdata.html" class="code" title="">loadclimbdata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 <a name="_sub0" href="#_subfunctions" class="code">function generateDataDemographicsByPatientFn(physdata, cdPatient, study)</a>
+0003 
+0004 <span class="comment">% generateDataDemographicsByPatientFn - function that creates data</span>
+0005 <span class="comment">% demographics by patient and stores matlab variables and creates an excel</span>
+0006 <span class="comment">% file of results</span>
+0007 
+0008 tic
+0009 cdPatient = sortrows(cdPatient, {<span class="string">'ID'</span>}, <span class="string">'ascend'</span>);
+0010 <span class="comment">%physdata = sortrows(physdata_predupehandling, {'SmartCareID', 'RecordingType', 'DateNum'}, 'ascend');</span>
+0011 
+0012 fprintf(<span class="string">'Calculating data demographics by patient\n'</span>);
+0013 tempdata = physdata;
+0014 tempdata(:,{<span class="string">'UserName'</span>, <span class="string">'ScaledDateNum'</span>, <span class="string">'DateNum'</span>, <span class="string">'Date_TimeRecorded'</span>}) = [];
+0015 <span class="keyword">if</span> ismember(study, {<span class="string">'SC'</span>})
+0016     tempdata(:,{<span class="string">'FEV1'</span>, <span class="string">'PredictedFEV'</span>, <span class="string">'ScalingRatio'</span>, <span class="string">'CalcFEV1SetAs'</span>}) = [];
+0017 <span class="keyword">elseif</span> ismember(study, {<span class="string">'BR'</span>})
+0018     tempdata(:,{<span class="string">'CaptureType'</span>}) = [];
+0019 <span class="keyword">elseif</span> ismember(study, {<span class="string">'CL'</span>})
+0020     <span class="comment">% no need to remove any columns for climb;</span>
+0021 <span class="keyword">end</span>
+0022 
+0023 <span class="comment">%if any(ismember(tempdata.Properties.VariableNames', {'SputumColour'}))</span>
+0024 <span class="comment">%    tempdata.SputumColour = [];</span>
+0025 <span class="comment">%end</span>
+0026 
+0027 demofunc = @(x)[mean(x) std(x) min(x) max(x) <a href="mid50mean.html" class="code" title="function y = mid50mean(x)">mid50mean</a>(x) <a href="mid50std.html" class="code" title="function y = mid50std(x)">mid50std</a>(x) <a href="mid50min.html" class="code" title="function y = mid50min(x)">mid50min</a>(x) <a href="mid50max.html" class="code" title="function y = mid50max(x)">mid50max</a>(x) <span class="keyword">...</span>
+0028     <a href="xb25mean.html" class="code" title="function y = xb25mean(x)">xb25mean</a>(x) <a href="xb25std.html" class="code" title="function y = xb25std(x)">xb25std</a>(x) <a href="xb25min.html" class="code" title="function y = xb25min(x)">xb25min</a>(x) <a href="xb25max.html" class="code" title="function y = xb25max(x)">xb25max</a>(x) <a href="xu25mean.html" class="code" title="function y = xu25mean(x)">xu25mean</a>(x) <a href="xu25std.html" class="code" title="function y = xu25std(x)">xu25std</a>(x) <a href="xu25min.html" class="code" title="function y = xu25min(x)">xu25min</a>(x) <a href="xu25max.html" class="code" title="function y = xu25max(x)">xu25max</a>(x)];
+0029 demographicstable = varfun(demofunc, tempdata, <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>});
+0030 
+0031 tempdata(:,{<span class="string">'SmartCareID'</span>}) = [];
+0032 overalltable = varfun(demofunc, tempdata, <span class="string">'GroupingVariables'</span>, {<span class="string">'RecordingType'</span>});
+0033 
+0034 <span class="comment">% example of how to access max FEV1_ for a given row</span>
+0035 <span class="comment">% demographicstable(3,:).Fun_FEV1_(4)</span>
+0036 
+0037 measurecounttable = demographicstable(:, {<span class="string">'SmartCareID'</span>,<span class="string">'RecordingType'</span>, <span class="string">'GroupCount'</span>});
+0038 
+0039 demographicstable = sortrows(demographicstable, {<span class="string">'RecordingType'</span>,<span class="string">'SmartCareID'</span>});
+0040 overalltable = sortrows(overalltable, {<span class="string">'RecordingType'</span>});
+0041 toc
+0042 fprintf(<span class="string">'\n'</span>);
+0043 
+0044 tic
+0045 timenow = datestr(clock(),30);
+0046 
+0047 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0048 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0049 outputfilename = sprintf(<span class="string">'%sdatademographicsbypatient-%s.mat'</span>, study, timenow);
+0050 fprintf(<span class="string">'Saving output variables to matlab file %s\n'</span>, outputfilename);
+0051 save(fullfile(basedir, subfolder, outputfilename), <span class="string">'measurecounttable'</span>, <span class="string">'demographicstable'</span>, <span class="string">'overalltable'</span>);
+0052 outputfilename = sprintf(<span class="string">'%sdatademographicsbypatient.mat'</span>, study);
+0053 fprintf(<span class="string">'Saving output variables to matlab file %s\n'</span>, outputfilename);
+0054 save(fullfile(basedir, subfolder, outputfilename), <span class="string">'measurecounttable'</span>, <span class="string">'demographicstable'</span>, <span class="string">'overalltable'</span>);
+0055 
+0056 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0057 subfolder = <span class="string">'ExcelFiles'</span>;
+0058 outputfilename = sprintf(<span class="string">'%sDataDemographicsByPatient-%s.xlsx'</span>,study, timenow);
+0059 fprintf(<span class="string">'Saving results to excel file %s\n'</span>, outputfilename);
+0060 writetable(measurecounttable, fullfile(basedir, subfolder, outputfilename), <span class="string">'Sheet'</span>, <span class="string">'MeasureCountByPatient'</span>);
+0061 writetable(demographicstable, fullfile(basedir, subfolder, outputfilename), <span class="string">'Sheet'</span>, <span class="string">'DataDemographicsByPatient'</span>);
+0062 writetable(overalltable, fullfile(basedir, subfolder, outputfilename), <span class="string">'Sheet'</span>, <span class="string">'OverallDataDemographics'</span>);
+0063 toc
+0064 fprintf(<span class="string">'\n'</span>);
+0065 
+0066 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

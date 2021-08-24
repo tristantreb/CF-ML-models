@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCCalcAbsPredAndBounds</title>
+  <meta name="keywords" content="amEMMCCalcAbsPredAndBounds">
+  <meta name="description" content="amEMMCCalcAbsPredAndBounds - calculates the prediction and lower/upper">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCCalcAbsPredAndBounds.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCCalcAbsPredAndBounds
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCCalcAbsPredAndBounds - calculates the prediction and lower/upper</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [amInterventions] = amEMMCCalcAbsPredAndBounds(amInterventions, ex_start, nlatentcurves) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCCalcAbsPredAndBounds - calculates the prediction and lower/upper
+ bounds in absolute days and stores as additional columns in
+ amInterventions table</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModelEMMCFcn.html" class="code" title="function runAlignmentModelEMMCFcn(amRunParameters)">runAlignmentModelEMMCFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="runAlignmentModelEMMCFcnSplit.html" class="code" title="function runAlignmentModelEMMCFcnSplit(amRunParameters)">runAlignmentModelEMMCFcnSplit</a>	function to run the alignment model (EM version) given a set of run</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [amInterventions] = amEMMCCalcAbsPredAndBounds(amInterventions, ex_start, nlatentcurves)</a>
+0002 
+0003 <span class="comment">% amEMMCCalcAbsPredAndBounds - calculates the prediction and lower/upper</span>
+0004 <span class="comment">% bounds in absolute days and stores as additional columns in</span>
+0005 <span class="comment">% amInterventions table</span>
+0006 
+0007 amInterventions.Ex_Start(:) = 0;
+0008 amInterventions.Pred(:) = 0;
+0009 amInterventions.RelLB1(:) = 0;
+0010 amInterventions.RelUB1(:) = 0;
+0011 amInterventions.RelLB2(:) = -1;
+0012 amInterventions.RelUB2(:) = -1;
+0013 
+0014 <span class="keyword">for</span> l = 1:nlatentcurves
+0015     amInterventions.Ex_Start(amInterventions.LatentCurve == l) = ex_start(l);
+0016 <span class="keyword">end</span>
+0017 
+0018 amInterventions.Pred   = amInterventions.IVScaledDateNum + amInterventions.Ex_Start + amInterventions.Offset;
+0019 amInterventions.RelLB1 = amInterventions.IVScaledDateNum + amInterventions.Ex_Start + amInterventions.LowerBound1;
+0020 amInterventions.RelUB1 = amInterventions.IVScaledDateNum + amInterventions.Ex_Start + amInterventions.UpperBound1;
+0021 
+0022 twoconfidx = amInterventions.LowerBound2 ~= -1;
+0023 amInterventions.RelLB2(twoconfidx) = amInterventions.IVScaledDateNum(twoconfidx) <span class="keyword">...</span>
+0024         + amInterventions.Ex_Start(twoconfidx) + amInterventions.LowerBound2(twoconfidx);
+0025     
+0026 amInterventions.RelUB2(twoconfidx) = amInterventions.IVScaledDateNum(twoconfidx) <span class="keyword">...</span>
+0027         + amInterventions.Ex_Start(twoconfidx) + amInterventions.UpperBound2(twoconfidx);
+0028 
+0029 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

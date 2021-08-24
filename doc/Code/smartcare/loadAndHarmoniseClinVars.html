@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadAndHarmoniseClinVars</title>
+  <meta name="keywords" content="loadAndHarmoniseClinVars">
+  <meta name="description" content="loadAndHarmoniseClinVars - loads clinical variables and standardises">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadAndHarmoniseClinVars.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadAndHarmoniseClinVars
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>loadAndHarmoniseClinVars - loads clinical variables and standardises</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> loadAndHarmoniseClinVars - loads clinical variables and standardises
+ their naming</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/exploration/patientDemographics.html" class="code" title="">patientDemographics</a>	create an excel with current BR patient demographics</li><li><a href="../../Code/pdm/exploration/plotPatientProfiles.html" class="code" title="">plotPatientProfiles</a>	plot a profile of each measures for each patient over the whole enrolment period</li><li><a href="../../Code/pdm/recovery/checkBreatheTreatmentsVsSelectMeasuresPost.html" class="code" title="">checkBreatheTreatmentsVsSelectMeasuresPost</a>	creates list of oral & IV treatments for recovery study</li><li><a href="../../Code/pdm/recovery/createAlignmentModelInputsRecovery.html" class="code" title="">createAlignmentModelInputsRecovery</a>	creates the inputs for the model</li><li><a href="../../Code/pdm/recovery/relateInferredClassesToPatientFeatures.html" class="code" title="">relateInferredClassesToPatientFeatures</a>	analyse the relation between patient characteristics and subset of interventions</li><li><a href="../../Code/pdm/recovery/runSpecificInterventions.html" class="code" title="">runSpecificInterventions</a>	run a model with a manually selected subset of interventions</li><li><a href="EmemLungFunctionComparison.html" class="code" title="">EmemLungFunctionComparison</a>	</li><li><a href="JosieQuery.html" class="code" title="">JosieQuery</a>	</li><li><a href="PrePostAnalysisPatientEligibilityScript.html" class="code" title="">PrePostAnalysisPatientEligibilityScript</a>	</li><li><a href="calcClinicalInfoForPaper.html" class="code" title="">calcClinicalInfoForPaper</a>	</li><li><a href="checkBreatheClinicalVsHomeFEV1Measures.html" class="code" title="">checkBreatheClinicalVsHomeFEV1Measures</a>	</li><li><a href="checkBreatheClinicalVsHomeWeightMeasures.html" class="code" title="">checkBreatheClinicalVsHomeWeightMeasures</a>	</li><li><a href="checkBreatheTreatmentsVsSelectMeasuresPrior.html" class="code" title="">checkBreatheTreatmentsVsSelectMeasuresPrior</a>	creates list of oral & IV treatments</li><li><a href="checkClimbCalculatedClinicalVsHomeFEV1Measures.html" class="code" title="">checkClimbCalculatedClinicalVsHomeFEV1Measures</a>	</li><li><a href="checkClinicalVsHomeWeightMeasures.html" class="code" title="">checkClinicalVsHomeWeightMeasures</a>	</li><li><a href="checkDatesAdmissionsVsAntibiotics.html" class="code" title="">checkDatesAdmissionsVsAntibiotics</a>	</li><li><a href="checkDatesClinicVisitsVsCRPNew.html" class="code" title="">checkDatesClinicVisitsVsCRPNew</a>	</li><li><a href="checkDatesClinicVisitsVsPFTNew.html" class="code" title="">checkDatesClinicVisitsVsPFTNew</a>	</li><li><a href="checkDatesIVTreatmentsVsMeasurementDate.html" class="code" title="">checkDatesIVTreatmentsVsMeasurementDate</a>	</li><li><a href="checkDatesIVTreatmentsVsPatientStudyDate.html" class="code" title="">checkDatesIVTreatmentsVsPatientStudyDate</a>	</li><li><a href="checkIVTreatmentsVsMeasuresPriorNew.html" class="code" title="">checkIVTreatmentsVsMeasuresPriorNew</a>	creates list of oral & IV treatments</li><li><a href="checkStudyDateVsFirstMeasurementDate.html" class="code" title="">checkStudyDateVsFirstMeasurementDate</a>	</li><li><a href="createAlignmentModelInputs.html" class="code" title="">createAlignmentModelInputs</a>	creates the inputs for the model</li><li><a href="createBreatheInterimCheckpointStats.html" class="code" title="">createBreatheInterimCheckpointStats</a>	</li><li><a href="createBreathePrePostStats.html" class="code" title="">createBreathePrePostStats</a>	</li><li><a href="createClinMeasPredExcelDataByPatient.html" class="code" title="">createClinMeasPredExcelDataByPatient</a>	</li><li><a href="createDataExportForREDCap.html" class="code" title="">createDataExportForREDCap</a>	createDataExportForREDCap.m - a script that takes current clinical data</li><li><a href="extractClinicalAndHomeFEV1Measures.html" class="code" title="">extractClinicalAndHomeFEV1Measures</a>	</li><li><a href="runAlignmentModelEMMCFcnSplit.html" class="code" title="function runAlignmentModelEMMCFcnSplit(amRunParameters)">runAlignmentModelEMMCFcnSplit</a>	function to run the alignment model (EM version) given a set of run</li><li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li><li><a href="runPlotsForPaperEMMC.html" class="code" title="">runPlotsForPaperEMMC</a>	</li><li><a href="visualiseExacerbationTimeline.html" class="code" title="">visualiseExacerbationTimeline</a>	</li><li><a href="visualiseMeasures.html" class="code" title="">visualiseMeasures</a>	</li><li><a href="visualisePatientSummary.html" class="code" title="">visualisePatientSummary</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP, </a><span class="keyword">...</span>
+0002     cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact] <span class="keyword">...</span>
+0003             = loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)
+0004 
+0005 <span class="comment">% loadAndHarmoniseClinVars - loads clinical variables and standardises</span>
+0006 <span class="comment">% their naming</span>
+0007 
+0008 tic
+0009 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0010 fprintf(<span class="string">'Loading %s Clinical data\n'</span>, study);
+0011 
+0012 <span class="keyword">if</span> ismember(study, <span class="string">'SC'</span>)
+0013     load(fullfile(basedir, subfolder, clinicalmatfile), <span class="string">'cdPatient'</span>, <span class="string">'cdMicrobiology'</span>, <span class="string">'cdClinicVisits'</span>, <span class="string">'cdPFT'</span>, <span class="string">'cdAdmissions'</span>, <span class="keyword">...</span>
+0014         <span class="string">'cdAntibiotics'</span>, <span class="string">'cdCRP'</span>, <span class="string">'cdEndStudy'</span>, <span class="string">'cdOtherVisits'</span>, <span class="string">'cdMedications'</span>, <span class="string">'cdNewMeds'</span>);
+0015     cdDrugTherapy      = [];
+0016     cdHghtWght         = [];
+0017     cdUnplannedContact = [];
+0018 <span class="keyword">elseif</span> ismember(study, <span class="string">'TM'</span>)
+0019     load(fullfile(basedir, subfolder, clinicalmatfile), <span class="string">'tmPatient'</span>, <span class="string">'tmMicrobiology'</span>, <span class="string">'tmClinicVisits'</span>, <span class="string">'tmPFT'</span>, <span class="string">'tmAdmissions'</span>, <span class="keyword">...</span>
+0020         <span class="string">'tmAntibiotics'</span>, <span class="string">'tmCRP'</span>, <span class="string">'tmEndStudy'</span>);
+0021     cdPatient      = tmPatient;
+0022     cdMicrobiology = tmMicrobiology;
+0023     cdClinicVisits = tmClinicVisits;
+0024     cdPFT          = tmPFT;
+0025     cdAdmissions   = tmAdmissions;
+0026     cdAntibiotics  = tmAntibiotics;
+0027     cdCRP          = tmCRP;
+0028     cdEndStudy     = tmEndStudy;
+0029     cdDrugTherapy  = [];
+0030     cdOtherVisits  = [];
+0031     cdHghtWght     = [];
+0032     cdMedications  = [];
+0033     cdNewMeds      = [];
+0034     cdUnplannedContact = [];
+0035 <span class="keyword">elseif</span> ismember(study, <span class="string">'CL'</span>)
+0036     load(fullfile(basedir, subfolder, clinicalmatfile), <span class="string">'clPatient'</span>, <span class="string">'clMicrobiology'</span>, <span class="string">'clClinicVisits'</span>, <span class="string">'clPFT'</span>, <span class="string">'clAdmissions'</span>, <span class="keyword">...</span>
+0037         <span class="string">'clAntibiotics'</span>, <span class="string">'clCRP'</span>, <span class="string">'clEndStudy'</span>, <span class="string">'clOtherVisits'</span>, <span class="string">'clHghtWght'</span>);
+0038     cdPatient      = clPatient;
+0039     cdMicrobiology = clMicrobiology;
+0040     cdClinicVisits = clClinicVisits;
+0041     cdPFT          = clPFT;
+0042     cdAdmissions   = clAdmissions;
+0043     cdAntibiotics  = clAntibiotics;
+0044     cdCRP          = clCRP;
+0045     cdEndStudy     = clEndStudy;
+0046     cdOtherVisits  = clOtherVisits;
+0047     cdHghtWght     = clHghtWght;
+0048     cdDrugTherapy  = [];
+0049     cdMedications  = [];
+0050     cdNewMeds      = [];
+0051     cdUnplannedContact = [];
+0052 <span class="keyword">elseif</span> ismember(study, <span class="string">'BR'</span>)
+0053     load(fullfile(basedir, subfolder, clinicalmatfile), <span class="string">'brPatient'</span>, <span class="string">'brDrugTherapy'</span>, <span class="string">'brMicrobiology'</span>, <span class="string">'brClinicVisits'</span>, <span class="string">'brPFT'</span>, <span class="string">'brAdmissions'</span>, <span class="keyword">...</span>
+0054         <span class="string">'brAntibiotics'</span>, <span class="string">'brCRP'</span>, <span class="string">'brEndStudy'</span>, <span class="string">'brOtherVisits'</span>, <span class="string">'brHghtWght'</span>, <span class="string">'brUnplannedContact'</span>);
+0055     cdPatient      = brPatient;
+0056     cdDrugTherapy  = brDrugTherapy;
+0057     cdMicrobiology = brMicrobiology;
+0058     cdClinicVisits = brClinicVisits;
+0059     cdPFT          = brPFT;
+0060     cdAdmissions   = brAdmissions;
+0061     cdAntibiotics  = brAntibiotics;
+0062     cdCRP          = brCRP;
+0063     cdEndStudy     = brEndStudy;
+0064     cdOtherVisits  = brOtherVisits;
+0065     cdHghtWght     = brHghtWght;
+0066     cdMedications  = [];
+0067     cdNewMeds      = [];
+0068     cdUnplannedContact = brUnplannedContact;
+0069 <span class="keyword">end</span>
+0070 
+0071 toc
+0072 
+0073 <span class="keyword">end</span>
+0074</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMCalcObjFcn</title>
+  <meta name="keywords" content="amEMCalcObjFcn">
+  <meta name="description" content="amEMCalcObjFcn - calculates residual sum of squares distance for points in">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMCalcObjFcn.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMCalcObjFcn
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMCalcObjFcn - calculates residual sum of squares distance for points in</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [dist, count, hstg, isOutlier] = amEMCalcObjFcn(meancurvemean, meancurvestd, amIntrCube,amHeldBackcube, isOutlier, outprior, measuresmask, measuresrange, normstd, hstg, currinter,curroffset, max_offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMCalcObjFcn - calculates residual sum of squares distance for points in
+ curve vs meancurve incorporating offset</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="calcRegDist.html" class="code" title="function [dist] = calcRegDist(lcpointmean, lcpointstd, pmstd, datapoint, sigmamethod)">calcRegDist</a>	calcRegDist - convenience function to calculate the sum of squares</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMAlignCurves.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount, meancurvemean, meancurvestd, animatedmeancurvemean, profile_pre,offsets, animatedoffsets, hstg, pdoffset, overall_hstg, overall_pdoffset, animated_overall_pdoffset,isOutlier, ppts, qual, min_offset, iter] =amEMAlignCurves(amIntrCube, amHeldBackcube, amInterventions, outprior, measures, normstd, max_offset, align_wind, nmeasures, ninterventions,detaillog, sigmamethod, smoothingmethod, offsetblockingmethod, runmode, fnmodelrun)">amEMAlignCurves</a>	amEMAlignCurves - function to align measurement curves prior to intervention</li><li><a href="amEMBestFit.html" class="code" title="function [better_offset, hstg, pdoffset, overall_hstg, overall_pdoffset, isOutlier] = amEMBestFit(meancurvemean, meancurvestd,amIntrCube, amHeldBackcube, measuresmask, measuresrange, normstd, hstg, pdoffset, overall_hstg, overall_pdoffset, isOutlier, outprior, currinter, min_offset, max_offset, align_wind,nmeasures, sigmamethod, smoothingmethod, runmode)">amEMBestFit</a>	amEMBestFit - calculates the offset for an intervention by minimising the</li><li><a href="checkEMLatentCurves.html" class="code" title="">checkEMLatentCurves</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [dist, count, hstg, isOutlier] = amEMCalcObjFcn(meancurvemean, meancurvestd, amIntrCube, </a><span class="keyword">...</span>
+0002     amHeldBackcube, isOutlier, outprior, measuresmask, measuresrange, normstd, hstg, currinter, <span class="keyword">...</span>
+0003     curroffset, max_offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod)
+0004 
+0005 <span class="comment">% amEMCalcObjFcn - calculates residual sum of squares distance for points in</span>
+0006 <span class="comment">% curve vs meancurve incorporating offset</span>
+0007 
+0008 dist = 0;
+0009 count = 0;
+0010 tempmean = zeros(max_offset + align_wind - 1, nmeasures);
+0011 tempstd  = zeros(max_offset + align_wind - 1, nmeasures);
+0012 
+0013 <span class="keyword">if</span> (update_histogram == 1)
+0014     <span class="keyword">for</span> m = 1:nmeasures
+0015         hstg(m, currinter, curroffset + 1) = 0;
+0016     <span class="keyword">end</span>
+0017 <span class="keyword">end</span>
+0018 
+0019 <span class="keyword">for</span> m = 1:nmeasures
+0020     <span class="keyword">if</span> smoothingmethod == 2
+0021         tempmean(:,m) = smooth(meancurvemean(:,m),5);
+0022         tempstd(:,m) = smooth(meancurvestd(:,m),5);
+0023     <span class="keyword">else</span>
+0024         tempmean(:,m) = meancurvemean(:,m);
+0025         tempstd(:,m) = meancurvestd(:,m);
+0026     <span class="keyword">end</span>
+0027 <span class="keyword">end</span>
+0028 
+0029 <span class="keyword">for</span> i = 1:align_wind
+0030     <span class="keyword">for</span> m = 1:nmeasures
+0031         <span class="comment">% distance calculation for an outlier point</span>
+0032         outdist = -log(outprior) + log(measuresrange(m));
+0033         <span class="keyword">if</span> (~isnan(amIntrCube(currinter, max_offset + align_wind - i, m)) &amp;&amp; amHeldBackcube(currinter, max_offset + align_wind - i, m) == 0)
+0034             <span class="comment">% distance calculation for a regular point</span>
+0035             regdist = <a href="calcRegDist.html" class="code" title="function [dist] = calcRegDist(lcpointmean, lcpointstd, pmstd, datapoint, sigmamethod)">calcRegDist</a>(tempmean(max_offset + align_wind - i - curroffset, m), <span class="keyword">...</span>
+0036                                   tempstd(max_offset + align_wind - i - curroffset, m), <span class="keyword">...</span>
+0037                                   normstd(currinter, m), <span class="keyword">...</span>
+0038                                   amIntrCube(currinter, max_offset + align_wind - i, m), <span class="keyword">...</span>
+0039                                   sigmamethod);
+0040             regdist = regdist - log(1 - outprior);
+0041 
+0042             <span class="keyword">if</span> regdist &lt;= outdist
+0043                 thisdist = regdist;
+0044                 isOutlier(currinter, align_wind + 1 - i, m, curroffset + 1) = 0;
+0045             <span class="keyword">else</span>
+0046                 thisdist = outdist;
+0047                 isOutlier(currinter, align_wind + 1 - i, m, curroffset + 1) = 1;
+0048             <span class="keyword">end</span>
+0049             
+0050             <span class="comment">% only include desired measures in overall alignment</span>
+0051             <span class="comment">% optimisation</span>
+0052             <span class="keyword">if</span> measuresmask(m) == 1
+0053                 dist = dist + thisdist;
+0054                 count = count + 1;
+0055             <span class="keyword">end</span>
+0056             <span class="keyword">if</span> (update_histogram == 1)
+0057                 hstg(m, currinter, curroffset + 1) = hstg(m, currinter, curroffset + 1) + thisdist;
+0058             <span class="keyword">end</span>
+0059         <span class="keyword">end</span>
+0060     <span class="keyword">end</span>
+0061 <span class="keyword">end</span>
+0062 
+0063 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

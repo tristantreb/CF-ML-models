@@ -1,0 +1,298 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of FastamEMVisualiseAlignmentDetailRecovery</title>
+  <meta name="keywords" content="FastamEMVisualiseAlignmentDetailRecovery">
+  <meta name="description" content="amEMVisualiseAlignmentDetail - creates a plot of horizontal bars showing">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="../index.html">recovery</a> &gt; <a href="index.html">updatedModel</a> &gt; FastamEMVisualiseAlignmentDetailRecovery.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../../index.html"><img alt="<" border="0" src="../../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery/updatedModel&nbsp;<img alt=">" border="0" src="../../../../right.png"></a></td></tr></table>-->
+
+<h1>FastamEMVisualiseAlignmentDetailRecovery
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>amEMVisualiseAlignmentDetail - creates a plot of horizontal bars showing</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>function [sorted_interventions, max_points] = amEMVisualiseAlignmentDetailRecovery(amIntrCube, amHeldBackcube, amInterventions,meancurvemean, meancurvecount, meancurvestd, overall_pdoffset, measures, offset, align_wind,nmeasures, ninterventions, run_type, ex_start, curveaveragingmethod, plotname, plotsubfolder) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMVisualiseAlignmentDetail - creates a plot of horizontal bars showing 
+ the alignment of the data window (including the best_offset) for all 
+interventions. Also indicates missing data in each of the horizontal bars</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="FastamEMMCVisualiseAlignmentDetailRecovery.html" class="code" title="function [sorted_interventions, max_points] = FastamEMMCVisualiseAlignmentDetailRecovery(amIntrNormcube, amHeldBackcube, amInterventions, meancurvemean,meancurvecount, meancurvestd, overall_pdoffset, measures, offset, align_wind, nmeasures, ninterventions,run_type, ex_start, curveaveragingmethod, plotname, plotsubfolder, nlatentcurves)">FastamEMMCVisualiseAlignmentDetailRecovery</a>	amEMMCVisualiseAlignmentDetail - wrapper around the</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [sorted_interventions, max_points] = amEMVisualiseAlignmentDetailRecovery(amIntrCube, amHeldBackcube, amInterventions, </a><span class="keyword">...</span>
+0002     meancurvemean, meancurvecount, meancurvestd, overall_pdoffset, measures, offset, align_wind, <span class="keyword">...</span>
+0003     nmeasures, ninterventions, run_type, ex_start, curveaveragingmethod, plotname, plotsubfolder)
+0004 
+0005 <span class="comment">% amEMVisualiseAlignmentDetail - creates a plot of horizontal bars showing</span>
+0006 <span class="comment">% the alignment of the data window (including the best_offset) for all</span>
+0007 <span class="comment">%interventions. Also indicates missing data in each of the horizontal bars</span>
+0008     
+0009 datatable = table(<span class="string">'Size'</span>,[1 3], <span class="keyword">...</span>
+0010     <span class="string">'VariableTypes'</span>, {<span class="string">'double'</span>,       <span class="string">'double'</span>,     <span class="string">'double'</span>}, <span class="keyword">...</span>
+0011     <span class="string">'VariableNames'</span>, {<span class="string">'Intervention'</span>, <span class="string">'ScaledDateNum'</span>, <span class="string">'Count'</span>});
+0012 
+0013 rowtoadd = datatable;
+0014 max_points = zeros(1, align_wind + offset.span-1);
+0015 sorted_interventions = amInterventions(:, {<span class="string">'IntrNbr'</span>,<span class="string">'Offset'</span>});
+0016 sorted_interventions = sortrows(sorted_interventions, {<span class="string">'Offset'</span>, <span class="string">'IntrNbr'</span>}, {<span class="string">'descend'</span>, <span class="string">'ascend'</span>});
+0017 
+0018 <span class="keyword">for</span> i = 1:align_wind + offset.span-1
+0019     <span class="keyword">if</span> curveaveragingmethod == 1
+0020         fprintf(&quot; curveaveragingmethod == 1 not implemented here&quot;);
+0021     <span class="keyword">else</span>
+0022         <span class="keyword">if</span> i &lt;= abs(offset.down)
+0023             max_points(1, i) = sum(i &gt;= sorted_interventions.Offset );
+0024         <span class="keyword">else</span>
+0025             max_points(1,i) = ninterventions;
+0026             <span class="comment">% Note: data is imputed on the right side, hence no data loss</span>
+0027         <span class="keyword">end</span>
+0028     <span class="keyword">end</span>
+0029 <span class="keyword">end</span>
+0030 
+0031 <span class="comment">% for m = 1:nmeasures</span>
+0032 <span class="comment">%     datatable(1:size(datatable,1),:) = [];</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%     % add a dummy rows to ensure all days from -49 to -1 show on the heatmap</span>
+0035 <span class="comment">%     rowtoadd.Intervention = 0;</span>
+0036 <span class="comment">%     rowtoadd.Count = 2;</span>
+0037 <span class="comment">%     for d = 1:align_wind + offset.span-1</span>
+0038 <span class="comment">%         rowtoadd.ScaledDateNum = d;</span>
+0039 <span class="comment">%         datatable = [datatable ; rowtoadd];</span>
+0040 <span class="comment">%     end</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%     for i = 1:ninterventions</span>
+0043 <span class="comment">%         scid = amInterventions.SmartCareID(i);</span>
+0044 <span class="comment">%         start = amInterventions.IVScaledDateNum(i);</span>
+0045 <span class="comment">%         curroffset = amInterventions.Offset(i);</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">%         %fprintf('Intervention %2d, patient %3d, start %3d, best_offset %2d\n', i, scid, start, offset);</span>
+0048 <span class="comment">%         rowtoadd.Intervention = amInterventions.IntrNbr(i);</span>
+0049 <span class="comment">%         rowtoadd.Count = 2;</span>
+0050 <span class="comment">%         for d = 1:align_wind</span>
+0051 <span class="comment">%             if ~isnan(amIntrCube(i, abs(offset.down) + d, m))</span>
+0052 <span class="comment">%                 rowtoadd.ScaledDateNum = d-1 + curroffset;</span>
+0053 <span class="comment">%                 datatable = [datatable ; rowtoadd];</span>
+0054 <span class="comment">%             end</span>
+0055 <span class="comment">%         end</span>
+0056 <span class="comment">%         rowtoadd.Count = 1;</span>
+0057 <span class="comment">%         if curveaveragingmethod == 2</span>
+0058 <span class="comment">%             for d = 1:abs(offset.down) % look for days imputed to the left</span>
+0059 <span class="comment">%                 if ~isnan(amIntrCube(i, d, m)) &amp;&amp; ... % point exists</span>
+0060 <span class="comment">%                         d + curroffset &gt; 0 % point is not shifted outside of the left boundary</span>
+0061 <span class="comment">%                         %abs(d) - offset.up &gt; curroffset % point in boundary</span>
+0062 <span class="comment">%                     rowtoadd.ScaledDateNum = offset.down + d-1 + curroffset;</span>
+0063 <span class="comment">%                     datatable = [datatable ; rowtoadd];</span>
+0064 <span class="comment">%                 end</span>
+0065 <span class="comment">%             end</span>
+0066 <span class="comment">%             for d = 1:offset.up + abs(offset.down) % look for days imputed to the right</span>
+0067 <span class="comment">%                 if d + curroffset &lt;= offset.up ... % point in boundary</span>
+0068 <span class="comment">%                         &amp;&amp; ~isnan(amIntrCube(i, abs(offset.down) + align_wind + d, m)) % point exists</span>
+0069 <span class="comment">%                     rowtoadd.ScaledDateNum = d-1 + curroffset + align_wind;</span>
+0070 <span class="comment">%                     datatable = [datatable ; rowtoadd];</span>
+0071 <span class="comment">%                 end</span>
+0072 <span class="comment">%             end</span>
+0073 <span class="comment">%         end</span>
+0074 <span class="comment">%     end</span>
+0075 
+0076 <span class="comment">%     temp = hsv(64);</span>
+0077 <span class="comment">%     brightness = .9;</span>
+0078 <span class="comment">%     colors(1,:)  = temp(8,:)  .* brightness;</span>
+0079 <span class="comment">%     colors(2,:)  = temp(16,:)  .* brightness;</span>
+0080 <span class="comment">%</span>
+0081 <span class="comment">%     plotsacross = 2;</span>
+0082 <span class="comment">%     plotsdown = 8;</span>
+0083 <span class="comment">%     plottitle = sprintf('%s_%s', plotname, measures.DisplayName{m});</span>
+0084 <span class="comment">%     anchor = 1; % latent curve is to be anchored on the plot (right side at min_offset)</span>
+0085 <span class="comment">%</span>
+0086 <span class="comment">%     [f, p] = createFigureAndPanel(plottitle, 'portrait', 'a4');</span>
+0087 <span class="comment">%</span>
+0088 <span class="comment">%     xl = [offset.down - 0.5, align_wind + offset.up - 1 + 0.5];</span>
+0089 <span class="comment">%     yl = [min(meancurvemean(:, m)) max(meancurvemean(:, m))];</span>
+0090 <span class="comment">%</span>
+0091 <span class="comment">%     if isnan(yl(1))</span>
+0092 <span class="comment">%         yl(1) = 0;</span>
+0093 <span class="comment">%     end</span>
+0094 <span class="comment">%     if isnan(yl(2))</span>
+0095 <span class="comment">%         yl(2) = 1;</span>
+0096 <span class="comment">%     end</span>
+0097 <span class="comment">%</span>
+0098 <span class="comment">%     ax = subplot(plotsdown,plotsacross, 1:6,'Parent',p);</span>
+0099 <span class="comment">%     yyaxis left;</span>
+0100 <span class="comment">%</span>
+0101 <span class="comment">%     [xl, yl] = plotLatentCurveRecovery(ax, offset, align_wind, (meancurvemean(:, m)), xl, yl, 'blue', ':', 0.5, anchor);</span>
+0102 <span class="comment">%     %[xl, yl] = plotLatentCurve(ax, max_offset, align_wind, min_offset, smooth(meancurvemean(:, m), 5), xl, yl, 'blue', '-', 0.5, anchor);</span>
+0103 <span class="comment">%     [xl, yl] = plotLatentCurveRecovery(ax, offset, align_wind, movmean(meancurvemean(:, m), 3, 'omitnan'), xl, yl, 'blue', '-', 0.5, anchor);</span>
+0104 <span class="comment">%</span>
+0105 <span class="comment">%     ax.XAxis.FontSize = 8;</span>
+0106 <span class="comment">%     xlabel('Days To Intervention');</span>
+0107 <span class="comment">%     ax.YAxis(1).Color = 'blue';</span>
+0108 <span class="comment">%     ax.YAxis(1).FontSize = 8;</span>
+0109 <span class="comment">%     ylabel('Normalised Measure', 'FontSize', 8);</span>
+0110 <span class="comment">%</span>
+0111 <span class="comment">%     if ex_start ~= 0</span>
+0112 <span class="comment">%         [xl, yl] = plotVerticalLine(ax, ex_start, xl, yl, 'blue', '--', 0.5); % plot ex_start</span>
+0113 <span class="comment">%     end</span>
+0114 <span class="comment">%</span>
+0115 <span class="comment">%     yyaxis right</span>
+0116 <span class="comment">%     ax.YAxis(2).Color = 'black';</span>
+0117 <span class="comment">%     ax.YAxis(2).FontSize = 8;</span>
+0118 <span class="comment">%     ylabel('Count of Data points');</span>
+0119 <span class="comment">%</span>
+0120 <span class="comment">%     if isequal(run_type,'Best Alignment')</span>
+0121 <span class="comment">%         bar(offset.down: align_wind + offset.up-1, max_points, 0.5, 'FaceColor', 'white', 'FaceAlpha', 0.1);</span>
+0122 <span class="comment">%     end</span>
+0123 <span class="comment">%     hold on;</span>
+0124 <span class="comment">%     bar(offset.down : align_wind + offset.up-1, meancurvecount(:, m), 0.5, 'FaceColor', 'black', 'FaceAlpha', 0.25, 'LineWidth', 0.2);</span>
+0125 <span class="comment">%     hold off;</span>
+0126 <span class="comment">%     if isequal(run_type,'Best Alignment')</span>
+0127 <span class="comment">%         ylbar = [0 max(max_points) * 4];</span>
+0128 <span class="comment">%     else</span>
+0129 <span class="comment">%         ylbar = [0 max(meancurvecount(:, m) * 4)];</span>
+0130 <span class="comment">%     end</span>
+0131 <span class="comment">%     if isnan(ylbar(2))</span>
+0132 <span class="comment">%         ylbar(2) = 100;</span>
+0133 <span class="comment">%     end</span>
+0134 <span class="comment">%     ylim(ylbar);</span>
+0135 <span class="comment">%</span>
+0136 <span class="comment">%     subplot(plotsdown,plotsacross, 7:16,'Parent',p);</span>
+0137 <span class="comment">%     h = heatmap(p, datatable, 'ScaledDateNum', 'Intervention', 'Colormap', colors, 'MissingDataColor', 'white', ...</span>
+0138 <span class="comment">%         'ColorVariable','Count','ColorMethod','max', 'MissingDataLabel', 'No data', 'ColorBarVisible', 'off', 'FontSize', 8);</span>
+0139 <span class="comment">%     h.Title = ' ';</span>
+0140 <span class="comment">%     h.XLabel = 'Days To Intervention';</span>
+0141 <span class="comment">%     h.YLabel = 'Intervention';</span>
+0142 <span class="comment">%     h.YDisplayData = sorted_interventions.IntrNbr;</span>
+0143 <span class="comment">%     h.XLimits = {offset.down align_wind + offset.up-1};</span>
+0144 <span class="comment">%     h.CellLabelColor = 'none';</span>
+0145 <span class="comment">%     h.GridVisible = 'on';</span>
+0146 <span class="comment">%</span>
+0147 <span class="comment">%     savePlotInDir(f, plottitle, plotsubfolder);</span>
+0148 <span class="comment">%     close(f);</span>
+0149 <span class="comment">%</span>
+0150 <span class="comment">% %     if measures.Mask(m) == 1</span>
+0151 <span class="comment">%</span>
+0152 <span class="comment">%         nbuckets = 5;</span>
+0153 <span class="comment">%         plotsacross = 2;</span>
+0154 <span class="comment">%         plotsdown = round(nbuckets/plotsacross);</span>
+0155 <span class="comment">%         plottitle = sprintf('%s_%s_Quintile', plotname, measures.DisplayName{m});</span>
+0156 <span class="comment">%</span>
+0157 <span class="comment">%         [f, p] = createFigureAndPanel(plottitle, 'portrait', 'a4');</span>
+0158 <span class="comment">%</span>
+0159 <span class="comment">%         for q = 1:nbuckets</span>
+0160 <span class="comment">%             qlower = 1 + round((ninterventions * (q - 1))/nbuckets);</span>
+0161 <span class="comment">%             qupper = round((ninterventions * q)/nbuckets);</span>
+0162 <span class="comment">%             qnbr   = qupper - qlower + 1;</span>
+0163 <span class="comment">%             fprintf('Quintile %d, Lower = %d, Upper = %d, Size = %d\n', q, qlower, qupper, qnbr);</span>
+0164 <span class="comment">%</span>
+0165 <span class="comment">%             temp_meancurvesumsq    = zeros(align_wind + offset.span-1, nmeasures);</span>
+0166 <span class="comment">%             temp_meancurvesum      = zeros(align_wind + offset.span-1, nmeasures);</span>
+0167 <span class="comment">%             temp_meancurvecount    = zeros(align_wind + offset.span-1, nmeasures);</span>
+0168 <span class="comment">%             temp_meancurvemean     = zeros(align_wind + offset.span-1, nmeasures);</span>
+0169 <span class="comment">%             temp_meancurvestd      = zeros(align_wind + offset.span-1, nmeasures);</span>
+0170 <span class="comment">%</span>
+0171 <span class="comment">%             %problem here</span>
+0172 <span class="comment">%             temp_interventions = amInterventions(ismember(amInterventions.IntrNbr, sorted_interventions.IntrNbr(qlower:qupper)),:);</span>
+0173 <span class="comment">%</span>
+0174 <span class="comment">%             for i = 1:qnbr</span>
+0175 <span class="comment">%                 [temp_meancurvesumsq, temp_meancurvesum, temp_meancurvecount] = RamEMAddToMean(temp_meancurvesumsq, temp_meancurvesum, temp_meancurvecount, ...</span>
+0176 <span class="comment">%                     overall_pdoffset(ismember(amInterventions.IntrNbr, sorted_interventions.IntrNbr(qlower:qupper)), :), amIntrCube(ismember(amInterventions.IntrNbr, sorted_interventions.IntrNbr(qlower:qupper)), :, :), ...</span>
+0177 <span class="comment">%                     amHeldBackcube(ismember(amInterventions.IntrNbr, sorted_interventions.IntrNbr(qlower:qupper)), :, :), i, ...</span>
+0178 <span class="comment">%                     offset, align_wind, nmeasures);</span>
+0179 <span class="comment">%                 [temp_meancurvemean, temp_meancurvestd] = RamEMMCCalcMeanAndStd(temp_meancurvesumsq, temp_meancurvesum, temp_meancurvecount);</span>
+0180 <span class="comment">%             end</span>
+0181 <span class="comment">%</span>
+0182 <span class="comment">%             qintrminoffset = min(amInterventions.Offset(ismember(amInterventions.IntrNbr, sorted_interventions.IntrNbr(qlower:qupper))));</span>
+0183 <span class="comment">%             qdataminoffset = align_wind + offset.span - max(find(max(temp_meancurvecount, [], 2)~=0)) + 1;</span>
+0184 <span class="comment">%             qto = max(qintrminoffset, qdataminoffset);</span>
+0185 <span class="comment">%</span>
+0186 <span class="comment">%             %qintrmaxoffset = max(amInterventions.Offset(sorted_interventions.Intervention(qlower:qupper))) + align_wind;</span>
+0187 <span class="comment">%             %qdatamaxoffset = max_offset + align_wind - min(find(min(temp_meancurvecount, [], 2)~=0));</span>
+0188 <span class="comment">%             %qfrom = max(qintrmaxoffset, qdatamaxoffset);</span>
+0189 <span class="comment">%</span>
+0190 <span class="comment">%             if curveaveragingmethod == 1</span>
+0191 <span class="comment">%                 qintrmaxoffset = max(amInterventions.Offset(ismember(amInterventions.IntrNbr, sorted_interventions.IntrNbr(qlower:qupper)))) + align_wind;</span>
+0192 <span class="comment">%                 qdatamaxoffset = align_wind + offset.span - min(find(min(temp_meancurvecount, [], 2)~=0));</span>
+0193 <span class="comment">%                 qfrom = max(qintrmaxoffset, qdatamaxoffset);</span>
+0194 <span class="comment">%             else</span>
+0195 <span class="comment">%                 qfrom = align_wind + offset.span-1;</span>
+0196 <span class="comment">%             end</span>
+0197 <span class="comment">%</span>
+0198 <span class="comment">%             xl = [0.5, (align_wind + offset.span) + 0.5];</span>
+0199 <span class="comment">%             yl = [min(min(temp_meancurvemean(:, m)), min(meancurvemean(:, m))) max(max(temp_meancurvemean(:, m)), max(meancurvemean(:, m)))];</span>
+0200 <span class="comment">%</span>
+0201 <span class="comment">%             if isnan(yl(1))</span>
+0202 <span class="comment">%                 yl(1) = 0;</span>
+0203 <span class="comment">%             end</span>
+0204 <span class="comment">%             if isnan(yl(2))</span>
+0205 <span class="comment">%                 yl(2) = 1;</span>
+0206 <span class="comment">%             end</span>
+0207 <span class="comment">%</span>
+0208 <span class="comment">%             ax = subplot(plotsdown, plotsacross, q, 'Parent', p);</span>
+0209 <span class="comment">%             ax.Title.FontSize = 8;</span>
+0210 <span class="comment">%             ax.Title.String = sprintf('Quintile %d', q);</span>
+0211 <span class="comment">%</span>
+0212 <span class="comment">%             yyaxis left;</span>
+0213 <span class="comment">%</span>
+0214 <span class="comment">%             % plot latent curve and vertical line for ex_start (if chosen at this point)</span>
+0215 <span class="comment">%             [xl, yl] = plotLatentCurveRecovery(ax, offset, align_wind, (meancurvemean(:, m)), xl, yl, 'blue', ':', 0.5, anchor);</span>
+0216 <span class="comment">%             %[xl, yl] = plotLatentCurve(ax, max_offset, align_wind, min_offset, smooth(meancurvemean(:, m), 5), xl, yl, 'blue', '-', 0.5, anchor);</span>
+0217 <span class="comment">%             [xl, yl] = plotLatentCurveRecovery(ax, offset, align_wind, movmean(meancurvemean(:, m), 3, 'omitnan'), xl, yl, 'blue', '-', 0.5, anchor);</span>
+0218 <span class="comment">%</span>
+0219 <span class="comment">%             if ex_start ~= 0</span>
+0220 <span class="comment">%                 [xl, yl] = plotVerticalLine(ax, ex_start, xl, yl, 'blue', '--', 0.5); % plot ex_start</span>
+0221 <span class="comment">%             end</span>
+0222 <span class="comment">%</span>
+0223 <span class="comment">%             ax.XAxis.FontSize = 8;</span>
+0224 <span class="comment">%             xlabel('Days To Intervention');</span>
+0225 <span class="comment">%             ax.YAxis(1).Color = 'blue';</span>
+0226 <span class="comment">%             ax.YAxis(1).FontSize = 8;</span>
+0227 <span class="comment">%             ylabel('Normalised Measure', 'FontSize', 8);</span>
+0228 <span class="comment">%</span>
+0229 <span class="comment">%             % plot latent curve for the quintile of interventions</span>
+0230 <span class="comment">%             line([-1 * qfrom: -1 * qto], temp_meancurvemean(align_wind + offset.span - qfrom : align_wind + offset.span - qto, m), 'Color', 'red','LineStyle', ':');</span>
+0231 <span class="comment">%             line([-1 * qfrom: -1 * qto], smooth(temp_meancurvemean(align_wind + offset.span - qfrom : align_wind + offset.span - qto, m), 5), 'Color', 'red','LineStyle', '-');</span>
+0232 <span class="comment">%</span>
+0233 <span class="comment">%             yyaxis right</span>
+0234 <span class="comment">%             ax.YAxis(2).Color = 'black';</span>
+0235 <span class="comment">%             ax.YAxis(2).FontSize = 8;</span>
+0236 <span class="comment">%             ylabel('Count of Data points');</span>
+0237 <span class="comment">%             bar([-1 * (align_wind + offset.span-1): -1], temp_meancurvecount(1:align_wind + offset.span-1, m), 0.5, 'FaceColor', 'black', 'FaceAlpha', 0.15);</span>
+0238 <span class="comment">%             ylim([0 (max(max_points) * 4 / nbuckets)]);</span>
+0239 <span class="comment">%         end</span>
+0240 <span class="comment">%</span>
+0241 <span class="comment">%         % save plot</span>
+0242 <span class="comment">%         savePlotInDir(f, plottitle, plotsubfolder);</span>
+0243 <span class="comment">%         close(f);</span>
+0244 <span class="comment">%     end</span>
+0245 <span class="comment">% end</span>
+0246 
+0247 <span class="keyword">end</span>
+0248 
+0249</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

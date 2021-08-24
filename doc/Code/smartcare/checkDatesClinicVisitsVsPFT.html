@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of checkDatesClinicVisitsVsPFT</title>
+  <meta name="keywords" content="checkDatesClinicVisitsVsPFT">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; checkDatesClinicVisitsVsPFT.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>checkDatesClinicVisitsVsPFT
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clc; clear; close all;
+0002 
+0003 tic
+0004 basedir = <span class="string">'./'</span>;
+0005 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0006 clinicalmatfile = <span class="string">'clinicaldata.mat'</span>;
+0007 scmatfile = <span class="string">'smartcaredata.mat'</span>;
+0008 
+0009 fprintf(<span class="string">'Loading Clinical data\n'</span>);
+0010 load(fullfile(basedir, subfolder, clinicalmatfile));
+0011 fprintf(<span class="string">'Loading SmartCare measurement data\n'</span>);
+0012 load(fullfile(basedir, subfolder, scmatfile));
+0013 toc
+0014 
+0015 fprintf(<span class="string">'\n'</span>);
+0016 
+0017 basedir = <span class="string">'./'</span>;
+0018 subfolder = <span class="string">'ExcelFiles'</span>;
+0019 outputfilename = <span class="string">'ClinicVisitsVsPFT.xlsx'</span>;
+0020 exceptionsheet = <span class="string">'1)ClinicVisitNoPFT'</span>;
+0021 matchsheet = <span class="string">'3)ClinicVisitAndPFT'</span>;
+0022 residualsheet = <span class="string">'2)PFTWithNoClinicOrAdmission'</span>;
+0023 
+0024 tic
+0025 <span class="comment">% sort by SmartCareID and StartDate</span>
+0026 cdClinicVisits = sortrows(cdClinicVisits, {<span class="string">'Hospital'</span>,<span class="string">'ID'</span>,<span class="string">'AttendanceDate'</span>},<span class="string">'ascend'</span>);
+0027 cdPFT = sortrows(cdPFT, {<span class="string">'Hospital'</span>,<span class="string">'ID'</span>,<span class="string">'LungFunctionDate'</span>}, <span class="string">'ascend'</span>);
+0028 cdAdmissions = sortrows(cdAdmissions, {<span class="string">'Hospital'</span>,<span class="string">'ID'</span>,<span class="string">'Admitted'</span>}, <span class="string">'ascend'</span>);
+0029 cdAntibiotics = sortrows(cdAntibiotics, {<span class="string">'Hospital'</span>,<span class="string">'ID'</span>,<span class="string">'StartDate'</span>}, <span class="string">'ascend'</span>);
+0030 
+0031 matchtable = table(<span class="string">'Size'</span>,[1 10], <span class="keyword">...</span>
+0032     <span class="string">'VariableTypes'</span>, {<span class="string">'string(35)'</span>, <span class="string">'string(8)'</span>, <span class="string">'int32'</span>,       <span class="string">'int32'</span>,    <span class="string">'datetime'</span>,       <span class="string">'int32'</span>,         <span class="string">'double'</span>, <span class="string">'int32'</span>, <span class="string">'double'</span>, <span class="string">'int32'</span>}, <span class="keyword">...</span>
+0033     <span class="string">'VariableNames'</span>, {<span class="string">'RowType'</span>,    <span class="string">'Hospital'</span>,  <span class="string">'SmartCareID'</span>, <span class="string">'ClinicID'</span>, <span class="string">'AttendanceDate'</span>, <span class="string">'LungFunctionID'</span>,<span class="string">'FEV1'</span>,   <span class="string">'FEV1_'</span>,  <span class="string">'FVC1'</span>,   <span class="string">'FVC1_'</span>});
+0034 rowtoadd = matchtable;
+0035 matchtable(1,:) = [];
+0036 
+0037 exceptiontable = table(<span class="string">'Size'</span>,[1 5], <span class="keyword">...</span>
+0038     <span class="string">'VariableTypes'</span>, {<span class="string">'string(35)'</span>, <span class="string">'string(8)'</span>, <span class="string">'int32'</span>,       <span class="string">'int32'</span>,    <span class="string">'datetime'</span>,}, <span class="keyword">...</span>
+0039     <span class="string">'VariableNames'</span>, {<span class="string">'RowType'</span>,    <span class="string">'Hospital'</span>,  <span class="string">'SmartCareID'</span>, <span class="string">'ClinicID'</span>, <span class="string">'AttendanceDate'</span>});
+0040 exceptiontable(1,:) = [];
+0041 
+0042 matchedidx = [];
+0043 
+0044 <span class="keyword">for</span> i = 1:size(cdClinicVisits,1)
+0045     scid = cdClinicVisits.ID(i);
+0046     attenddate = cdClinicVisits.AttendanceDate(i);
+0047     
+0048     idx = find(cdPFT.ID == scid &amp; cdPFT.LungFunctionDate == attenddate);
+0049     matchedidx = [matchedidx; idx];
+0050     
+0051     rowtoadd.SmartCareID = scid;
+0052     rowtoadd.Hospital = cdClinicVisits.Hospital(i);
+0053     rowtoadd.ClinicID = cdClinicVisits.ClinicID(i);
+0054     rowtoadd.AttendanceDate = attenddate;
+0055     
+0056     <span class="keyword">if</span> size(idx,1) == 0
+0057         rowtoadd.RowType = <span class="string">'*** ClinicVisit with no PFT ***'</span>;
+0058         fprintf(<span class="string">'%35s  :  Hospital %8s  Patient ID %3d  Attend Date  %11s\n'</span>, <span class="keyword">...</span><span class="comment"> </span>
+0059             rowtoadd.RowType, string(rowtoadd.Hospital), scid, datestr(attenddate,1)); 
+0060         exceptiontable = [exceptiontable;rowtoadd(1,{<span class="string">'RowType'</span>, <span class="string">'Hospital'</span>, <span class="string">'SmartCareID'</span>, <span class="string">'ClinicID'</span>, <span class="string">'AttendanceDate'</span>})];  
+0061     <span class="keyword">else</span>
+0062         <span class="keyword">for</span> t = 1:size(idx,1)
+0063             rowtoadd.RowType = <span class="string">'OK - ClinicVisit and PFT'</span>;
+0064             rowtoadd.LungFunctionID = cdPFT.LungFunctionID(idx(t));
+0065             rowtoadd.FEV1  = cdPFT.FEV1(idx(t));
+0066             rowtoadd.FEV1_ = cdPFT.FEV1_(idx(t));
+0067             rowtoadd.FVC1  = cdPFT.FVC1(idx(t));
+0068             rowtoadd.FVC1_ = cdPFT.FVC1_(idx(t));
+0069         
+0070             fprintf(<span class="string">'%35s  :  Hospital %8s  Patient ID %3d  Clinic ID %3d Attended  %11s  :  Lung Function ID %3d  FEV1 %1.2f  FEV1_ %3d  FVC1 %1.2f  FVC1_ %3d\n'</span>, <span class="keyword">...</span><span class="comment"> </span>
+0071                 rowtoadd.RowType, string(rowtoadd.Hospital), scid, rowtoadd.ClinicID, datestr(attenddate,1), rowtoadd.LungFunctionID, rowtoadd.FEV1, <span class="keyword">...</span>
+0072                 rowtoadd.FEV1_, rowtoadd.FVC1, rowtoadd.FVC1_); 
+0073         
+0074             matchtable = [matchtable;rowtoadd];  
+0075         <span class="keyword">end</span>
+0076     <span class="keyword">end</span>
+0077 <span class="keyword">end</span>
+0078 
+0079 toc
+0080 fprintf(<span class="string">'\n'</span>);
+0081 
+0082 tic
+0083 umatchedidx = unique(matchedidx);
+0084 pftidx = find(cdPFT.ID);
+0085 residualidx = setdiff(pftidx, umatchedidx);
+0086 
+0087 residualtable = table(<span class="string">'Size'</span>,[1 9], <span class="keyword">...</span>
+0088     <span class="string">'VariableTypes'</span>, {<span class="string">'string(56)'</span>, <span class="string">'string(8)'</span>, <span class="string">'int32'</span>,       <span class="string">'int32'</span>,          <span class="string">'datetime'</span>,         <span class="string">'double'</span>, <span class="string">'int32'</span>, <span class="string">'double'</span>, <span class="string">'int32'</span>}, <span class="keyword">...</span>
+0089     <span class="string">'VariableNames'</span>, {<span class="string">'RowType'</span>,    <span class="string">'Hospital'</span>,  <span class="string">'SmartCareID'</span>, <span class="string">'LungFunctionID'</span>, <span class="string">'LungFunctionDate'</span>, <span class="string">'FEV1'</span>,   <span class="string">'FEV1_'</span>,  <span class="string">'FVC1'</span>,   <span class="string">'FVC1_'</span>, });
+0090 rowtoadd = residualtable;
+0091 residualtable(1,:) = [];
+0092 hapftcount = 0;
+0093 
+0094 <span class="keyword">for</span> i = 1:size(residualidx,1)
+0095     scid = cdPFT.ID(residualidx(i));
+0096     pftdate = cdPFT.LungFunctionDate(residualidx(i));
+0097     
+0098     rowtoadd.SmartCareID = scid;
+0099     rowtoadd.Hospital = cdPFT.Hospital{residualidx(i)};
+0100     rowtoadd.LungFunctionID = cdPFT.LungFunctionID(residualidx(i));
+0101     rowtoadd.LungFunctionDate = pftdate;
+0102     rowtoadd.FEV1  = cdPFT.FEV1(residualidx(i));
+0103     rowtoadd.FEV1_ = cdPFT.FEV1_(residualidx(i));
+0104     rowtoadd.FVC1  = cdPFT.FVC1(residualidx(i));
+0105     rowtoadd.FVC1_ = cdPFT.FVC1_(residualidx(i));
+0106     
+0107     idx = find(cdAdmissions.ID == scid &amp; (cdAdmissions.Admitted-days(7)) &lt;= pftdate &amp; cdAdmissions.Discharge &gt;= pftdate);
+0108     idx2 = find(cdAntibiotics.ID == scid &amp; ismember(cdAntibiotics.Route, {<span class="string">'IV'</span>}) &amp; cdAntibiotics.StartDate &lt;= pftdate &amp; cdAntibiotics.StopDate &gt;= pftdate);
+0109     
+0110     <span class="keyword">if</span> (size(idx,1) ==0 &amp; size(idx2,1)==0)
+0111         rowtoadd.RowType = <span class="string">'*** PFT with no Clinic Visit/Admission/IV Antibiotic ***'</span>;
+0112         fprintf(<span class="string">'%56s  :  Hospital %8s  Patient ID %3d  :  LungFunction ID %3d  LungFunction Date  %11s  FEV1 %1.2f  FEV1_ %3.0f  FVC1 %1.2f  FVC1_ %3.0f\n'</span>, <span class="keyword">...</span><span class="comment"> </span>
+0113             rowtoadd.RowType, rowtoadd.Hospital, rowtoadd.SmartCareID, rowtoadd.LungFunctionID, datestr(rowtoadd.LungFunctionDate,1), rowtoadd.FEV1, <span class="keyword">...</span>
+0114             rowtoadd.FEV1_, rowtoadd.FVC1, rowtoadd.FVC1_);
+0115         residualtable = [residualtable; rowtoadd];
+0116     <span class="keyword">else</span>
+0117         rowtoadd.RowType = <span class="string">'Ok - PFT during Hospital Admission'</span>;
+0118         hapftcount = hapftcount + 1;
+0119         fprintf(<span class="string">'%56s  :  Hospital %8s  Patient ID %3d  :  LungFunction ID %3d  LungFunction Date  %11s  FEV1 %1.2f  FEV1_ %3.0f  FVC1 %1.2f  FVC1_ %3.0f\n'</span>, <span class="keyword">...</span><span class="comment"> </span>
+0120             rowtoadd.RowType, rowtoadd.Hospital, rowtoadd.SmartCareID, rowtoadd.LungFunctionID, datestr(rowtoadd.LungFunctionDate,1), rowtoadd.FEV1, <span class="keyword">...</span>
+0121             rowtoadd.FEV1_, rowtoadd.FVC1, rowtoadd.FVC1_);
+0122     <span class="keyword">end</span>
+0123 <span class="keyword">end</span>
+0124 
+0125 toc
+0126 fprintf(<span class="string">'\n'</span>);
+0127 
+0128 fprintf(<span class="string">'Completeness check - %3d rows missing\n'</span>, size(cdPFT,1) - size(umatchedidx,1) - size(residualtable,1) - hapftcount);
+0129 fprintf(<span class="string">'\n'</span>);
+0130 
+0131 tic
+0132 fprintf(<span class="string">'Saving results\n'</span>);
+0133 
+0134 writetable(residualtable,  fullfile(basedir, subfolder,outputfilename), <span class="string">'Sheet'</span>, residualsheet);
+0135 toc
+0136 fprintf(<span class="string">'\n'</span>);</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

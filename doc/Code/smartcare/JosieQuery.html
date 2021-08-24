@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of JosieQuery</title>
+  <meta name="keywords" content="JosieQuery">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; JosieQuery.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>JosieQuery
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMMCSelectModelRunFromDir.html" class="code" title="function [modelrun, modelidx, ModelResultFiles] = amEMMCSelectModelRunFromDir(study, loadtype, lcmode, intrfilt, tgapmode, tstlabelmode)">amEMMCSelectModelRunFromDir</a>	amEMMCSelectModelRunFromDir- allows you to load the saved variables from a</li><li><a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>	selectTreatmentGap - enter the gap between the end of a treatment and the</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; clc; close all;
+0002 
+0003 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0004 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0005 [studynbr, study, studyfullname] = <a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
+0006 
+0007 fprintf(<span class="string">'Loading raw data for study\n'</span>);
+0008 chosentreatgap = <a href="selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>();
+0009 [modelrun, modelidx, models] = <a href="amEMMCSelectModelRunFromDir.html" class="code" title="function [modelrun, modelidx, ModelResultFiles] = amEMMCSelectModelRunFromDir(study, loadtype, lcmode, intrfilt, tgapmode, tstlabelmode)">amEMMCSelectModelRunFromDir</a>(study, <span class="string">''</span>,      <span class="string">''</span>, <span class="string">'IntrFilt'</span>, <span class="string">'TGap'</span>,       <span class="string">''</span>);
+0010     
+0011 tic
+0012 [datamatfile, clinicalmatfile, demographicsmatfile] = <a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0013 [physdata, offset] = <a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0014 [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP, <span class="keyword">...</span>
+0015     cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds] = <a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0016 alignmentmodelinputsfile = sprintf(<span class="string">'%salignmentmodelinputs_gap%d.mat'</span>, study, chosentreatgap);
+0017 fprintf(<span class="string">'Loading alignment model inputs\n'</span>);
+0018 load(fullfile(basedir, subfolder, alignmentmodelinputsfile), <span class="string">'amInterventions'</span>,<span class="string">'amDatacube'</span>, <span class="string">'measures'</span>, <span class="string">'npatients'</span>,<span class="string">'ndays'</span>, <span class="string">'nmeasures'</span>, <span class="string">'ninterventions'</span>);
+0019 fprintf(<span class="string">'Loading output from model run\n'</span>);
+0020 load(fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>, modelrun)));
+0021 toc
+0022 fprintf(<span class="string">'\n'</span>);
+0023 
+0024 <span class="comment">% microbiology info for Papworth patients</span>
+0025 <span class="comment">%test = cdMicrobiology(ismember(cdMicrobiology.Hospital, 'PAP'),:);</span>
+0026 
+0027 <span class="comment">% list of id's for patients with pseudomonas</span>
+0028 pseudpatid = unique(cdMicrobiology.ID(contains(lower(cdMicrobiology.Microbiology), <span class="string">'pseud'</span>)));
+0029 
+0030 npseudpat = size(pseudpatid, 1);
+0031 
+0032 pseudpat = table(<span class="string">'Size'</span>,[npseudpat 2], <span class="keyword">...</span>
+0033     <span class="string">'VariableTypes'</span>, {<span class="string">'double'</span>, <span class="string">'double'</span>}, <span class="keyword">...</span>
+0034     <span class="string">'VariableNames'</span>, {<span class="string">'ID'</span>    , <span class="string">'HasPseud'</span>});
+0035 
+0036 pseudpat.ID = pseudpatid;
+0037 pseudpat.HasPseud(:) = 1;
+0038 
+0039 
+0040 intrcount = varfun(@max, amInterventions, <span class="string">'InputVariables'</span>, {<span class="string">'Pred'</span>}, <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0041 intrcount.Properties.VariableNames{<span class="string">'GroupCount'</span>} = <span class="string">'IntrCount'</span>;
+0042 
+0043 eligpat = cdPatient(:, {<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'StudyDate'</span>});
+0044 
+0045 eligpat = outerjoin(eligpat, intrcount, <span class="string">'LeftKeys'</span>, {<span class="string">'ID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'IntrCount'</span>});
+0046 eligpat.IntrCount(isnan(eligpat.IntrCount)) = 0;
+0047 
+0048 eligpat = outerjoin(eligpat, pseudpat, <span class="string">'LeftKeys'</span>, {<span class="string">'ID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'ID'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'HasPseud'</span>});
+0049 eligpat.HasPseud(isnan(eligpat.HasPseud)) = 0;
+0050 
+0051 <span class="comment">%eligpat(eligpat.IntrCount ~= 0 &amp; eligpat.HasPseud ~= 0,:)</span>
+0052 
+0053 eligintr = innerjoin(amInterventions, eligpat(eligpat.IntrCount ~= 0 &amp; eligpat.HasPseud ~= 0,:), <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'ID'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'StudyNumber'</span>, <span class="string">'StudyDate'</span>});
+0054 
+0055 
+0056 eligintr.PredDate      = eligintr.IVStartDate - days(eligintr.IVScaledDateNum - eligintr.Pred);
+0057 eligintr.RelLB1Date    = eligintr.IVStartDate - days(eligintr.IVScaledDateNum - eligintr.RelLB1);
+0058 eligintr.RelUB1Date    = eligintr.IVStartDate - days(eligintr.IVScaledDateNum - eligintr.RelUB1);
+0059 eligintr.RelLB2Date(:) = datetime(0,0,0,0,0,0);
+0060 eligintr.RelUB2Date(:) = datetime(0,0,0,0,0,0);
+0061 
+0062 eligintr.RelLB2Date(eligintr.RelLB2 ~= -1, :) = eligintr.IVStartDate(eligintr.RelLB2 ~= -1, :) <span class="keyword">...</span>
+0063     - days(eligintr.IVScaledDateNum(eligintr.RelLB2 ~= -1, :) - eligintr.RelLB2(eligintr.RelLB2 ~= -1, :));
+0064 eligintr.RelUB2Date(eligintr.RelUB2 ~= -1, :) = eligintr.IVStartDate(eligintr.RelUB2 ~= -1, :) <span class="keyword">...</span>
+0065     - days(eligintr.IVScaledDateNum(eligintr.RelUB2 ~= -1, :) - eligintr.RelUB2(eligintr.RelUB2 ~= -1, :));
+0066 
+0067 eligintr.StudyDate    = cellstr(datestr(eligintr.StudyDate,   <span class="string">'dd-mmm-yyyy'</span>));
+0068 eligintr.IVStartDate  = cellstr(datestr(eligintr.IVStartDate, <span class="string">'dd-mmm-yyyy'</span>));
+0069 eligintr.IVStopDate   = cellstr(datestr(eligintr.IVStopDate,  <span class="string">'dd-mmm-yyyy'</span>));
+0070 eligintr.PredDate     = cellstr(datestr(eligintr.PredDate,    <span class="string">'dd-mmm-yyyy'</span>));
+0071 eligintr.RelLB1Date   = cellstr(datestr(eligintr.RelLB1Date,  <span class="string">'dd-mmm-yyyy'</span>));
+0072 eligintr.RelUB1Date   = cellstr(datestr(eligintr.RelUB1Date,  <span class="string">'dd-mmm-yyyy'</span>));
+0073 eligintr.RelLB2Date   = cellstr(datestr(eligintr.RelLB2Date,  <span class="string">'dd-mmm-yyyy'</span>));
+0074 eligintr.RelUB2Date   = cellstr(datestr(eligintr.RelUB2Date,  <span class="string">'dd-mmm-yyyy'</span>));
+0075 
+0076 eligintr.RelLB2Date(ismember(eligintr.RelLB2Date, {<span class="string">'30-Nov-9999'</span>})) = cellstr(<span class="string">''</span>);
+0077 eligintr.RelUB2Date(ismember(eligintr.RelUB2Date, {<span class="string">'30-Nov-9999'</span>})) = cellstr(<span class="string">''</span>);
+0078 
+0079 filteligintr = eligintr(:, {<span class="string">'IntrNbr'</span>, <span class="string">'SmartCareID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'StudyDate'</span>, <span class="keyword">...</span>
+0080                             <span class="string">'IVStartDate'</span>, <span class="string">'IVStopDate'</span>, <span class="string">'Route'</span>, <span class="string">'PredDate'</span>, <span class="string">'RelLB1Date'</span>, <span class="keyword">...</span>
+0081                             <span class="string">'RelUB1Date'</span>, <span class="string">'RelLB2Date'</span>, <span class="string">'RelUB2Date'</span>});
+0082 
+0083 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0084 subfolder = <span class="string">'ExcelFiles'</span>;
+0085 xlfilename = sprintf(<span class="string">'JosieQuery2 %s.xlsx'</span>, plotname);
+0086 <span class="comment">%writetable(filteligintr(ismember(filteligintr.IntrNbr, [1, 2, 3, 33, 34, 42, 44, 45]), :), fullfile(basedir, subfolder, xlfilename), 'Sheet', 'Already Used');</span>
+0087 <span class="comment">%writetable(filteligintr(~ismember(filteligintr.IntrNbr, [1, 2, 3, 33, 34, 42, 44, 45]), :), fullfile(basedir, subfolder, xlfilename), 'Sheet', 'New Examples');</span>
+0088 writetable(filteligintr(ismember(filteligintr.IntrNbr, [2, 3, 33, 34, 6, 21, 39, 41, 67, 72, 88, 89, 97]), :), fullfile(basedir, subfolder, xlfilename), <span class="string">'Sheet'</span>, <span class="string">'Requested Examples'</span>);
+0089 
+0090</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

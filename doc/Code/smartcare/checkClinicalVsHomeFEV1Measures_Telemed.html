@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of checkClinicalVsHomeFEV1Measures_Telemed</title>
+  <meta name="keywords" content="checkClinicalVsHomeFEV1Measures_Telemed">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; checkClinicalVsHomeFEV1Measures_Telemed.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>checkClinicalVsHomeFEV1Measures_Telemed
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createAndSaveFEVPlots.html" class="code" title="function [figurearray] = createAndSaveFEVPlots(patientlist, pmeasuresfev, pclinicalfev, pstudydate,mindays, maxdays, plotsacross, plotsdown, plotsperpage, basedir, subfolder, filenameprefix)">createAndSaveFEVPlots</a>	createAndSaveFEVPlots - function to create plots of FEV home vs clinical</li><li><a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>	gets the patient offset table</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clc; clear; close all;
+0002 
+0003 tic
+0004 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0005 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0006 clinicalmatfile = <span class="string">'telemedclinicaldata.mat'</span>;
+0007 scmatfile = <span class="string">'telemeddata.mat'</span>;
+0008 
+0009 fprintf(<span class="string">'Loading Clinical data\n'</span>);
+0010 load(fullfile(basedir, subfolder, clinicalmatfile));
+0011 fprintf(<span class="string">'Loading TeleMed measurement data\n'</span>);
+0012 load(fullfile(basedir, subfolder, scmatfile));
+0013 toc
+0014 
+0015 tic
+0016 <span class="comment">% get the date scaling offset for each patient</span>
+0017 patientoffsets = <a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>(tmphysdata);
+0018 
+0019 <span class="comment">% extract clinical FEV1 measures and join with offsets to keep only those patients who</span>
+0020 <span class="comment">% have enough data (ie the patients left after outlier date handling</span>
+0021 pclinicalfev = sortrows(tmPFT(:,{<span class="string">'ID'</span>, <span class="string">'LungFunctionDate'</span>, <span class="string">'FEV1_'</span>}), {<span class="string">'ID'</span>, <span class="string">'LungFunctionDate'</span>}, <span class="string">'ascend'</span>);
+0022 pclinicalfev.Properties.VariableNames{<span class="string">'ID'</span>} = <span class="string">'SmartCareID'</span>;
+0023 pclinicalfev = innerjoin(pclinicalfev, patientoffsets);
+0024 
+0025 <span class="comment">% create a scaleddatenum to translate the study date to the same normalised</span>
+0026 <span class="comment">% scale as measurement data scaled date num</span>
+0027 pclinicalfev.ScaledDateNum = datenum(pclinicalfev.LungFunctionDate) - tmoffset - pclinicalfev.PatientOffset + 1;
+0028 
+0029 <span class="comment">% extract study date and join with offsets to keep only those patients who</span>
+0030 <span class="comment">% have enough data (ie the patients left after outlier date handling</span>
+0031 pstudydate = sortrows(tmPatient(:,{<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyDate'</span>}), <span class="string">'ID'</span>, <span class="string">'ascend'</span>);
+0032 pstudydate.Properties.VariableNames{<span class="string">'ID'</span>} = <span class="string">'SmartCareID'</span>;
+0033 pstudydate = innerjoin(patientoffsets, pstudydate);
+0034 
+0035 <span class="comment">% create a scaleddatenum to translate the study date to the same normalised</span>
+0036 <span class="comment">% scale as measurement data scaled date num</span>
+0037 pstudydate.ScaledDateNum = round(datenum(pstudydate.StudyDate) - tmoffset - pstudydate.PatientOffset);
+0038 
+0039 
+0040 <span class="comment">% extract just the weight measures from smartcare data</span>
+0041 pmeasuresfev = tmphysdata(ismember(tmphysdata.RecordingType,<span class="string">'LungFunctionRecording'</span>),{<span class="string">'SmartCareID'</span>, <span class="string">'ScaledDateNum'</span>, <span class="string">'FEV1_'</span>});
+0042 
+0043 <span class="comment">% store min and max to scale x-axis of plot display. Set min to -5 if less</span>
+0044 <span class="comment">% than, to avoid wasting plot space for the one patient with a larger delay</span>
+0045 <span class="comment">% between study date and active measurement period</span>
+0046 mindays = min([pmeasuresfev.ScaledDateNum ; pstudydate.ScaledDateNum]);
+0047 <span class="keyword">if</span> mindays &lt; -5
+0048     mindays = -5;
+0049 <span class="keyword">end</span>
+0050 maxdays = max([pmeasuresfev.ScaledDateNum ; pstudydate.ScaledDateNum + 183]);
+0051 
+0052 plotsacross = 2;
+0053 plotsdown = 4;
+0054 plotsperpage = plotsacross * plotsdown;
+0055 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0056 subfolder = <span class="string">'Plots'</span>;
+0057 toc
+0058 
+0059 <span class="comment">%tic</span>
+0060 <span class="comment">% create plots for patients with differences home vs clinical</span>
+0061 <span class="comment">%fprintf('FEV Plots for diff values home vs clinical\n');</span>
+0062 <span class="comment">%patientlist = [1 ; 2 ; 3 ; 4 ; 5 ; 6 ; 7 ; 8 ; 9 ; 10 ; 11 ; 12 ; 13 ; 14 ; 15];</span>
+0063 <span class="comment">%filenameprefix = 'TeleMed - ClinicalVsHomeFEV1 - Different Values';</span>
+0064 <span class="comment">%figurearray = createAndSaveFEVPlots(patientlist, pmeasuresfev, pclinicalfev, pstudydate, ...</span>
+0065 <span class="comment">%    mindays, maxdays, plotsacross, plotsdown, plotsperpage, basedir, subfolder, filenameprefix);</span>
+0066 <span class="comment">%close all;</span>
+0067 <span class="comment">%toc</span>
+0068 
+0069 tic
+0070 <span class="comment">% create plots for potential anomalous clinical FEV1 measures identified</span>
+0071 fprintf(<span class="string">'FEV Plots for potential anomalous clinical measures\n'</span>);
+0072 patientlist = [4 ; 10 ; 12];
+0073 plotsacross = 1;
+0074 plotsdown = 3;
+0075 plotsperpage = 3;
+0076 filenameprefix = <span class="string">'TeleMed - ClinicalVsHomeFEV1 - Outlier Clinical Values'</span>;
+0077 figurearray = <a href="createAndSaveFEVPlots.html" class="code" title="function [figurearray] = createAndSaveFEVPlots(patientlist, pmeasuresfev, pclinicalfev, pstudydate,mindays, maxdays, plotsacross, plotsdown, plotsperpage, basedir, subfolder, filenameprefix)">createAndSaveFEVPlots</a>(patientlist, pmeasuresfev, pclinicalfev, pstudydate, <span class="keyword">...</span>
+0078     mindays, maxdays, plotsacross, plotsdown, plotsperpage, basedir, subfolder, filenameprefix);
+0079 close all;
+0080 toc
+0081 tic
+0082 fprintf(<span class="string">'FEV Plots for all patients\n'</span>);
+0083 patientlist = unique(pmeasuresfev.SmartCareID);
+0084 filenameprefix = <span class="string">'TeleMed - ClinicalVsHomeFEV1'</span>;
+0085 figurearray = <a href="createAndSaveFEVPlots.html" class="code" title="function [figurearray] = createAndSaveFEVPlots(patientlist, pmeasuresfev, pclinicalfev, pstudydate,mindays, maxdays, plotsacross, plotsdown, plotsperpage, basedir, subfolder, filenameprefix)">createAndSaveFEVPlots</a>(patientlist, pmeasuresfev, pclinicalfev, pstudydate, <span class="keyword">...</span>
+0086     mindays, maxdays, plotsacross, plotsdown, plotsperpage, basedir, subfolder, filenameprefix);
+0087 close all;
+0088 toc</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

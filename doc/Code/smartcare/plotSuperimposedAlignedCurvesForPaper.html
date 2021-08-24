@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotSuperimposedAlignedCurvesForPaper</title>
+  <meta name="keywords" content="plotSuperimposedAlignedCurvesForPaper">
+  <meta name="description" content="plotSuperimposedAlignedCurves - plots the aligned curves for each of the">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; plotSuperimposedAlignedCurvesForPaper.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>plotSuperimposedAlignedCurvesForPaper
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>plotSuperimposedAlignedCurves - plots the aligned curves for each of the</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function plotSuperimposedAlignedCurvesForPaper(ax, meancurvemean, xl, yl,tmpmeasures, tmpnmeasures, min_offset, max_offset, align_wind, ex_start, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> plotSuperimposedAlignedCurves - plots the aligned curves for each of the
+ measures superimposed on a single plot to show any timing differences in
+ the declines</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getColourForMeasure.html" class="code" title="function [smcolour, rwcolour] = getColourForMeasure(displaymeasure)">getColourForMeasure</a>	getColorForMeasure - returns the RGB value of the colour for a given</li><li><a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>	plotLatentCurve - plots the latent curve actual and smoothed</li><li><a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>	plotVerticalLine - plots a vertical line</li><li><a href="sortMeasuresForPaper.html" class="code" title="function [measures] = sortMeasuresForPaper(study, measures)">sortMeasuresForPaper</a>	sortMeasuresForPaper - returns a sorted measures table in the order to</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/recovery/updatedModel/amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery(meancurvemean, meancurvecount, amIntrNormcube, amInterventions, normmean, normstd,measures, offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery</a>	amEMMCPlotSuperimposedAlignedCurves3 - wrapper around the</li><li><a href="amEMMCPlotSuperimposedAlignedCurvesForPaper.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper(meancurvemean, meancurvecount, amIntrNormcube, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper</a>	amEMMCPlotSuperimposedAlignedCurves - wrapper around the</li><li><a href="amEMMCPlotSuperimposedAlignedCurvesForPaper2.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper2(meancurvemean, meancurvecount, amIntrNormcube, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper2</a>	amEMMCPlotSuperimposedAlignedCurves2 - wrapper around the</li><li><a href="amEMMCPlotSuperimposedAlignedCurvesForPaper3.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper3(meancurvemean, meancurvecount, amIntrNormcube, amInterventions, normmean, normstd,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper3</a>	amEMMCPlotSuperimposedAlignedCurves3 - wrapper around the</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function plotSuperimposedAlignedCurvesForPaper(ax, meancurvemean, xl, yl, </a><span class="keyword">...</span>
+0002     tmpmeasures, tmpnmeasures, min_offset, max_offset, align_wind, ex_start, study)
+0003 
+0004 <span class="comment">% plotSuperimposedAlignedCurves - plots the aligned curves for each of the</span>
+0005 <span class="comment">% measures superimposed on a single plot to show any timing differences in</span>
+0006 <span class="comment">% the declines</span>
+0007 
+0008 anchor = 1; <span class="comment">% latent curve is to be anchored on the plot (right side at min_offset)</span>
+0009 
+0010 [tmpmeasures] = <a href="sortMeasuresForPaper.html" class="code" title="function [measures] = sortMeasuresForPaper(study, measures)">sortMeasuresForPaper</a>(study, tmpmeasures);
+0011 
+0012 <span class="keyword">for</span> m = 1:tmpnmeasures
+0013     thiscolour = <a href="getColourForMeasure.html" class="code" title="function [smcolour, rwcolour] = getColourForMeasure(displaymeasure)">getColourForMeasure</a>(tmpmeasures.DisplayName{m});
+0014     lstyle = <span class="string">'-'</span>;
+0015     lwidth = 1.5;
+0016     [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, (align_wind + ex_start), (min_offset + ex_start), meancurvemean(:, tmpmeasures.Index(m)), xl, yl, thiscolour, lstyle, lwidth, anchor);
+0017 <span class="keyword">end</span>
+0018 
+0019 <span class="keyword">if</span> ex_start ~= 0
+0020     [xl, yl] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax, 0, xl, yl, <span class="string">'black'</span>, <span class="string">'-'</span>, 0.5); <span class="comment">% plot ex_start</span>
+0021 <span class="keyword">end</span>
+0022 
+0023 <span class="keyword">end</span>
+0024</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

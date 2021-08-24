@@ -1,0 +1,427 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadClimbClinDataForPatient</title>
+  <meta name="keywords" content="loadClimbClinDataForPatient">
+  <meta name="description" content="loadClimbClinDataForPatient - populate the clinical data tables for a given">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadClimbClinDataForPatient.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadClimbClinDataForPatient
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>loadClimbClinDataForPatient - populate the clinical data tables for a given</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits, cdPFT, cdMicrobiology, cdHghtWght, cdOthClinMeas] =loadClimbClinDataForPatient(cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits, cdPFT, cdMicrobiology,cdHghtWght, cdOthClinMeas, clABNameTable, patfile, basedir, subfolder, userid) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> loadClimbClinDataForPatient - populate the clinical data tables for a given
+ patient's information</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createClimbClinicalTables.html" class="code" title="function [clPatient, clAdmissions, clAntibiotics, clClinicVisits, clOtherVisits,clCRP, clPFT, clMicrobiology, clHghtWght, clOthClinMeas, clEndStudy] = createClimbClinicalTables(nrows)">createClimbClinicalTables</a>	createClimbClinicalTables - creates empty copies of all the clinical</li><li><a href="getABNameFromCode.html" class="code" title="function [abname] = getABNameFromCode(scode, clABNameTable)">getABNameFromCode</a>	getABNameFromCode - returns the antibiotic name from a string code (or</li><li><a href="ingestDateCell.html" class="code" title="function [outputdate, isValid] = ingestDateCell(inputcell, matlabexcelserialdatediff, row, notime)">ingestDateCell</a>	ingestDateCell - ingest a date cell from a spreadsheet, handling various</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadclimbclinicaldata.html" class="code" title="">loadclimbclinicaldata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits, cdPFT, cdMicrobiology, cdHghtWght, cdOthClinMeas] = </a><span class="keyword">...</span>
+0002             loadClimbClinDataForPatient(cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits, cdPFT, cdMicrobiology, <span class="keyword">...</span>
+0003                                 cdHghtWght, cdOthClinMeas, clABNameTable, patfile, basedir, subfolder, userid)
+0004         
+0005 <span class="comment">% loadClimbClinDataForPatient - populate the clinical data tables for a given</span>
+0006 <span class="comment">% patient's information</span>
+0007 
+0008 hosplength = 3;
+0009 idlength = 3;
+0010 matlabexcelserialdatediff = datenum(datetime(1899,12,31)) - 1;
+0011 notime = true;
+0012 
+0013 [cdpatrow, cdadmrow, cdabrow, cdcvrow, ~, ~, cdpftrow, cdmicrorow, cdhwrow, cdocmrow, ~] = <a href="createClimbClinicalTables.html" class="code" title="function [clPatient, clAdmissions, clAntibiotics, clClinicVisits, clOtherVisits,clCRP, clPFT, clMicrobiology, clHghtWght, clOthClinMeas, clEndStudy] = createClimbClinicalTables(nrows)">createClimbClinicalTables</a>(1);
+0014 
+0015 cdpatientsheet = <span class="string">'(1) Enrolment Visit Worksheet'</span>;
+0016 cdmicrosheet = <span class="string">'(1) Positive bacterial growth i'</span>;
+0017 cdcvsheet = <span class="string">'(1) Clinic attendance dates dur'</span>;
+0018 cdpftsheet = <span class="string">'(1) Hospital Lung Function meas'</span>;
+0019 cdadmsheet = <span class="string">'(1) Hospital Admission dates in'</span>;
+0020 cdabsheet = <span class="string">'(1) Hospital Admission dates in'</span>;
+0021 cdoralabsheet = <span class="string">'(1) New  or  Changes to Medicat'</span>;
+0022 cdhwsheet = <span class="string">'(1) Height and Weight measureme'</span>;
+0023 
+0024 fprintf(<span class="string">'File %s, ID %d\n'</span>, patfile, userid);
+0025 fprintf(<span class="string">'=======================\n'</span>);
+0026 fprintf(<span class="string">'Patient Info\n'</span>);
+0027 fprintf(<span class="string">'------------\n'</span>);
+0028 tmppatient = readtable(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, cdpatientsheet, <span class="string">'ReadVariableNames'</span>, false);
+0029 cdpatrow.ID = userid;
+0030 cdpatrow.StudyNumber = upper(tmppatient.Var2(ismember(tmppatient.Var1, <span class="string">'User ID'</span>)));
+0031 <span class="keyword">if</span> ~ismember(cdpatrow.StudyNumber, extractBefore(patfile, 7))
+0032     fprintf(<span class="string">'**** Filename does not match User ID field - Exiting ****\n'</span>);
+0033     <span class="keyword">return</span>
+0034 <span class="keyword">end</span>
+0035 cdpatrow.Hospital      = extractBefore(cdpatrow.StudyNumber, hosplength + 1);
+0036 <span class="comment">%cdpatrow.StudyDate     = datetime(tmppatient.Var2(ismember(tmppatient.Var1, 'Date')), 'InputFormat', 'dd-MMM-yyyy');</span>
+0037 cdpatrow.StudyDate     = <a href="ingestDateCell.html" class="code" title="function [outputdate, isValid] = ingestDateCell(inputcell, matlabexcelserialdatediff, row, notime)">ingestDateCell</a>(tmppatient.Var2(ismember(tmppatient.Var1, <span class="string">'Date'</span>)),   matlabexcelserialdatediff, 1, notime);
+0038 cdpatrow.Age           = str2double(tmppatient.Var2(ismember(tmppatient.Var1, <span class="string">'Age(Y)'</span>)));
+0039 <span class="keyword">if</span> isnan(cdpatrow.Age)
+0040     fprintf(<span class="string">'**** Invalid Age: %s ****\n'</span>, tmppatient.Var2{ismember(tmppatient.Var1, <span class="string">'Age(Y)'</span>)});
+0041     cdpatrow.Age   = 0;
+0042     cdpatrow.AgeYy = 0;
+0043 <span class="keyword">end</span>
+0044 cdpatrow.AgeYy         = str2double(tmppatient.Var2(ismember(tmppatient.Var1, <span class="string">'Age(Y)'</span>)));
+0045 cdpatrow.AgeMm         = str2double(tmppatient.Var2(ismember(tmppatient.Var1, <span class="string">'Age(M)'</span>)));
+0046 <span class="keyword">if</span> isnan(cdpatrow.AgeMm)
+0047     fprintf(<span class="string">'**** Invalid AgeMm: %s ****\n'</span>, tmppatient.Var2{ismember(tmppatient.Var1, <span class="string">'Age(M)'</span>)});
+0048     cdpatrow.AgeMm = 0;
+0049 <span class="keyword">end</span>
+0050 cdpatrow.DOB           = cdpatrow.StudyDate - calyears(cdpatrow.Age) - calmonths(cdpatrow.AgeMm);
+0051 cdpatrow.Sex           = tmppatient.Var2(ismember(tmppatient.Var1, <span class="string">'Gender'</span>));
+0052 cdpatrow.Height        = str2double(tmppatient.Var2(ismember(tmppatient.Var1, <span class="string">'Height (cm)'</span>)));
+0053 <span class="keyword">if</span> isnan(cdpatrow.Height)
+0054     fprintf(<span class="string">'**** Invalid Height: %s ****\n'</span>, tmppatient.Var2{ismember(tmppatient.Var1, <span class="string">'Height (cm)'</span>)});
+0055     cdpatrow.Height = 0;
+0056 <span class="keyword">end</span>
+0057 cdpatrow.Weight        = str2double(tmppatient.Var2(ismember(tmppatient.Var1, <span class="string">'Weight (kg)'</span>)));
+0058 <span class="keyword">if</span> isnan(cdpatrow.Weight)
+0059     fprintf(<span class="string">'**** Invalid Weight: %s ****\n'</span>, tmppatient.Var2{ismember(tmppatient.Var1, <span class="string">'Weight (kg)'</span>)});
+0060     cdpatrow.Weight = 0;
+0061 <span class="keyword">end</span>
+0062 cdpatrow.TooYoung      = tmppatient.Var2(ismember(tmppatient.Var1, <span class="string">'Too young'</span>));
+0063 cdpatrow.PredictedFEV1 = str2double(strrep(tmppatient.Var2(ismember(tmppatient.Var1, <span class="string">'FEV1 (Litres)'</span>)), <span class="string">'L'</span>, <span class="string">''</span>));
+0064 <span class="keyword">if</span> isnan(cdpatrow.PredictedFEV1)
+0065     fprintf(<span class="string">'**** Invalid Predicted FEV1: %s **** (Too Young = %s, Age = %dy%dm)\n'</span>, tmppatient.Var2{ismember(tmppatient.Var1, <span class="string">'FEV1 (Litres)'</span>)}, <span class="keyword">...</span>
+0066         cdpatrow.TooYoung{1}, cdpatrow.AgeYy, cdpatrow.AgeMm);
+0067     cdpatrow.PredictedFEV1 = 0;
+0068 <span class="keyword">end</span>
+0069 cdpatrow.FEV1SetAs     = str2double(strrep(tmppatient.Var2(ismember(tmppatient.Var1, <span class="string">'FEV1 value entered into home lung function monitor (if applicable)'</span>)), <span class="string">'L'</span>, <span class="string">''</span>));
+0070 <span class="keyword">if</span> isnan(cdpatrow.FEV1SetAs)
+0071     fprintf(<span class="string">'**** Invalid FEV1SetAs: %s **** (Too Young = %s, Age = %dy%dm)\n'</span>, tmppatient.Var2{ismember(tmppatient.Var1, <span class="string">'FEV1 value entered into home lung function monitor (if applicable)'</span>)}, <span class="keyword">...</span>
+0072         cdpatrow.TooYoung{1}, cdpatrow.AgeYy, cdpatrow.AgeMm);
+0073     cdpatrow.FEV1SetAs = 0;
+0074 <span class="keyword">end</span>
+0075 <span class="keyword">if</span> ismember(cdpatrow.TooYoung, <span class="string">'No'</span>)
+0076     <span class="keyword">if</span> cdpatrow.PredictedFEV1 ~= 0 &amp;&amp; cdpatrow.FEV1SetAs == 0
+0077         cdpatrow.FEV1SetAs = round(cdpatrow.PredictedFEV1, 1);
+0078     <span class="keyword">end</span>
+0079     <span class="keyword">if</span> cdpatrow.FEV1SetAs ~= 0 &amp;&amp; cdpatrow.PredictedFEV1 == 0
+0080         cdpatrow.PredictedFEV1 = cdpatrow.FEV1SetAs;
+0081     <span class="keyword">end</span>
+0082 <span class="keyword">end</span>
+0083 cdpatrow.StudyEmail    = tmppatient.Var2(ismember(tmppatient.Var1, <span class="string">'Email'</span>));
+0084 cdpatrow.CalcAge       = cdpatrow.Age;
+0085 cdpatrow.CalcAgeExact  = cdpatrow.Age + str2double(tmppatient.Var2(ismember(tmppatient.Var1, <span class="string">'Age(M)'</span>))) / 12;
+0086 <span class="comment">% for now just set these to the same as the value in the file. Replace when</span>
+0087 <span class="comment">% I get the formula for children's predicted FEV1 calculation</span>
+0088 cdpatrow.CalcPredictedFEV1        = cdpatrow.PredictedFEV1;
+0089 cdpatrow.CalcPredictedFEV1OrigAge = cdpatrow.PredictedFEV1;
+0090 cdpatrow.CalcFEV1SetAs            = cdpatrow.FEV1SetAs;
+0091 cdpatrow.CalcFEV1SetAsOrigAge     = cdpatrow.FEV1SetAs;
+0092 
+0093 cdPatient = [cdPatient; cdpatrow];
+0094 
+0095 tmpmicro = readtable(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, cdmicrosheet);
+0096 fprintf(<span class="string">'Microbiology Info - %2d rows\n'</span>, size(tmpmicro, 1));
+0097 fprintf(<span class="string">'-----------------------\n'</span>);
+0098 <span class="keyword">for</span> i = 1:size(tmpmicro, 1)
+0099     cdmicrorow.ID          = userid;
+0100     cdmicrorow.StudyNumber = cdpatrow.StudyNumber;
+0101     cdmicrorow.Hospital   = cdpatrow.Hospital;
+0102     cdmicrorow.Microbiology = tmpmicro.Bacteria(i);
+0103     [cdmicrorow.DateMicrobiology, isValid] = <a href="ingestDateCell.html" class="code" title="function [outputdate, isValid] = ingestDateCell(inputcell, matlabexcelserialdatediff, row, notime)">ingestDateCell</a>(tmpmicro.Date(i), matlabexcelserialdatediff, i, notime);
+0104     <span class="keyword">if</span> isValid
+0105         cdMicrobiology = [cdMicrobiology; cdmicrorow];
+0106     <span class="keyword">end</span>
+0107 <span class="keyword">end</span>
+0108 
+0109 tmpcv = readtable(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, cdcvsheet);
+0110 fprintf(<span class="string">'Clinic Visits - %2d rows\n'</span>, size(tmpcv, 1));
+0111 fprintf(<span class="string">'-----------------------\n'</span>);
+0112 <span class="keyword">for</span> i = 1:size(tmpcv, 1)
+0113     isValid = true;
+0114     cdcvrow.ID          = userid;
+0115     cdcvrow.StudyNumber = cdpatrow.StudyNumber;
+0116     cdcvrow.Hospital   = cdpatrow.Hospital;
+0117     [cdcvrow.AttendanceDate, isValid] = <a href="ingestDateCell.html" class="code" title="function [outputdate, isValid] = ingestDateCell(inputcell, matlabexcelserialdatediff, row, notime)">ingestDateCell</a>(tmpcv.Date(i), matlabexcelserialdatediff, i, notime);
+0118     <span class="keyword">if</span> isValid
+0119         cdClinicVisits = [cdClinicVisits; cdcvrow];
+0120     <span class="keyword">end</span>
+0121 <span class="keyword">end</span>
+0122 
+0123 tmppft = readtable(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, cdpftsheet);
+0124 fprintf(<span class="string">'Clinical Lung Function Measures - %2d rows\n'</span>, size(tmppft, 1));
+0125 fprintf(<span class="string">'-----------------------------------------\n'</span>);
+0126 <span class="keyword">for</span> i = 1:size(tmppft, 1)
+0127     isValid = true;
+0128     cdpftrow.ID          = userid;
+0129     cdpftrow.StudyNumber = cdpatrow.StudyNumber;
+0130     cdpftrow.Hospital    = cdpatrow.Hospital;
+0131     [cdpftrow.LungFunctionDate, isValid] = <a href="ingestDateCell.html" class="code" title="function [outputdate, isValid] = ingestDateCell(inputcell, matlabexcelserialdatediff, row, notime)">ingestDateCell</a>(tmppft.Date(i), matlabexcelserialdatediff, i, notime);
+0132     cdpftrow.FEV1 = tmppft.FEV1_litresPredicted_(i);
+0133     <span class="keyword">if</span> isnan(cdpftrow.FEV1)
+0134         fprintf(<span class="string">'%3d: **** Invalid Clinical FEV1 Volume: %d ****\n'</span>, i, cdpftrow.FEV1);
+0135         cdpftrow.FEV1 = 0;
+0136     <span class="keyword">end</span>
+0137     cdpftrow.FEV1_ = tmppft.FEV1__Predicted_(i);
+0138     <span class="keyword">if</span> isnan(cdpftrow.FEV1_)
+0139         fprintf(<span class="string">'%3d: **** Invalid Clinical FEV1 %%: %d ****\n'</span>, i, cdpftrow.FEV1_);
+0140         cdpftrow.FEV1_ = 0;
+0141     <span class="keyword">end</span>
+0142     cdpftrow.FVC1 = tmppft.FVC_litresPredicted_(i);
+0143     <span class="keyword">if</span> isnan(cdpftrow.FVC1)
+0144         fprintf(<span class="string">'%3d: **** Invalid Clinical FVC Volume: %d ****\n'</span>, i, cdpftrow.FVC1);
+0145         cdpftrow.FVC1 = 0;
+0146     <span class="keyword">end</span>
+0147     cdpftrow.FVC1_ = tmppft.FVC__Predicted_(i);
+0148     <span class="keyword">if</span> isnan(cdpftrow.FVC1_)
+0149         fprintf(<span class="string">'%3d: **** Invalid Clinical FVC %%: %d ****\n'</span>, i, cdpftrow.FVC1_);
+0150         cdpftrow.FVC1_ = 0;
+0151     <span class="keyword">end</span>
+0152     cdpftrow.CalcFEV1SetAs = cdpftrow.FEV1;
+0153     cdpftrow.CalcFEV1_     = cdpftrow.FEV1_;
+0154     
+0155     <span class="keyword">if</span> isValid
+0156         cdPFT = [cdPFT; cdpftrow];
+0157     <span class="keyword">end</span>
+0158 <span class="keyword">end</span>
+0159 
+0160 tmpadm = readtable(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, cdadmsheet);
+0161 fprintf(<span class="string">'Hospital Admissions - %2d rows\n'</span>, size(tmpadm, 1));
+0162 fprintf(<span class="string">'-----------------------------\n'</span>);
+0163 <span class="keyword">if</span> ~ismember(<span class="string">'Exacerbation'</span>, tmpadm.Properties.VariableNames)
+0164     fprintf(<span class="string">'Adding missing Exacerbation column to admission/iv data\n'</span>);
+0165     tmpadm.Exacerbation(:) = cellstr(<span class="string">''</span>);
+0166 <span class="keyword">end</span>
+0167 <span class="keyword">for</span> i = 1:size(tmpadm, 1)
+0168     cdadmrow.ID          = userid;
+0169     cdadmrow.StudyNumber = cdpatrow.StudyNumber;
+0170     cdadmrow.Hospital    = cdpatrow.Hospital;
+0171     cdadmrow.Reason      = tmpadm.ReasonForAdmission(i);
+0172     [cdadmrow.Admitted,  isValid] = <a href="ingestDateCell.html" class="code" title="function [outputdate, isValid] = ingestDateCell(inputcell, matlabexcelserialdatediff, row, notime)">ingestDateCell</a>(tmpadm.DateAdmitted(i),   matlabexcelserialdatediff, i, notime);
+0173     [cdadmrow.Discharge, tmpisValid] = <a href="ingestDateCell.html" class="code" title="function [outputdate, isValid] = ingestDateCell(inputcell, matlabexcelserialdatediff, row, notime)">ingestDateCell</a>(tmpadm.DateDischarged(i), matlabexcelserialdatediff, i, notime);
+0174     <span class="keyword">if</span> ~tmpisValid
+0175         isValid = tmpisValid;
+0176     <span class="keyword">end</span>
+0177     
+0178     <span class="keyword">if</span> isValid
+0179         cdAdmissions = [cdAdmissions; cdadmrow];
+0180     <span class="keyword">end</span>
+0181 <span class="keyword">end</span>
+0182 
+0183 fprintf(<span class="string">'Hospital Antibiotics - %2d rows\n'</span>, size(tmpadm, 1));
+0184 fprintf(<span class="string">'------------------------------\n'</span>);
+0185 <span class="keyword">for</span> i = 1:size(tmpadm, 1)
+0186     cdabrow.ID          = userid;
+0187     cdabrow.StudyNumber = cdpatrow.StudyNumber;
+0188     cdabrow.Hospital    = cdpatrow.Hospital;
+0189     cdabrow.Reason      = tmpadm.ReasonForAdmission(i);
+0190     [cdabrow.StartDate, isValid] = <a href="ingestDateCell.html" class="code" title="function [outputdate, isValid] = ingestDateCell(inputcell, matlabexcelserialdatediff, row, notime)">ingestDateCell</a>(tmpadm.StartDate(i), matlabexcelserialdatediff, i, notime);
+0191     [cdabrow.StopDate,  tmpisValid] = <a href="ingestDateCell.html" class="code" title="function [outputdate, isValid] = ingestDateCell(inputcell, matlabexcelserialdatediff, row, notime)">ingestDateCell</a>(tmpadm.StopDate(i),  matlabexcelserialdatediff, i, notime);
+0192     <span class="keyword">if</span> ~tmpisValid
+0193         isValid = tmpisValid;
+0194     <span class="keyword">end</span>
+0195     <span class="keyword">if</span> isValid
+0196         <span class="keyword">if</span> ismember(tmpadm.Exacerbation(i), <span class="string">'X'</span>)
+0197             fprintf(<span class="string">'%3d: **** Found an exacerbation related IV treatment ****\n'</span>, i);
+0198             <span class="keyword">if</span> strlength(tmpadm.AntibioticUse_Name_preparation_{i}) ~= 0
+0199                 allabstr  = tmpadm.AntibioticUse_Name_preparation_{i};
+0200                 diffabidx = strfind(allabstr, <span class="string">','</span>);
+0201                 diffabidx(1, size(diffabidx, 2) + 1) = strlength(allabstr) + 1;
+0202                 <span class="keyword">for</span> s = 1:size(diffabidx, 2)
+0203                     <span class="keyword">if</span> s == 1
+0204                         fromidx = 1;
+0205                     <span class="keyword">else</span>
+0206                         fromidx = diffabidx(s - 1) + 1;
+0207                     <span class="keyword">end</span>
+0208                     oneabstr = extractBetween(allabstr, fromidx, diffabidx(s) - 1);
+0209                     oneabstr = strrep(oneabstr, <span class="string">' '</span>, <span class="string">''</span>);
+0210                     dividx   = strfind(oneabstr{1}, <span class="string">'/'</span>);
+0211                     <span class="keyword">if</span> size(dividx, 2) == 0
+0212                         cdabrow.AntibioticName = <a href="getABNameFromCode.html" class="code" title="function [abname] = getABNameFromCode(scode, clABNameTable)">getABNameFromCode</a>(oneabstr, clABNameTable);
+0213                         cdabrow.Route = <span class="string">'IV'</span>;
+0214                         cdabrow.HomeIV_s = <span class="string">'No'</span>;
+0215                         cdAntibiotics = [cdAntibiotics; cdabrow];
+0216                     <span class="keyword">elseif</span> size(dividx, 2) == 1
+0217                         cdabrow.AntibioticName = <a href="getABNameFromCode.html" class="code" title="function [abname] = getABNameFromCode(scode, clABNameTable)">getABNameFromCode</a>(extractBefore(oneabstr, dividx), clABNameTable);
+0218                         cdabrow.Route          = extractAfter(oneabstr, dividx);
+0219                         cdabrow.HomeIV_s = <span class="string">'No'</span>;
+0220                         <span class="keyword">if</span> ismember(cdabrow.Route, <span class="string">'PO'</span>)
+0221                             cdabrow.Route = <span class="string">'Oral'</span>;
+0222                         <span class="keyword">end</span>
+0223                         cdAntibiotics = [cdAntibiotics; cdabrow];
+0224                     <span class="keyword">else</span>
+0225                         fprintf(<span class="string">'**** Invalid Antibiotic format %s ****\n'</span>, oneabstr);
+0226                     <span class="keyword">end</span>
+0227                 <span class="keyword">end</span>
+0228             <span class="keyword">end</span>
+0229         <span class="keyword">end</span>
+0230     <span class="keyword">end</span>
+0231 <span class="keyword">end</span>
+0232 
+0233 oropts = detectImportOptions(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, cdoralabsheet);
+0234 oropts.DataRange = <span class="string">'A2'</span>;
+0235 oropts.VariableNamesRange = <span class="string">'A1'</span>;
+0236 oropts.VariableTypes(:, ismember(oropts.VariableNames, {<span class="string">'Medication'</span>, <span class="string">'Exacerbation'</span>})) = {<span class="string">'char'</span>};
+0237 tmporal = readtable(fullfile(basedir, subfolder, patfile), oropts, <span class="string">'Sheet'</span>, cdoralabsheet, <span class="string">'ReadVariableNames'</span>, true);
+0238 fprintf(<span class="string">'Oral Antibiotics - %2d rows\n'</span>, size(tmporal, 1));
+0239 fprintf(<span class="string">'--------------------------\n'</span>);
+0240 <span class="keyword">for</span> i = 1:size(tmporal, 1)
+0241     <span class="keyword">if</span> ismember(tmporal.Exacerbation(i), <span class="string">'X'</span>)
+0242         cdabrow.ID          = userid;
+0243         cdabrow.StudyNumber = cdpatrow.StudyNumber;
+0244         cdabrow.Hospital    = cdpatrow.Hospital;
+0245         cdabrow.Reason      = {<span class="string">'PE'</span>};
+0246         [cdabrow.StartDate, isValid] = <a href="ingestDateCell.html" class="code" title="function [outputdate, isValid] = ingestDateCell(inputcell, matlabexcelserialdatediff, row, notime)">ingestDateCell</a>(tmporal.StartDate(i), matlabexcelserialdatediff, i, notime);
+0247         [cdabrow.StopDate,  tmpisValid] = <a href="ingestDateCell.html" class="code" title="function [outputdate, isValid] = ingestDateCell(inputcell, matlabexcelserialdatediff, row, notime)">ingestDateCell</a>(tmporal.StopDate(i),  matlabexcelserialdatediff, i, notime);
+0248         <span class="keyword">if</span> ~tmpisValid
+0249             isValid = tmpisValid;
+0250         <span class="keyword">end</span>
+0251         <span class="keyword">if</span> isValid
+0252             cdabrow.AntibioticName = <a href="getABNameFromCode.html" class="code" title="function [abname] = getABNameFromCode(scode, clABNameTable)">getABNameFromCode</a>(tmporal.Medication{i}, clABNameTable);
+0253             cdabrow.Route = <span class="string">'Oral'</span>;
+0254             cdabrow.HomeIV_s = <span class="string">'No'</span>;
+0255             cdAntibiotics = [cdAntibiotics; cdabrow];  
+0256         <span class="keyword">end</span>
+0257     <span class="keyword">end</span>
+0258 <span class="keyword">end</span>
+0259 
+0260 hwopts = detectImportOptions(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, cdhwsheet);
+0261 hwopts.VariableTypes(:, ismember(hwopts.VariableNames, {<span class="string">'HeightInCM'</span>, <span class="string">'ZScore_ifKnown_'</span>, <span class="string">'WeightInKG'</span>, <span class="string">'ZScore_ifKnown__1'</span>, <span class="string">'BMI_ifKnown_'</span>})) = {<span class="string">'double'</span>};
+0262 tmphw = readtable(fullfile(basedir, subfolder, patfile), hwopts, <span class="string">'Sheet'</span>, cdhwsheet);
+0263 fprintf(<span class="string">'Clinical Height &amp; Weight Measures - %2d rows\n'</span>, size(tmphw, 1));
+0264 fprintf(<span class="string">'-------------------------------------------\n'</span>);
+0265 <span class="keyword">for</span> i = 1:size(tmphw, 1)
+0266     isValid = true;
+0267     cdhwrow.ID          = userid;
+0268     cdhwrow.StudyNumber = cdpatrow.StudyNumber;
+0269     cdhwrow.Hospital   = cdpatrow.Hospital;
+0270     [cdhwrow.MeasDate, isValid] = <a href="ingestDateCell.html" class="code" title="function [outputdate, isValid] = ingestDateCell(inputcell, matlabexcelserialdatediff, row, notime)">ingestDateCell</a>(tmphw.Date(i), matlabexcelserialdatediff, i, notime);
+0271     cdhwrow.Height = tmphw.HeightInCM(i);
+0272     <span class="keyword">if</span> isnan(cdhwrow.Height)
+0273         fprintf(<span class="string">'%3d: **** Invalid Clinical Height: %d ****\n'</span>, i, cdhwrow.Height);
+0274         cdhwrow.Height = 0;
+0275     <span class="keyword">end</span>
+0276     cdhwrow.H_ZScore = tmphw.ZScore_ifKnown_(i);
+0277     <span class="keyword">if</span> isnan(cdhwrow.H_ZScore)
+0278         fprintf(<span class="string">'%3d: **** Invalid Clinical Height Z-Score: %d ****\n'</span>, i, cdhwrow.H_ZScore);
+0279         cdhwrow.H_ZScore = 0;
+0280     <span class="keyword">end</span>
+0281     cdhwrow.Weight = tmphw.WeightInKG(i);
+0282     <span class="keyword">if</span> isnan(cdhwrow.Weight)
+0283         fprintf(<span class="string">'%3d: **** Invalid Clinical Weight: %d ****\n'</span>, i, cdhwrow.Weight);
+0284         cdhwrow.Weight = 0;
+0285     <span class="keyword">end</span>
+0286     cdhwrow.W_ZScore = tmphw.ZScore_ifKnown__1(i);
+0287     <span class="keyword">if</span> isnan(cdhwrow.W_ZScore)
+0288         fprintf(<span class="string">'%3d: **** Invalid Clinical Weight Z-Score: %d ****\n'</span>, i, cdhwrow.W_ZScore);
+0289         cdhwrow.W_ZScore = 0;
+0290     <span class="keyword">end</span>
+0291     cdhwrow.BMI = tmphw.BMI_ifKnown_(i);
+0292     <span class="keyword">if</span> isnan(cdhwrow.BMI)
+0293         fprintf(<span class="string">'%3d: **** Invalid Clinical BMI: %d ****\n'</span>, i, cdhwrow.BMI);
+0294         cdhwrow.BMI = 0;
+0295     <span class="keyword">end</span>
+0296     <span class="keyword">if</span> isValid
+0297         cdHghtWght = [cdHghtWght; cdhwrow];
+0298     <span class="keyword">end</span>
+0299 <span class="keyword">end</span>
+0300 
+0301 fprintf(<span class="string">'Other Clinical Measures\n'</span>);
+0302 fprintf(<span class="string">'-----------------------\n'</span>);
+0303 [~, sheetlist] = xlsfinfo(fullfile(basedir, subfolder, patfile));
+0304 sheetlist = sheetlist';
+0305 sheetlist = sheetlist(contains(sheetlist, <span class="string">'Subsequent Visit - Clinical'</span>));
+0306 fprintf(<span class="string">'Found %d subsequent visits\n'</span>, size(sheetlist, 1));
+0307 <span class="keyword">for</span> a = 1:size(sheetlist, 1)
+0308     fprintf(<span class="string">'Processing visit %d\n'</span>, a);
+0309     svopts = detectImportOptions(fullfile(basedir, subfolder, patfile), <span class="string">'Sheet'</span>, sheetlist{a}, <span class="string">'ReadVariableNames'</span>, false);
+0310     svopts.DataRange = <span class="string">'A1'</span>;
+0311     tmpsv = readtable(fullfile(basedir, subfolder, patfile), svopts, <span class="string">'Sheet'</span>, sheetlist{a});
+0312     cdocmrow.ID          = userid;
+0313     cdocmrow.StudyNumber = cdpatrow.StudyNumber;
+0314     cdocmrow.Hospital    = cdpatrow.Hospital;
+0315     [cdocmrow.MeasDate, isValid] = <a href="ingestDateCell.html" class="code" title="function [outputdate, isValid] = ingestDateCell(inputcell, matlabexcelserialdatediff, row, notime)">ingestDateCell</a>(tmpsv.Var2(ismember(tmpsv.Var1, <span class="string">'Date'</span>)), matlabexcelserialdatediff, a, notime);
+0316     
+0317     tmphr = str2double(tmpsv.Var2(ismember(tmpsv.Var1, <span class="string">'HR'</span>)));
+0318     <span class="keyword">if</span> size(tmphr, 1) == 1
+0319         cdocmrow.HR = tmphr;
+0320     <span class="keyword">else</span>
+0321         <span class="keyword">if</span> sum(~isnan(tmphr)) == 0
+0322             cdocmrow.HR = nan;
+0323         <span class="keyword">elseif</span> sum(~isnan(tmphr)) == 1
+0324             cdocmrow.HR = tmphr(~isnan(tmphr));
+0325         <span class="keyword">else</span>
+0326             fprintf(<span class="string">'Duplicate values for HR\n'</span>);
+0327             cdocmrow.HR = nan;
+0328         <span class="keyword">end</span>
+0329     <span class="keyword">end</span>
+0330     tmprr = str2double(tmpsv.Var2(ismember(tmpsv.Var1, <span class="string">'RR'</span>)));
+0331     <span class="keyword">if</span> size(tmprr, 1) == 1
+0332         cdocmrow.RR = tmprr;
+0333     <span class="keyword">else</span>
+0334         <span class="keyword">if</span> sum(~isnan(tmprr)) == 0
+0335             cdocmrow.RR = nan;
+0336         <span class="keyword">elseif</span> sum(~isnan(tmprr)) == 1
+0337             cdocmrow.RR = tmprr(~isnan(tmprr));
+0338         <span class="keyword">else</span>
+0339             fprintf(<span class="string">'Duplicate values for RR\n'</span>);
+0340             cdocmrow.RR = nan;
+0341         <span class="keyword">end</span>
+0342     <span class="keyword">end</span>
+0343     tmpTemp = str2double(tmpsv.Var2(ismember(tmpsv.Var1, <span class="string">'Temp'</span>)));
+0344     <span class="keyword">if</span> size(tmpTemp, 1) == 1
+0345         cdocmrow.Temp = tmpTemp;
+0346     <span class="keyword">else</span>
+0347         <span class="keyword">if</span> sum(~isnan(tmpTemp)) == 0
+0348             cdocmrow.Temp = nan;
+0349         <span class="keyword">elseif</span> sum(~isnan(tmpTemp)) == 1
+0350             cdocmrow.Temp = tmpTemp(~isnan(tmpTemp));
+0351         <span class="keyword">else</span>
+0352             fprintf(<span class="string">'Duplicate values for Temperature\n'</span>);
+0353             cdocmrow.Temp = nan;
+0354         <span class="keyword">end</span>
+0355     <span class="keyword">end</span>
+0356     tmpO2 = str2double(tmpsv.Var2(ismember(tmpsv.Var1, <span class="string">'O2 Sats'</span>)));
+0357     <span class="keyword">if</span> size(tmpO2, 1) == 1
+0358         cdocmrow.O2_Sat  = tmpO2;
+0359     <span class="keyword">else</span>
+0360         <span class="keyword">if</span> sum(~isnan(tmpO2)) == 0
+0361             cdocmrow.O2_Sat = nan;
+0362         <span class="keyword">elseif</span> sum(~isnan(tmpO2)) == 1
+0363             cdocmrow.O2_Sat = tmpO2(~isnan(tmpO2));
+0364         <span class="keyword">else</span>
+0365             fprintf(<span class="string">'Duplicate values for O2 Sat\n'</span>);
+0366             cdocmrow.O2_Sat = nan;
+0367         <span class="keyword">end</span>
+0368     <span class="keyword">end</span>
+0369     <span class="keyword">if</span> (~isnan(cdocmrow.HR) || ~isnan(cdocmrow.RR) || ~isnan(cdocmrow.Temp) || ~isnan(cdocmrow.O2_Sat))
+0370         cdOthClinMeas = [cdOthClinMeas; cdocmrow];
+0371     <span class="keyword">else</span>
+0372         fprintf(<span class="string">'Skipping as all measures are blank\n'</span>);
+0373     <span class="keyword">end</span>
+0374 <span class="keyword">end</span>
+0375 
+0376 fprintf(<span class="string">'\n'</span>);
+0377 
+0378 <span class="keyword">end</span>
+0379</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

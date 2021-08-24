@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMSetModelRunParametersFromTable</title>
+  <meta name="keywords" content="amEMSetModelRunParametersFromTable">
+  <meta name="description" content="amEMSetModelRunParameters - sets the various run parameters for the model">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMSetModelRunParametersFromTable.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMSetModelRunParametersFromTable
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMSetModelRunParameters - sets the various run parameters for the model</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [mversion, study, modelinputsmatfile, datademographicsfile, dataoutliersfile,sigmamethod, mumethod, curveaveragingmethod, smoothingmethod, offsetblockingmethod,measuresmask, runmode, randomseed, modelrun, imputationmode, confidencemode, printpredictions,max_offset, align_wind, ex_start, outprior, heldbackpct, confidencethreshold]= amEMSetModelRunParametersFromTable(amRunParameters) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMSetModelRunParameters - sets the various run parameters for the model
+ from a row in amRunParameters table</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModelEMFcn.html" class="code" title="function runAlignmentModelEMFcn(amRunParameters)">runAlignmentModelEMFcn</a>	function to run the alignment model (EM version) given a set of run</li><li><a href="runAlignmentModelEMFcnFEV1Split.html" class="code" title="function runAlignmentModelEMFcnFEV1Split(amRunParameters)">runAlignmentModelEMFcnFEV1Split</a>	function to run the alignment model (EM version) given a set of run</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [mversion, study, modelinputsmatfile, datademographicsfile, dataoutliersfile, </a><span class="keyword">...</span>
+0002     sigmamethod, mumethod, curveaveragingmethod, smoothingmethod, offsetblockingmethod, <span class="keyword">...</span>
+0003     measuresmask, runmode, randomseed, modelrun, imputationmode, confidencemode, printpredictions, <span class="keyword">...</span>
+0004     max_offset, align_wind, ex_start, outprior, heldbackpct, confidencethreshold] <span class="keyword">...</span>
+0005     = amEMSetModelRunParametersFromTable(amRunParameters)
+0006 
+0007 <span class="comment">% amEMSetModelRunParameters - sets the various run parameters for the model</span>
+0008 <span class="comment">% from a row in amRunParameters table</span>
+0009 
+0010 mversion             = amRunParameters.mversion{1};
+0011 study                = amRunParameters.study{1};
+0012 modelinputsmatfile   = amRunParameters.modelinputsmatfile{1};
+0013 datademographicsfile = amRunParameters.datademographicsfile{1};
+0014 dataoutliersfile     = amRunParameters.dataoutliersfile{1};
+0015 sigmamethod          = amRunParameters.sigmamethod;
+0016 mumethod             = amRunParameters.mumethod;
+0017 curveaveragingmethod = amRunParameters.curveaveragingmethod;
+0018 smoothingmethod      = amRunParameters.smoothingmethod;
+0019 offsetblockingmethod = amRunParameters.offsetblockingmethod;
+0020 measuresmask         = amRunParameters.measuresmask;
+0021 runmode              = amRunParameters.runmode;
+0022 randomseed           = amRunParameters.randomseed;
+0023 modelrun             = amRunParameters.modelrun;
+0024 imputationmode       = amRunParameters.imputationmode;
+0025 confidencemode       = amRunParameters.confidencemode;
+0026 printpredictions     = amRunParameters.printpredictions;
+0027 max_offset           = amRunParameters.max_offset;
+0028 align_wind           = amRunParameters.align_wind;
+0029 ex_start             = amRunParameters.ex_start;
+0030 outprior             = amRunParameters.outprior;
+0031 heldbackpct          = amRunParameters.heldbackpct;
+0032 confidencethreshold  = amRunParameters.confidencethreshold;
+0033 
+0034 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of extractClinicalAndHomeFEV1Measures</title>
+  <meta name="keywords" content="extractClinicalAndHomeFEV1Measures">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; extractClinicalAndHomeFEV1Measures.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>extractClinicalAndHomeFEV1Measures
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>	gets the patient offset table</li><li><a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clc; clear; close all;
+0002 
+0003 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0004 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0005 
+0006 [studynbr, study, ~] = <a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
+0007 [datamatfile, clinicalmatfile, ~] = <a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0008 [physdata, offset] = <a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0009 [cdPatient, ~, ~, ~, ~, cdPFT, ~, <span class="keyword">...</span>
+0010     ~, ~, ~, ~] = <a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0011 
+0012 aminputfile = &quot;CLalignmentmodelinputs_gap10.mat&quot;;
+0013 fprintf(<span class="string">'Loading alignment model Inputs data %s\n'</span>, aminputfile);
+0014 load(fullfile(basedir, subfolder, aminputfile));
+0015 
+0016 <span class="comment">% get the date scaling offset for each patient</span>
+0017 patientoffsets = <a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>(physdata);
+0018 
+0019 <span class="comment">% extract clinical FEV1 measures and join with offsets to keep only those patients who</span>
+0020 <span class="comment">% have enough data (ie the patients left after outlier date handling</span>
+0021 pclinicalfev = sortrows(cdPFT(:,{<span class="string">'ID'</span>, <span class="string">'LungFunctionDate'</span>, <span class="string">'FEV1'</span>}), {<span class="string">'ID'</span>, <span class="string">'LungFunctionDate'</span>}, <span class="string">'ascend'</span>);
+0022 pclinicalfev.Properties.VariableNames{<span class="string">'ID'</span>} = <span class="string">'SmartCareID'</span>;
+0023 pclinicalfev = innerjoin(pclinicalfev, patientoffsets);
+0024 
+0025 <span class="comment">% create a scaleddatenum to translate the study date to the same normalised</span>
+0026 <span class="comment">% scale as measurement data scaled date num</span>
+0027 pclinicalfev.ScaledDateNum = datenum(pclinicalfev.LungFunctionDate) - offset - pclinicalfev.PatientOffset + 1;
+0028 
+0029 <span class="comment">% extract study date and join with offsets to keep only those patients who</span>
+0030 <span class="comment">% have enough data (ie the patients left after outlier date handling</span>
+0031 pstudydate = sortrows(cdPatient(:,{<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'StudyDate'</span>}), <span class="string">'ID'</span>, <span class="string">'ascend'</span>);
+0032 pstudydate.Properties.VariableNames{<span class="string">'ID'</span>} = <span class="string">'SmartCareID'</span>;
+0033 pstudydate = innerjoin(patientoffsets, pstudydate);
+0034 
+0035 <span class="comment">% create a scaleddatenum to translate the study date to the same normalised</span>
+0036 <span class="comment">% scale as measurement data scaled date num</span>
+0037 pstudydate.ScaledDateNum = datenum(pstudydate.StudyDate) - offset - pstudydate.PatientOffset;
+0038 
+0039 <span class="comment">% extract just the weight measures from smartcare data</span>
+0040 <span class="comment">%pmeasfev = physdata(ismember(physdata.RecordingType,'LungFunctionRecording'),{'SmartCareID', 'ScaledDateNum', 'CalcFEV1_'});</span>
+0041 
+0042 midx = ismember(measures.DisplayName, {<span class="string">'LungFunction'</span>});
+0043 pmeasfev = amDatacube(:, :, midx);
+0044 maxdays = size(pmeasfev, 2);
+0045 
+0046 <span class="comment">% delete all clinical measures before or after the study period for each patient</span>
+0047 pclinicalfev((pclinicalfev.ScaledDateNum &lt; 0) | (pclinicalfev.ScaledDateNum &gt; maxdays), :) = [];
+0048 
+0049 <span class="comment">% create initial output table</span>
+0050 fevcomptable = innerjoin(pclinicalfev, pstudydate, <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>});
+0051 fevcomptable = fevcomptable(:, {<span class="string">'SmartCareID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'LungFunctionDate'</span>, <span class="string">'ScaledDateNum'</span>, <span class="string">'FEV1'</span>});
+0052 fevcomptable.Properties.VariableNames{<span class="string">'FEV1'</span>} = <span class="string">'ClinFEV1'</span>;
+0053 fevcomptable.NbrHomeMeas(:)  = 0.0;
+0054 fevcomptable.MeanHomeMeas(:) = 0.0;
+0055 fevcomptable.StdHomeMeas(:)  = 0.0;
+0056 
+0057 nkeycols  = size(fevcomptable, 2);
+0058 nclinmeas = size(fevcomptable, 1);
+0059 dwidth = 5;
+0060 ndays = (2 * dwidth) + 1;
+0061 dwin = nan(nclinmeas,ndays);
+0062 dwin = array2table(dwin);
+0063 
+0064 fevcomptable = [fevcomptable, dwin];
+0065 <span class="keyword">for</span> n = 1:ndays
+0066     <span class="keyword">if</span> n &lt;= dwidth
+0067         fevcomptable.Properties.VariableNames{n + nkeycols} = sprintf(<span class="string">'Dminus%d'</span>, (dwidth + 1) - n);
+0068     <span class="keyword">elseif</span> n == dwidth + 1
+0069         fevcomptable.Properties.VariableNames{n + nkeycols} = sprintf(<span class="string">'D%d'</span>, 0);
+0070     <span class="keyword">else</span>
+0071         fevcomptable.Properties.VariableNames{n + nkeycols} = sprintf(<span class="string">'Dplus%d'</span>, n - (dwidth + 1));
+0072     <span class="keyword">end</span>
+0073 <span class="keyword">end</span>    
+0074 
+0075 <span class="keyword">for</span> i = 1:size(fevcomptable, 1)
+0076     scid = fevcomptable.SmartCareID(i);
+0077     sdn  = fevcomptable.ScaledDateNum(i);
+0078     fromidx = sdn - dwidth;
+0079     lshift = 0;
+0080     <span class="keyword">if</span> fromidx &lt;= 0
+0081         lshift = 1 + (-1 * fromidx);
+0082         fromidx = fromidx + lshift;
+0083     <span class="keyword">end</span>
+0084     <span class="keyword">if</span> fromidx &gt; maxdays
+0085         <span class="keyword">continue</span>;
+0086     <span class="keyword">end</span>
+0087         
+0088     toidx   = sdn + dwidth;
+0089     <span class="keyword">if</span> toidx &gt; maxdays
+0090         toidx = maxdays;
+0091     <span class="keyword">end</span>
+0092     
+0093     dwinmeas = pmeasfev(scid, fromidx:toidx);
+0094     fevcomptable.NbrHomeMeas(i)  = sum(~isnan(dwinmeas)); 
+0095     fevcomptable.MeanHomeMeas(i) = mean(dwinmeas, <span class="string">'omitnan'</span>);
+0096     fevcomptable.StdHomeMeas(i)  = std(dwinmeas, <span class="string">'omitnan'</span>);
+0097     startcol = (nkeycols + 1 + lshift);
+0098     
+0099     fevcomptable(i, startcol:(startcol + size(dwinmeas, 2) - 1)) = array2table(dwinmeas);
+0100 <span class="keyword">end</span>
+0101 
+0102 subfolder = <span class="string">'ExcelFiles'</span>;
+0103 outputfilename = sprintf(<span class="string">'%s_ClinicalVsHomeFEVComparison.xlsx'</span>, study);
+0104 writetable(fevcomptable,  fullfile(basedir, subfolder, outputfilename), <span class="string">'Sheet'</span>, <span class="string">'FEV_Comparison'</span>);
+0105</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

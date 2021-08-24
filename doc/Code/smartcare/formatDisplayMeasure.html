@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of formatDisplayMeasure</title>
+  <meta name="keywords" content="formatDisplayMeasure">
+  <meta name="description" content="formatDisplayMeasure - adds final formatting for displaying measure name">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; formatDisplayMeasure.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>formatDisplayMeasure
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>formatDisplayMeasure - adds final formatting for displaying measure name</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [displaynameformatted] = formatDisplayMeasure(displaymeasure) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> formatDisplayMeasure - adds final formatting for displaying measure name
+ for use in plots/labels.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/recovery/updatedModel/amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery(meancurvemean, meancurvecount, amIntrNormcube, amInterventions, normmean, normstd,measures, offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery</a>	amEMMCPlotSuperimposedAlignedCurves3 - wrapper around the</li><li><a href="amEMMCPlotSuperimposedAlignedCurvesForPaper.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper(meancurvemean, meancurvecount, amIntrNormcube, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper</a>	amEMMCPlotSuperimposedAlignedCurves - wrapper around the</li><li><a href="amEMMCPlotSuperimposedAlignedCurvesForPaper2.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper2(meancurvemean, meancurvecount, amIntrNormcube, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper2</a>	amEMMCPlotSuperimposedAlignedCurves2 - wrapper around the</li><li><a href="amEMMCPlotSuperimposedAlignedCurvesForPaper3.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper3(meancurvemean, meancurvecount, amIntrNormcube, amInterventions, normmean, normstd,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper3</a>	amEMMCPlotSuperimposedAlignedCurves3 - wrapper around the</li><li><a href="visualiseMeasuresForPaperFcn.html" class="code" title="function visualiseMeasuresForPaperFcn(physdata, offset, cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits,cdCRP, cdPFT, cdNewMeds, measures, nmeasures, study)">visualiseMeasuresForPaperFcn</a>	visualiseMeasuresForPaperFcn - plots clinical and home measures</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [displaynameformatted] = formatDisplayMeasure(displaymeasure)</a>
+0002 
+0003 <span class="comment">% formatDisplayMeasure - adds final formatting for displaying measure name</span>
+0004 <span class="comment">% for use in plots/labels.</span>
+0005 
+0006 
+0007 <span class="keyword">if</span> ismember(displaymeasure, {<span class="string">'Clinical CRP'</span>})
+0008     displaynameformatted = <span class="string">'C-reactive protein'</span>;
+0009 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'Clinical FEV1'</span>})
+0010     displaynameformatted = <span class="string">'Clinic FEV_1'</span>;
+0011 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'LungFunction'</span>, <span class="string">'FEV1'</span>})
+0012     displaynameformatted = <span class="string">'FEV_1'</span>;
+0013 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'FEV6'</span>})
+0014     displaynameformatted = <span class="string">'FEV_6'</span>;
+0015 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'FEV075'</span>})
+0016     displaynameformatted = <span class="string">'FEV_0-75'</span>;
+0017 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'FEF2575'</span>})
+0018     displaynameformatted = <span class="string">'FEF_25-75'</span>;
+0019 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'MinsAsleep'</span>})
+0020     displaynameformatted = <span class="string">'Mins Asleep'</span>;
+0021 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'MinsAwake'</span>})
+0022     displaynameformatted = <span class="string">'Mins Awake'</span>;
+0023 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'O2Saturation'</span>})
+0024     displaynameformatted = <span class="string">'O_2 saturation'</span>;
+0025 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'PulseRate'</span>})
+0026     displaynameformatted = <span class="string">'Pulse rate'</span>;
+0027 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'RestingHR'</span>})
+0028     displaynameformatted = <span class="string">'Resting HR'</span>;
+0029 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'SleepActivity'</span>})
+0030     displaynameformatted = <span class="string">'Sleep'</span>;
+0031 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'SputumVolume'</span>})
+0032     displaynameformatted = <span class="string">'Sputum vol'</span>;
+0033 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'Temperature'</span>})
+0034     displaynameformatted = <span class="string">'Temp'</span>;
+0035 <span class="keyword">else</span>
+0036     displaynameformatted = displaymeasure;
+0037 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

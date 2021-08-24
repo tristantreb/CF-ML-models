@@ -1,0 +1,253 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of am4VisualiseAlignmentDetail</title>
+  <meta name="keywords" content="am4VisualiseAlignmentDetail">
+  <meta name="description" content="am4VisualiseAlignmentDetail - creates a plot of horizontal bars showing">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; am4VisualiseAlignmentDetail.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>am4VisualiseAlignmentDetail
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>am4VisualiseAlignmentDetail - creates a plot of horizontal bars showing</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [sorted_interventions, max_points] = am4VisualiseAlignmentDetail(amIntrCube, amInterventions,meancurvemean, meancurvecount, meancurvestd, offsets, measures, min_offset, max_offset, align_wind,nmeasures, run_type, study, ex_start, version, curveaveragingmethod) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> am4VisualiseAlignmentDetail - creates a plot of horizontal bars showing 
+ the alignment of the data window (including the best_offset) for all 
+interventions. Also indicates missing data in each of the horizontal bars</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="am4AddToMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = am4AddToMean(meancurvesumsq, meancurvesum, meancurvecount,amIntrCube, offset, currinter, min_offset, max_offset, align_wind, nmeasures)">am4AddToMean</a>	am4AddToMean - add an underlying curve to the meancurve (sumsq, sum and count)</li><li><a href="calcMeanAndStd.html" class="code" title="function [meancurvemean, meancurvestd] = calcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind)">calcMeanAndStd</a>	am4CalcMeanAndStd - recalc meancurvemean and meancurvestd arrays</li><li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>	plotLatentCurve - plots the latent curve actual and smoothed</li><li><a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>	plotVerticalLine - plots a vertical line</li><li><a href="savePlot.html" class="code" title="function savePlot(f, name)">savePlot</a>	savePlots - saves the figure to png and svp file types</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModel4.html" class="code" title="">runAlignmentModel4</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [sorted_interventions, max_points] = am4VisualiseAlignmentDetail(amIntrCube, amInterventions, </a><span class="keyword">...</span>
+0002     meancurvemean, meancurvecount, meancurvestd, offsets, measures, min_offset, max_offset, align_wind, <span class="keyword">...</span>
+0003     nmeasures, run_type, study, ex_start, version, curveaveragingmethod)
+0004 
+0005 <span class="comment">% am4VisualiseAlignmentDetail - creates a plot of horizontal bars showing</span>
+0006 <span class="comment">% the alignment of the data window (including the best_offset) for all</span>
+0007 <span class="comment">%interventions. Also indicates missing data in each of the horizontal bars</span>
+0008 
+0009 datatable = table(<span class="string">'Size'</span>,[1 3], <span class="keyword">...</span>
+0010     <span class="string">'VariableTypes'</span>, {<span class="string">'double'</span>,       <span class="string">'double'</span>,     <span class="string">'double'</span>}, <span class="keyword">...</span>
+0011     <span class="string">'VariableNames'</span>, {<span class="string">'Intervention'</span>, <span class="string">'ScaledDateNum'</span>, <span class="string">'Count'</span>});
+0012 
+0013 rowtoadd = datatable;
+0014 max_points = zeros(1, max_offset + align_wind - 1);
+0015 ninterventions = size(amInterventions,1);
+0016 sorted_interventions = array2table(offsets);
+0017 sorted_interventions.Intervention = [1:ninterventions]';
+0018 sorted_interventions = sortrows(sorted_interventions, {<span class="string">'offsets'</span>, <span class="string">'Intervention'</span>}, {<span class="string">'descend'</span>, <span class="string">'ascend'</span>});
+0019 
+0020 <span class="keyword">for</span> i = 1:max_offset + align_wind - 1
+0021     <span class="keyword">if</span> curveaveragingmethod == 1
+0022         max_points(1, i) = size(sorted_interventions.offsets(sorted_interventions.offsets &lt;= (max_offset + align_wind - i) <span class="keyword">...</span>
+0023             &amp; sorted_interventions.offsets &gt; (align_wind - i)),1);
+0024     <span class="keyword">else</span>
+0025         <span class="keyword">if</span> (i - align_wind) &lt;= 0
+0026             max_points(1, i) = ninterventions;
+0027         <span class="keyword">else</span>
+0028             max_points(1,i) = size(sorted_interventions.offsets(sorted_interventions.offsets &lt;= (max_offset + align_wind - i)),1);
+0029         <span class="keyword">end</span>
+0030     <span class="keyword">end</span>
+0031 <span class="keyword">end</span>
+0032 
+0033 <span class="keyword">for</span> m = 1:nmeasures
+0034     datatable(1:size(datatable,1),:) = [];
+0035     <span class="keyword">for</span> i = 1:ninterventions
+0036         scid = amInterventions.SmartCareID(i);
+0037         start = amInterventions.IVScaledDateNum(i);
+0038         offset = offsets(i);
+0039 
+0040         <span class="comment">%fprintf('Intervention %2d, patient %3d, start %3d, best_offset %2d\n', i, scid, start, offset);</span>
+0041     
+0042         rowtoadd.Intervention = i;
+0043         rowtoadd.Count = 2;
+0044         <span class="keyword">for</span> d = 1:align_wind
+0045             <span class="keyword">if</span> ~isnan(amIntrCube(i, max_offset + align_wind - d, m))
+0046                 rowtoadd.ScaledDateNum = 0 - d - offset;
+0047                 datatable = [datatable ; rowtoadd];
+0048             <span class="keyword">end</span>
+0049         <span class="keyword">end</span>
+0050         rowtoadd.Count = 1;
+0051         <span class="keyword">if</span> curveaveragingmethod == 2
+0052             <span class="keyword">for</span> d = 1:max_offset - 1
+0053                 <span class="keyword">if</span> ~isnan(amIntrCube(i, max_offset - d, m))
+0054                     rowtoadd.ScaledDateNum = 0 - align_wind - d - offset;
+0055                     datatable = [datatable ; rowtoadd];
+0056                 <span class="keyword">end</span>
+0057             <span class="keyword">end</span>
+0058         <span class="keyword">end</span>
+0059     <span class="keyword">end</span>
+0060 
+0061     temp = hsv;
+0062     brightness = .9;
+0063     colors(1,:)  = temp(8,:)  .* brightness;
+0064     colors(2,:)  = temp(16,:)  .* brightness;
+0065 
+0066     plotsacross = 2;
+0067     plotsdown = 8;
+0068     plottitle = sprintf(<span class="string">'%s_AM%s %s - %s'</span>, study, version, run_type, measures.DisplayName{m});
+0069     anchor = 1; <span class="comment">% latent curve is to be anchored on the plot (right side at min_offset)</span>
+0070     
+0071     [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0072     
+0073     xl = [((-1 * (max_offset + align_wind)) + 1 - 0.5), -0.5];
+0074     yl = [min(meancurvemean(:, m)) max(meancurvemean(:, m))];
+0075     
+0076     ax = subplot(plotsdown,plotsacross,[1:6],<span class="string">'Parent'</span>,p);
+0077     yyaxis left;
+0078     
+0079     [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, min_offset, (meancurvemean(:, m)), xl, yl, <span class="string">'blue'</span>, <span class="string">':'</span>, 0.5, anchor);
+0080     [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, min_offset, smooth(meancurvemean(:, m), 5), xl, yl, <span class="string">'blue'</span>, <span class="string">'-'</span>, 0.5, anchor);
+0081     
+0082     ax.XAxis.FontSize = 8;
+0083     xlabel(<span class="string">'Days prior to Intervention'</span>);
+0084     ax.YAxis(1).Color = <span class="string">'blue'</span>;
+0085     ax.YAxis(1).FontSize = 8;
+0086     ylabel(<span class="string">'Normalised Measure'</span>, <span class="string">'FontSize'</span>, 8);
+0087     
+0088     <span class="keyword">if</span> ex_start ~= 0
+0089         [xl, yl] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax, ex_start, xl, yl, <span class="string">'blue'</span>, <span class="string">'--'</span>, 0.5); <span class="comment">% plot ex_start</span>
+0090     <span class="keyword">end</span>
+0091     
+0092     yyaxis right
+0093     ax.YAxis(2).Color = <span class="string">'black'</span>;
+0094     ax.YAxis(2).FontSize = 8;
+0095     ylabel(<span class="string">'Count of Data points'</span>);
+0096     
+0097     <span class="keyword">if</span> isequal(run_type,<span class="string">'Best Alignment'</span>)
+0098         bar([-1 * (max_offset + align_wind - 1): -1], max_points, 0.5, <span class="string">'FaceColor'</span>, <span class="string">'white'</span>, <span class="string">'FaceAlpha'</span>, 0.1);
+0099     <span class="keyword">end</span>
+0100     bar([-1 * (max_offset + align_wind - 1): -1], meancurvecount(:, m), 0.5, <span class="string">'FaceColor'</span>, <span class="string">'black'</span>, <span class="string">'FaceAlpha'</span>, 0.25, <span class="string">'LineWidth'</span>, 0.2);
+0101     <span class="keyword">if</span> isequal(run_type,<span class="string">'Best Alignment'</span>)
+0102         ylim([0 max(max_points) * 4]);
+0103     <span class="keyword">else</span>
+0104         ylim([0 max(meancurvecount(:, m) * 4)]);
+0105     <span class="keyword">end</span>
+0106     
+0107     subplot(plotsdown,plotsacross,[7:16],<span class="string">'Parent'</span>,p);
+0108     h = heatmap(p, datatable, <span class="string">'ScaledDateNum'</span>, <span class="string">'Intervention'</span>, <span class="string">'Colormap'</span>, colors, <span class="string">'MissingDataColor'</span>, <span class="string">'white'</span>, <span class="keyword">...</span>
+0109         <span class="string">'ColorVariable'</span>,<span class="string">'Count'</span>,<span class="string">'ColorMethod'</span>,<span class="string">'max'</span>, <span class="string">'MissingDataLabel'</span>, <span class="string">'No data'</span>, <span class="string">'ColorBarVisible'</span>, <span class="string">'off'</span>, <span class="string">'FontSize'</span>, 8);
+0110     h.Title = <span class="string">' '</span>;
+0111     h.XLabel = <span class="string">'Days Prior to Intervention'</span>;
+0112     h.YLabel = <span class="string">'Intervention'</span>;
+0113     h.YDisplayData = sorted_interventions.Intervention;
+0114     h.XLimits = {-1 * (max_offset + align_wind - 1), -1};
+0115     h.CellLabelColor = <span class="string">'none'</span>;
+0116     h.GridVisible = <span class="string">'on'</span>;
+0117     
+0118     <a href="savePlot.html" class="code" title="function savePlot(f, name)">savePlot</a>(f, plottitle);
+0119     close(f);
+0120     
+0121     <span class="keyword">if</span> measures.Mask(m) == 1
+0122         
+0123         nbuckets = 5;
+0124         plotsacross = 2;
+0125         plotsdown = round(nbuckets/plotsacross);
+0126         plottitle = sprintf(<span class="string">'%s_AM%s - Alignment By Quintile - %s'</span>, study, version, measures.DisplayName{m});
+0127         
+0128         [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0129         
+0130         <span class="keyword">for</span> q = 1:nbuckets
+0131             qlower = 1 + round((ninterventions * (q - 1))/nbuckets);
+0132             qupper = round((ninterventions * q)/nbuckets);
+0133             qnbr   = qupper - qlower + 1;
+0134             fprintf(<span class="string">'Quintile %d, Lower = %d, Upper = %d, Size = %d\n'</span>, q, qlower, qupper, qnbr);
+0135             
+0136             temp_meancurvesumsq    = zeros(max_offset + align_wind - 1, nmeasures);
+0137             temp_meancurvesum      = zeros(max_offset + align_wind - 1, nmeasures);
+0138             temp_meancurvecount    = zeros(max_offset + align_wind - 1, nmeasures);
+0139             temp_meancurvemean     = zeros(max_offset + align_wind - 1, nmeasures);
+0140             temp_meancurvestd      = zeros(max_offset + align_wind - 1, nmeasures);
+0141             
+0142             temp_interventions = amInterventions(sorted_interventions.Intervention(qlower:qupper),:);
+0143             
+0144             <span class="keyword">for</span> i = 1:qnbr
+0145                 [temp_meancurvesumsq, temp_meancurvesum, temp_meancurvecount] = <a href="am4AddToMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = am4AddToMean(meancurvesumsq, meancurvesum, meancurvecount,amIntrCube, offset, currinter, min_offset, max_offset, align_wind, nmeasures)">am4AddToMean</a>(temp_meancurvesumsq, temp_meancurvesum, temp_meancurvecount, <span class="keyword">...</span>
+0146                     amIntrCube(sorted_interventions.Intervention(qlower:qupper), :, :), temp_interventions.Offset(i), i, min_offset, max_offset, align_wind, nmeasures);
+0147                 [temp_meancurvemean, temp_meancurvestd] = <a href="calcMeanAndStd.html" class="code" title="function [meancurvemean, meancurvestd] = calcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind)">calcMeanAndStd</a>(temp_meancurvesumsq, temp_meancurvesum, temp_meancurvecount, min_offset, max_offset, align_wind);
+0148             <span class="keyword">end</span>
+0149             
+0150             qintrminoffset = min(amInterventions.Offset(sorted_interventions.Intervention(qlower:qupper)));
+0151             qdataminoffset = max_offset + align_wind - max(find(max(temp_meancurvecount, [], 2)~=0)) + 1;
+0152             qto = max(qintrminoffset, qdataminoffset);
+0153             
+0154             <span class="keyword">if</span> curveaveragingmethod == 1
+0155                 qintrmaxoffset = max(amInterventions.Offset(sorted_interventions.Intervention(qlower:qupper))) + align_wind;
+0156                 qdatamaxoffset = max_offset + align_wind - min(find(min(temp_meancurvecount, [], 2)~=0));
+0157                 qfrom = max(qintrmaxoffset, qdatamaxoffset);
+0158             <span class="keyword">else</span>
+0159                 qfrom = max_offset + align_wind - 1;
+0160             <span class="keyword">end</span>
+0161             
+0162             xl = [((-1 * (max_offset + align_wind)) + 1 - 0.5), -0.5];
+0163             yl = [min(min(temp_meancurvemean(:, m)), min(meancurvemean(:, m))) max(max(temp_meancurvemean(:, m)), max(meancurvemean(:, m)))];
+0164     
+0165             ax = subplot(plotsdown, plotsacross, q, <span class="string">'Parent'</span>, p);
+0166             ax.Title.FontSize = 8;
+0167             ax.Title.String = sprintf(<span class="string">'Quintile %d'</span>, q);
+0168             
+0169             yyaxis left;
+0170             
+0171             <span class="comment">% plot latent curve and vertical line for ex_start (if chosen at this point)</span>
+0172             [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, min_offset, (meancurvemean(:, m)), xl, yl, <span class="string">'blue'</span>, <span class="string">':'</span>, 0.5, anchor);
+0173             [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, min_offset, smooth(meancurvemean(:, m), 5), xl, yl, <span class="string">'blue'</span>, <span class="string">'-'</span>, 0.5, anchor);
+0174             <span class="keyword">if</span> ex_start ~= 0
+0175                 [xl, yl] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax, ex_start, xl, yl, <span class="string">'blue'</span>, <span class="string">'--'</span>, 0.5); <span class="comment">% plot ex_start</span>
+0176             <span class="keyword">end</span>
+0177             
+0178             ax.XAxis.FontSize = 8;
+0179             xlabel(<span class="string">'Days prior to Intervention'</span>);
+0180             ax.YAxis(1).Color = <span class="string">'blue'</span>;
+0181             ax.YAxis(1).FontSize = 8;
+0182             ylabel(<span class="string">'Normalised Measure'</span>, <span class="string">'FontSize'</span>, 8);
+0183             
+0184             <span class="comment">% plot latent curve for the quintile of interventions</span>
+0185             line([-1 * qfrom: -1 * qto], temp_meancurvemean(max_offset + align_wind - qfrom : max_offset + align_wind - qto, m), <span class="string">'Color'</span>, <span class="string">'red'</span>,<span class="string">'LineStyle'</span>, <span class="string">':'</span>);
+0186             line([-1 * qfrom: -1 * qto], smooth(temp_meancurvemean(max_offset + align_wind - qfrom : max_offset + align_wind - qto, m), 5), <span class="string">'Color'</span>, <span class="string">'red'</span>,<span class="string">'LineStyle'</span>, <span class="string">'-'</span>);
+0187 
+0188             yyaxis right
+0189             ax.YAxis(2).Color = <span class="string">'black'</span>;
+0190             ax.YAxis(2).FontSize = 8;
+0191             ylabel(<span class="string">'Count of Data points'</span>);
+0192             bar([-1 * (max_offset + align_wind - 1): -1], temp_meancurvecount(1:max_offset + align_wind - 1, m), 0.5, <span class="string">'FaceColor'</span>, <span class="string">'black'</span>, <span class="string">'FaceAlpha'</span>, 0.15);
+0193             ylim([0 (max(max_points) * 4 / nbuckets)]);
+0194         <span class="keyword">end</span>
+0195         
+0196         <span class="comment">% save plot</span>
+0197         <a href="savePlot.html" class="code" title="function savePlot(f, name)">savePlot</a>(f, plottitle);
+0198         close(f);
+0199     <span class="keyword">end</span>
+0200 <span class="keyword">end</span>
+0201 
+0202 <span class="keyword">end</span>
+0203 
+0204</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

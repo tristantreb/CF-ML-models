@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createAndSaveWeightPlots</title>
+  <meta name="keywords" content="createAndSaveWeightPlots">
+  <meta name="description" content="createAndSaveWeightPlots - function to create plots of Weight home vs clinical">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createAndSaveWeightPlots.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createAndSaveWeightPlots
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>createAndSaveWeightPlots - function to create plots of Weight home vs clinical</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function createAndSaveWeightPlots(pmeasuresweight, pstudydateweight,mindays, maxdays, plotsacross, plotsdown, plotsperpage, basedir, subfolder, filenameprefix) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> createAndSaveWeightPlots - function to create plots of Weight home vs clinical 
+ measures and save results to file</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>	setMinYDisplayRangeForMeasure - sets the minimum range for Y axis for</li><li><a href="setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>	setYDisplayRange - function to scale y axis of plots appropriately</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="checkClinicalVsHomeWeightMeasures.html" class="code" title="">checkClinicalVsHomeWeightMeasures</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function createAndSaveWeightPlots(pmeasuresweight, pstudydateweight, </a><span class="keyword">...</span>
+0002     mindays, maxdays, plotsacross, plotsdown, plotsperpage, basedir, subfolder, filenameprefix)
+0003 
+0004 <span class="comment">% createAndSaveWeightPlots - function to create plots of Weight home vs clinical</span>
+0005 <span class="comment">% measures and save results to file</span>
+0006 
+0007 npages = ceil(size(pstudydateweight, 1) / plotsperpage);
+0008 
+0009 page = 1;
+0010 imagefilename = sprintf(<span class="string">'%s - Page %2d of %2d'</span>, filenameprefix, page, npages);
+0011 [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(imagefilename, <span class="string">'Portrait'</span>, <span class="string">'a4'</span>);
+0012 
+0013 <span class="keyword">for</span> i = 1:size(pstudydateweight,1)
+0014     scid     = pstudydateweight.SmartCareID(i);
+0015     studyid  = pstudydateweight.StudyNumber{i};
+0016     hospital = pstudydateweight.Hospital{i};
+0017     pweight  = pstudydateweight.Weight(i);
+0018     <span class="comment">% get weight measures just for current patient</span>
+0019     pmeasures = pmeasuresweight(pmeasuresweight.SmartCareID == scid,:);
+0020     <span class="comment">% store min and max for patient</span>
+0021     minpmweight = min(pmeasures.WeightInKg);
+0022     <span class="keyword">if</span> size(minpmweight, 1) == 0
+0023         minpmweight = 100;
+0024     <span class="keyword">end</span>
+0025     maxpmweight = max(pmeasures.WeightInKg);
+0026     <span class="keyword">if</span> size(maxpmweight, 1) == 0
+0027         maxpmweight = 0;
+0028     <span class="keyword">end</span>
+0029     
+0030     studystart = pstudydateweight.ScaledDateNum(i);
+0031     studyend = studystart + 183;
+0032     
+0033     <span class="comment">% plot weight measures</span>
+0034     ax = subplot(plotsdown, plotsacross, i - (page - 1) * plotsperpage, <span class="string">'Parent'</span>, p);
+0035     hold on;
+0036     plot(ax, pmeasures.ScaledDateNum,pmeasures.WeightInKg,<span class="string">'y-o'</span>,<span class="keyword">...</span>
+0037         <span class="string">'LineWidth'</span>,1,<span class="keyword">...</span>
+0038         <span class="string">'MarkerSize'</span>,3,<span class="keyword">...</span>
+0039         <span class="string">'MarkerEdgeColor'</span>,<span class="string">'b'</span>,<span class="keyword">...</span>
+0040         <span class="string">'MarkerFaceColor'</span>,<span class="string">'g'</span>);
+0041     xl = [mindays maxdays];
+0042     xlim(xl);
+0043     rangelimit = <a href="setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>(<span class="string">'WeightRecording'</span>);
+0044     yl = <a href="setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>(min(pweight, minpmweight), max(pweight, maxpmweight), rangelimit);
+0045     <span class="comment">%yl = [min(pweight, minpmweight)*.9 max(pweight, maxpmweight)*1.1];</span>
+0046     ylim(yl);
+0047     title(ax, sprintf(<span class="string">'ID%3d (%s %s)'</span>,scid, hospital, studyid), <span class="string">'fontsize'</span>, 10);
+0048     
+0049     <span class="comment">% add clinical weight as a horizontal line</span>
+0050     line(ax, xl, [pweight pweight], <span class="string">'Color'</span>, <span class="string">'r'</span>, <span class="string">'LineStyle'</span>,<span class="string">'--'</span>, <span class="string">'LineWidth'</span>,1);
+0051     
+0052     <span class="comment">% add study start and end as vertical lines</span>
+0053     line(ax, [studystart studystart], yl, <span class="string">'Color'</span>, <span class="string">'g'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, 1);
+0054     line(ax, [studyend studyend],     yl, <span class="string">'Color'</span>, <span class="string">'g'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, 1);
+0055     
+0056     fprintf(<span class="string">'Row %3d, Patient %3d: Clinical Weight = %2.2f Min Home Weight = %2.2f Max Home Weight = %2.2f\n'</span>, <span class="keyword">...</span>
+0057         i, scid, pweight, minpmweight, maxpmweight);
+0058     
+0059     <span class="comment">% create a new page as necessary</span>
+0060     <span class="keyword">if</span> round((i)/plotsperpage) == (i)/plotsperpage
+0061         <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, imagefilename, subfolder);
+0062         close(f);
+0063         page = page + 1;
+0064         imagefilename = sprintf(<span class="string">'%s - Page %2d of %2d'</span>, filenameprefix, page, npages);
+0065         [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(imagefilename, <span class="string">'Portrait'</span>, <span class="string">'a4'</span>);
+0066         fprintf(<span class="string">'Next Page\n'</span>);
+0067     <span class="keyword">end</span>
+0068 <span class="keyword">end</span>
+0069 
+0070 <span class="keyword">if</span> exist(<span class="string">'f'</span>, <span class="string">'var'</span>)
+0071     <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, imagefilename, subfolder);
+0072     close(f);
+0073 <span class="keyword">end</span>
+0074 
+0075 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

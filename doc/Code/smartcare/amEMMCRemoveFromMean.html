@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCRemoveFromMean</title>
+  <meta name="keywords" content="amEMMCRemoveFromMean">
+  <meta name="description" content="amEMMCRemoveFromMean - remove an underlying curve from each of the sets of meancurve (sumsq, sum and count)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCRemoveFromMean.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCRemoveFromMean
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCRemoveFromMean - remove an underlying curve from each of the sets of meancurve (sumsq, sum and count)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [meancurvesumsq, meancurvesum, meancurvecount] = amEMMCRemoveFromMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, vshift, currinter, min_offset, max_offset, align_wind, nmeasures, nlatentcurves) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCRemoveFromMean - remove an underlying curve from each of the sets of meancurve (sumsq, sum and count) 
+ from possible offsets, weighted by the overall probability of each
+ offset/meancurve</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMMCAlignCurves.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount, meancurvemean, meancurvestd, amInterventions,hstg, pdoffset, overall_hist, overall_pdoffset,animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset,vshift, isOutlier, pptsstruct, qual, min_offset, iter, miniiter] =amEMMCAlignCurves(meancurvesumsq, meancurvesum, meancurvecount, amIntrCube, amHeldBackcube,animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset,hstg, pdoffset, overall_hist, overall_pdoffset, vshift, isOutlier,amInterventions, outprior, measures, normstd, min_offset, max_offset, align_wind,nmeasures, ninterventions, nlatentcurves, sigmamethod, smoothingmethod,runmode, countthreshold, aniterations, maxiterations, allowvshift, vshiftmax, miniiter, fnmodelrun)">amEMMCAlignCurves</a>	amEMMCAlignCurves - function to align measurement curves prior to</li><li><a href="testobjfcnscript.html" class="code" title="">testobjfcnscript</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [meancurvesumsq, meancurvesum, meancurvecount] = amEMMCRemoveFromMean(meancurvesumsq, meancurvesum, meancurvecount, </a><span class="keyword">...</span>
+0002     overall_pdoffset, amIntrCube, amHeldBackcube, vshift, currinter, min_offset, max_offset, align_wind, nmeasures, nlatentcurves)
+0003 
+0004 <span class="comment">% amEMMCRemoveFromMean - remove an underlying curve from each of the sets of meancurve (sumsq, sum and count)</span>
+0005 <span class="comment">% from possible offsets, weighted by the overall probability of each</span>
+0006 <span class="comment">% offset/meancurve</span>
+0007 
+0008 <span class="keyword">for</span> n = 1:nlatentcurves
+0009     <span class="keyword">for</span> offset = min_offset:max_offset-1
+0010         <span class="comment">% place the current intervention curve into every possible offset</span>
+0011         <span class="comment">% position, weighted by the probability each offset position is the</span>
+0012         <span class="comment">% right one</span>
+0013         <span class="keyword">for</span> m = 1:nmeasures
+0014             <span class="keyword">for</span> i = 1:(max_offset + align_wind - 1 - offset)
+0015                 <span class="keyword">if</span> (~isnan(amIntrCube(currinter, max_offset + align_wind - i, m)) &amp;&amp; amHeldBackcube(currinter, max_offset + align_wind - i, m)==0)
+0016                     meancurvesumsq(n, max_offset + align_wind - offset - i, m) = meancurvesumsq(n, max_offset + align_wind - offset - i, m) - (((amIntrCube(currinter, max_offset + align_wind - i, m) + vshift(n, currinter, m, offset + 1)) ^ 2) * overall_pdoffset(n, currinter, offset + 1));
+0017                     meancurvesum(n, max_offset + align_wind - offset - i, m)   = meancurvesum(n, max_offset + align_wind   - offset - i, m) -  ((amIntrCube(currinter, max_offset + align_wind - i, m) + vshift(n, currinter, m, offset + 1))      * overall_pdoffset(n, currinter, offset + 1));
+0018                     meancurvecount(n, max_offset + align_wind - offset - i, m) = meancurvecount(n, max_offset + align_wind - offset - i, m) - overall_pdoffset(n, currinter, offset + 1);
+0019                 <span class="keyword">end</span>
+0020             <span class="keyword">end</span>
+0021         <span class="keyword">end</span>
+0022     <span class="keyword">end</span>
+0023 <span class="keyword">end</span>
+0024 
+0025 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

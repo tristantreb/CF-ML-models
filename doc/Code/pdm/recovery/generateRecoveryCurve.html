@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of generateRecoveryCurve</title>
+  <meta name="keywords" content="generateRecoveryCurve">
+  <meta name="description" content="plot an unaligned profile">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">recovery</a> &gt; generateRecoveryCurve.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>generateRecoveryCurve
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>plot an unaligned profile</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> plot an unaligned profile</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function plotresults(ax,x,z,s,n,m_name,data)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% plot an unaligned profile</span>
+0002 
+0003 <span class="comment">% Input:</span>
+0004 <span class="comment">% ------</span>
+0005 <span class="comment">% *intrnormdatacube_recovery.mat</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Output: different kinds of plots</span>
+0008 <span class="comment">% -------</span>
+0009 <span class="comment">% unaligned model</span>
+0010 <span class="comment">% violently superpose all interventions on one plot (not conclusive)</span>
+0011 
+0012 <a href="init.html" class="code" title="">init</a>;
+0013 filename = sprintf(<span class="string">'%sintrnormdatacube_recovery.mat'</span>, study);
+0014 fprintf(<span class="string">'Loading alignment model Inputs data %s\n'</span>, filename);
+0015 load(fullfile(basedir, subfolder, filename));
+0016 
+0017 <span class="comment">% data window analysis</span>
+0018 
+0019 <span class="comment">% size, #Nan, #0</span>
+0020 fprintf(<span class="string">'amIntreNormcube contains %i values, %i NaN, %i zeros\n'</span>,numel(amIntrNormcube), sum(sum(sum(isnan(amIntrNormcube)))), sum(sum(sum(amIntrNormcube == 0))))
+0021 
+0022 <span class="comment">% align_wind</span>
+0023 align_wind = size(amIntrNormcube,2)-1;<span class="comment">% TODO % remove - 1</span>
+0024 ninterventions = size(amIntrNormcube,1);
+0025 
+0026 <span class="comment">%% compute Z and S - MLE of data</span>
+0027 
+0028 <span class="comment">% initialise outputs</span>
+0029 z = zeros(align_wind,length(measures.Index));
+0030 s = z;
+0031 n = z;
+0032 
+0033 <span class="comment">% calculate z, s, n</span>
+0034 <span class="keyword">for</span> m = measures.Index
+0035     <span class="comment">% get z, s for each point of the latent profile</span>
+0036     <span class="keyword">for</span> d = 1:align_wind
+0037         <span class="comment">% over all interventions</span>
+0038          z(d,m) = mean(amIntrNormcube(:,d,m),<span class="string">'omitnan'</span>);
+0039          s(d,m) = std(amIntrNormcube(:,d,m),<span class="string">'omitnan'</span>);
+0040          n(d,m) = sum(~isnan(amIntrNormcube(:,d,m)))/size(amIntrNormcube,1)*100;
+0041     <span class="keyword">end</span>
+0042 <span class="keyword">end</span>
+0043 
+0044 <span class="comment">%% plot #measures latent curves</span>
+0045 
+0046 figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 2000 1000])
+0047 
+0048 tiledlayout(4,4);
+0049 meas = 1:17; meas(5)=[];
+0050 
+0051 <span class="keyword">for</span> m = meas
+0052     ax = nexttile;
+0053     <a href="#_sub1" class="code" title="subfunction plotresults(ax,x,z,s,n,m_name,data)">plotresults</a>(ax,0:align_wind-1,smooth(z(:,m),3),smooth(s(:,m),3),n(:,m),measures.DisplayName{m},amIntrNormcube);
+0054 <span class="keyword">end</span>
+0055 
+0056 saveas(gcf,fullfile(plotfolder,<span class="string">'UnalignedModel_munorm_before_ape_40d.png'</span>))
+0057 
+0058 <span class="comment">%% violently superpose all interventions curves for selected measure</span>
+0059 <span class="comment">% not conclusive</span>
+0060 
+0061 figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 2000 1000])
+0062 tiledlayout(4,2);
+0063 meas = 1:17; meas(5)=[];
+0064 <span class="keyword">for</span> m = [14, 17, 6, 2, 3, 12, 16, 8] <span class="comment">%meas</span>
+0065     nexttile;
+0066     hold on
+0067     <span class="keyword">for</span> i = 1:size(amIntrNormcube,1)
+0068         plot(1:align_wind,smooth(amIntrNormcube(i,1:end-1,m),3))
+0069     <span class="keyword">end</span>
+0070     ylabel(sprintf(<span class="string">'%s Normalised'</span>,measures.DisplayName{m}))
+0071     hold off
+0072 <span class="keyword">end</span>
+0073 sgtitle(sprintf(<span class="string">'Violently superpose all %i interventions curves'</span>,size(amIntrNormcube,1)))
+0074 saveas(gcf,fullfile(plotfolder,<span class="string">'All_timeseries_superposition.png'</span>))
+0075 
+0076 <span class="comment">%% functions</span>
+0077 
+0078 <a name="_sub0" href="#_subfunctions" class="code">function plotresults(ax,x,z,s,n,m_name,data)</a>
+0079 <span class="comment">% plot latent curve for one measure</span>
+0080 yyaxis(ax,<span class="string">'left'</span>)
+0081 plot(x,z,<span class="string">'.b'</span>,x,z-s,<span class="string">'.b'</span>,x,z+s,<span class="string">'.b'</span>)
+0082 hold on
+0083 plot(x,z,<span class="string">'b'</span>,x,z-s,<span class="string">'--b'</span>,x,z+s,<span class="string">'--b'</span>)
+0084 hold off
+0085 ax.YColor = <span class="string">'b'</span>;
+0086 ylabel(ax,sprintf(<span class="string">'%s Normalised'</span>,m_name))
+0087 
+0088 yyaxis(ax,<span class="string">'right'</span>)
+0089 bar(x,n,<span class="string">'k'</span>,<span class="string">'FaceAlpha'</span>,0.1,<span class="string">'EdgeAlpha'</span>,0.0)
+0090 ax.YColor = <span class="string">'k'</span>;
+0091 ylim(ax,[0,size(data,1)*4])
+0092 yticks(ax,[0 50 100])
+0093 ylabel(ax,<span class="string">'Data count (%)'</span>)
+0094 
+0095 <span class="comment">% ax.Color, background color</span>
+0096 <span class="comment">% ax.YColor, y axis color</span>
+0097 <span class="comment">% ax1.Box = 'off', remove ticks on the other side</span>
+0098 
+0099 xlabel(<span class="string">'Days post treatment'</span>)
+0100 
+0101 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

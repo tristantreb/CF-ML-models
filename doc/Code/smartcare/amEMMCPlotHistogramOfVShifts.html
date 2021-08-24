@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCPlotHistogramOfVShifts</title>
+  <meta name="keywords" content="amEMMCPlotHistogramOfVShifts">
+  <meta name="description" content="amEMMCPlotHistogramOfVShifts - plot a histogram of the vertical shifts">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCPlotHistogramOfVShifts.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCPlotHistogramOfVShifts
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCPlotHistogramOfVShifts - plot a histogram of the vertical shifts</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function amEMMCPlotHistogramOfVShifts(amInterventions, vshift, measures, nmeasures, ninterventions, nlatentcurves, plotname, plotsubfolder, vshiftmode, vshiftmax) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCPlotHistogramOfVShifts - plot a histogram of the vertical shifts
+ for a given model run, for each latent curve set, by measure and overall</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function amEMMCPlotHistogramOfVShifts(amInterventions, vshift, measures, nmeasures, ninterventions, nlatentcurves, plotname, plotsubfolder, vshiftmode, vshiftmax)</a>
+0002 
+0003 <span class="comment">% amEMMCPlotHistogramOfVShifts - plot a histogram of the vertical shifts</span>
+0004 <span class="comment">% for a given model run, for each latent curve set, by measure and overall</span>
+0005 
+0006 vshiftfin = zeros(nlatentcurves, ninterventions, nmeasures);
+0007 
+0008 <span class="keyword">for</span> lc = 1:nlatentcurves
+0009     <span class="keyword">for</span> i = 1:ninterventions
+0010         <span class="keyword">for</span> m = 1:nmeasures
+0011             vshiftfin(lc, i, m) = vshift(lc, i, m, amInterventions.Offset(i) + 1);
+0012         <span class="keyword">end</span>
+0013     <span class="keyword">end</span>
+0014 <span class="keyword">end</span>
+0015 
+0016 <span class="keyword">if</span> vshiftmax &gt;= 10
+0017     nbins = 100;
+0018 <span class="keyword">elseif</span> vshiftmax &gt;=1
+0019     nbins = vshiftmax * 10;
+0020 <span class="keyword">else</span>
+0021     nbins = 10;
+0022 <span class="keyword">end</span>
+0023 nplots = nmeasures + 1;
+0024 plotsacross = 3;
+0025 plotsdown = ceil(nplots / plotsacross);
+0026 edges = -vshiftmax:(2 * vshiftmax) / nbins:vshiftmax;
+0027 
+0028 <span class="keyword">for</span> lc = 1:nlatentcurves
+0029     plottitle   = sprintf(<span class="string">'%s - V-Shift Histograms C%d'</span>, plotname, lc);
+0030     [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0031     
+0032     <span class="keyword">for</span> m = 1:nmeasures
+0033         ax = subplot(plotsdown, plotsacross, m, <span class="string">'Parent'</span>, p);
+0034         h = histogram(ax, vshiftfin(lc, :, m), edges);
+0035         title(ax, measures.DisplayName{m});
+0036         xlabel(ax, <span class="string">'Vertical Shift'</span>);
+0037         ylabel(ax, <span class="string">'Count'</span>);
+0038     <span class="keyword">end</span>
+0039     m = m + 1;
+0040     ax = subplot(plotsdown, plotsacross, m, <span class="string">'Parent'</span>, p);
+0041     h = histogram(ax, vshiftfin(lc, :, :), edges);
+0042     title(ax, <span class="string">'Overall'</span>);
+0043     xlabel(ax, <span class="string">'Vertical Shift'</span>);
+0044     ylabel(ax, <span class="string">'Count'</span>);
+0045     
+0046     <span class="comment">% save plot</span>
+0047     <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0048     close(f);
+0049 <span class="keyword">end</span>
+0050</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

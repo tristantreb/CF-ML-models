@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of convertTeleMedData</title>
+  <meta name="keywords" content="convertTeleMedData">
+  <meta name="description" content="convertTelemedData - converts from TelemedData format to SmartCare format">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; convertTeleMedData.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>convertTeleMedData
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>convertTelemedData - converts from TelemedData format to SmartCare format</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [tmPatient, tmClinicVisits, tmAdmissions, tmAntibiotics, tmCRP, tmPFT, tmphysdata] =convertTeleMedData(tmData, tmPatient, tmClinicVisits, tmAdmissions, tmAntibiotics, tmCRP, tmPFT, tmphysdata,cvrowtoadd, admrowtoadd, poabrowtoadd, ivabrowtoadd, crprowtoadd, pftrowtoadd, phrowtoadd, fileid, offset) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> convertTelemedData - converts from TelemedData format to SmartCare format</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="initialiseMeasurementRow.html" class="code" title="function [phrowtoadd] = initialiseMeasurementRow(phrowtoadd, id, recordingdate, offset)">initialiseMeasurementRow</a>	initialiseMeasurementRow - convenience function to initialise measurement</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadTeleMeddata.html" class="code" title="">loadTeleMeddata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [tmPatient, tmClinicVisits, tmAdmissions, tmAntibiotics, tmCRP, tmPFT, tmphysdata] = </a><span class="keyword">...</span>
+0002     convertTeleMedData(tmData, tmPatient, tmClinicVisits, tmAdmissions, tmAntibiotics, tmCRP, tmPFT, tmphysdata, <span class="keyword">...</span>
+0003     cvrowtoadd, admrowtoadd, poabrowtoadd, ivabrowtoadd, crprowtoadd, pftrowtoadd, phrowtoadd, fileid, offset)
+0004 
+0005 <span class="comment">% convertTelemedData - converts from TelemedData format to SmartCare format</span>
+0006 
+0007 <span class="keyword">if</span> isequal(class(tmData.CRP), <span class="string">'cell'</span>)
+0008     numlevel = str2double(regexprep(tmData.CRP, <span class="string">'[&lt;&gt;]'</span>,<span class="string">''</span>));
+0009 <span class="keyword">else</span>
+0010     numlevel = tmData.CRP;
+0011 <span class="keyword">end</span>
+0012 numlevel = array2table(numlevel);
+0013 numlevel.Properties.VariableNames{1} = <span class="string">'NumericLevel'</span>;
+0014 tmData = [tmData numlevel];
+0015 
+0016 nmeasurements = size(tmData,1);
+0017 
+0018 id = tmPatient.ID(tmPatient.ID==fileid);
+0019 
+0020 prioradm = {<span class="string">''</span>};
+0021 priorpoab = {<span class="string">''</span>};
+0022 priorivab = {<span class="string">''</span>};
+0023 
+0024 <span class="keyword">for</span> i = 1:nmeasurements
+0025     
+0026     <span class="comment">% Clinic Visits</span>
+0027     <span class="keyword">if</span> isequal(class(tmData.Clinic),<span class="string">'cell'</span>)
+0028         <span class="keyword">if</span> (tmData.Clinic{i} == <span class="string">'Y'</span>)
+0029            cvrowtoadd.ID = id;
+0030            cvrowtoadd.Hospital = <span class="string">'PAP'</span>;
+0031            cvrowtoadd.StudyNumber = num2str(id);
+0032            cvrowtoadd.ClinicID = 0;
+0033            cvrowtoadd.AttendanceDate = tmData.Date(i);
+0034            tmClinicVisits = [tmClinicVisits; cvrowtoadd];   
+0035            fprintf(<span class="string">'Clinic Visit on %s\n'</span>, datestr(tmData.Date(i),29));
+0036         <span class="keyword">end</span>
+0037     <span class="keyword">end</span>
+0038     <span class="comment">% Hospital Admissions</span>
+0039     <span class="keyword">if</span> isequal(class(tmData.Admission),<span class="string">'cell'</span>)
+0040         <span class="keyword">if</span> (ismember(tmData.Admission(i),{<span class="string">'Y'</span>}) &amp; ~ismember(tmData.Admission(i),prioradm))
+0041             admrowtoadd.ID = id;
+0042             admrowtoadd.Hospital = <span class="string">'PAP'</span>;
+0043             admrowtoadd.StudyNumber = num2str(id);
+0044             admrowtoadd.HospitalAdmissionID = 0;
+0045             admrowtoadd.Admitted = tmData.Date(i);
+0046             fprintf(<span class="string">'Admission started on %s\n'</span>, datestr(tmData.Date(i),29));     
+0047         <span class="keyword">end</span>
+0048         <span class="keyword">if</span> (~ismember(tmData.Admission(i),{<span class="string">'Y'</span>}) &amp; ~ismember(tmData.Admission(i),prioradm))
+0049             admrowtoadd.Discharge = tmData.Date(i-1);
+0050             tmAdmissions = [tmAdmissions; admrowtoadd];
+0051             fprintf(<span class="string">'Admission ended on %s\n'</span>, datestr(tmData.Date(i-1),29));
+0052         <span class="keyword">end</span> 
+0053         prioradm = tmData.Admission(i);
+0054     <span class="keyword">end</span>
+0055     
+0056     <span class="comment">% Oral Antibiotics</span>
+0057     <span class="keyword">if</span> isequal(class(tmData.POAbx),<span class="string">'cell'</span>)
+0058         <span class="keyword">if</span> (ismember(tmData.POAbx(i),{<span class="string">'Y'</span>}) &amp; ~ismember(tmData.POAbx(i),priorpoab))
+0059             poabrowtoadd.ID = id;
+0060             poabrowtoadd.Hospital = <span class="string">'PAP'</span>;
+0061             poabrowtoadd.StudyNumber = num2str(id);
+0062             poabrowtoadd.AntibioticID = 0;
+0063             poabrowtoadd.AntibioticName = <span class="string">'Not Captured'</span>;
+0064             poabrowtoadd.Route = <span class="string">'Oral'</span>;
+0065             poabrowtoadd.HomeIV_s_ = <span class="string">'No'</span>;
+0066             poabrowtoadd.StartDate = tmData.Date(i);
+0067             fprintf(<span class="string">'Oral AB started on %s\n'</span>, datestr(tmData.Date(i),29));     
+0068         <span class="keyword">end</span>
+0069         <span class="keyword">if</span> (~ismember(tmData.POAbx(i),{<span class="string">'Y'</span>}) &amp; ~ismember(tmData.POAbx(i),priorpoab))
+0070             poabrowtoadd.StopDate = tmData.Date(i-1);
+0071             tmAntibiotics = [tmAntibiotics; poabrowtoadd];
+0072             fprintf(<span class="string">'Oral AB ended on %s\n'</span>, datestr(tmData.Date(i-1),29));
+0073         <span class="keyword">end</span> 
+0074         priorpoab = tmData.POAbx(i);
+0075     <span class="keyword">end</span>
+0076     
+0077     <span class="comment">% IV Antibiotics</span>
+0078     <span class="keyword">if</span> isequal(class(tmData.IVAbx),<span class="string">'cell'</span>)
+0079         <span class="keyword">if</span> (ismember(tmData.IVAbx(i),{<span class="string">'Y'</span>}) &amp; ~ismember(tmData.IVAbx(i),priorivab))
+0080             ivabrowtoadd.ID = id;
+0081             ivabrowtoadd.Hospital = <span class="string">'PAP'</span>;
+0082             ivabrowtoadd.StudyNumber = num2str(id);
+0083             ivabrowtoadd.AntibioticID = 0;
+0084             ivabrowtoadd.AntibioticName = <span class="string">'Not Captured'</span>;
+0085             ivabrowtoadd.Route = <span class="string">'IV'</span>;
+0086             <span class="keyword">if</span> isequal(class(tmData.Admission),<span class="string">'cell'</span>) &amp; ismember(tmData.Admission(i),{<span class="string">'Y'</span>})
+0087                 ivabrowtoadd.HomeIV_s_ = <span class="string">'No'</span>;
+0088             <span class="keyword">else</span>
+0089                 ivabrowtoadd.HomeIV_s_ = <span class="string">'Yes'</span>;
+0090             <span class="keyword">end</span>
+0091             ivabrowtoadd.StartDate = tmData.Date(i);
+0092             fprintf(<span class="string">'IV AB started on %s\n'</span>, datestr(tmData.Date(i),29));     
+0093         <span class="keyword">end</span>
+0094         <span class="keyword">if</span> (~ismember(tmData.IVAbx(i),{<span class="string">'Y'</span>}) &amp; ~ismember(tmData.IVAbx(i),priorivab))
+0095             ivabrowtoadd.StopDate = tmData.Date(i-1);
+0096             <span class="keyword">if</span> isequal(class(tmData.Admission),<span class="string">'cell'</span>) &amp; ismember(tmData.Admission(i-1),{<span class="string">'Y'</span>}) &amp; ismember(ivabrowtoadd.HomeIV_s_, {<span class="string">'Yes'</span>})
+0097                    ivabrowtoadd.HomeIV_s_ = <span class="string">'IP+OP'</span>;
+0098             <span class="keyword">end</span>
+0099             <span class="keyword">if</span> isequal(class(tmData.Admission),<span class="string">'cell'</span>) &amp; ~ismember(tmData.Admission(i-1),{<span class="string">'Y'</span>}) &amp; ismember(ivabrowtoadd.HomeIV_s_, {<span class="string">'No'</span>})
+0100                 ivabrowtoadd.HomeIV_s_ = <span class="string">'IP+OP'</span>;
+0101             <span class="keyword">end</span>
+0102             tmAntibiotics = [tmAntibiotics; ivabrowtoadd];
+0103             fprintf(<span class="string">'IV AB ended on %s\n'</span>, datestr(tmData.Date(i-1),29));
+0104         <span class="keyword">end</span> 
+0105         priorivab = tmData.IVAbx(i);
+0106     <span class="keyword">end</span>
+0107     
+0108     <span class="comment">% CRP</span>
+0109     <span class="keyword">if</span> ~isnan(tmData.NumericLevel(i))
+0110         crprowtoadd.ID = id;
+0111         crprowtoadd.Hospital = <span class="string">'PAP'</span>;
+0112         <span class="comment">%crprowtoadd.StudyNumber = ' ';</span>
+0113         crprowtoadd.StudyNumber = num2str(id);
+0114         crprowtoadd.CRPID = 0;
+0115         crprowtoadd.CRPDate = tmData.Date(i);
+0116         <span class="keyword">if</span> isequal(class(tmData.CRP), <span class="string">'cell'</span>)
+0117             crprowtoadd.Level = tmData.CRP(i);
+0118         <span class="keyword">else</span>
+0119             crprowtoadd.Level = num2str(tmData.CRP(i));
+0120         <span class="keyword">end</span>
+0121         crprowtoadd.Units = <span class="string">'mg/L'</span>;
+0122         <span class="keyword">if</span> (isequal(class(tmData.POAbx),<span class="string">'cell'</span>) &amp; ismember(tmData.POAbx(i),{<span class="string">'Y'</span>})) | (isequal(class(tmData.IVAbx),<span class="string">'cell'</span>) &amp; ismember(tmData.IVAbx(i), {<span class="string">'Y'</span>}))
+0123             crprowtoadd.PatientAntibiotics = <span class="string">'On'</span>;
+0124         <span class="keyword">else</span>
+0125             crprowtoadd.PatientAntibiotics = <span class="string">'Off'</span>;
+0126         <span class="keyword">end</span>
+0127         crprowtoadd.NumericLevel = tmData.NumericLevel(i);
+0128         tmCRP = [tmCRP; crprowtoadd];   
+0129         fprintf(<span class="string">'CRP taken on %s\n'</span>, datestr(tmData.Date(i),29));
+0130     <span class="keyword">end</span>
+0131     
+0132     <span class="comment">% PFT</span>
+0133     <span class="keyword">if</span> ~isnan(tmData.FEVI_L_(i))
+0134         pftrowtoadd.ID = id;
+0135         pftrowtoadd.Hospital = <span class="string">'PAP'</span>;
+0136         pftrowtoadd.StudyNumber = num2str(id);
+0137         pftrowtoadd.LungFunctionID = 0;
+0138         pftrowtoadd.LungFunctionDate = tmData.Date(i);
+0139         pftrowtoadd.FEV1 = tmData.FEVI_L_(i);
+0140         pftrowtoadd.FEV1_ = tmData.FEV1___(i);
+0141         pftrowtoadd.FVC1 = NaN;
+0142         pftrowtoadd.FVC1_ = NaN;
+0143         pftrowtoadd.CalcFEV1SetAs = tmPatient.CalcFEV1SetAs(tmPatient.ID==id);
+0144         pftrowtoadd.CalcFEV1_ = round((pftrowtoadd.FEV1 / pftrowtoadd.CalcFEV1SetAs) * 100);
+0145         tmPFT = [tmPFT; pftrowtoadd];   
+0146         fprintf(<span class="string">'PFT taken on %s\n'</span>, datestr(tmData.Date(i),29));
+0147     <span class="keyword">end</span>
+0148     
+0149     <span class="comment">% measurement data</span>
+0150     
+0151     <span class="comment">% weight</span>
+0152     <span class="keyword">if</span> ~isnan(tmData.weight(i))
+0153         phrowtoadd = <a href="initialiseMeasurementRow.html" class="code" title="function [phrowtoadd] = initialiseMeasurementRow(phrowtoadd, id, recordingdate, offset)">initialiseMeasurementRow</a>(phrowtoadd, id, tmData.Date(i), offset);
+0154         phrowtoadd.RecordingType = {<span class="string">'WeightRecording'</span>};
+0155         phrowtoadd.WeightInKg = tmData.weight(i);
+0156         tmphysdata = [tmphysdata; phrowtoadd];
+0157     <span class="keyword">end</span>
+0158     
+0159     <span class="comment">% FEV1</span>
+0160     <span class="keyword">if</span> ~isnan(tmData.FEV1_A_(i))
+0161         phrowtoadd = <a href="initialiseMeasurementRow.html" class="code" title="function [phrowtoadd] = initialiseMeasurementRow(phrowtoadd, id, recordingdate, offset)">initialiseMeasurementRow</a>(phrowtoadd, id, tmData.Date(i), offset);
+0162         phrowtoadd.RecordingType = {<span class="string">'LungFunctionRecording'</span>};
+0163         phrowtoadd.FEV1 = tmData.FEV1_A_(i);
+0164         phrowtoadd.PredictedFEV = tmPatient.CalcPredictedFEV1(tmPatient.ID == id);
+0165         phrowtoadd.FEV1_ = round(100 * phrowtoadd.FEV1 / phrowtoadd.PredictedFEV);
+0166         phrowtoadd.CalcFEV1SetAs = tmPatient.CalcFEV1SetAs(tmPatient.ID == id);
+0167         phrowtoadd.CalcFEV1_ = round(100 * phrowtoadd.FEV1 / phrowtoadd.PredictedFEV);
+0168         tmphysdata = [tmphysdata; phrowtoadd];
+0169     <span class="keyword">end</span>
+0170     
+0171     <span class="comment">% Pulse Rate</span>
+0172     <span class="keyword">if</span> ~isnan(tmData.HR_mean_(i))
+0173         phrowtoadd = <a href="initialiseMeasurementRow.html" class="code" title="function [phrowtoadd] = initialiseMeasurementRow(phrowtoadd, id, recordingdate, offset)">initialiseMeasurementRow</a>(phrowtoadd, id, tmData.Date(i), offset);
+0174         phrowtoadd.RecordingType = {<span class="string">'PulseRateRecording'</span>};
+0175         phrowtoadd.Pulse_BPM_ = tmData.HR_mean_(i);
+0176         tmphysdata = [tmphysdata; phrowtoadd];
+0177     <span class="keyword">end</span>
+0178     
+0179     <span class="comment">% O2 Saturation</span>
+0180     <span class="keyword">if</span> ~isnan(tmData.SpO2_mean_(i))
+0181         phrowtoadd = <a href="initialiseMeasurementRow.html" class="code" title="function [phrowtoadd] = initialiseMeasurementRow(phrowtoadd, id, recordingdate, offset)">initialiseMeasurementRow</a>(phrowtoadd, id, tmData.Date(i), offset);
+0182         phrowtoadd.RecordingType = {<span class="string">'O2SaturationRecording'</span>};
+0183         phrowtoadd.O2Saturation = tmData.SpO2_mean_(i);
+0184         tmphysdata = [tmphysdata; phrowtoadd];
+0185     <span class="keyword">end</span>
+0186     
+0187     <span class="comment">% Activity</span>
+0188     <span class="keyword">if</span> ~isnan(tmData.Steps(i))
+0189         phrowtoadd = <a href="initialiseMeasurementRow.html" class="code" title="function [phrowtoadd] = initialiseMeasurementRow(phrowtoadd, id, recordingdate, offset)">initialiseMeasurementRow</a>(phrowtoadd, id, tmData.Date(i), offset);
+0190         phrowtoadd.RecordingType = {<span class="string">'ActivityRecording'</span>};
+0191         phrowtoadd.Activity_Steps = tmData.Steps(i);
+0192         tmphysdata = [tmphysdata; phrowtoadd];
+0193     <span class="keyword">end</span>
+0194     
+0195     <span class="comment">% Cough</span>
+0196     <span class="keyword">if</span> ~isnan(tmData.CoughScore(i))
+0197         phrowtoadd = <a href="initialiseMeasurementRow.html" class="code" title="function [phrowtoadd] = initialiseMeasurementRow(phrowtoadd, id, recordingdate, offset)">initialiseMeasurementRow</a>(phrowtoadd, id, tmData.Date(i), offset);
+0198         phrowtoadd.RecordingType = {<span class="string">'CoughRecording'</span>};
+0199         phrowtoadd.Rating = tmData.CoughScore(i) * 10;
+0200         tmphysdata = [tmphysdata; phrowtoadd];
+0201     <span class="keyword">end</span>
+0202     
+0203     <span class="comment">% Wellness</span>
+0204     <span class="keyword">if</span> ~isnan(tmData.WellnessScore(i))
+0205         phrowtoadd = <a href="initialiseMeasurementRow.html" class="code" title="function [phrowtoadd] = initialiseMeasurementRow(phrowtoadd, id, recordingdate, offset)">initialiseMeasurementRow</a>(phrowtoadd, id, tmData.Date(i), offset);
+0206         phrowtoadd.RecordingType = {<span class="string">'WellnessRecording'</span>};
+0207         phrowtoadd.Rating = tmData.WellnessScore(i) * 10;
+0208         tmphysdata = [tmphysdata; phrowtoadd];
+0209     <span class="keyword">end</span>
+0210 <span class="keyword">end</span>
+0211 
+0212 
+0213 <span class="keyword">end</span>
+0214 
+0215</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

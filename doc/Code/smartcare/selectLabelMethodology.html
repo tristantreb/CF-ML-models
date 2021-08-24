@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of selectLabelMethodology</title>
+  <meta name="keywords" content="selectLabelMethodology">
+  <meta name="description" content="selectLabelMethodology - enter the gap between the end of a treatment and the">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; selectLabelMethodology.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>selectLabelMethodology
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>selectLabelMethodology - enter the gap between the end of a treatment and the</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [testlabelmthd, testlabeltxt] = selectLabelMethodology() </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> selectLabelMethodology - enter the gap between the end of a treatment and the
+ start of the next. Used to define the list of interventions</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMMCSelectModelRunFromDir.html" class="code" title="function [modelrun, modelidx, ModelResultFiles] = amEMMCSelectModelRunFromDir(study, loadtype, lcmode, intrfilt, tgapmode, tstlabelmode)">amEMMCSelectModelRunFromDir</a>	amEMMCSelectModelRunFromDir- allows you to load the saved variables from a</li><li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [testlabelmthd, testlabeltxt] = selectLabelMethodology()</a>
+0002 
+0003 <span class="comment">% selectLabelMethodology - enter the gap between the end of a treatment and the</span>
+0004 <span class="comment">% start of the next. Used to define the list of interventions</span>
+0005 
+0006 fprintf(<span class="string">'\n'</span>);
+0007 fprintf(<span class="string">'1: Consensus decline start\n'</span>);
+0008 fprintf(<span class="string">'2: Earliest decline start\n'</span>);
+0009 fprintf(<span class="string">'\n'</span>);
+0010 
+0011 stestlabelmthd = input(<span class="string">'Enter test label methodology (1-2) ? '</span>, <span class="string">'s'</span>);
+0012 testlabelmthd = str2double(stestlabelmthd);
+0013 <span class="keyword">if</span> (isnan(testlabelmthd) || testlabelmthd &lt; 1 || testlabelmthd &gt; 2)
+0014     fprintf(<span class="string">'Invalid choice - defaulting to 1\n'</span>);
+0015     testlabelmthd = 1;
+0016 <span class="keyword">end</span>
+0017 
+0018 <span class="keyword">if</span> testlabelmthd == 1
+0019     testlabeltxt = <span class="string">'consensus'</span>;
+0020 <span class="keyword">elseif</span> testlabelmthd == 2
+0021     testlabeltxt = <span class="string">'earliest'</span>;
+0022 <span class="keyword">else</span>
+0023     fprintf(<span class="string">'Should not get here....\n'</span>);
+0024     testlabelmthd = 0;
+0025     testlabeltxt = <span class="string">' '</span>;
+0026 <span class="keyword">end</span>
+0027 
+0028 <span class="keyword">end</span>
+0029</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of testLayoutScript</title>
+  <meta name="keywords" content="testLayoutScript">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; testLayoutScript.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>testLayoutScript
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="formatTexDisplayMeasure.html" class="code" title="function [displaynameformatted] = formatTexDisplayMeasure(displaymeasure)">formatTexDisplayMeasure</a>	formatTexDisplayMeasure - adds final formatting for displaying measure name</li><li><a href="getUnitsForMeasure.html" class="code" title="function [units] = getUnitsForMeasure(displaymeasure)">getUnitsForMeasure</a>	getUnitsForMeasure - returns the units for a given measure</li><li><a href="sortMeasuresForPaper.html" class="code" title="function [measures] = sortMeasuresForPaper(study, measures)">sortMeasuresForPaper</a>	sortMeasuresForPaper - returns a sorted measures table in the order to</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 close all;
+0003 
+0004 widthinch = 8.25;
+0005 heightinch = 11.75;
+0006 name = <span class="string">''</span>;
+0007 singlehght = 1/24;
+0008 doublehght  = singlehght * 2;
+0009 labelwidth = 0.25;
+0010 plotwidth  = 0.75;
+0011 
+0012 ntitles = 2;
+0013 nclinicalmeasures = 2;
+0014 nmeasures = 9;
+0015 nlabels = nclinicalmeasures + nmeasures;
+0016 
+0017 typearray = [1, 2, 3, 2, 3, 1, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3];
+0018 
+0019 labeltext = {<span class="string">'A.'</span>; <span class="string">'Clinical CRP'</span>; <span class="string">' '</span>; <span class="string">'Clinical FEV1'</span>; <span class="string">' '</span>; <span class="string">'B.'</span>};
+0020 
+0021 [measures] = <a href="sortMeasuresForPaper.html" class="code" title="function [measures] = sortMeasuresForPaper(study, measures)">sortMeasuresForPaper</a>(study, measures);
+0022 <span class="keyword">for</span> m = 1:nmeasures
+0023     labeltext = [labeltext; cellstr(measures.DisplayName{m}); <span class="string">' '</span>];
+0024 <span class="keyword">end</span>
+0025 
+0026 [f, p] = <a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(name, widthinch, heightinch);
+0027 
+0028 currhght = 1.0;
+0029 <span class="keyword">for</span> i = 1:(ntitles + nclinicalmeasures + nmeasures + nlabels)
+0030     type = typearray(i);
+0031         
+0032     <span class="keyword">if</span> type == 1
+0033         <span class="comment">% title</span>
+0034         currhght = currhght - singlehght;
+0035         sp(i) = uipanel(<span class="string">'Parent'</span>, p, <span class="keyword">...</span>
+0036                         <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0037                         <span class="string">'OuterPosition'</span>, [0, currhght, 1.0, singlehght]);
+0038         displaytext = sprintf(<span class="string">'\\bf %s\\rm'</span>, labeltext{i});
+0039         annotation(sp(i), <span class="string">'textbox'</span>,  <span class="keyword">...</span>
+0040                         <span class="string">'String'</span>, displaytext, <span class="keyword">...</span>
+0041                         <span class="string">'Interpreter'</span>, <span class="string">'tex'</span>, <span class="keyword">...</span>
+0042                         <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="keyword">...</span>
+0043                         <span class="string">'Position'</span>, [0, 0, 1, 1], <span class="keyword">...</span>
+0044                         <span class="string">'HorizontalAlignment'</span>, <span class="string">'left'</span>, <span class="keyword">...</span>
+0045                         <span class="string">'VerticalAlignment'</span>, <span class="string">'middle'</span>, <span class="keyword">...</span>
+0046                         <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0047                         <span class="string">'FontSize'</span>, 13);
+0048     <span class="keyword">elseif</span> type == 2
+0049         <span class="comment">% label</span>
+0050         currhght = currhght - doublehght;
+0051         displaytext = {<a href="formatTexDisplayMeasure.html" class="code" title="function [displaynameformatted] = formatTexDisplayMeasure(displaymeasure)">formatTexDisplayMeasure</a>(labeltext{i}); sprintf(<span class="string">'(%s)'</span>, <a href="getUnitsForMeasure.html" class="code" title="function [units] = getUnitsForMeasure(displaymeasure)">getUnitsForMeasure</a>(labeltext{i}))};
+0052         sp(i) = uipanel(<span class="string">'Parent'</span>, p, <span class="keyword">...</span>
+0053                         <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0054                         <span class="string">'OuterPosition'</span>, [0, currhght, labelwidth, doublehght]);
+0055         annotation(sp(i), <span class="string">'textbox'</span>,  <span class="keyword">...</span>
+0056                         <span class="string">'String'</span>, displaytext, <span class="keyword">...</span>
+0057                         <span class="string">'Interpreter'</span>, <span class="string">'tex'</span>, <span class="keyword">...</span>
+0058                         <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="keyword">...</span>
+0059                         <span class="string">'Position'</span>, [0, 0, 1, 1], <span class="keyword">...</span>
+0060                         <span class="string">'HorizontalAlignment'</span>, <span class="string">'center'</span>, <span class="keyword">...</span>
+0061                         <span class="string">'VerticalAlignment'</span>, <span class="string">'middle'</span>, <span class="keyword">...</span>
+0062                         <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0063                         <span class="string">'FontSize'</span>, 10);
+0064     <span class="keyword">elseif</span> type == 3
+0065         <span class="comment">% plot</span>
+0066         sp(i) = uipanel(<span class="string">'Parent'</span>, p, <span class="keyword">...</span>
+0067                         <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0068                         <span class="string">'OuterPosition'</span>, [labelwidth, currhght, plotwidth, doublehght]);
+0069 
+0070         
+0071     <span class="keyword">end</span>
+0072 
+0073 <span class="keyword">end</span>
+0074 
+0075 
+0076</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

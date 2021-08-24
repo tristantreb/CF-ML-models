@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotProbDistribution</title>
+  <meta name="keywords" content="plotProbDistribution">
+  <meta name="description" content="plotProbDistribution - plots a prob distribution">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; plotProbDistribution.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>plotProbDistribution
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>plotProbDistribution - plots a prob distribution</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> plotProbDistribution - plots a prob distribution</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="am4PlotsAndSavePredictions.html" class="code" title="function am4PlotsAndSavePredictions(amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset,overall_pdoffset_all, overall_pdoffset_xAL, hstg, overall_hist, overall_hist_all, overall_hist_xAL, offsets,meancurvemean, normmean, ex_start, thisinter, nmeasures, max_offset, align_wind, study, version)">am4PlotsAndSavePredictions</a>	am4PlotsAndSavePredictions - plots measures prior to</li><li><a href="amEMMCAnimatedProbDistConcurrent.html" class="code" title="function [f, p, niterations] = amEMMCAnimatedProbDistConcurrent(animated_overall_pdoffset, max_offset,ninterventions, nlatentcurves, basemoviefilename)">amEMMCAnimatedProbDistConcurrent</a>	amEMMCAnimatedProbDistConcurrent - function to display animated</li><li><a href="amEMMCCompareModelRunToTestData.html" class="code" title="function amEMMCCompareModelRunToTestData(amLabelledInterventions, amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset,hstg, overall_hist, meancurvemean, normmean, normstd, ex_start, nmeasures, ninterventions, nlatentcurves, max_offset,align_wind, sigmamethod, study, mversion, modelrun, modelidx, testsetmode)">amEMMCCompareModelRunToTestData</a>	amEMMCCompareModelRunToTestData - compares the output of a chosen model run to</li><li><a href="amEMMCCompareModelRuns.html" class="code" title="function amEMMCCompareModelRuns(modelrun1, modelidx1, modelrun2, modelidx2)">amEMMCCompareModelRuns</a>	</li><li><a href="amEMMCPlotsAndSavePredictions.html" class="code" title="function amEMMCPlotsAndSavePredictions(amInterventions, amIntrcube, measures, pdoffset,overall_pdoffset, hstg, overall_hist, vshift, meancurvemean, normmean, normstd, isOutlier,ex_start_array, thisinter, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder, normmode)">amEMMCPlotsAndSavePredictions</a>	amEMMCPlotsAndSavePredictions - plots measures prior to</li><li><a href="amEMPlotsAndSavePredictions.html" class="code" title="function amEMPlotsAndSavePredictions(amInterventions, amIntrDatacube, measures, pdoffset,overall_pdoffset, hstg, overall_hist, meancurvemean, normmean, normstd, isOutlier,ex_start, thisinter, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder)">amEMPlotsAndSavePredictions</a>	amEMPlotsAndSavePredictions - plots measures prior to</li><li><a href="animatedProbDistConcurrent.html" class="code" title="function [f, p, niterations] = animatedProbDistConcurrent(animated_overall_pdoffset, max_offset, ninterventions, moviefilename)">animatedProbDistConcurrent</a>	animatedALingmentConcurrent - function to display animated curve</li><li><a href="compareModelRunToTestData.html" class="code" title="function compareModelRunToTestData(amLabelledInterventions, amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset,hstg, overall_hist, meancurvemean, normmean, normstd, ex_start, nmeasures, ninterventions, min_offset, max_offset,align_wind, study, mversion, modelrun, modelidx)">compareModelRunToTestData</a>	compareModelRunToTestData - compares the output of a chosen model run to</li><li><a href="compareModelRuns.html" class="code" title="function compareModelRuns(modelrun1, modelidx1, modelrun2, modelidx2)">compareModelRuns</a>	</li><li><a href="compareModelRunsScript.html" class="code" title="">compareModelRunsScript</a>	</li><li><a href="createLabelledInterventions.html" class="code" title="function [amLabelledInterventions] = createLabelledInterventions(amIntrDatacube, amLabelledInterventions,pdoffset, overall_pdoffset, interfrom, interto, measures, normmean, max_offset, align_wind, ex_start,study, nmeasures)">createLabelledInterventions</a>	createLabelledInterventions - plots measurement data and asks for lower</li><li><a href="plotLabelledInterventions.html" class="code" title="function plotLabelledInterventions(amIntrDatacube, amInterventions, amLabelledInterventions,pdoffset, overall_pdoffset, measures, normmean, max_offset, align_wind, ex_start,study, nmeasures)">plotLabelledInterventions</a>	plotLabelledInterventions - plots all the labelled test data</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc)</a>
+0002 
+0003 <span class="comment">% plotProbDistribution - plots a prob distribution</span>
+0004                         
+0005 line(ax, [0:max_offset-1], reshape(pdoffset, [max_offset,1]), <span class="keyword">...</span>
+0006     <span class="string">'Color'</span>, markerec, <span class="keyword">...</span>
+0007     <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0008     <span class="string">'LineWidth'</span>, linewidth, <span class="keyword">...</span>
+0009     <span class="string">'Marker'</span>, marker, <span class="keyword">...</span>
+0010     <span class="string">'MarkerSize'</span>, markersize,<span class="keyword">...</span>
+0011     <span class="string">'MarkerEdgeColor'</span>, markerec,<span class="keyword">...</span>
+0012     <span class="string">'MarkerFaceColor'</span>, markerfc);
+0013 xl = [0 max(max_offset-1, xl(2))];
+0014 xlim(xl);
+0015 yl = [0 max(max(pdoffset) * 1.1, yl(2))];
+0016 ylim(yl);
+0017 
+0018 <span class="keyword">end</span>
+0019</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

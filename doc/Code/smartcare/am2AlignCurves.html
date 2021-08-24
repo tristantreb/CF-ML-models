@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of am2AlignCurves</title>
+  <meta name="keywords" content="am2AlignCurves">
+  <meta name="description" content="am2AlignCurves = function to align measurement curves prior to intervention">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; am2AlignCurves.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>am2AlignCurves
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>am2AlignCurves = function to align measurement curves prior to intervention</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [offsets, profile_pre, profile_post, hstg, qual] = am2AlignCurves(amDatacube, amInterventions, measures, normstd, max_offset, align_wind, nmeasures, ninterventions, run_type, detaillog) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> am2AlignCurves = function to align measurement curves prior to intervention</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="am2AddToMean.html" class="code" title="function [meancurvesum,meancurvecount] = am2AddToMean(meancurvesum, meancurvecount, amDatacube, amInterventions, currinter, max_offset, align_wind, nmeasures)">am2AddToMean</a>	am2AddToMean - add a curve to the mean curve (sum and count)</li><li><a href="am2BestFit.html" class="code" title="function [better_offset, hstg] = am2BestFit(meancurvesum, meancurvecount, amDatacube, amInterventions, measures, normstd, hstg, currinter, max_offset, align_wind, nmeasures)">am2BestFit</a>	am2BestFit - calculates the offset for an intervention by minimising the</li><li><a href="am2CalcObjFcn.html" class="code" title="function [dist, hstg] = am2CalcObjFcn(meancurvesum, meancurvecount, amDatacube, amInterventions, measures, normstd, hstg, currinter, curroffset, max_offset, align_wind, nmeasures, updatehistogram)">am2CalcObjFcn</a>	am2CalcObjFcn - calculates residual sum of squares distance for points in</li><li><a href="am2RemoveFromMean.html" class="code" title="function [meancurvesum,meancurvecount] = am2RemoveFromMean(meancurvesum, meancurvecount, amDatacube, amInterventions, currinter, max_offset, align_wind, nmeasures)">am2RemoveFromMean</a>	am2RemoveFromMean - remove a curve from the mean curve (sum and count)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModel2.html" class="code" title="">runAlignmentModel2</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [offsets, profile_pre, profile_post, hstg, qual] = am2AlignCurves(amDatacube, amInterventions, measures, normstd, max_offset, align_wind, nmeasures, ninterventions, run_type, detaillog)</a>
+0002 
+0003 <span class="comment">% am2AlignCurves = function to align measurement curves prior to intervention</span>
+0004 
+0005 meancurvesum      = zeros(max_offset + align_wind, nmeasures);
+0006 meancurvecount    = zeros(max_offset + align_wind, nmeasures);
+0007 offsets           = zeros(ninterventions, 1);
+0008 profile_pre       = zeros(nmeasures, max_offset+align_wind);
+0009 profile_post      = zeros(nmeasures, max_offset+align_wind);
+0010 hstg              = zeros(nmeasures, ninterventions, max_offset);
+0011 
+0012 qual = 0;
+0013 
+0014 <span class="comment">% calculate mean curve over all interventions</span>
+0015 <span class="keyword">for</span> i = 1:ninterventions
+0016     [meancurvesum, meancurvecount] = <a href="am2AddToMean.html" class="code" title="function [meancurvesum,meancurvecount] = am2AddToMean(meancurvesum, meancurvecount, amDatacube, amInterventions, currinter, max_offset, align_wind, nmeasures)">am2AddToMean</a>(meancurvesum, meancurvecount, amDatacube, amInterventions, i, max_offset, align_wind, nmeasures);
+0017 <span class="keyword">end</span>
+0018 
+0019 <span class="comment">% store the mean curves pre-alignment for each measure for plotting</span>
+0020 <span class="keyword">for</span> m = 1:nmeasures
+0021     <span class="keyword">for</span> day = 1:max_offset + align_wind
+0022         profile_pre(m, day) = meancurvesum(day, m)/meancurvecount(day, m);
+0023     <span class="keyword">end</span>
+0024 <span class="keyword">end</span>
+0025 
+0026 <span class="comment">% iterate to convergence</span>
+0027 pnt = 1;
+0028 cnt = 0;
+0029 iter = 0;
+0030 ok  = 0;
+0031 <span class="keyword">while</span> 1
+0032     [meancurvesum, meancurvecount] = <a href="am2RemoveFromMean.html" class="code" title="function [meancurvesum,meancurvecount] = am2RemoveFromMean(meancurvesum, meancurvecount, amDatacube, amInterventions, currinter, max_offset, align_wind, nmeasures)">am2RemoveFromMean</a>(meancurvesum, meancurvecount, amDatacube, amInterventions, pnt, max_offset, align_wind, nmeasures);
+0033     <span class="comment">%check safety</span>
+0034     ok = 1;
+0035     <span class="keyword">for</span> i=1:max_offset + align_wind
+0036         <span class="keyword">for</span> m=1:nmeasures
+0037             <span class="keyword">if</span> meancurvecount(i,m) &lt; 3
+0038                 <span class="comment">%if detaillog</span>
+0039                 <span class="comment">%    fprintf('Intervention %d, Measure %s, dayprior %d &lt;3 datapoints\n', pnt, measures.Name{m}, i);</span>
+0040                 <span class="comment">%end</span>
+0041                 ok = 0;
+0042             <span class="keyword">end</span>
+0043         <span class="keyword">end</span>
+0044     <span class="keyword">end</span>
+0045     
+0046     <span class="keyword">if</span> ok == 1
+0047         [better_offset, hstg] = <a href="am2BestFit.html" class="code" title="function [better_offset, hstg] = am2BestFit(meancurvesum, meancurvecount, amDatacube, amInterventions, measures, normstd, hstg, currinter, max_offset, align_wind, nmeasures)">am2BestFit</a>(meancurvesum, meancurvecount, amDatacube, amInterventions, measures, normstd, hstg, pnt, max_offset, align_wind, nmeasures);
+0048     <span class="keyword">else</span>
+0049         better_offset = amInterventions.Offset(pnt);
+0050     <span class="keyword">end</span>
+0051     
+0052     <span class="keyword">if</span> better_offset ~= amInterventions.Offset(pnt)
+0053         amInterventions.Offset(pnt) = better_offset;
+0054         <span class="comment">%if detaillog</span>
+0055         <span class="comment">%    fprintf('amIntervention.Offset(%d) set to %d\n', pnt, better_offset);</span>
+0056         <span class="comment">%end</span>
+0057         cnt = cnt+1;
+0058     <span class="keyword">end</span>
+0059     [meancurvesum, meancurvecount] = <a href="am2AddToMean.html" class="code" title="function [meancurvesum,meancurvecount] = am2AddToMean(meancurvesum, meancurvecount, amDatacube, amInterventions, currinter, max_offset, align_wind, nmeasures)">am2AddToMean</a>(meancurvesum, meancurvecount, amDatacube, amInterventions, pnt, max_offset, align_wind, nmeasures);
+0060         
+0061     pnt = pnt+1;
+0062     <span class="keyword">if</span> pnt &gt; ninterventions
+0063         iter = iter + 1;
+0064         pnt = pnt - ninterventions;
+0065         <span class="keyword">if</span> cnt == 0
+0066             <span class="keyword">if</span> detaillog
+0067                 fprintf(<span class="string">'Converged after %2d iterations\n'</span>, iter);
+0068             <span class="keyword">end</span>
+0069             <span class="keyword">break</span>;
+0070         <span class="keyword">else</span> 
+0071             <span class="keyword">if</span> detaillog
+0072                 fprintf(<span class="string">'Changed %2d offsets on iteration %2d\n'</span>, cnt, iter);
+0073             <span class="keyword">end</span>
+0074             <span class="keyword">if</span> iter &gt; 100
+0075                 <span class="keyword">if</span> detaillog
+0076                     fprintf(<span class="string">'Iteration count limit exceeded - breaking\n'</span>);
+0077                 <span class="keyword">end</span>
+0078                 <span class="keyword">break</span>;
+0079             <span class="keyword">end</span>
+0080             cnt = 0;
+0081         <span class="keyword">end</span>
+0082     <span class="keyword">end</span>
+0083 <span class="keyword">end</span>
+0084 
+0085 <span class="comment">% computing the objective function result for converged offset array</span>
+0086 <span class="keyword">for</span> i=1:ninterventions
+0087     [meancurvesum, meancurvecount] = <a href="am2RemoveFromMean.html" class="code" title="function [meancurvesum,meancurvecount] = am2RemoveFromMean(meancurvesum, meancurvecount, amDatacube, amInterventions, currinter, max_offset, align_wind, nmeasures)">am2RemoveFromMean</a>(meancurvesum, meancurvecount, amDatacube, amInterventions, i, max_offset, align_wind, nmeasures);
+0088     qual = qual + <a href="am2CalcObjFcn.html" class="code" title="function [dist, hstg] = am2CalcObjFcn(meancurvesum, meancurvecount, amDatacube, amInterventions, measures, normstd, hstg, currinter, curroffset, max_offset, align_wind, nmeasures, updatehistogram)">am2CalcObjFcn</a>(meancurvesum, meancurvecount, amDatacube, amInterventions, measures, normstd, hstg, i, amInterventions.Offset(i), max_offset, align_wind, nmeasures, 0);
+0089     [meancurvesum, meancurvecount] = <a href="am2AddToMean.html" class="code" title="function [meancurvesum,meancurvecount] = am2AddToMean(meancurvesum, meancurvecount, amDatacube, amInterventions, currinter, max_offset, align_wind, nmeasures)">am2AddToMean</a>(meancurvesum, meancurvecount, amDatacube, amInterventions, i, max_offset, align_wind, nmeasures);
+0090 <span class="keyword">end</span>
+0091 
+0092 <span class="keyword">for</span> i=1:ninterventions 
+0093     offsets(i) = amInterventions.Offset(i);
+0094 <span class="keyword">end</span>
+0095 
+0096 <span class="comment">% store the mean curves post-alignment for each measure for plotting</span>
+0097 <span class="keyword">for</span> m = 1:nmeasures
+0098     <span class="keyword">for</span> day = 1:max_offset + align_wind
+0099         profile_post(m, day) = meancurvesum(day, m)/meancurvecount(day, m);
+0100     <span class="keyword">end</span>
+0101 <span class="keyword">end</span>
+0102 
+0103 <span class="keyword">end</span>
+0104</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

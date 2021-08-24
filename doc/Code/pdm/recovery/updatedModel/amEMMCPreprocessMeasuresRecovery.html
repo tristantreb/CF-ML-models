@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCPreprocessMeasuresRecovery</title>
+  <meta name="keywords" content="amEMMCPreprocessMeasuresRecovery">
+  <meta name="description" content="amEMMCPreprocessMeasures - 1) select a set of measures, 2) filter">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="../index.html">recovery</a> &gt; <a href="index.html">updatedModel</a> &gt; amEMMCPreprocessMeasuresRecovery.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../../index.html"><img alt="<" border="0" src="../../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery/updatedModel&nbsp;<img alt=">" border="0" src="../../../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCPreprocessMeasuresRecovery
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>amEMMCPreprocessMeasures - 1) select a set of measures, 2) filter</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>function [amDatacube, measures, nmeasures] = amEMMCPreprocessMeasuresRecovery(amDatacube, amInterventions, measures,demographicstable, measuresmask, align_wind, npatients, ndays, ninterventions, nmeasures, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCPreprocessMeasures - 1) select a set of measures, 2) filter 
+ corresponding data and 3) compute high level statistics (for each measure)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="../../../../Code/smartcare/getMeasureOverallMinMax.html" class="code" title="function [measuremin, measuremax] = getMeasureOverallMinMax(demographicstable, measure)">getMeasureOverallMinMax</a>	getMeasureMinMax - returns the min and max value for a measure across all</li><li><a href="../../../../Code/smartcare/getMeasuresMask.html" class="code" title="function measures = getMeasuresMask(measuresmask, measures)">getMeasuresMask</a>	reset measures mask</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="../../../../Code/pdm/recovery/createIntrNormDataCube.html" class="code" title="function createIntrNormDataCube(amRunParameters)">createIntrNormDataCube</a>	create the array with the normalised data for each intervention</li><li><a href="../../../../Code/pdm/recovery/runAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist)">runAlignmentModelEMMCRecoveryFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="../../../../Code/pdm/recovery/runFastAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runFastAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist, nameaddendum)">runFastAlignmentModelEMMCRecoveryFcn</a>	fast version with 1 plot (typical profile) + alignment result matfile</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [amDatacube, measures, nmeasures] = amEMMCPreprocessMeasuresRecovery(amDatacube, amInterventions, measures, </a><span class="keyword">...</span>
+0002     demographicstable, measuresmask, align_wind, npatients, ndays, ninterventions, nmeasures, study)
+0003 
+0004 <span class="comment">% amEMMCPreprocessMeasures - 1) select a set of measures, 2) filter</span>
+0005 <span class="comment">% corresponding data and 3) compute high level statistics (for each measure)</span>
+0006 
+0007 <span class="comment">% remove temperature readings as insufficient datapoints for a number of</span>
+0008 <span class="comment">% the interventions</span>
+0009 <span class="keyword">if</span> ismember(study, {<span class="string">'SC'</span>, <span class="string">'TM'</span>})
+0010     idx = ismember(measures.DisplayName, {<span class="string">'Temperature'</span>});
+0011     amDatacube(:,:,measures.Index(idx)) = [];
+0012     measures(idx,:) = [];
+0013     nmeasures = size(measures,1);
+0014     measures.Index = (1:nmeasures)';
+0015 <span class="keyword">end</span>
+0016 
+0017 measures = <a href="../../../../Code/smartcare/getMeasuresMask.html" class="code" title="function measures = getMeasuresMask(measuresmask, measures)">getMeasuresMask</a>(measuresmask, measures);
+0018 
+0019 <span class="comment">% calculate the overall &amp; alignment window std for each measure and store in measures</span>
+0020 <span class="comment">% table. Also the overall min, max and range values by measure (across all</span>
+0021 <span class="comment">% patients and days)</span>
+0022 
+0023 <span class="keyword">for</span> m = 1:nmeasures
+0024     tempdata = [];
+0025     <span class="keyword">for</span> i = 1:ninterventions
+0026         scid   = amInterventions.SmartCareID(i);
+0027         start = amInterventions.IVScaledDateNum(i);
+0028         periodstart = start;
+0029         tempdata = [tempdata; amDatacube(scid, periodstart:(start + align_wind - 1), m)'];  
+0030     <span class="keyword">end</span>
+0031     tempdata(1) = [];
+0032     
+0033     measures.AlignWindStd(m) = std(tempdata(~isnan(tempdata)));
+0034     tempdata = reshape(amDatacube(:, :, m), npatients * ndays, 1);
+0035     measures.OverallStd(m) = std(tempdata(~isnan(tempdata)));
+0036     [measures.OverallMin(m), measures.OverallMax(m)] = <a href="../../../../Code/smartcare/getMeasureOverallMinMax.html" class="code" title="function [measuremin, measuremax] = getMeasureOverallMinMax(demographicstable, measure)">getMeasureOverallMinMax</a>(demographicstable, measures.Name{m});
+0037     measures.OverallRange(m) = measures.OverallMax(m) - measures.OverallMin(m);
+0038 <span class="keyword">end</span>
+0039 
+0040 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

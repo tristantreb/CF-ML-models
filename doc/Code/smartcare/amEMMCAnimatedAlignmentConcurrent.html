@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCAnimatedAlignmentConcurrent</title>
+  <meta name="keywords" content="amEMMCAnimatedAlignmentConcurrent">
+  <meta name="description" content="amEMMCAnimatedAlingmentConcurrent - function to display animated curve">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCAnimatedAlignmentConcurrent.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCAnimatedAlignmentConcurrent
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCAnimatedAlingmentConcurrent - function to display animated curve</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [f, p, niterations] = amEMMCAnimatedAlignmentConcurrent(animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset,profile_pre, measures, max_offset, align_wind, nmeasures, ninterventions, nlatentcurves, runmode, basemoviefilename) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCAnimatedAlingmentConcurrent - function to display animated curve
+ alignment and offset histogram through the iterative alignment process
+ and able to handle multiple sets of latent curves</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [f, p, niterations] = amEMMCAnimatedAlignmentConcurrent(animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset, </a><span class="keyword">...</span>
+0002     profile_pre, measures, max_offset, align_wind, nmeasures, ninterventions, nlatentcurves, runmode, basemoviefilename)
+0003 
+0004 <span class="comment">% amEMMCAnimatedAlingmentConcurrent - function to display animated curve</span>
+0005 <span class="comment">% alignment and offset histogram through the iterative alignment process</span>
+0006 <span class="comment">% and able to handle multiple sets of latent curves</span>
+0007 
+0008 <span class="keyword">for</span> l = 1:nlatentcurves
+0009     
+0010     moviefilename = sprintf(<span class="string">'%s - LC Set %d'</span>, basemoviefilename, l);
+0011     v = VideoWriter(moviefilename, <span class="string">'MPEG-4'</span>);
+0012     open(v);
+0013 
+0014     plotsacross = 3;
+0015     plotsdown = 3;
+0016     <span class="keyword">for</span> niterations = 1:2000
+0017         <span class="keyword">if</span> all(animatedmeancurvemean(l, :, :, niterations)==0)
+0018             <span class="keyword">break</span>;
+0019         <span class="keyword">end</span>
+0020     <span class="keyword">end</span>
+0021     niterations = niterations - 1;
+0022     days = -1 * (max_offset+align_wind-1):-1;
+0023 
+0024     [f,p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(<span class="string">'Animation of Curve Alignment'</span>,<span class="string">'portrait'</span>,<span class="string">'a4'</span>);
+0025 
+0026     <span class="keyword">for</span> m = 1:nmeasures
+0027         ax(m) = subplot(plotsdown, plotsacross, m, <span class="string">'Parent'</span>, p);
+0028         xl = [min(days) max(days)];
+0029         xlim(xl);
+0030         yl = [min(min(profile_pre(l, :, m)), min(min(animatedmeancurvemean(l, :, m, 1:niterations),[],4))), <span class="keyword">...</span>
+0031               max(max(profile_pre(l, :, m)), max(max(animatedmeancurvemean(l, :, m, 1:niterations),[],4)))];
+0032         ylim(yl);
+0033         <span class="keyword">if</span> measures.Mask(m) == 1
+0034             title(ax(m), sprintf(<span class="string">'LC%d %s - Iteration %2d'</span>, l, measures.DisplayName{m}, 1), <span class="string">'BackgroundColor'</span>, <span class="string">'green'</span>);
+0035         <span class="keyword">else</span>
+0036             title(ax(m), sprintf(<span class="string">'LC%d %s - Iteration %2d'</span>, l, measures.DisplayName{m}, 1));
+0037         <span class="keyword">end</span>
+0038         line(ax(m),days, profile_pre(l, :, m), <span class="string">'Color'</span>, <span class="string">'red'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="string">'Linewidth'</span>, 0.5);
+0039         line(ax(m), days, smooth(profile_pre(l, :, m),5), <span class="string">'Color'</span>, <span class="string">'red'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'Linewidth'</span>, 0.5);
+0040 
+0041         an(m) = animatedline(ax(m), days, profile_pre(l, :, m), <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="string">'Linewidth'</span>, 0.5);
+0042         ansm(m) = animatedline(ax(m), days, smooth(profile_pre(l, :, m),5), <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'Linewidth'</span>, 0.5);
+0043 
+0044     <span class="keyword">end</span>
+0045 
+0046     ax(m + 1) = subplot(plotsdown, plotsacross, m + 1, <span class="string">'Parent'</span>, p);
+0047     title(ax(m + 1), sprintf(<span class="string">'LC%d Histogram of Offsets - Iteration %2d'</span>, l, 1));
+0048     <span class="keyword">if</span> runmode == 4 || runmode == 6 || runmode == 7
+0049         bar((-1 * max_offset) + 1: 0, reshape(sum(animated_overall_pdoffset(l, :, max_offset:-1:1, 1), 2), [1 max_offset]), 0.5, <span class="string">'FaceColor'</span>, <span class="string">'black'</span>, <span class="string">'FaceAlpha'</span>, 0.25, <span class="string">'LineWidth'</span>, 0.2);
+0050     <span class="keyword">else</span>
+0051         histogram(-1 * animatedoffsets(animatedlc(:,1) == l, 1))
+0052     <span class="keyword">end</span>
+0053     xlim([((-1 * max_offset) + 0.5) 0.5]);
+0054     ylim([0 ninterventions/2]);
+0055 
+0056     frame = getframe(f);
+0057     writeVideo(v,frame);
+0058     frame = getframe(f);
+0059     writeVideo(v,frame);
+0060 
+0061     pause(1);
+0062 
+0063     <span class="keyword">for</span> i = 1:niterations
+0064         <span class="keyword">for</span> m = 1:nmeasures
+0065             <span class="keyword">if</span> measures.Mask(m) == 1
+0066                 title(ax(m), sprintf(<span class="string">'LC%d %s - Iteration %2d'</span>, l, measures.DisplayName{m}, i), <span class="string">'BackgroundColor'</span>, <span class="string">'green'</span>);
+0067             <span class="keyword">else</span>
+0068                 title(ax(m), sprintf(<span class="string">'LC%d %s - Iteration %2d'</span>, l, measures.DisplayName{m}, i));
+0069             <span class="keyword">end</span>
+0070             clearpoints(an(m));
+0071             addpoints(an(m), days, animatedmeancurvemean(l, :, m, i));
+0072             clearpoints(ansm(m));
+0073             addpoints(ansm(m), days, smooth(animatedmeancurvemean(l, :, m, i),5)); 
+0074         <span class="keyword">end</span>
+0075         drawnow nocallbacks;
+0076         title(ax(m + 1), sprintf(<span class="string">'LC%d Histogram of Offsets - Iteration %2d'</span>, l, i));
+0077         <span class="keyword">if</span> runmode == 4 || runmode == 6 || runmode == 7
+0078             bar((-1 * max_offset) + 1: 0, reshape(sum(animated_overall_pdoffset(l, :, max_offset:-1:1, i), 2), [1 max_offset]), 0.5, <span class="string">'FaceColor'</span>, <span class="string">'black'</span>, <span class="string">'FaceAlpha'</span>, 0.25, <span class="string">'LineWidth'</span>, 0.2);
+0079         <span class="keyword">else</span>
+0080             histogram(-1 * animatedoffsets(animatedlc(:,i) == l, i))
+0081         <span class="keyword">end</span>
+0082         xlim([((-1 * max_offset) + 0.5) 0.5]);
+0083         ylim([0 ninterventions/2]);
+0084 
+0085         frame = getframe(f);
+0086         writeVideo(v,frame);
+0087         frame = getframe(f);
+0088         writeVideo(v,frame);
+0089     <span class="keyword">end</span>
+0090 
+0091     close(v);
+0092     close(f);
+0093 
+0094 <span class="keyword">end</span>
+0095 
+0096 <span class="keyword">end</span>
+0097 
+0098</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadREDCapFieldMapFile</title>
+  <meta name="keywords" content="loadREDCapFieldMapFile">
+  <meta name="description" content="loadREDCapFieldMapFile - loads the latest REDCap field mapping file">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadREDCapFieldMapFile.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadREDCapFieldMapFile
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>loadREDCapFieldMapFile - loads the latest REDCap field mapping file</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [redcaptablemap, redcapfieldmap] = loadREDCapFieldMapFile(basedir, subfolder) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> loadREDCapFieldMapFile - loads the latest REDCap field mapping file</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getLatestFileName.html" class="code" title="function [latestfname, filefound] = getLatestFileName(basedir, subfolder, fnamematchstring)">getLatestFileName</a>	getLatestFileName - returns the name of the most recent version of a file</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadbreatheclinicalREDCapdata.html" class="code" title="">loadbreatheclinicalREDCapdata</a>	loads Breathe clinical data from REDCap database</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [redcaptablemap, redcapfieldmap] = loadREDCapFieldMapFile(basedir, subfolder)</a>
+0002 
+0003 <span class="comment">% loadREDCapFieldMapFile - loads the latest REDCap field mapping file</span>
+0004 
+0005 fmapsubfolder = sprintf(<span class="string">'%s/%s'</span>, subfolder, <span class="string">'FieldMapping'</span>);
+0006 fnamematchstring = <span class="string">'REDCapFieldMappingFile*'</span>;
+0007 
+0008 [latestfname, filefound] = <a href="getLatestFileName.html" class="code" title="function [latestfname, filefound] = getLatestFileName(basedir, subfolder, fnamematchstring)">getLatestFileName</a>(basedir, fmapsubfolder, fnamematchstring);
+0009 
+0010 <span class="keyword">if</span> filefound
+0011     fprintf(<span class="string">'Latest filename found is %s\n'</span>, latestfname);
+0012     fprintf(<span class="string">'Loading...'</span>);
+0013     
+0014     redcaptablemap = readtable(fullfile(basedir, fmapsubfolder, latestfname), <span class="string">'Sheet'</span>, <span class="string">'Instrument_Table'</span>);
+0015     redcapfieldmap = readtable(fullfile(basedir, fmapsubfolder, latestfname), <span class="string">'Sheet'</span>, <span class="string">'Field_Column'</span>);
+0016 
+0017     fprintf(<span class="string">'%d rows...done\n'</span>, size(redcapfieldmap, 1));
+0018 <span class="keyword">else</span>
+0019     fprintf(<span class="string">'**** No matching files found ****\n'</span>);
+0020     redcaptablemap = [];
+0021     redcapfieldmap = [];
+0022 <span class="keyword">end</span>
+0023 
+0024 <span class="keyword">end</span>
+0025</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

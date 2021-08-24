@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getClimbAntibioticNameTable</title>
+  <meta name="keywords" content="getClimbAntibioticNameTable">
+  <meta name="description" content="getClimbAntibioticNameTable - returns a table with the antibiotic names and">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; getClimbAntibioticNameTable.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>getClimbAntibioticNameTable
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>getClimbAntibioticNameTable - returns a table with the antibiotic names and</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [clABTable] = getClimbAntibioticNameTable() </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> getClimbAntibioticNameTable - returns a table with the antibiotic names and 
+ they given the numeric codes</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadclimbclinicaldata.html" class="code" title="">loadclimbclinicaldata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [clABTable] = getClimbAntibioticNameTable()</a>
+0002 
+0003 <span class="comment">% getClimbAntibioticNameTable - returns a table with the antibiotic names and</span>
+0004 <span class="comment">% they given the numeric codes</span>
+0005 
+0006 clABTable   = table(<span class="string">'Size'</span>,[11 2], <span class="keyword">...</span>
+0007     <span class="string">'VariableTypes'</span>, {<span class="string">'double'</span>,   <span class="string">'cell'</span>}, <span class="keyword">...</span>
+0008     <span class="string">'VariableNames'</span>, {<span class="string">'ID'</span>,   <span class="string">'Name'</span>});
+0009 
+0010 clABTable.ID(:) = 1:11;
+0011 clABTable.Name{1}  = <span class="string">'Ceftazidime'</span>;
+0012 clABTable.Name{2}  = <span class="string">'Tobramycin'</span>;
+0013 clABTable.Name{3}  = <span class="string">'Ciprofloxacin'</span>;
+0014 clABTable.Name{4}  = <span class="string">'Colistin'</span>;
+0015 clABTable.Name{5}  = <span class="string">'Meropenem'</span>;
+0016 clABTable.Name{6}  = <span class="string">'Impipenem'</span>;
+0017 clABTable.Name{7}  = <span class="string">'Flucloxacillin'</span>;
+0018 clABTable.Name{8}  = <span class="string">'Amoxycillin'</span>;
+0019 clABTable.Name{9}  = <span class="string">'Coamoxyclav'</span>;
+0020 clABTable.Name{10} = <span class="string">'Azithromycin'</span>;
+0021 clABTable.Name{11} = <span class="string">'Cotrimoxazole'</span>;
+0022 
+0023 <span class="keyword">end</span>
+0024</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

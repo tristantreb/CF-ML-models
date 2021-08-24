@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCCompareModelRunsByLCSets</title>
+  <meta name="keywords" content="amEMMCCompareModelRunsByLCSets">
+  <meta name="description" content="amEMMCCompareModelRunsByLCSets - compares populations of latent curve">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCCompareModelRunsByLCSets.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCCompareModelRunsByLCSets
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCCompareModelRunsByLCSets - compares populations of latent curve</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function amEMMCCompareModelRunsByLCSets(modelrun1, modelidx1, modelrun2, modelidx2) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCCompareModelRunsByLCSets - compares populations of latent curve
+ sets across 2 model runs</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function amEMMCCompareModelRunsByLCSets(modelrun1, modelidx1, modelrun2, modelidx2)</a>
+0002 
+0003 <span class="comment">% amEMMCCompareModelRunsByLCSets - compares populations of latent curve</span>
+0004 <span class="comment">% sets across 2 model runs</span>
+0005 
+0006 fprintf(<span class="string">'\n'</span>);
+0007 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0008 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0009 fprintf(<span class="string">'Loading output from first model run\n'</span>);
+0010 load(fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>, modelrun1)), <span class="string">'amInterventions'</span>, <span class="string">'ex_start'</span>, <span class="string">'nlatentcurves'</span>, <span class="string">'study'</span>, <span class="string">'mversion'</span>, <span class="string">'scenario'</span>, <span class="string">'runmode'</span>, <span class="string">'randomseed'</span>);
+0011 
+0012 amInterventions1 = amInterventions;
+0013 ex_start1        = ex_start;
+0014 nlatentcurves1   = nlatentcurves;
+0015 study1           = study;
+0016 mversion1        = mversion;
+0017 scenario1        = scenario;
+0018 runmode1         = runmode;
+0019 randomseed1      = randomseed;
+0020 
+0021 
+0022 fprintf(<span class="string">'Loading output from second model run\n'</span>);
+0023 load(fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>, modelrun2)), <span class="string">'amInterventions'</span>, <span class="string">'ex_start'</span>, <span class="string">'nlatentcurves'</span>, <span class="string">'study'</span>, <span class="string">'mversion'</span>, <span class="string">'scenario'</span>, <span class="string">'runmode'</span>, <span class="string">'randomseed'</span>);
+0024 
+0025 amInterventions2 = amInterventions;
+0026 ex_start2        = ex_start;
+0027 nlatentcurves2   = nlatentcurves;
+0028 study2           = study;
+0029 mversion2        = mversion;
+0030 scenario2        = scenario;
+0031 runmode2         = runmode;
+0032 randomseed2      = randomseed;
+0033 
+0034 textstring = [{sprintf(<span class="string">'Comparing latent curve set populations for models:'</span>)}; <span class="keyword">...</span>
+0035               {sprintf(<span class="string">'%2d: %s'</span>, modelidx1, modelrun1)}                     ; <span class="keyword">...</span>
+0036               {sprintf(<span class="string">'%2d: %s'</span>, modelidx2, modelrun2)}
+0037              ];
+0038 fprintf(<span class="string">'\n'</span>);
+0039 fprintf(<span class="string">'%s'</span>, textstring{:});
+0040 fprintf(<span class="string">'\n'</span>);
+0041          
+0042 intersectresults = zeros(nlatentcurves1, nlatentcurves2);
+0043 lclabels1        = cell(nlatentcurves1, 1);
+0044 lclabels2        = cell(nlatentcurves2, 1);
+0045 
+0046 <span class="keyword">for</span> lc1 = 1:nlatentcurves1
+0047     lcamintr1 = amInterventions1(amInterventions1.LatentCurve == lc1,:);
+0048     lcintrids1    = lcamintr1.IntrNbr;
+0049     lclabels1{lc1} = sprintf(<span class="string">'LC%d (%d)'</span>, lc1, size(lcintrids1, 1));
+0050     fprintf(<span class="string">'Model %ssc%srm%drs%d Latent Curve Set %d size = %2d\n'</span>, mversion1, scenario1, runmode1, randomseed1, lc1, size(lcintrids1, 1));
+0051     <span class="keyword">for</span> lc2 = 1:nlatentcurves2
+0052         lcamintr2 = amInterventions2(amInterventions2.LatentCurve == lc2,:);
+0053         lcintrids2    = lcamintr2.IntrNbr;
+0054         lclabels2{lc2} = sprintf(<span class="string">'LC%d (%d)'</span>, lc2, size(lcintrids2, 1));
+0055         
+0056         intersectresults(lc1, lc2) = size(intersect(lcintrids1, lcintrids2), 1);
+0057         fprintf(<span class="string">'In Model %ssc%srm%drs%d LC set %d: %2d\n'</span>, mversion2, scenario2, runmode2, randomseed2, lc2, intersectresults(lc1, lc2));
+0058     <span class="keyword">end</span>
+0059 <span class="keyword">end</span>
+0060 
+0061 plotsacross = 1;
+0062 plotsdown = 1;
+0063 plottitle = sprintf(<span class="string">'%s LC Popn %ssc%srm%drs%d vs %ssc%srm%drs%d'</span>, study1, mversion1, scenario1, runmode1, randomseed1, mversion2, scenario2, runmode2, randomseed2);
+0064 
+0065 [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0066 sp1 = uicontrol(<span class="string">'Parent'</span>, p, <span class="keyword">...</span><span class="comment"> </span>
+0067                 <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="keyword">...</span>
+0068                 <span class="string">'OuterPosition'</span>, [0.1, 0.92, 0.9, 0.05], <span class="keyword">...</span>
+0069                 <span class="string">'Style'</span>, <span class="string">'text'</span>, <span class="keyword">...</span>
+0070                 <span class="string">'FontName'</span>, <span class="string">'FixedWidth'</span>, <span class="keyword">...</span>
+0071                 <span class="string">'FontSize'</span>, 6, <span class="keyword">...</span>
+0072                 <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>, <span class="keyword">...</span>
+0073                 <span class="string">'HorizontalAlignment'</span>, <span class="string">'left'</span>, <span class="keyword">...</span>
+0074                 <span class="string">'String'</span>, textstring);
+0075 sp2 =   uipanel(<span class="string">'Parent'</span>, p, <span class="keyword">...</span>
+0076                 <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0077                 <span class="string">'OuterPosition'</span>, [0.0, 0.0, 1.0, 0.92]);
+0078 
+0079 h = heatmap(sp2, intersectresults, <span class="string">'ColorMethod'</span>, <span class="string">'none'</span>, <span class="string">'ColorbarVisible'</span>, <span class="string">'off'</span>, <span class="string">'GridVisible'</span>, <span class="string">'on'</span>, <span class="string">'CellLabelColor'</span>, <span class="string">'black'</span>);
+0080 h.Title = <span class="string">' '</span>;
+0081 h.YLabel = sprintf(<span class="string">'%ssc%srm%drs%d'</span>, mversion1, scenario1, runmode1, randomseed1);
+0082 h.XLabel = sprintf(<span class="string">'%ssc%srm%drs%d'</span>, mversion2, scenario2, runmode2, randomseed2);
+0083 h.YData  = lclabels1;
+0084 h.XData  = lclabels2;
+0085 
+0086 <span class="comment">% save plot</span>
+0087 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, <span class="string">'Plots'</span>);
+0088 close(f);
+0089 
+0090 
+0091 <span class="keyword">end</span>
+0092</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

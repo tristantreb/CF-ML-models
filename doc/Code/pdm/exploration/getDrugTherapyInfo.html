@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getDrugTherapyInfo</title>
+  <meta name="keywords" content="getDrugTherapyInfo">
+  <meta name="description" content="all information about CFTR modulator therapies is centralised here">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">exploration</a> &gt; getDrugTherapyInfo.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/exploration&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>getDrugTherapyInfo
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>all information about CFTR modulator therapies is centralised here</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [Drugsbypatients, historytable] = getDrugTherapyInfo(brDrugTherapy, brPatient) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> all information about CFTR modulator therapies is centralised here
+ 
+ - groupcount the different drug therapies over patients
+ - define drugs mix: list of the drug therapies given to a patient, sorted in time
+ - groupcount the different drugs mix over patients and details the concerned patients IDs
+ 
+ Input: needs ID, DrugTherapyType, DrugTherapyStopDate from brDrugTherapy
+ ------
+ 
+ Output: 
+ -------
+ - displays two tables
+ - table with patients and their associated drug mix</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="exploreInterventions.html" class="code" title="">exploreInterventions</a>	explores the list of interventions</li><li><a href="patientDemographics.html" class="code" title="">patientDemographics</a>	create an excel with current BR patient demographics</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Drugsbypatients, historytable] = getDrugTherapyInfo(brDrugTherapy, brPatient) </a>
+0002 <span class="comment">% all information about CFTR modulator therapies is centralised here</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% - groupcount the different drug therapies over patients</span>
+0005 <span class="comment">% - define drugs mix: list of the drug therapies given to a patient, sorted in time</span>
+0006 <span class="comment">% - groupcount the different drugs mix over patients and details the concerned patients IDs</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Input: needs ID, DrugTherapyType, DrugTherapyStopDate from brDrugTherapy</span>
+0009 <span class="comment">% ------</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Output:</span>
+0012 <span class="comment">% -------</span>
+0013 <span class="comment">% - displays two tables</span>
+0014 <span class="comment">% - table with patients and their associated drug mix</span>
+0015 
+0016 <span class="comment">% sort by date and ID</span>
+0017 brDrugTherapy = sortrows(brDrugTherapy,<span class="string">'DrugTherapyStartDate'</span>,<span class="string">'ascend'</span>);
+0018 brDrugTherapy = sortrows(brDrugTherapy,<span class="string">'ID'</span>,<span class="string">'ascend'</span>);
+0019 
+0020 patients = unique(brDrugTherapy.ID);
+0021 
+0022 <span class="comment">% group drug therapies by patients</span>
+0023 History = string(zeros(length(patients),1));
+0024 Current = string(zeros(length(patients),1));
+0025 <span class="keyword">for</span> i = 1:length(patients)
+0026     drugs_list = brDrugTherapy(brDrugTherapy.ID == patients(i),{<span class="string">'DrugTherapyStopDate'</span>, <span class="string">'DrugTherapyType'</span>, <span class="string">'DrugTherapyStartDate'</span>});
+0027     
+0028     <span class="comment">% merge therapies that are consecutiveley the same</span>
+0029     <span class="comment">% TODO % this should be handled at source (in redcap)</span>
+0030     <span class="keyword">for</span> j = 1:size(drugs_list,1)-1
+0031         <span class="keyword">if</span> strcmp(drugs_list.DrugTherapyType(j), drugs_list.DrugTherapyType(j+1))
+0032             drugs_list.DrugTherapyStartDate(j+1) = drugs_list.DrugTherapyStartDate(j);
+0033             drugs_list(j,:)=[];
+0034         <span class="keyword">end</span>
+0035     <span class="keyword">end</span>
+0036     
+0037     History(i,1) = join(string(drugs_list.DrugTherapyType),<span class="string">', '</span>);
+0038     Current(i,1) = string(drugs_list.DrugTherapyType(end));
+0039     <span class="keyword">if</span> ~isnat(drugs_list.DrugTherapyStopDate(end))
+0040         History(i,1) = append(History(i,1),&quot;, _Therapy Stopped_&quot;);
+0041         Current(i,1) = &quot;_Therapy Stopped_&quot;;
+0042     <span class="keyword">end</span>
+0043 <span class="keyword">end</span>
+0044 
+0045 <span class="comment">% (out var) table with patients and their associated history</span>
+0046 Drugsbypatients = table(patients,History,Current);
+0047 Drugsbypatients = outerjoin(Drugsbypatients, brPatient, <span class="string">'LeftKeys'</span>, <span class="string">'patients'</span>, <span class="string">'RightKeys'</span>, <span class="string">'ID'</span>, <span class="string">'LeftVariables'</span>, {<span class="string">'patients'</span>, <span class="string">'History'</span>, <span class="string">'Current'</span>}, <span class="string">'RightVariables'</span>, <span class="string">'ID'</span>);
+0048 idxtoreplace = isnan(Drugsbypatients.patients);
+0049 Drugsbypatients.History(idxtoreplace) = &quot;_No Therapy_&quot;;
+0050 Drugsbypatients.Current(idxtoreplace) = &quot;_No Therapy_&quot;;
+0051 Drugsbypatients = removevars(Drugsbypatients,<span class="string">'patients'</span>);
+0052 
+0053 <span class="comment">% find (drug therapies, count) and display it (after doublons were discarded)</span>
+0054 CFTR_modulator = categorical(unique(brDrugTherapy.DrugTherapyType));
+0055 druglisttable = table(CFTR_modulator);
+0056 <span class="keyword">for</span> i = 1:size(druglisttable,1)
+0057     druglisttable.Amount_prescribed(i) = sum(contains(Drugsbypatients.History,string(druglisttable.CFTR_modulator(i))));
+0058 <span class="keyword">end</span>
+0059 druglisttable = sortrows(druglisttable,2,<span class="string">'descend'</span>);
+0060 fprintf(<span class="string">'Found %i CFTR modulators among %i patients:\n'</span>, sum(druglisttable.Amount_prescribed), length(patients));
+0061 disp(druglisttable)
+0062 
+0063 <span class="comment">% view patients with current drug therapy</span>
+0064 currenttable =  groupcounts(Drugsbypatients,<span class="string">'Current'</span>);
+0065 currenttable = sortrows(currenttable,2,<span class="string">'descend'</span>);
+0066 fprintf(<span class="string">'Current repartition of the CFTR modulators among the %i patients\n'</span>, size(Drugsbypatients,1));
+0067 disp(currenttable);
+0068 
+0069 <span class="comment">%%% find (patient CFTR modulator history, count, IDs) and display it</span>
+0070 <span class="comment">% group patients by their history</span>
+0071 historytable =  groupcounts(Drugsbypatients,<span class="string">'History'</span>);
+0072 
+0073 <span class="comment">% get patient IDs for each drug mix</span>
+0074 ID = string(zeros(size(historytable,1),1));
+0075 <span class="keyword">for</span> i = 1:size(historytable,1)
+0076     ID(i,1) = join(string(Drugsbypatients{ismember(Drugsbypatients.History,string(historytable.History(i))),<span class="string">'ID'</span>}),<span class="string">', '</span>);
+0077 <span class="keyword">end</span>
+0078 historytable.IDs = ID;
+0079 
+0080 <span class="comment">% display results</span>
+0081 fprintf(<span class="string">'The %i patients have %i differents CFTR modulator history:\n'</span>, sum(historytable.GroupCount), size(historytable,1));
+0082 historytable = sortrows(historytable,2,<span class="string">'descend'</span>);
+0083 disp(historytable)
+0084 
+0085 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createAlignmentModelInputs</title>
+  <meta name="keywords" content="createAlignmentModelInputs">
+  <meta name="description" content="creates the inputs for the model">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createAlignmentModelInputs.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createAlignmentModelInputs
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>creates the inputs for the model</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> creates the inputs for the model
+ 
+ - creates list of interventions with enough data to run model on
+ - formats measure data into a datacube of size (npatients, ndays,
+ nmeasurestype)
+ - outputs this in a .mat file
+ 
+ Input:
+ ------
+ clinical and measurements data
+ ivandmeasures_gap .mat
+
+
+ Output:
+ -------
+ alignmentmodelinputs_gap .mat</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="addDrugTherapyInfo.html" class="code" title="function amInterventions = addDrugTherapyInfo(amInterventions, cdDrugTherapy)">addDrugTherapyInfo</a>	addDrugTherapyInfo - adds a column to the interventions table to store</li><li><a href="createDataCube.html" class="code" title="function [datacube] = createDataCube(physdata, measures, npatients, ndays, nmeasures)">createDataCube</a>	createDataCube - populates a 3D array from the measurement data of</li><li><a href="createListOfInterventions.html" class="code" title="function [interventions] = createListOfInterventions(ivandmeasurestable, physdata, offset)">createListOfInterventions</a>	creates the list of distinct IV Antiobiotic treatments in a structure to be used by the alignment model</li><li><a href="createMeasuresTable.html" class="code" title="function [measures, nmeasures] = createMeasuresTable(physdata)">createMeasuresTable</a>	creates the measures table</li><li><a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>	selectTreatmentGap - enter the gap between the end of a treatment and the</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/recovery/masterScriptAPEs.html" class="code" title="">masterScriptAPEs</a>	master script to run an alignment model for APEs (prior to redcap)</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% creates the inputs for the model</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% - creates list of interventions with enough data to run model on</span>
+0004 <span class="comment">% - formats measure data into a datacube of size (npatients, ndays,</span>
+0005 <span class="comment">% nmeasurestype)</span>
+0006 <span class="comment">% - outputs this in a .mat file</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Input:</span>
+0009 <span class="comment">% ------</span>
+0010 <span class="comment">% clinical and measurements data</span>
+0011 <span class="comment">% ivandmeasures_gap .mat</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% Output:</span>
+0015 <span class="comment">% -------</span>
+0016 <span class="comment">% alignmentmodelinputs_gap .mat</span>
+0017 
+0018 clear; close all; clc;
+0019 
+0020 [studynbr, study, studyfullname] = <a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
+0021 chosentreatgap = <a href="selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>();
+0022 
+0023 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0024 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0025 [datamatfile, clinicalmatfile, demographicsmatfile] = <a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0026 [physdata, offset] = <a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0027 [~, cdDrugTherapy, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = <a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0028 
+0029 tic
+0030 fprintf(<span class="string">'Loading datademographics by patient\n'</span>);
+0031 load(fullfile(basedir, subfolder, demographicsmatfile));
+0032 toc
+0033 
+0034 tic
+0035 ivandmeasuresfile = sprintf(<span class="string">'%sivandmeasures_gap%d.mat'</span>, study, chosentreatgap);
+0036 fprintf(<span class="string">'Loading iv treatment and measures prior data\n'</span>);
+0037 load(fullfile(basedir, subfolder, ivandmeasuresfile));
+0038 toc
+0039 
+0040 <span class="comment">% useful variables</span>
+0041 npatients = max(physdata.SmartCareID);
+0042 ndays = max(physdata.ScaledDateNum);
+0043 
+0044 [measures, nmeasures] = <a href="createMeasuresTable.html" class="code" title="function [measures, nmeasures] = createMeasuresTable(physdata)">createMeasuresTable</a>(physdata);
+0045 
+0046 tic
+0047 <span class="comment">% create list of interventions with enough data to run model on</span>
+0048 fprintf(<span class="string">'Creating list of interventions\n'</span>);
+0049 amInterventions = <a href="createListOfInterventions.html" class="code" title="function [interventions] = createListOfInterventions(ivandmeasurestable, physdata, offset)">createListOfInterventions</a>(ivandmeasurestable, physdata, offset);
+0050 ninterventions = size(amInterventions,1);
+0051 toc
+0052 
+0053 amInterventions = <a href="addDrugTherapyInfo.html" class="code" title="function amInterventions = addDrugTherapyInfo(amInterventions, cdDrugTherapy)">addDrugTherapyInfo</a>(amInterventions, cdDrugTherapy);
+0054 
+0055 tic
+0056 <span class="comment">% create datacube - 3D array of patients/days/measures for model</span>
+0057 fprintf(<span class="string">'Creating 3D data array\n'</span>);
+0058 [amDatacube] = <a href="createDataCube.html" class="code" title="function [datacube] = createDataCube(physdata, measures, npatients, ndays, nmeasures)">createDataCube</a>(physdata, measures, npatients, ndays, nmeasures);
+0059 toc
+0060 
+0061 tic
+0062 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0063 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0064 outputfilename = sprintf(<span class="string">'%salignmentmodelinputs_gap%d.mat'</span>, study, treatgap);
+0065 fprintf(<span class="string">'Saving output variables to file %s\n'</span>, outputfilename);
+0066 save(fullfile(basedir, subfolder,outputfilename), <span class="string">'amInterventions'</span>,<span class="string">'amDatacube'</span>, <span class="string">'measures'</span>, <span class="string">'npatients'</span>,<span class="string">'ndays'</span>, <span class="string">'nmeasures'</span>, <span class="string">'ninterventions'</span>);
+0067 toc
+0068 
+0069 
+0070 
+0071</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of runPlotsForPaperEMMC</title>
+  <meta name="keywords" content="runPlotsForPaperEMMC">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; runPlotsForPaperEMMC.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>runPlotsForPaperEMMC
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMMCPlotHistogramOfTimeToTreatForPaper.html" class="code" title="function amEMMCPlotHistogramOfTimeToTreatForPaper(amInterventions, plotname, plotsubfolder, nlatentcurves, study)">amEMMCPlotHistogramOfTimeToTreatForPaper</a>	amEMMCPlotHistogramOfTimeToTreatForPaper - plots a historgram of the time</li><li><a href="amEMMCPlotInterventionsByLatentCurveSetForPaper.html" class="code" title="function amEMMCPlotInterventionsByLatentCurveSetForPaper(pmPatients, amInterventions,ivandmeasurestable, npatients, maxdays, plotname, plotsubfolder, nlatentcurves, plotmode, studymarkermode, pfiltermode)">amEMMCPlotInterventionsByLatentCurveSetForPaper</a>	amEMMCPlotInterventionsByLatentCurveSetForPaper - plots interventions and</li><li><a href="amEMMCPlotSuperimposedAlignedCurvesForPaper.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper(meancurvemean, meancurvecount, amIntrNormcube, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper</a>	amEMMCPlotSuperimposedAlignedCurves - wrapper around the</li><li><a href="amEMMCPlotSuperimposedAlignedCurvesForPaper3.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper3(meancurvemean, meancurvecount, amIntrNormcube, amInterventions, normmean, normstd,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper3</a>	amEMMCPlotSuperimposedAlignedCurves3 - wrapper around the</li><li><a href="amEMMCPlotVariablesVsLatentCurveSetForPaper.html" class="code" title="function [wcxpvaltable] = amEMMCPlotVariablesVsLatentCurveSetForPaper(amInterventions, pmPatients, pmPatientMeasStats, ivandmeasurestable,cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder, ninterventions, nlatentcurves, scenario, randomseed, study)">amEMMCPlotVariablesVsLatentCurveSetForPaper</a>	amEMMCPlotVariablesVsLatentCurveSet - compact plots of various variables</li><li><a href="amEMMCSelectModelRunFromDir.html" class="code" title="function [modelrun, modelidx, ModelResultFiles] = amEMMCSelectModelRunFromDir(study, loadtype, lcmode, intrfilt, tgapmode, tstlabelmode)">amEMMCSelectModelRunFromDir</a>	amEMMCSelectModelRunFromDir- allows you to load the saved variables from a</li><li><a href="calcExFrequencyByDT.html" class="code" title="function [brDTExStats, sumtable, hospsumtable] = calcExFrequencyByDT(offset, ivandmeasurestable, cdPatient, cdDrugTherapy, amInterventions, study)">calcExFrequencyByDT</a>	calcExFrequencyByDT - function to analyse the frequency of exacerbations</li><li><a href="createMeasuresHeatmapSortedForPaper.html" class="code" title="function createMeasuresHeatmapSortedForPaper(physdata, offset, cdPatient, study)">createMeasuresHeatmapSortedForPaper</a>	createMeasuresHeatmapSortedForPaper - creates the Patient/Measures</li><li><a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="plotNbrIntrByPatient.html" class="code" title="function plotNbrIntrByPatient(physdata, offset, ivandmeasurestable, cdPatient, amInterventions, study)">plotNbrIntrByPatient</a>	plotNbrIntrByPatient - plots bar chart of number of interventions by</li><li><a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>	selectTreatmentGap - enter the gap between the end of a treatment and the</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li><li><a href="visualiseExacerbationForPaperFcn3.html" class="code" title="function visualiseExacerbationForPaperFcn3(amDatacube, amInterventions, measures, nmeasures, npatients, study)">visualiseExacerbationForPaperFcn3</a>	visualiseExacerbationForPaperFcn3 - plots measures around an exacerbation</li><li><a href="visualiseMeasuresForPaperFcn2.html" class="code" title="function visualiseMeasuresForPaperFcn2(physdata, offset, amDatacube, cdPatient, cdAntibiotics,cdCRP, cdPFT, cdNewMeds, measures, nmeasures, ndays, study)">visualiseMeasuresForPaperFcn2</a>	visualiseMeasuresForPaperFcn2 - plots clinical and home measures</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; close all; clc;
+0002 
+0003 <span class="comment">% other models to potentially add</span>
+0004 <span class="comment">% sig4 version (although zero offset start is infinity</span>
+0005 <span class="comment">% vEM with bet random start from 3 or 4</span>
+0006 
+0007 fprintf(<span class="string">'Run Plots For Paper\n'</span>);
+0008 fprintf(<span class="string">'\n'</span>);
+0009 fprintf(<span class="string">'Choose plot to run\n'</span>);
+0010 fprintf(<span class="string">'----------------------\n'</span>);
+0011 fprintf(<span class="string">' 0: Paper Figure 0 - Heatmap\n'</span>);
+0012 fprintf(<span class="string">' 1: Paper Figure 1 - Clinical and Home Measures\n'</span>);
+0013 fprintf(<span class="string">' 2: Paper Figure 2 - Early and Late Exacerbations\n'</span>);
+0014 fprintf(<span class="string">' 3: Paper Figure 3 - Typical profile of an exacerbation\n'</span>);
+0015 fprintf(<span class="string">' 4: Paper Figure 4 - Sub-population decline curve profiles with examples\n'</span>);
+0016 fprintf(<span class="string">' 5: Paper Figure 5a - &lt;n/a - done in illustrator&gt;\n'</span>);
+0017 fprintf(<span class="string">' 6: Paper Figure 5b - p-Values of correlations\n'</span>);
+0018 fprintf(<span class="string">' 7: Paper Figure 5c - Interventions over time\n'</span>);
+0019 fprintf(<span class="string">' 8: Slides - histogram of variable time to treatment\n'</span>);
+0020 fprintf(<span class="string">' 9: Paper Figure 5c alt - Interventions over time no filtering\n'</span>);
+0021 fprintf(<span class="string">'10: Paper Figure 1B - Number of interventions histogram\n'</span>);
+0022 fprintf(<span class="string">'11: Modulator therapy - reduction in intervention frequency\n'</span>);
+0023 
+0024 fprintf(<span class="string">'\n'</span>);
+0025 npaperplots = 11;
+0026 srunfunction = input(sprintf(<span class="string">'Choose function (0-%d): '</span>, npaperplots), <span class="string">'s'</span>);
+0027 runfunction = str2double(srunfunction);
+0028 
+0029 <span class="keyword">if</span> (isnan(runfunction) || runfunction &lt; 0 || runfunction &gt; npaperplots)
+0030     fprintf(<span class="string">'Invalid choice\n'</span>);
+0031     runfunction = -1;
+0032     <span class="keyword">return</span>;
+0033 <span class="keyword">end</span>
+0034 
+0035 fprintf(<span class="string">'\n'</span>);
+0036 
+0037 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0038 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0039 [studynbr, study, studyfullname] = <a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
+0040 <span class="keyword">if</span> runfunction == 0 || runfunction == 1 || runfunction == 2 || runfunction == 6 || runfunction == 10 || runfunction == 11
+0041     fprintf(<span class="string">'Loading raw data for study\n'</span>);
+0042     chosentreatgap = <a href="selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>();
+0043     tic
+0044     [datamatfile, clinicalmatfile, demographicsmatfile] = <a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0045     [physdata, offset, physdata_predateoutlierhandling] = <a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0046     [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP, <span class="keyword">...</span>
+0047         cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds] = <a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0048     alignmentmodelinputsfile = sprintf(<span class="string">'%salignmentmodelinputs_gap%d.mat'</span>, study, chosentreatgap);
+0049     fprintf(<span class="string">'Loading alignment model inputs\n'</span>);
+0050     load(fullfile(basedir, subfolder, alignmentmodelinputsfile), <span class="string">'amInterventions'</span>,<span class="string">'amDatacube'</span>, <span class="string">'measures'</span>, <span class="string">'npatients'</span>,<span class="string">'ndays'</span>, <span class="string">'nmeasures'</span>, <span class="string">'ninterventions'</span>);
+0051     ivandmeasuresfile = sprintf(<span class="string">'%sivandmeasures_gap%d.mat'</span>, study, chosentreatgap);
+0052     fprintf(<span class="string">'Loading Treatment and Measures Prior info\n'</span>);
+0053     load(fullfile(basedir, subfolder, ivandmeasuresfile), <span class="string">'ivandmeasurestable'</span>);
+0054     toc
+0055     fprintf(<span class="string">'\n'</span>);
+0056 <span class="keyword">end</span>
+0057 
+0058 <span class="keyword">if</span> runfunction &gt;= 3 &amp;&amp; runfunction &lt; 11
+0059     [modelrun, modelidx, models] = <a href="amEMMCSelectModelRunFromDir.html" class="code" title="function [modelrun, modelidx, ModelResultFiles] = amEMMCSelectModelRunFromDir(study, loadtype, lcmode, intrfilt, tgapmode, tstlabelmode)">amEMMCSelectModelRunFromDir</a>(study, <span class="string">''</span>,      <span class="string">''</span>, <span class="string">'IntrFilt'</span>, <span class="string">'TGap'</span>,       <span class="string">''</span>);
+0060     tic
+0061     fprintf(<span class="string">'Loading output from model run\n'</span>);
+0062     load(fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>, modelrun)));
+0063     predictivemodelinputsfile = sprintf(<span class="string">'%spredictivemodelinputs.mat'</span>, study);
+0064     <span class="keyword">if</span> runfunction == 6 || runfunction == 7 || runfunction == 9
+0065         fprintf(<span class="string">'Loading Predictive Model Patient Measures Stats\n'</span>);
+0066         load(fullfile(basedir, subfolder, predictivemodelinputsfile), <span class="string">'pmPatients'</span>, <span class="string">'pmPatientMeasStats'</span>, <span class="string">'npatients'</span>, <span class="string">'maxdays'</span>);
+0067     <span class="keyword">end</span>
+0068     ivandmeasuresfile = sprintf(<span class="string">'%sivandmeasures_gap%d.mat'</span>, study, treatgap);
+0069     fprintf(<span class="string">'Loading Treatment and Measures Prior info\n'</span>);
+0070     load(fullfile(basedir, subfolder, ivandmeasuresfile), <span class="string">'ivandmeasurestable'</span>);
+0071     <span class="comment">% default some variables for backward compatibility with prior versions</span>
+0072     <span class="keyword">if</span> ~exist(<span class="string">'animated_overall_pdoffset'</span>, <span class="string">'var'</span>)
+0073         animated_overall_pdoffset = 0;
+0074     <span class="keyword">end</span>
+0075     <span class="keyword">if</span> ~exist(<span class="string">'isOutlier'</span>, <span class="string">'var'</span>)
+0076         isOutlier = zeros(nlatentcurves, ninterventions, align_wind, nmeasures, max_offset);
+0077     <span class="keyword">end</span>
+0078     <span class="keyword">if</span> (~exist(<span class="string">'intrkeepidx'</span>,<span class="string">'var'</span>))
+0079         intrkeepidx = true(ninterventions, 1);
+0080     <span class="keyword">end</span>
+0081     <span class="keyword">if</span> (~exist(<span class="string">'vshift'</span>,<span class="string">'var'</span>))
+0082         vshift = zeros(nlatentcurves, ninterventions, nmeasures, max_offset);
+0083     <span class="keyword">end</span>
+0084     toc
+0085     fprintf(<span class="string">'\n'</span>);
+0086 <span class="keyword">end</span>
+0087     
+0088 <span class="keyword">if</span> runfunction == 0
+0089     fprintf(<span class="string">'Creating sorted measures heatmap for study period\n'</span>);
+0090     <a href="createMeasuresHeatmapSortedForPaper.html" class="code" title="function createMeasuresHeatmapSortedForPaper(physdata, offset, cdPatient, study)">createMeasuresHeatmapSortedForPaper</a>(physdata, offset, cdPatient, study);
+0091 <span class="keyword">elseif</span> runfunction == 1
+0092     fprintf(<span class="string">'Plotting clinical and home measures\n'</span>);
+0093     <a href="visualiseMeasuresForPaperFcn2.html" class="code" title="function visualiseMeasuresForPaperFcn2(physdata, offset, amDatacube, cdPatient, cdAntibiotics,cdCRP, cdPFT, cdNewMeds, measures, nmeasures, ndays, study)">visualiseMeasuresForPaperFcn2</a>(physdata, offset, amDatacube, cdPatient, cdAntibiotics, <span class="keyword">...</span>
+0094         cdCRP, cdPFT, cdNewMeds, measures, nmeasures, ndays, study);
+0095 <span class="keyword">elseif</span> runfunction == 2
+0096     fprintf(<span class="string">'Plotting measures around exacerbation\n'</span>);
+0097     <a href="visualiseExacerbationForPaperFcn3.html" class="code" title="function visualiseExacerbationForPaperFcn3(amDatacube, amInterventions, measures, nmeasures, npatients, study)">visualiseExacerbationForPaperFcn3</a>(amDatacube, amInterventions, measures, nmeasures, npatients, study);
+0098 <span class="keyword">elseif</span> runfunction == 3
+0099     run_type = <span class="string">'Best Alignment'</span>;
+0100     fprintf(<span class="string">'Plotting superimposed alignment curves - mean shift - all on one page\n'</span>);
+0101     compactplot = true;
+0102     shiftmode = 4; <span class="comment">% shift by 7d mean to left of ex_start</span>
+0103     examplemode = 0; <span class="comment">% no examples</span>
+0104     lcexamples = [];
+0105     pcountthresh = 6;
+0106     <a href="amEMMCPlotSuperimposedAlignedCurvesForPaper.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper(meancurvemean, meancurvecount, amIntrNormcube, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper</a>(meancurvemean, meancurvecount, amIntrNormcube, amInterventions, <span class="keyword">...</span>
+0107         measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, <span class="keyword">...</span>
+0108         nlatentcurves, pcountthresh, shiftmode, study, examplemode, lcexamples);
+0109 <span class="keyword">elseif</span> runfunction == 4
+0110     run_type = <span class="string">'Best Alignment'</span>;
+0111     fprintf(<span class="string">'Plotting superimposed alignment curves - mean shift - all on one page\n'</span>);
+0112     compactplot = true;
+0113     shiftmode = 4; <span class="comment">% shift by 7d mean to left of ex_start</span>
+0114     <span class="keyword">if</span> ismember(study, {<span class="string">'SC'</span>})
+0115         examplemode = 1; <span class="comment">% include examples</span>
+0116         lcexamples = [41, 67, 6];
+0117     <span class="keyword">else</span>
+0118         examplemode = 0;
+0119         lcexamples = [];
+0120     <span class="keyword">end</span>
+0121     pcountthresh = 6;
+0122     <a href="amEMMCPlotSuperimposedAlignedCurvesForPaper3.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper3(meancurvemean, meancurvecount, amIntrNormcube, amInterventions, normmean, normstd,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper3</a>(meancurvemean, meancurvecount, amIntrNormcube, amInterventions, normmean, normstd, <span class="keyword">...</span>
+0123         measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, <span class="keyword">...</span>
+0124         nlatentcurves, pcountthresh, shiftmode, study, examplemode, lcexamples);
+0125 <span class="keyword">elseif</span> runfunction == 5
+0126     fprintf(<span class="string">'Plot being generated from Adobe Illustrator\n'</span>);
+0127 <span class="keyword">elseif</span> runfunction == 6
+0128     fprintf(<span class="string">'Plotting Variables vs latent curve allocation\n'</span>);
+0129     [pvaltable] = <a href="amEMMCPlotVariablesVsLatentCurveSetForPaper.html" class="code" title="function [wcxpvaltable] = amEMMCPlotVariablesVsLatentCurveSetForPaper(amInterventions, pmPatients, pmPatientMeasStats, ivandmeasurestable,cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder, ninterventions, nlatentcurves, scenario, randomseed, study)">amEMMCPlotVariablesVsLatentCurveSetForPaper</a>(amInterventions, pmPatients, pmPatientMeasStats, <span class="keyword">...</span>
+0130         ivandmeasurestable, cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder, <span class="keyword">...</span>
+0131         ninterventions, nlatentcurves, scenario, randomseed, study);
+0132 <span class="keyword">elseif</span> runfunction == 7
+0133     fprintf(<span class="string">'Loading Predictive Model Patient info\n'</span>);
+0134     fprintf(<span class="string">'Plotting interventions over time by latent curve set\n'</span>);
+0135     plotmode = 2; <span class="comment">% plot using absolute dates</span>
+0136     studymarkermode = 2; <span class="comment">% exclude study markers</span>
+0137     pfiltermode = 2; <span class="comment">% exclude patients with zero interventions;</span>
+0138     <a href="amEMMCPlotInterventionsByLatentCurveSetForPaper.html" class="code" title="function amEMMCPlotInterventionsByLatentCurveSetForPaper(pmPatients, amInterventions,ivandmeasurestable, npatients, maxdays, plotname, plotsubfolder, nlatentcurves, plotmode, studymarkermode, pfiltermode)">amEMMCPlotInterventionsByLatentCurveSetForPaper</a>(pmPatients, amInterventions, ivandmeasurestable, <span class="keyword">...</span>
+0139         npatients, maxdays, plotname, plotsubfolder, nlatentcurves, plotmode, studymarkermode, pfiltermode);
+0140 <span class="keyword">elseif</span> runfunction == 8
+0141     run_type = <span class="string">'Best Alignment'</span>;
+0142     fprintf(<span class="string">'Plotting histogram of variable time to treatment\n'</span>);
+0143     <a href="amEMMCPlotHistogramOfTimeToTreatForPaper.html" class="code" title="function amEMMCPlotHistogramOfTimeToTreatForPaper(amInterventions, plotname, plotsubfolder, nlatentcurves, study)">amEMMCPlotHistogramOfTimeToTreatForPaper</a>(amInterventions, plotname, plotsubfolder, nlatentcurves, study);
+0144 <span class="keyword">elseif</span> runfunction == 9
+0145     fprintf(<span class="string">'Loading Predictive Model Patient info\n'</span>);
+0146     fprintf(<span class="string">'Plotting interventions over time by latent curve set\n'</span>);
+0147     plotmode = 2; <span class="comment">% plot using absolute dates</span>
+0148     studymarkermode = 2; <span class="comment">% exclude study markers</span>
+0149     pfiltermode = 1; <span class="comment">% exclude patients with zero interventions;</span>
+0150     <a href="amEMMCPlotInterventionsByLatentCurveSetForPaper.html" class="code" title="function amEMMCPlotInterventionsByLatentCurveSetForPaper(pmPatients, amInterventions,ivandmeasurestable, npatients, maxdays, plotname, plotsubfolder, nlatentcurves, plotmode, studymarkermode, pfiltermode)">amEMMCPlotInterventionsByLatentCurveSetForPaper</a>(pmPatients, amInterventions, ivandmeasurestable, <span class="keyword">...</span>
+0151         npatients, maxdays, plotname, plotsubfolder, nlatentcurves, plotmode, studymarkermode, pfiltermode);
+0152 <span class="keyword">elseif</span> runfunction == 10
+0153     fprintf(<span class="string">'Plotting histogram of mnumber of interventions\n'</span>);
+0154     <a href="plotNbrIntrByPatient.html" class="code" title="function plotNbrIntrByPatient(physdata, offset, ivandmeasurestable, cdPatient, amInterventions, study)">plotNbrIntrByPatient</a>(physdata, offset, ivandmeasurestable, cdPatient, amInterventions, study);
+0155 <span class="keyword">elseif</span> runfunction == 11
+0156     fprintf(<span class="string">'Modulator Therapy - analysing reduction in frequency of exacerbations\n'</span>);
+0157     [brDTExStats, sumtable, hospsumtable] = <a href="calcExFrequencyByDT.html" class="code" title="function [brDTExStats, sumtable, hospsumtable] = calcExFrequencyByDT(offset, ivandmeasurestable, cdPatient, cdDrugTherapy, amInterventions, study)">calcExFrequencyByDT</a>(offset, ivandmeasurestable, cdPatient, cdDrugTherapy, amInterventions, study);
+0158 <span class="keyword">else</span>
+0159     fprintf(<span class="string">'Should not get here....\n'</span>);
+0160 <span class="keyword">end</span>
+0161     
+0162 
+0163</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

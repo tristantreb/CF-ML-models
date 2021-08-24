@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCSetModelRunParametersFromTableRecovery</title>
+  <meta name="keywords" content="amEMMCSetModelRunParametersFromTableRecovery">
+  <meta name="description" content="amEMMCSetModelRunParameters - sets the various run parameters for the model">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="../index.html">recovery</a> &gt; <a href="index.html">updatedModel</a> &gt; amEMMCSetModelRunParametersFromTableRecovery.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../../index.html"><img alt="<" border="0" src="../../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery/updatedModel&nbsp;<img alt=">" border="0" src="../../../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCSetModelRunParametersFromTableRecovery
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>amEMMCSetModelRunParameters - sets the various run parameters for the model</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>function [mversion, study, treatgap, testlabelmthd, testlabeltxt,modelinputsmatfile, datademographicsfile, dataoutliersfile, labelledinterventionsfile, electivefile,sigmamethod, mumethod, curveaveragingmethod, smoothingmethod, datasmoothmethod,measuresmask, runmode, randomseed, intrmode, modelrun, imputationmode, confidencemode, printpredictions,offset, align_wind, data_wind, outprior, heldbackpct, confidencethreshold, nlatentcurves, countthreshold, scenario, vshiftmode, vshiftmax]= amEMMCSetModelRunParametersFromTableRecovery(amRunParameters) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCSetModelRunParameters - sets the various run parameters for the model
+ from a row in amRunParameters table</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="../../../../Code/pdm/recovery/createIntrNormDataCube.html" class="code" title="function createIntrNormDataCube(amRunParameters)">createIntrNormDataCube</a>	create the array with the normalised data for each intervention</li><li><a href="../../../../Code/pdm/recovery/runAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist)">runAlignmentModelEMMCRecoveryFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="../../../../Code/pdm/recovery/runFastAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runFastAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist, nameaddendum)">runFastAlignmentModelEMMCRecoveryFcn</a>	fast version with 1 plot (typical profile) + alignment result matfile</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [mversion, study, treatgap, testlabelmthd, testlabeltxt, </a><span class="keyword">...</span>
+0002     modelinputsmatfile, datademographicsfile, dataoutliersfile, labelledinterventionsfile, electivefile, <span class="keyword">...</span>
+0003     sigmamethod, mumethod, curveaveragingmethod, smoothingmethod, datasmoothmethod, <span class="keyword">...</span>
+0004     measuresmask, runmode, randomseed, intrmode, modelrun, imputationmode, confidencemode, printpredictions, <span class="keyword">...</span>
+0005     offset, align_wind, data_wind, outprior, heldbackpct, confidencethreshold, nlatentcurves, countthreshold, scenario, vshiftmode, vshiftmax] <span class="keyword">...</span>
+0006     = amEMMCSetModelRunParametersFromTableRecovery(amRunParameters)
+0007 
+0008 <span class="comment">% amEMMCSetModelRunParameters - sets the various run parameters for the model</span>
+0009 <span class="comment">% from a row in amRunParameters table</span>
+0010 
+0011 mversion                  = amRunParameters.mversion{1};
+0012 study                     = amRunParameters.study{1};
+0013 treatgap                  = amRunParameters.treatgap;
+0014 testlabelmthd             = amRunParameters.testlabelmthd;
+0015 <span class="keyword">if</span> testlabelmthd == 1
+0016     testlabeltxt = <span class="string">'consensus'</span>;
+0017 <span class="keyword">elseif</span> testlabelmthd == 2
+0018     testlabeltxt = <span class="string">'earliest'</span>;
+0019 <span class="keyword">else</span>
+0020     fprintf(<span class="string">'**** Unknown test label method ****\n'</span>);
+0021     testlabeltxt = <span class="string">'unknown'</span>;
+0022     <span class="keyword">return</span>;
+0023 <span class="keyword">end</span>
+0024 data_wind                 = amRunParameters.data_wind;
+0025 modelinputsmatfile        = sprintf(amRunParameters.modelinputsmatfile{1}, study, treatgap, data_wind);
+0026 datademographicsfile      = sprintf(amRunParameters.datademographicsfile{1}, study);
+0027 dataoutliersfile          = sprintf(amRunParameters.dataoutliersfile{1}, study);
+0028 labelledinterventionsfile = sprintf(amRunParameters.labelledinterventionsfile{1}, study, treatgap, testlabeltxt);
+0029 electivefile              = sprintf(amRunParameters.electivefile{1}, study, treatgap);
+0030 sigmamethod               = amRunParameters.sigmamethod;
+0031 mumethod                  = amRunParameters.mumethod;
+0032 curveaveragingmethod      = amRunParameters.curveaveragingmethod;
+0033 smoothingmethod           = amRunParameters.smoothingmethod;
+0034 datasmoothmethod          = amRunParameters.datasmoothmethod;
+0035 measuresmask              = amRunParameters.measuresmask;
+0036 runmode                   = amRunParameters.runmode;
+0037 <span class="keyword">if</span> runmode == 4 || runmode == 5 || runmode == 9
+0038     randomseed            = amRunParameters.randomseed;
+0039 <span class="keyword">else</span>
+0040     randomseed            = 0;
+0041 <span class="keyword">end</span>
+0042 intrmode                  = amRunParameters.intrmode;
+0043 modelrun                  = amRunParameters.modelrun;
+0044 imputationmode            = amRunParameters.imputationmode;
+0045 confidencemode            = amRunParameters.confidencemode;
+0046 printpredictions          = amRunParameters.printpredictions;
+0047 offset.down                = amRunParameters.offset_down; <span class="comment">% offset.down is negative or equal to 0</span>
+0048 offset.up                = amRunParameters.offset_up; <span class="comment">% offset.up is positive or equal to 0</span>
+0049 offset.span               = abs(offset.down) + offset.up + 1; <span class="comment">% 0 is also an offset</span>
+0050 align_wind                = amRunParameters.align_wind;
+0051 outprior                  = amRunParameters.outprior;
+0052 heldbackpct               = amRunParameters.heldbackpct;
+0053 confidencethreshold       = amRunParameters.confidencethreshold;
+0054 nlatentcurves             = amRunParameters.nlatentcurves;
+0055 countthreshold            = amRunParameters.countthreshold;
+0056 scenario                  = amRunParameters.scenario{1};
+0057 vshiftmode                = amRunParameters.vshiftmode;
+0058 vshiftmax                 = amRunParameters.vshiftmax;
+0059 
+0060 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

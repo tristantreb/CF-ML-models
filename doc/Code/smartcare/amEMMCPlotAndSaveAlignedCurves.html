@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCPlotAndSaveAlignedCurves</title>
+  <meta name="keywords" content="amEMMCPlotAndSaveAlignedCurves">
+  <meta name="description" content="amEMMCPlotAndSaveAlignedCurves - wrapper around the">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCPlotAndSaveAlignedCurves.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCPlotAndSaveAlignedCurves
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCPlotAndSaveAlignedCurves - wrapper around the</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function amEMMCPlotAndSaveAlignedCurves(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets, latentcurves,measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder, nlatentcurves) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCPlotAndSaveAlignedCurves - wrapper around the
+ amEMPlotAndSaveAlignedCurves to plot for each set of latent curves</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMPlotAndSaveAlignedCurves.html" class="code" title="function amEMPlotAndSaveAlignedCurves(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets,measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder)">amEMPlotAndSaveAlignedCurves</a>	amEMPlotAndSaveAlignedCurves - plots the curves pre and post alignment for</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModelEMMCFcn.html" class="code" title="function runAlignmentModelEMMCFcn(amRunParameters)">runAlignmentModelEMMCFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="runAlignmentModelEMMCFcnSplit.html" class="code" title="function runAlignmentModelEMMCFcnSplit(amRunParameters)">runAlignmentModelEMMCFcnSplit</a>	function to run the alignment model (EM version) given a set of run</li><li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function amEMMCPlotAndSaveAlignedCurves(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets, latentcurves, </a><span class="keyword">...</span>
+0002     measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder, nlatentcurves)
+0003 
+0004 <span class="comment">% amEMMCPlotAndSaveAlignedCurves - wrapper around the</span>
+0005 <span class="comment">% amEMPlotAndSaveAlignedCurves to plot for each set of latent curves</span>
+0006 
+0007 <span class="keyword">for</span> n = 1:nlatentcurves
+0008     tmp_profile_pre    = reshape(profile_pre(n, :, :),    [max_offset + align_wind - 1, nmeasures]);
+0009     tmp_meancurvemean  = reshape(meancurvemean(n, :, :),  [max_offset + align_wind - 1, nmeasures]);
+0010     tmp_meancurvecount = reshape(meancurvecount(n, :, :), [max_offset + align_wind - 1, nmeasures]);
+0011     tmp_meancurvestd   = reshape(meancurvestd(n, :, :),   [max_offset + align_wind - 1, nmeasures]);
+0012     tmp_offsets        = offsets(latentcurves == n);
+0013     
+0014     tmp_plotname = sprintf(<span class="string">'%s C%d'</span>, plotname, n);
+0015     
+0016     <a href="amEMPlotAndSaveAlignedCurves.html" class="code" title="function amEMPlotAndSaveAlignedCurves(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets,measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder)">amEMPlotAndSaveAlignedCurves</a>(tmp_profile_pre, tmp_meancurvemean, tmp_meancurvecount, tmp_meancurvestd, <span class="keyword">...</span>
+0017             tmp_offsets, measures, max_points(n, :), min_offset, max_offset, align_wind, nmeasures, run_type, ex_start(n), sigmamethod, tmp_plotname, plotsubfolder);
+0018 <span class="keyword">end</span>
+0019 
+0020 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

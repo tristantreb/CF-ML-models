@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCPlotSuperimposedAlignedCurves</title>
+  <meta name="keywords" content="amEMMCPlotSuperimposedAlignedCurves">
+  <meta name="description" content="amEMMCPlotSuperimposedAlignedCurves - wrapper around the">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCPlotSuperimposedAlignedCurves.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCPlotSuperimposedAlignedCurves
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCPlotSuperimposedAlignedCurves - wrapper around the</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function amEMMCPlotSuperimposedAlignedCurves(meancurvemean, meancurvecount, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCPlotSuperimposedAlignedCurves - wrapper around the
+ plotSuperimposedAlignedCurves to plot for each set of latent curves</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>	getInvertedMeasures - returns an array of measure display names that need</li><li><a href="plotSuperimposedAlignedCurves.html" class="code" title="function plotSuperimposedAlignedCurves(ax, meancurvemean, xl, yl,measures, min_offset, max_offset, align_wind, ex_start, lc, nlcex, invmeasarray, posarray)">plotSuperimposedAlignedCurves</a>	plotSuperimposedAlignedCurves - plots the aligned curves for each of the</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>	savePlots - saves the figure to png and svp file types in the specified</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function amEMMCPlotSuperimposedAlignedCurves(meancurvemean, meancurvecount, amInterventions, </a><span class="keyword">...</span>
+0002     measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, countthreshold, compactplot, shiftmode, study)
+0003 
+0004 <span class="comment">% amEMMCPlotSuperimposedAlignedCurves - wrapper around the</span>
+0005 <span class="comment">% plotSuperimposedAlignedCurves to plot for each set of latent curves</span>
+0006 
+0007 invmeasarray = <a href="getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>(study);
+0008 
+0009 <span class="keyword">if</span> shiftmode == 1
+0010     shifttext = <span class="string">'MeanShift'</span>;
+0011 <span class="keyword">elseif</span> shiftmode == 2
+0012     shifttext = <span class="string">'MaxShift'</span>;
+0013 <span class="keyword">elseif</span> shiftmode == 3
+0014     shifttext = <span class="string">'ExZeroShift'</span>;
+0015 <span class="keyword">elseif</span> shiftmode == 4
+0016     meanwindow = 7;
+0017     shifttext = sprintf(<span class="string">'%ddMeanShift'</span>, meanwindow);
+0018 <span class="keyword">else</span>
+0019     fprintf(<span class="string">'**** Unknown shift mode ****\n'</span>);
+0020 <span class="keyword">end</span>
+0021 
+0022 plottitle   = sprintf(<span class="string">'%s - %s Superimposed %s'</span>, plotname, run_type, shifttext);
+0023 
+0024 <span class="keyword">if</span> compactplot
+0025     plotsacross = 2;
+0026     plotsdown   = 2;
+0027     [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0028     posarray = [0.7, 0.1, 0.2, 0.2];
+0029 <span class="keyword">else</span>
+0030     plotsacross = 1;
+0031     plotsdown   = 1;
+0032     posarray    = [0.2, 0.2, 0.2, 0.2]
+0033 <span class="keyword">end</span>
+0034 
+0035 smoothwdth = 4;
+0036 
+0037 <span class="comment">% Preprocess the latent curve :-</span>
+0038 <span class="comment">% 1) invert pulse rate</span>
+0039 <span class="comment">% 2) remove points with fewer than count threshold underlying data poins</span>
+0040 <span class="comment">% contributing</span>
+0041 <span class="comment">% 3) apply mean smoothing</span>
+0042 <span class="comment">% 4) apply a vertical shift (by the average of the points to the left of</span>
+0043 <span class="comment">% ex_start)</span>
+0044 <span class="keyword">for</span> n = 1:nlatentcurves
+0045     pridx = ismember(measures.DisplayName, invmeasarray);
+0046     meancurvemean(n, :, pridx) = meancurvemean(n, :, pridx) * -1;
+0047     <span class="keyword">for</span> m = 1:nmeasures
+0048         meancurvemean(n, meancurvecount(n, :, m) &lt; countthreshold, m) = NaN;
+0049         meancurvemean(n, :, m) = movmean(meancurvemean(n, :, m), smoothwdth, <span class="string">'omitnan'</span>);
+0050         <span class="keyword">if</span> shiftmode == 1
+0051             vertshift = mean(meancurvemean(n, 1:(align_wind + max_offset + ex_start(n)), m));
+0052         <span class="keyword">elseif</span> shiftmode == 2
+0053             vertshift = max(meancurvemean(n, 1:(align_wind + max_offset + ex_start(n)), m));
+0054         <span class="keyword">elseif</span> shiftmode == 3
+0055             vertshift = meancurvemean(n, (align_wind + max_offset + ex_start(n)), m);
+0056         <span class="keyword">elseif</span> shiftmode == 4
+0057             vertshift = mean(meancurvemean(n, (align_wind + max_offset + ex_start(n) - meanwindow):(align_wind + max_offset + ex_start(n)), m));
+0058         <span class="keyword">end</span>
+0059         meancurvemean(n, :, m) = meancurvemean(n, :, m) - vertshift;
+0060         fprintf(<span class="string">'For curve %d and measure %13s, vertical shift is %.3f\n'</span>, n, measures.DisplayName{m}, -vertshift);
+0061     <span class="keyword">end</span>
+0062 <span class="keyword">end</span>
+0063 
+0064 <span class="comment">% set the plot range over all curves to ensure comparable visual scaling</span>
+0065 xfrom = -1 * (align_wind + max_offset - 1 + ex_start);
+0066 xto   = -1 * (1 + ex_start);
+0067 xl = [xfrom, xto];
+0068 <span class="comment">%xl = [((-1 * (max_offset + align_wind)) + 1 - 0.5), -0.5];</span>
+0069 yl = [min(min(min(meancurvemean))) <span class="keyword">...</span>
+0070       max(max(max(meancurvemean)))];
+0071 
+0072 <span class="comment">% for each curve, plot all measures superimposed</span>
+0073 <span class="keyword">for</span> n = 1:nlatentcurves
+0074     xfrom = -1 * (align_wind + max_offset - 1 + ex_start(n));
+0075     xto   = -1 * (1 + ex_start(n));
+0076     xl = [xfrom, xto];
+0077     tmp_meancurvemean  = reshape(meancurvemean(n, :, :),  [max_offset + align_wind - 1, nmeasures]);
+0078     <span class="comment">%tmp_meancurvecount = reshape(meancurvecount(n, :, :), [max_offset + align_wind - 1, nmeasures]);</span>
+0079     tmp_ninterventions   = sum(amInterventions.LatentCurve == n);
+0080     
+0081     <span class="keyword">if</span> tmp_ninterventions ~= 0
+0082         <span class="keyword">if</span> compactplot
+0083             ax = subplot(plotsdown, plotsacross, n, <span class="string">'Parent'</span>,p);
+0084         <span class="keyword">else</span>
+0085             plottitle   = sprintf(<span class="string">'%s - %s Superimposed %s C%d'</span>, plotname, run_type, shifttext, n);
+0086             [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0087             ax = subplot(plotsdown, plotsacross, 1, <span class="string">'Parent'</span>,p);
+0088         <span class="keyword">end</span>
+0089         <a href="plotSuperimposedAlignedCurves.html" class="code" title="function plotSuperimposedAlignedCurves(ax, meancurvemean, xl, yl,measures, min_offset, max_offset, align_wind, ex_start, lc, nlcex, invmeasarray, posarray)">plotSuperimposedAlignedCurves</a>(ax, tmp_meancurvemean, xl, yl, <span class="keyword">...</span>
+0090                 measures, min_offset, max_offset, align_wind, ex_start(n), n, sum(amInterventions.LatentCurve == n), invmeasarray, posarray);
+0091         <span class="keyword">if</span> ~compactplot
+0092             <span class="comment">% save plot</span>
+0093             <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0094             <a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, plottitle, plotsubfolder);
+0095             close(f);
+0096         <span class="keyword">end</span>
+0097     <span class="keyword">end</span>
+0098 <span class="keyword">end</span>
+0099 
+0100 <span class="keyword">if</span> compactplot
+0101     <span class="comment">% save plot</span>
+0102     <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0103     <a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, plottitle, plotsubfolder);
+0104     close(f);
+0105 <span class="keyword">end</span>
+0106 
+0107 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

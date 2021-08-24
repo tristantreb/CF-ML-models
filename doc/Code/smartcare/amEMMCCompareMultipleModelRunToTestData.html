@@ -1,0 +1,282 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCCompareMultipleModelRunToTestData</title>
+  <meta name="keywords" content="amEMMCCompareMultipleModelRunToTestData">
+  <meta name="description" content="amEMMCCompareMultipleModelRunToTestData - compares the output of multiple model runs to">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCCompareMultipleModelRunToTestData.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCCompareMultipleModelRunToTestData
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCCompareMultipleModelRunToTestData - compares the output of multiple model runs to</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [lcbymodelrun, offsetbymodelrun] = amEMMCCompareMultipleModelRunToTestData(amLabelledInterventions, modelrun, modelidx, models, plotmode, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCCompareMultipleModelRunToTestData - compares the output of multiple model runs to
+ the labelled test data. Able to handle multiple latent curve sets.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li><li><a href="setResultTableDisplayRow.html" class="code" title="function [resultrow] = setResultTableDisplayRow(mversion, study, treatgap, testlabelmthd, sigmamethod, mumethod,curveaveragingmethod, smoothingmethod, datasmoothmethod, measuresmask, runmode, randomseed,intrmode, imputationmode, confidencemode, max_offset, align_wind, outprior, heldbackpct,confidencethreshold, countthreshold, nlatentcurves, niterations, vshiftmode, vshiftmax, scenario, ex_start, qual,testsetmatch, testsetsize, testsetdist, measures, nmeasures)">setResultTableDisplayRow</a>	setResultTableDisplayRow - creates the tabular record for the model run,</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [lcbymodelrun, offsetbymodelrun] = amEMMCCompareMultipleModelRunToTestData(amLabelledInterventions, modelrun, modelidx, models, plotmode, study)</a>
+0002 
+0003 <span class="comment">% amEMMCCompareMultipleModelRunToTestData - compares the output of multiple model runs to</span>
+0004 <span class="comment">% the labelled test data. Able to handle multiple latent curve sets.</span>
+0005 
+0006 lcbymodelrun     = zeros(size(amLabelledInterventions, 1), size(models,1));
+0007 offsetbymodelrun = zeros(size(amLabelledInterventions, 1), size(models,1));
+0008 
+0009 amLabelledInterventions = [array2table([1:size(amLabelledInterventions,1)]'), amLabelledInterventions];
+0010 amLabelledInterventions.Properties.VariableNames{<span class="string">'Var1'</span>} = <span class="string">'InterNbr'</span>;
+0011 
+0012 testidx = amLabelledInterventions.IncludeInTestSet==<span class="string">'Y'</span>;
+0013 testset    = amLabelledInterventions(testidx, :);
+0014 testsetsize = sum(testidx);
+0015 
+0016 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0017 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0018 
+0019 datatable = table(<span class="string">'Size'</span>,[1 4], <span class="keyword">...</span>
+0020     <span class="string">'VariableTypes'</span>, {<span class="string">'double'</span>,   <span class="string">'double'</span>,     <span class="string">'double'</span>,      <span class="string">'double'</span>}, <span class="keyword">...</span>
+0021     <span class="string">'VariableNames'</span>, {<span class="string">'ModelRun'</span>, <span class="string">'TestSetNbr'</span>, <span class="string">'LatentCurve'</span>, <span class="string">'Count'</span>});
+0022 
+0023 rowtoadd = datatable;
+0024 datatable(1:size(datatable,1),:) = [];
+0025 
+0026 resulttable = [];
+0027 
+0028 ylabels = {<span class="string">'Dummy'</span>};
+0029 modelrunlist = 0;
+0030 qualityscore = 0;
+0031 
+0032 <span class="keyword">for</span> midx = modelidx:size(models,1)
+0033     <span class="keyword">if</span> (~isequal(models{midx}, <span class="string">'placeholder'</span>) &amp;&amp; ~contains(models{midx}, <span class="string">'xxx'</span>))
+0034         clear randomseed;
+0035         clear datasmoothmethod;
+0036         clear vshiftmode;
+0037         clear vshiftmax;
+0038         load(fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>, models{midx})));
+0039         <span class="comment">% for backward compatibility</span>
+0040         <span class="keyword">if</span> (~exist(<span class="string">'randomseed'</span>,<span class="string">'var'</span>))
+0041             randomseed = 0;
+0042         <span class="keyword">end</span>
+0043         <span class="keyword">if</span> (~exist(<span class="string">'datasmoothmethod'</span>,<span class="string">'var'</span>))
+0044             datasmoothmethod = 1;
+0045         <span class="keyword">end</span>
+0046         <span class="keyword">if</span> (~exist(<span class="string">'heldbackpct'</span>,<span class="string">'var'</span>))
+0047             heldbackpct = 0;
+0048         <span class="keyword">end</span>
+0049         <span class="keyword">if</span> (~exist(<span class="string">'intrmode'</span>,<span class="string">'var'</span>))
+0050             intrmode = 1;
+0051         <span class="keyword">end</span>
+0052         <span class="keyword">if</span> (~exist(<span class="string">'scenario'</span>,<span class="string">'var'</span>))
+0053             scenario = <span class="string">''</span>;
+0054         <span class="keyword">end</span>
+0055         <span class="keyword">if</span> (~exist(<span class="string">'vshiftmode'</span>,<span class="string">'var'</span>))
+0056             vshiftmode = 0;
+0057         <span class="keyword">end</span>
+0058         <span class="keyword">if</span> (~exist(<span class="string">'vshiftmax'</span>,<span class="string">'var'</span>))
+0059             <span class="keyword">if</span> vshiftmode == 0
+0060                 vshiftmax = 0.0;
+0061             <span class="keyword">else</span>
+0062                 vshiftmax = 0.3;
+0063             <span class="keyword">end</span>
+0064         <span class="keyword">end</span>
+0065         temp = hsv(64);
+0066         brightness = .9;
+0067         colors(1,:) = temp(20,:) .* brightness;
+0068         
+0069         <span class="comment">%for i = 2:12</span>
+0070         <span class="comment">%    colors(i,:)  = temp(13 - (i-1),:)  .* brightness;</span>
+0071         <span class="comment">%end</span>
+0072         <span class="comment">%for i = 13:max_offset - 1</span>
+0073         <span class="comment">%    colors(i,:)  = temp(1,:)  .* brightness;</span>
+0074         <span class="comment">%end</span>
+0075         <span class="keyword">for</span> i = 2:15
+0076             colors(i,:)  = temp(16 - (i-1),:)  .* brightness;
+0077         <span class="keyword">end</span>
+0078         <span class="keyword">for</span> i = 16:max_offset - 1
+0079             colors(i,:)  = temp(1,:)  .* brightness;
+0080         <span class="keyword">end</span>
+0081 
+0082         modelpreds = amInterventions.Pred(testidx);
+0083         modellcs   = amInterventions.LatentCurve(testidx);
+0084         modelscids = amInterventions.SmartCareID(testidx);
+0085         modelivdn  = amInterventions.IVDateNum(testidx);
+0086         
+0087         matchidx   = (modelpreds &gt;= (testset.IVScaledDateNum + testset.LowerBound1) &amp; modelpreds &lt;= (testset.IVScaledDateNum + testset.UpperBound1)) | <span class="keyword">...</span>
+0088                      (modelpreds &gt;= (testset.IVScaledDateNum + testset.LowerBound2) &amp; modelpreds &lt;= (testset.IVScaledDateNum + testset.UpperBound2));
+0089         
+0090         fprintf(<span class="string">'For model %s%d: %s:\n'</span>, mversion, midx, models{midx});
+0091         fprintf(<span class="string">'%2d of %2d results match labelled test data, '</span>, sum(matchidx), testsetsize); 
+0092         rowtoadd.ModelRun = midx;
+0093         
+0094         distArr = zeros(1,4);
+0095         <span class="keyword">for</span> i = 1:size(testset,1)
+0096             <span class="keyword">if</span> (testset.SmartCareID(i) ~= modelscids(i) || testset.IVDateNum(i) ~= modelivdn(i))
+0097                 fprintf(<span class="string">'**** WARNING - Mismatch between Labelled test data and Model Interventions for intrnbr %d ****\n'</span>, testset.InterNbr(i));
+0098             <span class="keyword">end</span>
+0099             rowtoadd.TestSetNbr = testset.InterNbr(i);
+0100             rowtoadd.LatentCurve = modellcs(i);
+0101             <span class="keyword">if</span> matchidx(i)
+0102                 rowtoadd.Count = 0;
+0103             <span class="keyword">else</span>
+0104                 <span class="comment">%dist1 = min(abs(testset.IVScaledDateNum(i) + testset.LowerBound1(i) - modelpreds(i)), abs(testset.IVScaledDateNum(i) + testset.LowerBound2(i) - modelpreds(i)));</span>
+0105                 <span class="comment">%dist2 = min(abs(testset.IVScaledDateNum(i) + testset.UpperBound1(i) - modelpreds(i)), abs(testset.IVScaledDateNum(i) + testset.UpperBound2(i) - modelpreds(i)));</span>
+0106                 <span class="comment">%dist = min(dist1, dist2);</span>
+0107                 distArr(1) = abs(testset.IVScaledDateNum(i) + testset.LowerBound1(i) - modelpreds(i));
+0108                 distArr(2) = abs(testset.IVScaledDateNum(i) + testset.UpperBound1(i) - modelpreds(i));
+0109                 <span class="keyword">if</span> testset.LowerBound2(i) ~= 0
+0110                     distArr(3) = abs(testset.IVScaledDateNum(i) + testset.LowerBound2(i) - modelpreds(i));
+0111                     distArr(4) = abs(testset.IVScaledDateNum(i) + testset.UpperBound2(i) - modelpreds(i));
+0112                 <span class="keyword">else</span>
+0113                     distArr(3) = 100;
+0114                     distArr(4) = 100;
+0115                 <span class="keyword">end</span>
+0116                 dist = min(distArr);
+0117                 <span class="keyword">if</span> dist &gt; (max_offset - 1)
+0118                     dist = max_offset - 1;
+0119                 <span class="keyword">end</span>
+0120                 rowtoadd.Count = dist;
+0121             <span class="keyword">end</span>
+0122             <span class="comment">%fprintf('For intervention %2d, Match = %d, Dist = %d\n', testset.InterNbr(i), matchidx(i), rowtoadd.Count);</span>
+0123             datatable = [datatable ; rowtoadd];
+0124         <span class="keyword">end</span>
+0125         
+0126         fprintf(<span class="string">'Quality score = %d\n'</span>, sum(datatable.Count(datatable.ModelRun==midx)));
+0127         fprintf(<span class="string">'\n'</span>);
+0128         modelrunlist = [modelrunlist; midx];
+0129         qualityscore = [qualityscore; sum(datatable.Count(datatable.ModelRun==midx))];
+0130         <span class="comment">%if niterations == 200</span>
+0131         <span class="comment">%    convergeflag = '*';</span>
+0132         <span class="comment">%else</span>
+0133         <span class="comment">%    convergeflag = ' ';</span>
+0134         <span class="comment">%end</span>
+0135         ylabels = [ylabels; sprintf(<span class="string">'mm%dmo%dds%drm%drs%dct%dlm%dvs%dvm%.1fsc%sni%d\n(%2d:%2d)'</span>, measuresmask, <span class="keyword">...</span>
+0136             max_offset, datasmoothmethod, runmode, randomseed, countthreshold, testlabelmthd, vshiftmode, vshiftmax, scenario, niterations, <span class="keyword">...</span>
+0137             sum(matchidx), sum(datatable.Count(datatable.ModelRun==midx)))];
+0138 
+0139         [resultrow] = <a href="setResultTableDisplayRow.html" class="code" title="function [resultrow] = setResultTableDisplayRow(mversion, study, treatgap, testlabelmthd, sigmamethod, mumethod,curveaveragingmethod, smoothingmethod, datasmoothmethod, measuresmask, runmode, randomseed,intrmode, imputationmode, confidencemode, max_offset, align_wind, outprior, heldbackpct,confidencethreshold, countthreshold, nlatentcurves, niterations, vshiftmode, vshiftmax, scenario, ex_start, qual,testsetmatch, testsetsize, testsetdist, measures, nmeasures)">setResultTableDisplayRow</a>(mversion, study, treatgap, testlabelmthd, sigmamethod, mumethod, <span class="keyword">...</span>
+0140                         curveaveragingmethod, smoothingmethod, datasmoothmethod, measuresmask, runmode, randomseed, <span class="keyword">...</span>
+0141                         intrmode, imputationmode, confidencemode, max_offset, align_wind, <span class="keyword">...</span>
+0142                         outprior, heldbackpct, confidencethreshold, countthreshold, nlatentcurves, <span class="keyword">...</span>
+0143                         niterations, vshiftmode, vshiftmax, scenario, ex_start, qual, <span class="keyword">...</span>
+0144                         sum(matchidx), testsetsize, sum(datatable.Count(datatable.ModelRun==midx)), measures, nmeasures);
+0145         resulttable = [resulttable; resultrow];
+0146         
+0147         <span class="keyword">for</span> i = 1:ninterventions
+0148             lcbymodelrun(i, midx)     = amInterventions.LatentCurve(i);
+0149             offsetbymodelrun(i, midx) = amInterventions.Offset(i);
+0150         <span class="keyword">end</span>
+0151     <span class="keyword">end</span>
+0152 <span class="keyword">end</span>
+0153 
+0154 <span class="comment">% remove dummy row</span>
+0155 modelrunlist(1) = [];
+0156 qualityscore(1) = [];
+0157 ylabels(1) = [];
+0158 
+0159 dispmin = min(datatable.ModelRun);
+0160 dispmax = max(datatable.ModelRun);
+0161 
+0162 labelsandquality = [array2table(modelrunlist), array2table(ylabels), array2table(qualityscore)];
+0163 labelsandquality = sortrows(labelsandquality, {<span class="string">'ylabels'</span>}, {<span class="string">'ascend'</span>});
+0164 resulttable = sortrows(resulttable, {<span class="string">'NumLCSets'</span>, <span class="string">'Measures'</span>, <span class="string">'MaxOffset'</span>, <span class="string">'DataSmooth'</span>, <span class="string">'RunMode'</span>, <span class="string">'RandomSeed'</span>});
+0165 
+0166 <span class="keyword">if</span> ismember(plotmode, {<span class="string">'Overall'</span>})
+0167     plotsacross = 1;
+0168     plotsdown = 1;
+0169     plottitle = sprintf(<span class="string">'%s Model Run Results %s_gp%d_lm%d_in%d_nl%d(%d-%d) vs Labelled Test Data'</span>, study, mversion, treatgap, testlabelmthd, intrmode, nlatentcurves,  modelidx, size(models,1));
+0170 
+0171     [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0172 
+0173     subplot(plotsdown,plotsacross,[1],<span class="string">'Parent'</span>,p);
+0174     h = heatmap(p, datatable, <span class="string">'TestSetNbr'</span>, <span class="string">'ModelRun'</span>, <span class="string">'Colormap'</span>, colors(1:max(datatable.Count),:), <span class="string">'MissingDataColor'</span>, <span class="string">'white'</span>, <span class="keyword">...</span>
+0175         <span class="string">'ColorVariable'</span>,<span class="string">'Count'</span>,<span class="string">'ColorMethod'</span>,<span class="string">'max'</span>, <span class="string">'MissingDataLabel'</span>, <span class="string">'No data'</span>, <span class="string">'ColorBarVisible'</span>, <span class="string">'on'</span>, <span class="string">'FontSize'</span>, 8);
+0176     h.Title = <span class="string">' '</span>;
+0177     h.FontName = <span class="string">'Monaco'</span>;
+0178     h.FontSize = 6;
+0179     h.XLabel = <span class="string">'Intervention Nbr'</span>;
+0180     h.YLabel = <span class="string">'Model Run'</span>;
+0181     h.YDisplayData = labelsandquality.modelrunlist;
+0182     h.YDisplayLabels = labelsandquality.ylabels;
+0183     h.CellLabelColor = <span class="string">'none'</span>;
+0184     h.GridVisible = <span class="string">'on'</span>;
+0185 
+0186     plotsubfolder = <span class="string">'Plots'</span>;
+0187     <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, sprintf(<span class="string">'%s %s'</span>, plottitle, datestr(clock(),30)), plotsubfolder);
+0188     close(f);
+0189 
+0190     writetable(resulttable, fullfile(basedir, <span class="string">'ExcelFiles'</span>, sprintf(<span class="string">'%s.xlsx'</span>, plottitle)));
+0191 <span class="keyword">elseif</span> ismember(plotmode, {<span class="string">'ByLCSet'</span>})
+0192     <span class="comment">% add dummy rows to ensure a column for each entry in the test set is</span>
+0193     <span class="comment">% shown on all latent curve heatmaps</span>
+0194     dispmin = min(datatable.ModelRun);
+0195     dispmax = max(datatable.ModelRun);
+0196     rowtoadd.ModelRun = 0;
+0197     <span class="keyword">for</span> i = 1:testsetsize
+0198         rowtoadd.TestSetNbr = testset.InterNbr(i);
+0199         rowtoadd.Count      = 0;
+0200         <span class="keyword">for</span> n = 1:nlatentcurves;
+0201             rowtoadd.LatentCurve = n;
+0202             datatable = [datatable ; rowtoadd];
+0203         <span class="keyword">end</span>
+0204     <span class="keyword">end</span>
+0205     
+0206     <span class="keyword">for</span> n = 1:nlatentcurves
+0207         plotsacross = 1;
+0208         plotsdown = 1;
+0209         plottitle = sprintf(<span class="string">'%s Model Run Results %s_in%d_nl%d_tg%d(%d-%d) vs Labelled Test Data C%d'</span>, study, mversion, intrmode, nlatentcurves, treatgap, modelidx, size(models,1), n);
+0210 
+0211         [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0212 
+0213         subplot(plotsdown,plotsacross,[1],<span class="string">'Parent'</span>,p);
+0214         h = heatmap(p, datatable(datatable.LatentCurve==n,:), <span class="string">'TestSetNbr'</span>, <span class="string">'ModelRun'</span>, <span class="string">'Colormap'</span>, colors(1:max(datatable.Count),:), <span class="string">'MissingDataColor'</span>, <span class="string">'white'</span>, <span class="keyword">...</span>
+0215             <span class="string">'ColorVariable'</span>,<span class="string">'Count'</span>,<span class="string">'ColorMethod'</span>,<span class="string">'max'</span>, <span class="string">'MissingDataLabel'</span>, <span class="string">'No data'</span>, <span class="string">'ColorBarVisible'</span>, <span class="string">'on'</span>, <span class="string">'FontSize'</span>, 8);
+0216         h.Title = <span class="string">' '</span>;
+0217         h.FontName = <span class="string">'Monaco'</span>;
+0218         h.FontSize = 6;
+0219         h.XLabel = <span class="string">'Intervention Nbr'</span>;
+0220         h.YLabel = <span class="string">'Model Run'</span>;
+0221         h.YDisplayData = labelsandquality.modelrunlist;
+0222         h.YDisplayLabels = labelsandquality.ylabels;
+0223         h.YLimits = {dispmin,dispmax};
+0224         h.CellLabelColor = <span class="string">'none'</span>;
+0225         h.GridVisible = <span class="string">'on'</span>;
+0226 
+0227         plotsubfolder = <span class="string">'Plots'</span>;
+0228         <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, sprintf(<span class="string">'%s %s'</span>, plottitle, datestr(clock(),30)), plotsubfolder);
+0229         close(f);
+0230     <span class="keyword">end</span>
+0231 <span class="keyword">else</span>
+0232     fprintf(<span class="string">'**** Unknown plot mode ****\n'</span>);
+0233 <span class="keyword">end</span>
+0234</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

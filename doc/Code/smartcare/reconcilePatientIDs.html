@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of reconcilePatientIDs</title>
+  <meta name="keywords" content="reconcilePatientIDs">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; reconcilePatientIDs.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>reconcilePatientIDs
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clc; clear; close all;
+0002 
+0003 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0004 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0005 clinicalmatfile = <span class="string">'clinicaldata.mat'</span>;
+0006 fprintf(<span class="string">'Loading clinical data\n'</span>);
+0007 load(fullfile(basedir, subfolder, clinicalmatfile));
+0008 datamatfile = <span class="string">'smartcaredataPreIDMismatchFix.mat'</span>;
+0009 fprintf(<span class="string">'Loading old patient and measurement data\n'</span>);
+0010 load(fullfile(basedir, subfolder, datamatfile), <span class="string">'patientid'</span>);
+0011 
+0012 patientidold = patientid;
+0013 
+0014 datamatfile = <span class="string">'smartcaredata.mat'</span>;
+0015 fprintf(<span class="string">'Loading new patient and measurement data\n'</span>);
+0016 load(fullfile(basedir, subfolder, datamatfile));
+0017 
+0018 temppatidnew = patientid;
+0019 <span class="keyword">for</span> n = 1:size(temppatidnew, 1)
+0020     temppatidnew.Study_ID{n} = upper(temppatidnew.Study_ID{n});
+0021 <span class="keyword">end</span>
+0022 temppatid    = patientidold;
+0023 <span class="keyword">for</span> n = 1:size(temppatid, 1)
+0024     temppatid.Study_ID{n} = upper(temppatid.Study_ID{n});
+0025 <span class="keyword">end</span>
+0026 
+0027 temp = outerjoin(temppatidnew, temppatid, <span class="string">'LeftKeys'</span>, {<span class="string">'Study_ID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'Study_ID'</span>});
+0028 
+0029 mismatchids = temp(temp.SmartCareID_temppatidnew ~= temp.SmartCareID_temppatid,:);
+0030 fprintf(<span class="string">'\n'</span>);
+0031 fprintf(<span class="string">'Potentially %d mismatched ids in previous dataset\n'</span>, size(mismatchids, 1));
+0032 
+0033 <span class="keyword">for</span> i = 1:size(mismatchids, 1)
+0034     measurecount = sum(physdata.SmartCareID == mismatchids.SmartCareID_temppatidnew(i));
+0035     measurecount2 = sum(ismember(physdata_original.UserID, mismatchids.Patient_ID_temppatidnew(i)));
+0036     
+0037     fprintf(<span class="string">'For SmartCareID %3d (old id = %3d, measure count orig = %5d measure count pre-proc %5d\n'</span>, mismatchids.SmartCareID_temppatidnew(i), mismatchids.SmartCareID_temppatid(i), measurecount2, measurecount);
+0038 
+0039 <span class="keyword">end</span>
+0040 
+0041 <span class="comment">%cdAntibiotics(ismember(cdAntibiotics.ID, [193, 195, 196, 197, 198, 199, 201]),:)</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

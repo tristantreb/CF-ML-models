@@ -1,0 +1,437 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of selectModelRunFromList</title>
+  <meta name="keywords" content="selectModelRunFromList">
+  <meta name="description" content="selectModelRunFromList - allows you to load the saved variables from a">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; selectModelRunFromList.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>selectModelRunFromList
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>selectModelRunFromList - allows you to load the saved variables from a</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [modelrun, modelidx, models] = selectModelRunFromList(loadtype) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> selectModelRunFromList - allows you to load the saved variables from a
+ historical model run (either all the variables or just the prob
+ distributions/distance function arrays.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMSetModelRunParameters.html" class="code" title="function [study, modelinputsmatfile, datademographicsfile, dataoutliersfile, sigmamethod, mumethod, curveaveragingmethod,smoothingmethod, offsetblockingmethod, measuresmask, runmode, modelrun, imputationmode, confidencemode, printpredictions] = amEMSetModelRunParameters">amEMSetModelRunParameters</a>	amEMSetModelRunParameters - sets the various run parameters for the model</li><li><a href="compareModelRunsScript.html" class="code" title="">compareModelRunsScript</a>	</li><li><a href="runModelUtilityFunctions.html" class="code" title="">runModelUtilityFunctions</a>	</li><li><a href="runPlotFunctions.html" class="code" title="">runPlotFunctions</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [modelrun, modelidx, models] = selectModelRunFromList(loadtype)</a>
+0002 
+0003 <span class="comment">% selectModelRunFromList - allows you to load the saved variables from a</span>
+0004 <span class="comment">% historical model run (either all the variables or just the prob</span>
+0005 <span class="comment">% distributions/distance function arrays.</span>
+0006 
+0007 SCmodelsVEM = {  
+0008             <span class="string">'SC_AMv4c_sig3_mu3_ca2_sm1_rm1_mm2_mo25_dw25_ex-26_obj4595.2626'</span>;
+0009             <span class="string">'SC_AMv4c_sig3_mu3_ca2_sm2_rm1_mm2_mo25_dw25_ex-27_obj4602.0068'</span>;
+0010             <span class="string">'SC_AMv4c_sig3_mu3_ca2_sm2_rm2_mm2_mo25_dw25_ex-27_obj4557.8883'</span>;
+0011             <span class="string">'SC_AMvEM_sig3_mu3_ca2_sm1_rm5_mm2_mo25_dw25_ex-26_obj4595.2626'</span>;
+0012             <span class="string">'SC_AMvEM_sig3_mu3_ca2_sm1_rm4_mm2_mo25_dw25_ex-27_obj4536.9297'</span>;
+0013             
+0014             <span class="string">'SC_AMv4c_sig3_mu3_ca2_sm1_rm1_mm3_mo25_dw25_ex-27_obj10964.9323'</span>;
+0015             <span class="string">'SC_AMv4c_sig3_mu3_ca2_sm2_rm1_mm3_mo25_dw25_ex-27_obj10815.2946'</span>;
+0016             <span class="string">'SC_AMv4c_sig3_mu3_ca2_sm2_rm2_mm3_mo25_dw25_ex-27_obj10753.8213'</span>;
+0017             <span class="string">'SC_AMvEM_sig3_mu3_ca2_sm1_rm5_mm3_mo25_dw25_ex-27_obj10964.9323'</span>;
+0018             <span class="string">'SC_AMvEM_sig3_mu3_ca2_sm1_rm4_mm3_mo25_dw25_ex-27_obj10775.2724'</span>;
+0019             
+0020             <span class="string">'SC_AMvEM_sig3_mu3_ca2_sm2_rm4_mm2_mo25_dw25_ex-27_obj4559.9901'</span>;
+0021             <span class="string">'SC_AMvEM_sig3_mu3_ca2_sm2_rm4_mm3_mo25_dw25_ex-27_obj10779.2176'</span>;
+0022             <span class="string">'SC_AMv4c_sig3_mu3_ca2_sm1_rm2_mm2_mo25_dw25_ex-27_obj4551.0881'</span>;
+0023             <span class="string">'SC_AMv4c_sig3_mu3_ca2_sm1_rm2_mm3_mo25_dw25_ex-27_obj10768.2854'</span>;
+0024             <span class="string">'placeholder'</span>;
+0025             
+0026             <span class="string">'placeholder'</span>;
+0027             <span class="string">'placeholder'</span>;
+0028             <span class="string">'placeholder'</span>;
+0029             <span class="string">'placeholder'</span>;
+0030             <span class="string">'placeholder'</span>;
+0031             
+0032             <span class="string">'SC_AMv4c_sig3_mu3_ca2_sm1_rm1_ob1_mm2_mo25_dw25_ex-27_obj17477.2629'</span>;
+0033             <span class="string">'SC_AMv4c_sig3_mu3_ca2_sm2_rm1_ob1_mm2_mo25_dw25_ex-27_obj17419.4511'</span>;
+0034             <span class="string">'SC_AMv4c_sig3_mu3_ca2_sm2_rm2_ob1_mm2_mo25_dw25_ex-xx_objxxxx.xxxx'</span>;
+0035             <span class="string">'SC_AMvEM_sig3_mu3_ca2_sm1_rm5_ob1_mm2_mo25_dw25_ex-27_obj17477.2629'</span>;
+0036             <span class="string">'SC_AMvEM_sig3_mu3_ca2_sm1_rm4_ob1_mm2_mo25_dw25_ex-27_obj17384.2629'</span>;
+0037             
+0038             <span class="string">'SC_AMv4c_sig3_mu3_ca2_sm1_rm1_ob1_mm3_mo25_dw25_ex-27_obj32115.4702'</span>;
+0039             <span class="string">'SC_AMv4c_sig3_mu3_ca2_sm2_rm1_ob1_mm3_mo25_dw25_ex-27_obj32042.1136'</span>;
+0040             <span class="string">'SC_AMv4c_sig3_mu3_ca2_sm2_rm2_ob1_mm3_mo25_dw25_ex-xx_objxxxxx.xxxx'</span>;
+0041             <span class="string">'SC_AMvEM_sig3_mu3_ca2_sm1_rm5_ob1_mm3_mo25_dw25_ex-27_obj32115.4702'</span>;
+0042             <span class="string">'SC_AMvEM_sig3_mu3_ca2_sm1_rm4_ob1_mm3_mo25_dw25_ex-27_obj32077.8214'</span>;
+0043             
+0044             <span class="string">'SC_AMvEM_sig3_mu3_ca2_sm2_rm4_ob1_mm2_mo25_dw25_ex-27_obj17402.3337'</span>;
+0045             <span class="string">'SC_AMvEM_sig3_mu3_ca2_sm2_rm4_ob1_mm3_mo25_dw25_ex-27_obj32015.6861'</span>;
+0046             <span class="string">'SC_AMv4c_sig3_mu3_ca2_sm1_rm2_ob1_mm2_mo25_dw25_ex-27_obj17383.5845'</span>;
+0047             <span class="string">'SC_AMv4c_sig3_mu3_ca2_sm1_rm2_ob1_mm3_mo25_dw25_ex-27_obj32004.1787'</span>;
+0048             <span class="string">'placeholder'</span>;
+0049             
+0050             <span class="string">'placeholder'</span>;
+0051             <span class="string">'placeholder'</span>;
+0052             <span class="string">'placeholder'</span>;
+0053             <span class="string">'placeholder'</span>;
+0054             <span class="string">'placeholder'</span>;
+0055             
+0056             <span class="string">'SC_AMv4c_sig4_mu3_ca2_sm1_rm1_ob1_mm2_mo25_dw25_ex-28_obj17836.3116'</span>;
+0057             <span class="string">'SC_AMv4c_sig4_mu3_ca2_sm2_rm1_ob1_mm2_mo25_dw25_ex-28_obj17850.8576'</span>;
+0058             <span class="string">'SC_AMv4c_sig4_mu3_ca2_sm2_rm2_ob1_mm2_mo25_dw25_ex-28_obj17806.9471'</span>;
+0059             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm1_rm5_ob1_mm2_mo25_dw25_ex-28_obj17836.3116'</span>;
+0060             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm1_rm4_ob1_mm2_mo25_dw25_ex-28_obj17797.4510'</span>;
+0061             
+0062             <span class="string">'SC_AMv4c_sig4_mu3_ca2_sm1_rm1_ob1_mm3_mo25_dw25_ex-28_obj32500.5703'</span>;
+0063             <span class="string">'SC_AMv4c_sig4_mu3_ca2_sm2_rm1_ob1_mm3_mo25_dw25_ex-28_obj32461.0147'</span>;
+0064             <span class="string">'SC_AMv4c_sig4_mu3_ca2_sm2_rm2_ob1_mm3_mo25_dw25_ex-28_obj32449.6955'</span>;
+0065             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm1_rm5_ob1_mm3_mo25_dw25_ex-28_obj32500.5703'</span>;
+0066             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm1_rm4_ob1_mm3_mo25_dw25_ex-28_obj32486.8715'</span>;
+0067             
+0068             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm2_rm4_ob1_mm2_mo25_dw25_ex-28_obj17826.4088'</span>;
+0069             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm2_rm4_ob1_mm3_mo25_dw25_ex-28_obj32464.4365'</span>;
+0070             <span class="string">'SC_AMv4c_sig4_mu3_ca2_sm1_rm2_ob1_mm2_mo25_dw25_ex-28_obj17778.1399'</span>;
+0071             <span class="string">'SC_AMv4c_sig4_mu3_ca2_sm1_rm2_ob1_mm3_mo25_dw25_ex-27_obj31672.5924'</span>;
+0072             <span class="string">'placeholder'</span>;
+0073             
+0074             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm2_rm4_ob1_mm3_mo25_dw25_ex-28_obj293.8308'</span>;
+0075             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm2_rm4_ob1_mm2_mo25_dw25_ex-28_obj318.6805'</span>;
+0076             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm2_rm4_ob1_mm1_mo25_dw25_ex-28_obj291.2961'</span>;
+0077             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm1_rm4_ob1_mm1_mo25_dw25_ex-28_obj291.1600'</span>;
+0078             <span class="string">'placeholder'</span>;
+0079             
+0080             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm1_rm4_ob1_mm3_mo25_dw25_ex-28_obj293.7499'</span>;
+0081             <span class="string">'SC_AMvEM_sig4_mu4_ca2_sm1_rm4_ob1_mm3_mo25_dw25_ex-28_obj293.5482'</span>;
+0082             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm2_rm4_ob1_mm3_mo25_dw25_ex-28_obj293.8308'</span>;
+0083             <span class="string">'SC_AMvEM_sig4_mu4_ca2_sm2_rm4_ob1_mm3_mo25_dw25_ex-28_obj293.6818'</span>;
+0084          };
+0085      
+0086 SCmodelsVEM2 = {  
+0087             <span class="string">'placeholder'</span>;
+0088             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm1_rm4_ob1_mm2_mo25_dw25_ex-28_obj317.8905'</span>;
+0089             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm2_rm4_ob1_mm2_mo25_dw25_ex-28_obj318.6805'</span>;
+0090             <span class="string">'SC_AMvEM_sig4_mu4_ca2_sm1_rm4_ob1_mm2_mo25_dw25_ex-28_obj317.8905'</span>;
+0091             <span class="string">'SC_AMvEM_sig4_mu4_ca2_sm2_rm4_ob1_mm2_mo25_dw25_ex-28_obj318.6805'</span>;
+0092             
+0093             <span class="string">'placeholder'</span>;
+0094             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm1_rm4_ob1_mm3_mo25_dw25_ex-28_obj293.7499'</span>;
+0095             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm2_rm4_ob1_mm3_mo25_dw25_ex-28_obj293.8308'</span>;
+0096             <span class="string">'SC_AMvEM_sig4_mu4_ca2_sm1_rm4_ob1_mm3_mo25_dw25_ex-28_obj293.5482'</span>;
+0097             <span class="string">'SC_AMvEM_sig4_mu4_ca2_sm2_rm4_ob1_mm3_mo25_dw25_ex-28_obj293.6818'</span>;
+0098             
+0099             <span class="string">'placeholder'</span>;
+0100             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm1_rm4_ob1_mm1_mo25_dw25_ex-28_obj291.1600'</span>;
+0101             <span class="string">'SC_AMvEM_sig4_mu3_ca2_sm2_rm4_ob1_mm1_mo25_dw25_ex-28_obj291.2961'</span>;
+0102             <span class="string">'SC_AMvEM_sig4_mu4_ca2_sm1_rm4_ob1_mm1_mo25_dw25_ex-28_obj290.9940'</span>;
+0103             <span class="string">'SC_AMvEM_sig4_mu4_ca2_sm2_rm4_ob1_mm1_mo25_dw25_ex-28_obj291.1567'</span>;
+0104             
+0105             <span class="string">'placeholder'</span>;
+0106             <span class="string">'SC_AMvEM2_sig4_mu3_ca2_sm1_rm4_ob1_mm3_mo25_dw25_ex-28_obj295.4349'</span>;
+0107             <span class="string">'SC_AMvEM2_sig4_mu3_ca2_sm2_rm4_ob1_mm3_mo25_dw25_ex-28_obj296.0669'</span>;
+0108             <span class="string">'SC_AMvEM2_sig4_mu4_ca2_sm1_rm4_ob1_mm3_mo25_dw25_ex-28_obj295.6658'</span>;
+0109             <span class="string">'SC_AMvEM2_sig4_mu4_ca2_sm2_rm4_ob1_mm3_mo25_dw25_ex-28_obj295.9340'</span>;
+0110             
+0111             <span class="string">'placeholder'</span>;
+0112             <span class="string">'SC_AMvEM2_sig4_mu3_ca2_sm1_rm4_ob1_mm1_mo25_dw25_ex-28_obj292.6813'</span>;
+0113             <span class="string">'SC_AMvEM2_sig4_mu3_ca2_sm2_rm4_ob1_mm1_mo25_dw25_ex-28_obj293.2933'</span>;
+0114             <span class="string">'SC_AMvEM2_sig4_mu4_ca2_sm1_rm4_ob1_mm1_mo25_dw25_ex-28_obj292.6343'</span>;
+0115             <span class="string">'SC_AMvEM2_sig4_mu4_ca2_sm2_rm4_ob1_mm1_mo25_dw25_ex-28_obj292.9482'</span>;
+0116             
+0117             <span class="string">'placeholder'</span>;
+0118             <span class="string">'SC_AMvEM2_sig4_mu3_ca2_sm1_rm4_ob1_im1_mm3_mo25_dw25_ex-28_obj135.6674'</span>;
+0119             <span class="string">'SC_AMvEM2_sig4_mu3_ca2_sm2_rm4_ob1_im1_mm3_mo25_dw25_ex-28_obj135.5826'</span>;
+0120             <span class="string">'SC_AMvEM2_sig4_mu4_ca2_sm1_rm4_ob1_im1_mm3_mo25_dw25_ex-28_obj135.3840'</span>;
+0121             <span class="string">'placeholder'</span>;
+0122             
+0123             <span class="string">'placeholder'</span>;
+0124             <span class="string">'SC_AMvEM2_sig4_mu3_ca2_sm2_rm4_ob1_im1_mm1_mo25_dw25_ex-28_obj135.4247'</span>;
+0125             <span class="string">'placeholder'</span>;
+0126             <span class="string">'placeholder'</span>;
+0127             <span class="string">'SC_AMvEM2_sig4_mu4_ca2_sm2_rm4_ob1_im1_mm1_mo25_dw25_ex-28_obj135.3157'</span>;
+0128             
+0129             
+0130          };
+0131 
+0132 SCmodelsVEM3 = {
+0133             <span class="string">'SC_AMvEM3_sig4_mu3_ca2_sm1_rm4_ob1_im1_mm3_mo25_dw25_ex-28_obj1.41351385'</span>;
+0134             <span class="string">'SC_AMvEM3_sig4_mu3_ca2_sm2_rm4_ob1_im1_mm3_mo25_dw25_ex-28_obj1.40838638'</span>;
+0135             <span class="string">'SC_AMvEM3_sig4_mu4_ca2_sm1_rm4_ob1_im1_mm3_mo25_dw25_ex-28_obj1.41130446'</span>;
+0136             <span class="string">'SC_AMvEM3_sig4_mu4_ca2_sm2_rm4_ob1_im1_mm3_mo25_dw25_ex-28_obj1.40679241'</span>;
+0137             <span class="string">'SC_AMvEM3_sig4_mu5_ca2_sm1_rm4_ob1_im1_mm3_mo25_dw25_ex-28_obj1.40255040'</span>; <span class="comment">% didn't fully converge - #4:18-20, #9:0-1, #22:21-20, #36:7-8, #52:20-21</span>
+0138             <span class="string">'SC_AMvEM3_sig4_mu5_ca2_sm2_rm4_ob1_im1_mm3_mo25_dw25_ex-28_obj1.40246666'</span>;
+0139             <span class="string">'placeholder'</span>;
+0140             <span class="string">'placeholder'</span>;
+0141             <span class="string">'placeholder'</span>;
+0142             <span class="string">'placeholder'</span>;
+0143             <span class="string">'SC_AMvEM3_sig4_mu3_ca2_sm1_rm4_ob1_im1_mm1_mo25_dw25_ex-28_obj1.41329103'</span>; <span class="comment">% didn't fully converge - no offsets changing, but pd didn't fully converge</span>
+0144             <span class="string">'SC_AMvEM3_sig4_mu3_ca2_sm2_rm4_ob1_im1_mm1_mo25_dw25_ex-28_obj1.40994122'</span>;
+0145             <span class="string">'SC_AMvEM3_sig4_mu4_ca2_sm1_rm4_ob1_im1_mm1_mo25_dw25_ex-28_obj1.41574385'</span>;
+0146             <span class="string">'SC_AMvEM3_sig4_mu4_ca2_sm2_rm4_ob1_im1_mm1_mo25_dw25_ex-28_obj1.40902340'</span>; <span class="comment">% didn't fully converge - #3:2-1, #12:24-23</span>
+0147             <span class="string">'SC_AMvEM3_sig4_mu5_ca2_sm1_rm4_ob1_im1_mm1_mo25_dw25_ex-28_obj1.40500764'</span>;
+0148             <span class="string">'SC_AMvEM3_sig4_mu5_ca2_sm2_rm4_ob1_im1_mm1_mo25_dw25_ex-28_obj1.40425671'</span>; <span class="comment">% didn't fully converge - no offsets changing, but pd didn't fully converge</span>
+0149             <span class="string">'placeholder'</span>;
+0150             <span class="string">'placeholder'</span>;
+0151             <span class="string">'placeholder'</span>;
+0152             <span class="string">'placeholder'</span>;
+0153             <span class="string">'SC_AMvEM3_sig4_mu3_ca2_sm1_rm4_ob1_im1_mm2_mo25_dw25_ex-28_obj1.30894768'</span>; <span class="comment">% didn't fully converge - intervention 12 flipping between offset 19 &amp; 22</span>
+0154             <span class="string">'SC_AMvEM3_sig4_mu3_ca2_sm2_rm4_ob1_im1_mm2_mo25_dw25_ex-28_obj1.31930876'</span>;
+0155             <span class="string">'SC_AMvEM3_sig4_mu4_ca2_sm1_rm4_ob1_im1_mm2_mo25_dw25_ex-28_obj1.30894768'</span>; <span class="comment">% didn't fully converge - intervention 12 flipping between offset 19 &amp; 22</span>
+0156             <span class="string">'SC_AMvEM3_sig4_mu4_ca2_sm2_rm4_ob1_im1_mm2_mo25_dw25_ex-28_obj1.31930876'</span>;
+0157             <span class="string">'SC_AMvEM3_sig4_mu5_ca2_sm1_rm4_ob1_im1_mm2_mo25_dw25_ex-28_obj1.29222264'</span>;
+0158             <span class="string">'SC_AMvEM3_sig4_mu5_ca2_sm2_rm4_ob1_im1_mm2_mo25_dw25_ex-28_obj1.30011632'</span>;
+0159             <span class="string">'placeholder'</span>;
+0160             <span class="string">'placeholder'</span>;
+0161             <span class="string">'placeholder'</span>;
+0162             <span class="string">'placeholder'</span>;
+0163          };
+0164      
+0165 SCmodelsVEM4 = {
+0166             <span class="string">'SCvEM4_sig4_mu3_ca2_sm1_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.41351385'</span>;
+0167             <span class="string">'SCvEM4_sig4_mu3_ca2_sm2_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.40838638'</span>;
+0168             <span class="string">'SCvEM4_sig4_mu4_ca2_sm1_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.41130446'</span>;
+0169             <span class="string">'SCvEM4_sig4_mu4_ca2_sm2_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.40679241'</span>;
+0170             <span class="string">'SCvEM4_sig4_mu5_ca2_sm1_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.40255040'</span>; 
+0171             <span class="string">'SCvEM4_sig4_mu5_ca2_sm2_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.40246666'</span>;
+0172             <span class="string">'placeholder'</span>;
+0173             <span class="string">'placeholder'</span>;
+0174             <span class="string">'placeholder'</span>;
+0175             <span class="string">'placeholder'</span>;
+0176             <span class="string">'SCvEM4_sig4_mu3_ca2_sm1_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.41329103'</span>; 
+0177             <span class="string">'SCvEM4_sig4_mu3_ca2_sm2_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.40994122'</span>;
+0178             <span class="string">'SCvEM4_sig4_mu4_ca2_sm1_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.41574385'</span>;
+0179             <span class="string">'SCvEM4_sig4_mu4_ca2_sm2_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.40902340'</span>; 
+0180             <span class="string">'SCvEM4_sig4_mu5_ca2_sm1_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.40500764'</span>;
+0181             <span class="string">'SCvEM4_sig4_mu5_ca2_sm2_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.40425671'</span>; 
+0182             <span class="string">'placeholder'</span>;
+0183             <span class="string">'placeholder'</span>;
+0184             <span class="string">'placeholder'</span>;
+0185             <span class="string">'placeholder'</span>;
+0186             <span class="string">'SCvEM4_sig4_mu3_ca2_sm1_rm4_ob1_im1_cm2_mm2_mo25_dw25_ex-28_obj1.30894768'</span>; 
+0187             <span class="string">'SCvEM4_sig4_mu3_ca2_sm2_rm4_ob1_im1_cm2_mm2_mo25_dw25_ex-28_obj1.31930876'</span>;
+0188             <span class="string">'SCvEM4_sig4_mu4_ca2_sm1_rm4_ob1_im1_cm2_mm2_mo25_dw25_ex-28_obj1.30894768'</span>; 
+0189             <span class="string">'SCvEM4_sig4_mu4_ca2_sm2_rm4_ob1_im1_cm2_mm2_mo25_dw25_ex-28_obj1.31930876'</span>;
+0190             <span class="string">'SCvEM4_sig4_mu5_ca2_sm1_rm4_ob1_im1_cm2_mm2_mo25_dw25_ex-28_obj1.29222264'</span>;
+0191             <span class="string">'SCvEM4_sig4_mu5_ca2_sm2_rm4_ob1_im1_cm2_mm2_mo25_dw25_ex-28_obj1.30011632'</span>;
+0192             <span class="string">'placeholder'</span>;
+0193             <span class="string">'placeholder'</span>;
+0194             <span class="string">'placeholder'</span>;
+0195             <span class="string">'placeholder'</span>;
+0196          };
+0197      
+0198 SCmodelsVEM5 = {
+0199             <span class="string">'SCvEM5_sig4_mu3_ca2_sm1_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.39965424'</span>;
+0200             <span class="string">'SCvEM5_sig4_mu3_ca2_sm2_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.39575620'</span>;
+0201             <span class="string">'SCvEM5_sig4_mu4_ca2_sm1_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.39533401'</span>;
+0202             <span class="string">'SCvEM5_sig4_mu4_ca2_sm2_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.39416912'</span>;
+0203             <span class="string">'SCvEM5_sig4_mu5_ca2_sm1_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.39024821'</span>;
+0204             <span class="string">'SCvEM5_sig4_mu5_ca2_sm2_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.38940962'</span>;
+0205             <span class="string">'placeholder'</span>;
+0206             <span class="string">'placeholder'</span>;
+0207             <span class="string">'placeholder'</span>;
+0208             <span class="string">'placeholder'</span>;
+0209             <span class="string">'SCvEM5_sig4_mu3_ca2_sm1_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.39600674'</span>;
+0210             <span class="string">'SCvEM5_sig4_mu3_ca2_sm2_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.39504919'</span>;
+0211             <span class="string">'SCvEM5_sig4_mu4_ca2_sm1_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.39487324'</span>;
+0212             <span class="string">'SCvEM5_sig4_mu4_ca2_sm2_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.39401364'</span>;
+0213             <span class="string">'SCvEM5_sig4_mu5_ca2_sm1_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.38980249'</span>;
+0214             <span class="string">'SCvEM5_sig4_mu5_ca2_sm2_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.38900888'</span>;
+0215             <span class="string">'placeholder'</span>;
+0216             <span class="string">'placeholder'</span>;
+0217             <span class="string">'placeholder'</span>;
+0218             <span class="string">'placeholder'</span>;
+0219             <span class="string">'SCvEM5_sig4_mu3_ca2_sm1_rm4_ob1_im1_cm2_mm2_mo25_dw25_ex-28_obj1.28374272'</span>;
+0220             <span class="string">'SCvEM5_sig4_mu3_ca2_sm2_rm4_ob1_im1_cm2_mm2_mo25_dw25_ex-28_obj1.29211356'</span>;
+0221             <span class="string">'SCvEM5_sig4_mu4_ca2_sm1_rm4_ob1_im1_cm2_mm2_mo25_dw25_ex-28_obj1.28374272'</span>;
+0222             <span class="string">'SCvEM5_sig4_mu4_ca2_sm2_rm4_ob1_im1_cm2_mm2_mo25_dw25_ex-28_obj1.29211356'</span>;
+0223             <span class="string">'SCvEM5_sig4_mu5_ca2_sm1_rm4_ob1_im1_cm2_mm2_mo25_dw25_ex-28_obj1.26469079'</span>;
+0224             <span class="string">'SCvEM5_sig4_mu5_ca2_sm2_rm4_ob1_im1_cm2_mm2_mo25_dw25_ex-28_obj1.27156118'</span>;
+0225             <span class="string">'placeholder'</span>;
+0226             <span class="string">'placeholder'</span>;
+0227             <span class="string">'placeholder'</span>;
+0228             <span class="string">'placeholder'</span>;
+0229          };     
+0230 
+0231      
+0232 SCmodelsVEM3Imputed = {
+0233             <span class="string">'SC_AMvEM3_sig4_mu3_ca2_sm1_rm4_ob1_im2_mm3_mo25_dw25_ex-28_obj1.41193292'</span>;
+0234             <span class="string">'SC_AMvEM3_sig4_mu3_ca2_sm2_rm4_ob1_im2_mm3_mo25_dw25_ex-28_obj1.40747059'</span>;
+0235             <span class="string">'SC_AMvEM3_sig4_mu4_ca2_sm1_rm4_ob1_im2_mm3_mo25_dw25_ex-28_obj1.41080252'</span>; 
+0236             <span class="string">'SC_AMvEM3_sig4_mu4_ca2_sm2_rm4_ob1_im2_mm3_mo25_dw25_ex-28_obj1.40592220'</span>;
+0237             <span class="string">'SC_AMvEM3_sig4_mu5_ca2_sm1_rm4_ob1_im2_mm3_mo25_dw25_ex-28_obj1.40264028'</span>; 
+0238             <span class="string">'SC_AMvEM3_sig4_mu5_ca2_sm2_rm4_ob1_im2_mm3_mo25_dw25_ex-28_obj1.40041165'</span>; <span class="comment">% didn't fully converge - #10:18-17, #22:23-20, #69:19-21, #74:2-11</span>
+0239             <span class="string">'placeholder'</span>;
+0240             <span class="string">'placeholder'</span>;
+0241             <span class="string">'placeholder'</span>;
+0242             <span class="string">'placeholder'</span>;
+0243             <span class="string">'SC_AMvEM3_sig4_mu3_ca2_sm1_rm4_ob1_im2_mm1_mo25_dw25_ex-28_obj1.41446115'</span>; 
+0244             <span class="string">'SC_AMvEM3_sig4_mu3_ca2_sm2_rm4_ob1_im2_mm1_mo25_dw25_ex-28_obj1.40930355'</span>;
+0245             <span class="string">'SC_AMvEM3_sig4_mu4_ca2_sm1_rm4_ob1_im2_mm1_mo25_dw25_ex-28_obj1.41246829'</span>;
+0246             <span class="string">'SC_AMvEM3_sig4_mu4_ca2_sm2_rm4_ob1_im2_mm1_mo25_dw25_ex-28_obj1.40833872'</span>; <span class="comment">% didn't fully converge - no offsets changing, but pd didn't fully converge</span>
+0247             <span class="string">'SC_AMvEM3_sig4_mu5_ca2_sm1_rm4_ob1_im2_mm1_mo25_dw25_ex-28_obj1.40568664'</span>; <span class="comment">% didn't fully converge - #23:23-22, #30:6-5, #80:19-22, #87:0-1</span>
+0248             <span class="string">'SC_AMvEM3_sig4_mu5_ca2_sm2_rm4_ob1_im2_mm1_mo25_dw25_ex-28_obj1.40250473'</span>; 
+0249             <span class="string">'placeholder'</span>;
+0250             <span class="string">'placeholder'</span>;
+0251             <span class="string">'placeholder'</span>;
+0252             <span class="string">'placeholder'</span>;
+0253             <span class="string">'SC_AMvEM3_sig4_mu3_ca2_sm1_rm4_ob1_im2_mm2_mo25_dw25_ex-28_obj1.31068191'</span>; 
+0254             <span class="string">'SC_AMvEM3_sig4_mu3_ca2_sm2_rm4_ob1_im2_mm2_mo25_dw25_ex-28_obj1.31806011'</span>; <span class="comment">% didn't fully converge - no offsets changing, but pd didn't fully converge</span>
+0255             <span class="string">'SC_AMvEM3_sig4_mu4_ca2_sm1_rm4_ob1_im2_mm2_mo25_dw25_ex-28_obj1.31068191'</span>; 
+0256             <span class="string">'SC_AMvEM3_sig4_mu4_ca2_sm2_rm4_ob1_im2_mm2_mo25_dw25_ex-28_obj1.31806011'</span>; <span class="comment">% didn't fully converge - no offsets changing, but pd didn't fully converge</span>
+0257             <span class="string">'SC_AMvEM3_sig4_mu5_ca2_sm1_rm4_ob1_im2_mm2_mo25_dw25_ex-28_obj1.28785594'</span>;
+0258             <span class="string">'SC_AMvEM3_sig4_mu5_ca2_sm2_rm4_ob1_im2_mm2_mo25_dw25_ex-28_obj1.29832814'</span>;
+0259             <span class="string">'placeholder'</span>;
+0260             <span class="string">'placeholder'</span>;
+0261             <span class="string">'placeholder'</span>;
+0262             <span class="string">'placeholder'</span>;
+0263          };
+0264             
+0265 TMmodelsVEM2 = {  
+0266             <span class="string">'TM_AMvEM2_sig4_mu3_ca2_sm2_rm4_ob1_im1_mm3_mo25_dw25_ex-28_obj38.1535'</span>;
+0267             <span class="string">'TM_AMvEM2_sig4_mu4_ca2_sm2_rm4_ob1_im1_mm1_mo25_dw25_ex-28_obj38.4991'</span>;
+0268             <span class="string">'TM_AMvEM2_sig4_mu4_ca2_sm2_rm4_ob1_im1_mm3_mo25_dw25_ex-28_obj38.1535'</span>;
+0269             <span class="string">'TM_AMvEM2_sig4_mu5_ca2_sm1_rm4_ob1_im1_mm1_mo25_dw25_ex-28_obj38.2212'</span>;
+0270             <span class="string">'TM_AMvEM2_sig4_mu5_ca2_sm2_rm4_ob1_im1_mm1_mo25_dw25_ex-28_obj37.7257'</span>;
+0271             <span class="string">'TM_AMvEM2_sig4_mu5_ca2_sm2_rm4_ob1_im1_mm3_mo25_dw25_ex-28_obj37.4667'</span>;
+0272             <span class="string">'TM_AMvEM2_sig4_mu5_ca2_sm2_rm4_ob1_im1_mm3_mo25_dw25_ex-28_obj37.0931'</span>;
+0273             <span class="string">'placeholder'</span>;
+0274             <span class="string">'placeholder'</span>;
+0275             <span class="string">'placeholder'</span>;
+0276             };
+0277         
+0278 TMmodelsVEM3 = {             
+0279             <span class="string">'TM_AMvEM2_sig4_mu5_ca2_sm2_rm4_ob1_im1_mm3_mo25_dw25_ex-28_obj38.2047'</span>; <span class="comment">% 28 interventions</span>
+0280             <span class="string">'TM_AMvEM2_sig4_mu5_ca2_sm2_rm4_ob1_im1_mm1_mo25_dw25_ex-28_obj38.4291'</span>; <span class="comment">% 28 interventions</span>
+0281             <span class="string">'TM_AMvEM2_sig4_mu5_ca2_sm2_rm4_ob1_im1_mm3_mo25_dw25_ex-28_obj37.1701'</span>; <span class="comment">% 28 interventions and outlier prior = 1%</span>
+0282             <span class="string">'TM_AMvEM2_sig4_mu5_ca2_sm2_rm4_ob1_im1_mm1_mo25_dw25_ex-28_obj37.3985'</span>; <span class="comment">% 28 interventions and outlier prior = 1%</span>
+0283             
+0284             };
+0285         
+0286 TMmodelsVEM4 = {
+0287             <span class="string">'TMvEM4_sig4_mu4_ca2_sm2_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.37745872'</span>;
+0288             <span class="string">'TMvEM4_sig4_mu5_ca2_sm2_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.33160543'</span>;
+0289             <span class="string">'TMvEM4_sig4_mu4_ca2_sm2_rm4_ob1_im1_cm2_mm2_mo25_dw25_ex-28_obj1.36845419'</span>;
+0290             <span class="string">'TMvEM4_sig4_mu5_ca2_sm2_rm4_ob1_im1_cm2_mm2_mo25_dw25_ex-28_obj1.28396865'</span>;
+0291             <span class="string">'TMvEM4_sig4_mu4_ca2_sm2_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.36073688'</span>;
+0292             <span class="string">'TMvEM4_sig4_mu5_ca2_sm2_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.31991255'</span>;
+0293             <span class="string">'placeholder'</span>;
+0294             <span class="string">'placeholder'</span>;
+0295             <span class="string">'placeholder'</span>;
+0296             <span class="string">'placeholder'</span>;
+0297             <span class="string">'TMvEM4_sig4_mu4_ca2_sm2_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.37396710'</span>;
+0298             <span class="string">'TMvEM4_sig4_mu5_ca2_sm2_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.32784193'</span>;
+0299             <span class="string">'TMvEM4_sig4_mu4_ca2_sm2_rm4_ob1_im1_cm2_mm2_mo25_dw25_ex-28_obj1.37786845'</span>;
+0300             <span class="string">'TMvEM4_sig4_mu5_ca2_sm2_rm4_ob1_im1_cm2_mm2_mo25_dw25_ex-28_obj1.27531006'</span>;
+0301             <span class="string">'TMvEM4_sig4_mu4_ca2_sm2_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.36069992'</span>;
+0302             <span class="string">'TMvEM4_sig4_mu5_ca2_sm2_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.31989860'</span>;
+0303             };
+0304 
+0305 SCmodelsFEV1Split = {
+0306             <span class="string">'SCFEV1Split1_sig4_mu4_ca2_sm2_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.38927877'</span>;
+0307             <span class="string">'SCFEV1Split2_sig4_mu4_ca2_sm2_rm4_ob1_im1_cm2_mm1_mo25_dw25_ex-28_obj1.42343683'</span>;
+0308             <span class="string">'SCFEV1Split1_sig4_mu4_ca2_sm2_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.38653038'</span>;
+0309             <span class="string">'SCFEV1Split2_sig4_mu4_ca2_sm2_rm4_ob1_im1_cm2_mm3_mo25_dw25_ex-28_obj1.41807577'</span>;
+0310             };
+0311      
+0312      
+0313 fprintf(<span class="string">'Pick Model set\n'</span>);
+0314 fprintf(<span class="string">'--------------\n'</span>);
+0315 fprintf(<span class="string">' 1: Damian SC - vEM\n'</span>);
+0316 fprintf(<span class="string">' 2: Damian SC - vEM2\n'</span>);
+0317 fprintf(<span class="string">' 3: Damian SC - vEM3\n'</span>);
+0318 fprintf(<span class="string">' 4: Damian SC - vEM4\n'</span>);
+0319 fprintf(<span class="string">' 5: Damian SC - vEM3 with imputation\n'</span>);
+0320 fprintf(<span class="string">' 6: Damian TM - vEM2\n'</span>);
+0321 fprintf(<span class="string">' 7: Damian TM - vEM3\n'</span>);
+0322 fprintf(<span class="string">' 8: Damian TM - vEM4\n'</span>);
+0323 fprintf(<span class="string">' 9: Damian SC - vFEV1Split\n'</span>);
+0324 fprintf(<span class="string">'10: Damian SC - vEM5\n'</span>);
+0325 
+0326 modelset = input(<span class="string">'Choose model set (1-10) '</span>);
+0327 
+0328 <span class="keyword">if</span> modelset &gt; 10
+0329     fprintf(<span class="string">'Invalid choice\n'</span>);
+0330     <span class="keyword">return</span>;
+0331 <span class="keyword">end</span>
+0332 <span class="keyword">if</span> isequal(modelset,<span class="string">''</span>)
+0333     fprintf(<span class="string">'Invalid choice\n'</span>);
+0334     <span class="keyword">return</span>;
+0335 <span class="keyword">end</span>
+0336 
+0337 <span class="keyword">if</span> modelset == 1
+0338     models = SCmodelsVEM;
+0339 <span class="keyword">elseif</span> modelset == 2
+0340     models = SCmodelsVEM2;
+0341 <span class="keyword">elseif</span> modelset == 3
+0342     models = SCmodelsVEM3;
+0343 <span class="keyword">elseif</span> modelset == 4
+0344     models = SCmodelsVEM4;
+0345 <span class="keyword">elseif</span> modelset == 5
+0346     models = SCmodelsVEM3Imputed;
+0347 <span class="keyword">elseif</span> modelset == 6
+0348     models = TMmodelsVEM2;
+0349 <span class="keyword">elseif</span> modelset == 7
+0350     models = TMmodelsVEM3;
+0351 <span class="keyword">elseif</span> modelset == 8
+0352     models = TMmodelsVEM4;
+0353 <span class="keyword">elseif</span> modelset == 9
+0354     models = SCmodelsFEV1Split;
+0355 <span class="keyword">elseif</span> modelset == 10
+0356     models = SCmodelsVEM5;
+0357 <span class="keyword">else</span>
+0358     fprintf(<span class="string">'Should not get here\n'</span>);
+0359 <span class="keyword">end</span>
+0360 
+0361 
+0362 nmodels = size(models,1);
+0363 fprintf(<span class="string">'Model runs available\n'</span>);
+0364 fprintf(<span class="string">'--------------------\n'</span>);
+0365 <span class="keyword">for</span> i = 1:nmodels
+0366     fprintf(<span class="string">'%d: %s\n'</span>, i, models{i});
+0367 <span class="keyword">end</span>
+0368 fprintf(<span class="string">'\n'</span>);
+0369 
+0370 modelidx = input(<span class="string">'Choose model run to use ? '</span>);
+0371 <span class="keyword">if</span> modelidx &gt; nmodels 
+0372     fprintf(<span class="string">'Invalid choice\n'</span>);
+0373     <span class="keyword">return</span>;
+0374 <span class="keyword">end</span>
+0375 <span class="keyword">if</span> isequal(modelidx,<span class="string">''</span>)
+0376     fprintf(<span class="string">'Invalid choice\n'</span>);
+0377     <span class="keyword">return</span>;
+0378 <span class="keyword">end</span>
+0379 fprintf(<span class="string">'\n'</span>);
+0380 
+0381 <span class="keyword">if</span> isequal(loadtype,<span class="string">'pd'</span>)
+0382     modelrun = sprintf(<span class="string">'%s-PDs'</span>,models{modelidx});
+0383 <span class="keyword">else</span>
+0384     modelrun = models{modelidx};
+0385 <span class="keyword">end</span>
+0386 
+0387 <span class="keyword">end</span>
+0388</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

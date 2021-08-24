@@ -1,0 +1,507 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of handleDuplicateMeasures</title>
+  <meta name="keywords" content="handleDuplicateMeasures">
+  <meta name="description" content="handleDuplicateMeasures -  Analyse and correct for duplicate measures">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; handleDuplicateMeasures.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>handleDuplicateMeasures
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>handleDuplicateMeasures -  Analyse and correct for duplicate measures</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [physdata] = handleDuplicateMeasures(physdata, study, doupdates, detaillog) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> handleDuplicateMeasures -  Analyse and correct for duplicate measures
+ Duplicates are of three types - for a given patient ID and recordingtype :-
+           1) multiple rows with exactly the same date/time
+           2) multiple rows within a few minutes
+           3) multiple rows for the same day</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getMeasuresForPatientAndDateRange.html" class="code" title="function relrows = getMeasuresForPatientAndDateRange(physdata,smartcareID, daymid, range, rectype, includeActivity)">getMeasuresForPatientAndDateRange</a>	getMeasuresForPatientDateRange - returns table containing the measurements</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadclimbdata.html" class="code" title="">loadclimbdata</a>	</li><li><a href="loadsmartcaredata.html" class="code" title="">loadsmartcaredata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [physdata] = handleDuplicateMeasures(physdata, study, doupdates, detaillog)</a>
+0002 
+0003 <span class="comment">% handleDuplicateMeasures -  Analyse and correct for duplicate measures</span>
+0004 <span class="comment">% Duplicates are of three types - for a given patient ID and recordingtype :-</span>
+0005 <span class="comment">%           1) multiple rows with exactly the same date/time</span>
+0006 <span class="comment">%           2) multiple rows within a few minutes</span>
+0007 <span class="comment">%           3) multiple rows for the same day</span>
+0008 
+0009 nadupefile = sprintf(<span class="string">'%sNonActivityDuplicates.xlsx'</span>, study);
+0010 
+0011 fprintf(<span class="string">'Handling Duplicates\n'</span>);
+0012 fprintf(<span class="string">'-------------------\n'</span>);
+0013 tic
+0014 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0015 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0016 demographicsmatfile = sprintf(<span class="string">'%sdatademographicsbypatient.mat'</span>, study);
+0017 fprintf(<span class="string">'Loading demographic data by patient\n'</span>);
+0018 load(fullfile(basedir, subfolder, demographicsmatfile));
+0019 toc
+0020 fprintf(<span class="string">'\n'</span>);
+0021 
+0022 tic
+0023 <span class="comment">% 1a) fix non-activity dupes -</span>
+0024 fprintf(<span class="string">'1a) Exact date/time duplicates - Non-Activity\n'</span>);
+0025 
+0026 <span class="comment">% first ensure physdata is sorted correctly</span>
+0027 physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>);
+0028 
+0029 <span class="comment">% create indexes for Activity vs Non-Activity rows</span>
+0030 idxna = find(~ismember(physdata.RecordingType,<span class="string">'ActivityRecording'</span>));
+0031 idxa = find(ismember(physdata.RecordingType,<span class="string">'ActivityRecording'</span>));
+0032 
+0033 <span class="comment">% create index of all sequential rows with date/time diff == 0</span>
+0034 exactidx = find(diff(physdata.Date_TimeRecorded)==0);
+0035 
+0036 <span class="comment">% build idx of non-activity rows with exact same date/time</span>
+0037 naexactidx = intersect(exactidx, idxna);
+0038 
+0039 <span class="comment">% need to eliminate those rows with exactly the same time, but the</span>
+0040 <span class="comment">% Smart Care ID or RecordingType isn't the same between rows - ie they aren't real dupes</span>
+0041 invalididx = find(physdata.SmartCareID(naexactidx) ~= physdata.SmartCareID(naexactidx+1) | <span class="keyword">...</span>
+0042     string([physdata.RecordingType(naexactidx)]) ~= string([physdata.RecordingType(naexactidx+1)]));
+0043 naexactidx(invalididx) = [];
+0044 
+0045 fprintf(<span class="string">'Found %d pairs of non-activity exact matches - delete one row of each pair\n'</span>, size(naexactidx,1));
+0046 
+0047 temp = physdata(naexactidx, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>, <span class="string">'DateNum'</span>});
+0048 temp2 = varfun(@mean, temp, <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>});
+0049 temp2.GroupCount = temp2.GroupCount * 2; <span class="comment">% each row is a pair of dupes for this set</span>
+0050 writetable(temp2(:, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>, <span class="string">'GroupCount'</span>}), fullfile(basedir, <span class="string">'ExcelFiles'</span>, nadupefile), <span class="string">'Sheet'</span>, <span class="string">'ExactTimeDupes'</span>);
+0051 
+0052 <span class="comment">% from analysing, all non-activity exact dupes have same values</span>
+0053 <span class="comment">% =&gt; therefore just need to keep one of the pairs of rows</span>
+0054 <span class="comment">% naexactpairidx = unique([naexactidx; naexactidx+1]);</span>
+0055 <span class="comment">% temp = varfun(@std, physdata(intersect(exactpairidx,idxna),:),'GroupingVariables', {'SmartCareID','DateNum','UserName','RecordingType','Date_TimeRecorded'});</span>
+0056 
+0057 <span class="comment">% 1b) next deal with activity dupes</span>
+0058 fprintf(<span class="string">'\n'</span>);
+0059 fprintf(<span class="string">'1b) Exact date/time duplicates - Activity\n'</span>);
+0060 
+0061 <span class="comment">% build idx of activity rows with exact same date/time</span>
+0062 aexactidx = intersect(exactidx, idxa);
+0063 
+0064 <span class="comment">% need to eliminate those rows where the Smart Care ID or RecordingType</span>
+0065 <span class="comment">% isn't the same between rows - ie they aren't real dupes</span>
+0066 invalididx = find(physdata.SmartCareID(aexactidx) ~= physdata.SmartCareID(aexactidx+1) | <span class="keyword">...</span>
+0067     string([physdata.RecordingType(aexactidx)]) ~= string([physdata.RecordingType(aexactidx+1)]));
+0068 aexactidx(invalididx) = [];
+0069 
+0070 <span class="comment">% now create index including the next row for each set of the activity</span>
+0071 <span class="comment">% exact match rows</span>
+0072 aexactpairidx = unique([aexactidx; aexactidx+1]);
+0073 
+0074 fprintf(<span class="string">'Found %d exact duplicate rows of activity measures - to be deleted\n'</span>, size(aexactpairidx,1)); 
+0075 
+0076 <span class="comment">% create table of activity rows to add back - single row for each exact dupe set</span>
+0077 <span class="comment">% with the mode of the activity steps for each. Only include rows where the</span>
+0078 <span class="comment">% std dev of the dupe set is &lt; 10 (ie every row almost exactly matches)</span>
+0079 temp = varfun(@std, physdata(aexactpairidx,:), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>,<span class="string">'DateNum'</span>,<span class="string">'UserName'</span>,<span class="string">'RecordingType'</span>,<span class="string">'Date_TimeRecorded'</span>}, <span class="string">'InputVariables'</span>, {<span class="string">'Activity_Steps'</span>});
+0080 goodrowidx = find(temp.std_Activity_Steps &lt; 10);
+0081 fprintf(<span class="string">'Of those dupes, found %d sets that have identical or near-identical values - add back the mode of each\n'</span>, size(goodrowidx,1)); 
+0082 goodrows = temp(goodrowidx, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>});
+0083 
+0084 addexactrows = physdata(1:1,:);
+0085 addexactrows = [];
+0086 
+0087 <span class="keyword">for</span> i = 1:size(goodrows,1)
+0088     tempidx = find(physdata.SmartCareID == goodrows.SmartCareID(i) &amp; physdata.Date_TimeRecorded == goodrows.Date_TimeRecorded(i));
+0089     setmode = mode(physdata.Activity_Steps(tempidx));
+0090     rowtoadd = physdata(tempidx(1),:);
+0091     rowtoadd.Activity_Steps = setmode;
+0092     addexactrows = [addexactrows ; rowtoadd];
+0093 <span class="keyword">end</span>
+0094 
+0095 <span class="comment">% make the updates</span>
+0096 <span class="comment">% - non-activity - delete one of the pairs of identical rows</span>
+0097 <span class="comment">% - activity - delete all the dupe rows and add back a row with the most</span>
+0098 <span class="comment">% common value (mode)</span>
+0099 
+0100 <span class="keyword">if</span> doupdates
+0101     fprintf(<span class="string">'\n'</span>);
+0102     fprintf(<span class="string">'1c) Making updates to data table\n'</span>);
+0103     delrowsidx = [naexactidx ; aexactpairidx];
+0104     fprintf(<span class="string">'Deleting %d + %d = %d exact dupe rows\n'</span>, size(naexactidx,1), size(aexactpairidx,1), size(delrowsidx,1)); 
+0105     physdata(delrowsidx,:) = [];
+0106     fprintf(<span class="string">'Adding back %d replacements\n'</span>, size(addexactrows,1)); 
+0107     physdata = [physdata ; addexactrows];
+0108     physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>);
+0109     fprintf(<span class="string">'SmartCare data now has %d rows\n'</span>, size(physdata,1));
+0110 <span class="keyword">end</span>
+0111 toc
+0112 fprintf(<span class="string">'\n'</span>);
+0113 
+0114 <span class="comment">% 2a) fix duplicates within 12 min window 0 Activity</span>
+0115 tic
+0116 fprintf(<span class="string">'2a) Duplicate measures within 12mins - Activity\n'</span>);
+0117 
+0118 <span class="comment">% create index for Activity rows</span>
+0119 idxa = find(ismember(physdata.RecordingType,<span class="string">'ActivityRecording'</span>));
+0120 
+0121 <span class="comment">% create index of all sequential rows with date/time diff &lt; 12mins</span>
+0122 timewindow = <span class="string">'00:12:00'</span>;
+0123 diffDTR = diff(physdata.Date_TimeRecorded);
+0124 similaridx = find(diffDTR &gt; <span class="string">'00:00:00'</span> &amp; diffDTR &lt; timewindow);
+0125 
+0126 <span class="comment">% build idx of activity rows with date/time diff &lt; 12mins</span>
+0127 asimilaridx = intersect(similaridx, idxa);
+0128 
+0129 <span class="comment">% need to eliminate those rows where the Smart Care ID or RecordingType</span>
+0130 <span class="comment">% isn't the same between rows - ie they aren't real dupes</span>
+0131 invalididx = find(physdata.SmartCareID(asimilaridx) ~= physdata.SmartCareID(asimilaridx+1) | <span class="keyword">...</span>
+0132     string([physdata.RecordingType(asimilaridx)]) ~= string([physdata.RecordingType(asimilaridx+1)]));
+0133 asimilaridx(invalididx) = [];
+0134 
+0135 <span class="comment">% create table of activity rows to add back - single row for each dupe set</span>
+0136 <span class="comment">% with the max of the activity steps for each.</span>
+0137 <span class="comment">% with detaillogging on, compare toe mean and std of activity for patient</span>
+0138 <span class="comment">% to ensure max is reasonable</span>
+0139 addsimrows = physdata(1:1,:);
+0140 addsimrows = [];
+0141 priorscid = 0;
+0142 priorrectype = <span class="string">' '</span>;
+0143 priorenddtr = <span class="string">''</span>;
+0144 asimilarpairidx = [];
+0145 <span class="keyword">for</span> i = 1:size(asimilaridx,1)
+0146     pidx = asimilaridx(i);
+0147     scid = physdata.SmartCareID(pidx);
+0148     dtnum = physdata.DateNum(pidx);
+0149     rectype = physdata.RecordingType(pidx);
+0150     startdtr = physdata.Date_TimeRecorded(pidx);
+0151     enddtr = startdtr + timewindow;
+0152     patientddidx = find(demographicstable.SmartCareID == scid &amp; ismember(demographicstable.RecordingType,rectype));
+0153     <span class="keyword">if</span> (size(patientddidx,1) &gt; 0)
+0154         patientmean = demographicstable(patientddidx,:).Fun_Activity_Steps(1);
+0155         patientstd = demographicstable(patientddidx,:).Fun_Activity_Steps(2);
+0156     <span class="keyword">else</span>
+0157         patientmean = 0;
+0158         patientstd = 0;
+0159     <span class="keyword">end</span>
+0160     <span class="keyword">if</span> detaillog
+0161         <span class="comment">%fprintf('Dupe %3d, scid = %3d, rectype = %22s, startdtr = %20s, enddtr = %20s\n', i, scid, string(rectype), startdtr, enddtr);</span>
+0162     <span class="keyword">end</span>
+0163     <span class="keyword">if</span> (scid ~= priorscid | ~ismember(rectype, priorrectype) | startdtr &gt; priorenddtr)
+0164         ntidx = find(physdata.SmartCareID == scid &amp; ismember(physdata.RecordingType,rectype) &amp; physdata.Date_TimeRecorded &gt;= startdtr &amp; physdata.Date_TimeRecorded &lt; enddtr);
+0165         setmax = max(physdata.Activity_Steps(ntidx));
+0166         <span class="keyword">if</span> detaillog    
+0167             <span class="keyword">if</span> ((setmax &lt; patientmean-2*patientstd) | (setmax &gt; patientmean+2*patientstd))
+0168                 fprintf(<span class="string">'Max of similar dupe set (size %3d) is %3d, patient: -2SD = %.2f, mean = %.2f, +2SD = %.2f\n'</span>, size(ntidx,1), setmax, patientmean - 2*patientstd, patientmean, patientmean + 2*patientstd);
+0169                 <span class="comment">%physdata(ntidx,:)</span>
+0170             <span class="keyword">end</span>
+0171         <span class="keyword">end</span>
+0172         rowtoadd = physdata(ntidx(1),:);
+0173         rowtoadd.Activity_Steps = setmax;
+0174         addsimrows = [addsimrows ; rowtoadd];
+0175         asimilarpairidx = [asimilarpairidx; ntidx];
+0176     <span class="keyword">end</span>
+0177     priorscid = scid;
+0178     priorrectype = rectype;
+0179     priorenddtr = enddtr;
+0180 <span class="keyword">end</span>
+0181 
+0182 fprintf(<span class="string">'There are %d sets of Activity similar dupes (&lt; 12mins)\n'</span>, size(addsimrows,1));
+0183 
+0184 <span class="keyword">if</span> doupdates
+0185     fprintf(<span class="string">'Deleting %d Activity similar dupe rows\n'</span>, size(asimilarpairidx,1)); 
+0186     physdata(asimilarpairidx,:) = [];
+0187     fprintf(<span class="string">'Adding back %d replacements\n'</span>, size(addsimrows,1)); 
+0188     physdata = [physdata ; addsimrows];
+0189     physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>);
+0190     fprintf(<span class="string">'SmartCare data now has %d rows\n'</span>, size(physdata,1));
+0191 <span class="keyword">end</span>
+0192 toc
+0193 fprintf(<span class="string">'\n'</span>);
+0194 
+0195 tic
+0196 fprintf(<span class="string">'2b) Duplicate measures within 30 mins - Non-Activity\n'</span>);
+0197 <span class="comment">% recreate indexes after deletions</span>
+0198 <span class="comment">% create index for Activity rows</span>
+0199 idxna = find(~ismember(physdata.RecordingType,<span class="string">'ActivityRecording'</span>));
+0200 <span class="comment">% create index of all sequential rows with date/time diff &lt; 30mins</span>
+0201 timewindow = <span class="string">'00:30:00'</span>;
+0202 diffDTR = diff(physdata.Date_TimeRecorded);
+0203 similaridx = find(diffDTR &gt; <span class="string">'00:00:00'</span> &amp; diffDTR &lt; timewindow);
+0204 
+0205 <span class="comment">% build idx of non-activity rows with date/time diff &lt; 30mins</span>
+0206 nasimidx = intersect(similaridx, idxna);
+0207 
+0208 <span class="comment">% need to eliminate those rows where the Smart Care ID or RecordingType</span>
+0209 <span class="comment">% isn't the same between rows - ie they aren't real dupes</span>
+0210 invalididx = find(physdata.SmartCareID(nasimidx) ~= physdata.SmartCareID(nasimidx+1) | <span class="keyword">...</span>
+0211     string([physdata.RecordingType(nasimidx)]) ~= string([physdata.RecordingType(nasimidx+1)]));
+0212 nasimidx(invalididx) = [];
+0213 
+0214 <span class="comment">% create table of non-activity rows to add back - single row for dupe set</span>
+0215 <span class="comment">% for lung function, with the max, for others with the chronologically last</span>
+0216 addsimrows = physdata(1:1,:);
+0217 addsimrows = [];
+0218 priorscid = 0;
+0219 priorrectype = <span class="string">' '</span>;
+0220 priorenddtr = <span class="string">''</span>;
+0221 nasimpairidx = [];
+0222 <span class="keyword">for</span> i = 1:size(nasimidx,1)
+0223     pidx = nasimidx(i);
+0224     scid = physdata.SmartCareID(pidx);
+0225     dtnum = physdata.DateNum(pidx);
+0226     rectype = physdata.RecordingType(pidx);
+0227     startdtr = physdata.Date_TimeRecorded(pidx);
+0228     enddtr = startdtr + timewindow;
+0229     <span class="keyword">if</span> detaillog
+0230         fprintf(<span class="string">'Dupe %3d, scid = %3d, rectype = %22s, startdtr = %20s, enddtr = %20s\n'</span>, i, scid, string(rectype), startdtr, enddtr);
+0231     <span class="keyword">end</span>
+0232     <span class="keyword">if</span> (scid ~= priorscid | ~ismember(rectype, priorrectype) | startdtr &gt; priorenddtr)
+0233         ntidx = find(physdata.SmartCareID == scid &amp; ismember(physdata.RecordingType,rectype) &amp; physdata.Date_TimeRecorded &gt;= startdtr &amp; physdata.Date_TimeRecorded &lt; enddtr);
+0234         <span class="keyword">if</span> ismember(rectype, {<span class="string">'LungFunctionRecording'</span>, <span class="string">'FEV1Recording'</span>})
+0235             <span class="comment">% for Lung Function, some patients mirror clinical procedure</span>
+0236             <span class="comment">% so take the best of 3 measures for this</span>
+0237             <span class="keyword">if</span> ismember(study, {<span class="string">'SC'</span>, <span class="string">'TM'</span>})
+0238                 [fevmax fevmaxidx] = max(physdata.FEV1_(ntidx));
+0239             <span class="keyword">elseif</span> ismember(study, {<span class="string">'CL'</span>})
+0240                 [fevmax fevmaxidx] = max(physdata.FEV1(ntidx));
+0241             <span class="keyword">else</span>
+0242                 fprintf(<span class="string">'Unknown study\n'</span>);
+0243             <span class="keyword">end</span>
+0244             rowtoadd = physdata(ntidx(fevmaxidx),:);
+0245             addsimrows = [addsimrows ; rowtoadd];
+0246             nasimpairidx = [nasimpairidx; ntidx];
+0247             <span class="keyword">if</span> detaillog    
+0248                 physdata(ntidx,:)
+0249                 rowtoadd
+0250             <span class="keyword">end</span>
+0251         <span class="keyword">else</span>
+0252             <span class="comment">% for other measures, multiple entries in a short space of time</span>
+0253             <span class="comment">% indicates a mistake that has been corrected so for these, keep</span>
+0254             <span class="comment">% the chronologically last row of the set</span>
+0255             rowtoadd = physdata(ntidx(size(ntidx,1)),:);
+0256             addsimrows = [addsimrows ; rowtoadd];
+0257             nasimpairidx = [nasimpairidx; ntidx];
+0258             <span class="keyword">if</span> detaillog    
+0259                 physdata(ntidx,:)
+0260                 rowtoadd
+0261             <span class="keyword">end</span>
+0262         <span class="keyword">end</span>
+0263     <span class="keyword">end</span>
+0264     priorscid = scid;
+0265     priorrectype = rectype;
+0266     priorenddtr = enddtr;
+0267 <span class="keyword">end</span>
+0268 
+0269 fprintf(<span class="string">'There are %d sets of Non-Activity similar dupes (&lt; 30mins)\n'</span>, size(addsimrows,1));
+0270 
+0271 temp = physdata(nasimpairidx, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>, <span class="string">'DateNum'</span>});
+0272 temp2 = varfun(@mean, temp, <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>});
+0273 writetable(temp2(:, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>, <span class="string">'GroupCount'</span>}), fullfile(basedir, <span class="string">'ExcelFiles'</span>, nadupefile), <span class="string">'Sheet'</span>, <span class="string">'SimilarTimeDupes'</span>);
+0274 
+0275 <span class="keyword">if</span> doupdates
+0276     fprintf(<span class="string">'Deleting %d Activity similar dupe rows\n'</span>, size(nasimpairidx,1)); 
+0277     physdata(nasimpairidx,:) = [];
+0278     fprintf(<span class="string">'Adding back %d replacements\n'</span>, size(addsimrows,1)); 
+0279     physdata = [physdata ; addsimrows];
+0280     physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>);
+0281     fprintf(<span class="string">'SmartCare data now has %d rows\n'</span>, size(physdata,1));
+0282 <span class="keyword">end</span>
+0283 
+0284 toc
+0285 fprintf(<span class="string">'\n'</span>);
+0286 
+0287 tic
+0288 fprintf(<span class="string">'3a) Duplicate measures on same day - Activity\n'</span>);
+0289 
+0290 physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'DateNum'</span>}, <span class="string">'ascend'</span>);
+0291 <span class="comment">% recreate indexes after deletions</span>
+0292 idxa = find(ismember(physdata.RecordingType,<span class="string">'ActivityRecording'</span>));
+0293 samedayidx = find(diff(physdata.DateNum)==0);
+0294 
+0295 <span class="comment">% build idx of activity rows with date/time diff &lt; 12mins</span>
+0296 asamedayidx = intersect(samedayidx, idxa);
+0297 
+0298 <span class="comment">% need to eliminate those rows where the Smart Care ID or RecordingType</span>
+0299 <span class="comment">% isn't the same between rows - ie they aren't real dupes</span>
+0300 invalididx = find(physdata.SmartCareID(asamedayidx) ~= physdata.SmartCareID(asamedayidx+1) | <span class="keyword">...</span>
+0301     string([physdata.RecordingType(asamedayidx)]) ~= string([physdata.RecordingType(asamedayidx+1)]));
+0302 asamedayidx(invalididx) = [];
+0303 
+0304 <span class="comment">% create table of activity rows to add back - single row for each dupe set</span>
+0305 <span class="comment">% with the sum of the activity steps for each.</span>
+0306 <span class="comment">% with detaillogging on, compare toe mean and std of activity for patient</span>
+0307 <span class="comment">% to ensure max is reasonable</span>
+0308 addsamerows = physdata(1:1,:);
+0309 addsamerows = [];
+0310 priorscid = 0;
+0311 priordtnum = 0;
+0312 priorrectype = <span class="string">' '</span>;
+0313 asamedaypairidx = [];
+0314 <span class="keyword">for</span> i = 1:size(asamedayidx,1)
+0315     pidx = asamedayidx(i);
+0316     scid = physdata.SmartCareID(pidx);
+0317     dtnum = physdata.DateNum(pidx);
+0318     rectype = physdata.RecordingType(pidx);
+0319     patientddidx = find(demographicstable.SmartCareID == scid &amp; ismember(demographicstable.RecordingType,rectype));
+0320     <span class="keyword">if</span> (size(patientddidx,1) &gt; 0)
+0321         patientmean = demographicstable(patientddidx,:).Fun_Activity_Steps(1);
+0322         patientstd = demographicstable(patientddidx,:).Fun_Activity_Steps(2);
+0323     <span class="keyword">else</span>
+0324         patientmean = 0;
+0325         patientstd = 0;
+0326     <span class="keyword">end</span>
+0327     <span class="keyword">if</span> detaillog
+0328         fprintf(<span class="string">'Dupe %3d, scid = %3d, rectype = %22s, dtnum = %3d\n'</span>, i, scid, string(rectype), dtnum);
+0329     <span class="keyword">end</span>
+0330     <span class="keyword">if</span> (scid ~= priorscid | dtnum ~= priordtnum | ~ismember(rectype, priorrectype))
+0331         ntidx = find(physdata.SmartCareID == scid &amp; physdata.DateNum == dtnum &amp; ismember(physdata.RecordingType,rectype));
+0332         setsum = sum(physdata.Activity_Steps(ntidx));
+0333         <span class="keyword">if</span> detaillog
+0334             <span class="keyword">if</span> ((setsum &lt; patientmean-2*patientstd) | (setsum &gt; patientmean+2*patientstd))
+0335                 fprintf(<span class="string">'Sum of same day dupe set (size %3d) is %3d, patient: -2SD = %.2f, mean = %.2f, +2SD = %.2f\n'</span>,size(ntidx,1), setsum , patientmean - 2*patientstd, patientmean, patientmean + 2*patientstd);
+0336                 <span class="comment">%physdata(ntidx,:)</span>
+0337                 
+0338             <span class="keyword">end</span>
+0339             sortrows(<a href="getMeasuresForPatientAndDateRange.html" class="code" title="function relrows = getMeasuresForPatientAndDateRange(physdata,smartcareID, daymid, range, rectype, includeActivity)">getMeasuresForPatientAndDateRange</a>(physdata(idxa,:),scid,dtnum, 1, rectype, true),{<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>,<span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>)
+0340         <span class="keyword">end</span>
+0341         rowtoadd = physdata(ntidx(1),:);
+0342         rowtoadd.Activity_Steps = setsum;
+0343         addsamerows = [addsamerows ; rowtoadd];
+0344         asamedaypairidx = [asamedaypairidx; ntidx];
+0345     <span class="keyword">end</span>
+0346     priorscid = scid;
+0347     priordtnum = dtnum;
+0348     priorrectype = rectype;
+0349 <span class="keyword">end</span>
+0350 
+0351 fprintf(<span class="string">'There are %d sets of Activity same day dupes\n'</span>, size(addsamerows,1));
+0352 
+0353 <span class="keyword">if</span> doupdates
+0354     fprintf(<span class="string">'Deleting %d Activity similar dupe rows\n'</span>, size(asamedaypairidx,1)); 
+0355     physdata(asamedaypairidx,:) = [];
+0356     fprintf(<span class="string">'Adding back %d replacements\n'</span>, size(addsamerows,1)); 
+0357     physdata = [physdata ; addsamerows];
+0358     physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>);
+0359     fprintf(<span class="string">'SmartCare data now has %d rows\n'</span>, size(physdata,1));
+0360 <span class="keyword">end</span>
+0361 toc
+0362 fprintf(<span class="string">'\n'</span>);
+0363 
+0364 tic
+0365 fprintf(<span class="string">'3b) Duplicate measures on same day - Non-Activity\n'</span>);
+0366 physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'DateNum'</span>}, <span class="string">'ascend'</span>);
+0367 
+0368 <span class="comment">% recreate indexes after deletions</span>
+0369 idxna = find(~ismember(physdata.RecordingType,<span class="string">'ActivityRecording'</span>));
+0370 samedayidx = find(diff(physdata.DateNum)==0);
+0371 
+0372 <span class="comment">% build idx of activity rows with date/time diff &lt; 12mins</span>
+0373 nasamedayidx = intersect(samedayidx, idxna);
+0374 
+0375 <span class="comment">% need to eliminate those rows where the diff is in the window, but the</span>
+0376 <span class="comment">% Smart Care ID or RecordingType isn't the same between rows - ie they aren't real dupes</span>
+0377 invalididx = find(physdata.SmartCareID(nasamedayidx) ~= physdata.SmartCareID(nasamedayidx+1) | <span class="keyword">...</span>
+0378     string([physdata.RecordingType(nasamedayidx)]) ~= string([physdata.RecordingType(nasamedayidx+1)]));
+0379 nasamedayidx(invalididx) = [];
+0380 
+0381 addsamerows = physdata(1:1,:);
+0382 addsamerows = [];
+0383 priorscid = 0;
+0384 priordtnum = 0;
+0385 priorrectype = <span class="string">' '</span>;
+0386 nasamedaypairidx = [];
+0387 <span class="keyword">for</span> i = 1:size(nasamedayidx,1)
+0388     pidx = nasamedayidx(i);
+0389     scid = physdata.SmartCareID(pidx);
+0390     dtnum = physdata.DateNum(pidx);
+0391     rectype = physdata.RecordingType(pidx);
+0392     <span class="keyword">if</span> detaillog
+0393         fprintf(<span class="string">'Dupe %3d, scid = %3d, rectype = %22s, dtnum = %3d\n'</span>, i, scid, string(rectype), dtnum);
+0394     <span class="keyword">end</span>
+0395     <span class="keyword">if</span> (scid ~= priorscid | dtnum ~= priordtnum | ~ismember(rectype, priorrectype))
+0396         ntidx = find(physdata.SmartCareID == scid &amp; physdata.DateNum == dtnum &amp; ismember(physdata.RecordingType,rectype));
+0397         temp = physdata(ntidx,:);
+0398         <span class="keyword">if</span> ismember(study, <span class="string">'CL'</span>)
+0399             temp.SputumColour = [];
+0400         <span class="keyword">end</span>
+0401         <span class="comment">%meantable = varfun(@mean, physdata(ntidx,:), 'GroupingVariables', {'SmartCareID','DateNum','UserName','RecordingType'});</span>
+0402         meantable = varfun(@mean, temp, <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>,<span class="string">'DateNum'</span>,<span class="string">'UserName'</span>,<span class="string">'RecordingType'</span>});
+0403         <span class="keyword">if</span> (size(meantable,1) &gt;1)
+0404             fprintf(<span class="string">'Multiple rows returned from mean calc !! dupe %3d, scid %3d, dtnum %3d dupe set size = %d\n'</span>, i, scid, dtnum, size(ntidx,1));
+0405         <span class="keyword">end</span>
+0406         rowtoadd = physdata(ntidx(end),:);
+0407         rowtoadd.WeightInKg = meantable.mean_WeightInKg;
+0408         rowtoadd.O2Saturation = meantable.mean_O2Saturation;
+0409         rowtoadd.Pulse_BPM_ = meantable.mean_Pulse_BPM_;
+0410         rowtoadd.Rating = meantable.mean_Rating;
+0411         rowtoadd.Temp_degC_ = meantable.mean_Temp_degC_;
+0412         <span class="keyword">if</span> ismember(study, {<span class="string">'SC'</span>, <span class="string">'TM'</span>})
+0413             rowtoadd.FEV1 = meantable.mean_FEV1;
+0414             rowtoadd.PredictedFEV = meantable.mean_PredictedFEV;
+0415             rowtoadd.FEV1_ = meantable.mean_FEV1_;
+0416             rowtoadd.CalcFEV1SetAs = meantable.mean_CalcFEV1SetAs;
+0417             rowtoadd.ScalingRatio = meantable.mean_ScalingRatio;
+0418             rowtoadd.CalcFEV1_ = meantable.mean_CalcFEV1_;
+0419         <span class="keyword">end</span>
+0420         <span class="keyword">if</span> ismember(study, <span class="string">'CL'</span>)
+0421             rowtoadd.FEV = meantable.mean_FEV;
+0422             rowtoadd.NumSleepDisturb = meantable.mean_NumSleepDisturb;
+0423             rowtoadd.BreathsPerMin = meantable.mean_BreathsPerMin;
+0424         <span class="keyword">end</span>
+0425         addsamerows = [addsamerows ; rowtoadd];
+0426         nasamedaypairidx = [nasamedaypairidx; ntidx];
+0427         <span class="keyword">if</span> detaillog
+0428             <span class="comment">%physdata(ntidx,:)</span>
+0429             sortrows(<a href="getMeasuresForPatientAndDateRange.html" class="code" title="function relrows = getMeasuresForPatientAndDateRange(physdata,smartcareID, daymid, range, rectype, includeActivity)">getMeasuresForPatientAndDateRange</a>(physdata(idxna,:),scid,dtnum, 1, rectype, true),{<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>,<span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>)
+0430         <span class="keyword">end</span>
+0431     <span class="keyword">end</span>
+0432     priorscid = scid;
+0433     priordtnum = dtnum;
+0434     priorrectype = rectype;
+0435 <span class="keyword">end</span>
+0436 
+0437 fprintf(<span class="string">'There are %d sets of Non-Activity same day dupes\n'</span>, size(addsamerows,1));
+0438 
+0439 temp = physdata(nasamedaypairidx, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>, <span class="string">'DateNum'</span>});
+0440 temp2 = varfun(@mean, temp, <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>});
+0441 writetable(temp2(:, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>, <span class="string">'GroupCount'</span>}), fullfile(basedir, <span class="string">'ExcelFiles'</span>, nadupefile), <span class="string">'Sheet'</span>, <span class="string">'SameDayDupes'</span>);
+0442 
+0443 <span class="keyword">if</span> doupdates
+0444     fprintf(<span class="string">'Deleting %d Activity similar dupe rows\n'</span>, size(nasamedaypairidx,1)); 
+0445     physdata(nasamedaypairidx,:) = [];
+0446     fprintf(<span class="string">'Adding back %d replacements\n'</span>, size(addsamerows,1)); 
+0447     physdata = [physdata ; addsamerows];
+0448     physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>);
+0449     fprintf(<span class="string">'SmartCare data now has %d rows\n'</span>, size(physdata,1));
+0450     
+0451 <span class="keyword">end</span>
+0452 toc
+0453 fprintf(<span class="string">'\n'</span>);
+0454 
+0455 <span class="keyword">end</span>
+0456</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

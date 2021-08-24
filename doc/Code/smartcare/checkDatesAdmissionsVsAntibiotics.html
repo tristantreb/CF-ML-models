@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of checkDatesAdmissionsVsAntibiotics</title>
+  <meta name="keywords" content="checkDatesAdmissionsVsAntibiotics">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; checkDatesAdmissionsVsAntibiotics.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>checkDatesAdmissionsVsAntibiotics
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>	gets the patient offset table</li><li><a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clc; clear; close all;
+0002 
+0003 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0004 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0005 
+0006 [studynbr, study, studyfullname] = <a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
+0007 [datamatfile, clinicalmatfile, demographicsmatfile] = <a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0008 [physdata, offset] = <a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0009 [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP, <span class="keyword">...</span>
+0010     cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght] = <a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0011 
+0012 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0013 subfolder = <span class="string">'ExcelFiles'</span>;
+0014 outputfilename = sprintf(<span class="string">'%s-AdmissionsVsAntibiotics.xlsx'</span>, study);
+0015 exceptionsheet = <span class="string">'1)AdmissionWithNoTreatment'</span>;
+0016 matchsheet = <span class="string">'3)AdmissionsWithTreatments'</span>;
+0017 ipsheet = <span class="string">'2)HospitalIVWithNoAdmission'</span>;
+0018 residualsheet = <span class="string">'4)HomeTreatments'</span>;
+0019 
+0020 tic
+0021 <span class="comment">% get patients with enough data</span>
+0022 patientoffsets = <a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>(physdata);
+0023 patientoffsets.Properties.VariableNames{<span class="string">'SmartCareID'</span>} = <span class="string">'ID'</span>;
+0024 
+0025 <span class="comment">% sort by SmartCareID and StartDate</span>
+0026 cdAntibiotics = sortrows(cdAntibiotics, {<span class="string">'ID'</span>,<span class="string">'StartDate'</span>},<span class="string">'ascend'</span>);
+0027 cdAntibiotics = innerjoin(cdAntibiotics, patientoffsets);
+0028 
+0029 cdAdmissions = sortrows(cdAdmissions, {<span class="string">'ID'</span>,<span class="string">'Admitted'</span>}, <span class="string">'ascend'</span>);
+0030 cdAdmissions = innerjoin(cdAdmissions, patientoffsets);
+0031 
+0032 matchtable = table(<span class="string">'Size'</span>,[1 13], <span class="string">'VariableTypes'</span>, {<span class="string">'string(35)'</span>, <span class="string">'string(8)'</span>, <span class="string">'int32'</span>, <span class="string">'string(20)'</span>, <span class="string">'int32'</span>, <span class="string">'datetime'</span>, <span class="string">'datetime'</span>,<span class="string">'int32'</span>, <span class="string">'string(15)'</span>, <span class="string">'string(5)'</span>, <span class="keyword">...</span>
+0033     <span class="string">'string(10)'</span>, <span class="string">'datetime'</span>,<span class="string">'datetime'</span>}, <span class="string">'VariableNames'</span>, {<span class="string">'RowType'</span>, <span class="string">'Hospital'</span>, <span class="string">'SmartCareID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'AdmissionID'</span>, <span class="string">'Admitted'</span>, <span class="string">'Discharge'</span>, <span class="keyword">...</span>
+0034     <span class="string">'AntibioticID'</span>, <span class="string">'AntibioticName'</span>,<span class="string">'Route'</span>, <span class="string">'HomeIV'</span>,<span class="string">'Start'</span>,<span class="string">'Stop'</span>});
+0035 rowtoadd = matchtable;
+0036 matchtable(1,:) = [];
+0037 
+0038 exceptiontable = table(<span class="string">'Size'</span>,[1 7], <span class="string">'VariableTypes'</span>, {<span class="string">'string(35)'</span>,<span class="string">'string(8)'</span>, <span class="string">'int32'</span>, <span class="string">'string(20)'</span>, <span class="string">'int32'</span>, <span class="string">'datetime'</span>, <span class="string">'datetime'</span>}, <span class="keyword">...</span>
+0039     <span class="string">'VariableNames'</span>, {<span class="string">'RowType'</span>,<span class="string">'Hospital'</span>, <span class="string">'SmartCareID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'AdmissionID'</span>, <span class="string">'Admitted'</span>, <span class="string">'Discharge'</span>});
+0040 exceptiontable(1,:) = [];
+0041 
+0042 matchedidx = [];
+0043 
+0044 <span class="keyword">for</span> i = 1:size(cdAdmissions,1)
+0045     scid = cdAdmissions.ID(i);
+0046     admitted = cdAdmissions.Admitted(i);
+0047     discharge = cdAdmissions.Discharge(i);
+0048     
+0049     idx = find(cdAntibiotics.ID == scid &amp; (cdAntibiotics.StartDate &gt;= (admitted-days(7))) &amp; (cdAntibiotics.StartDate &lt;= (discharge+days(7))));
+0050     matchedidx = [matchedidx; idx];
+0051     
+0052     rowtoadd.SmartCareID = scid;
+0053     rowtoadd.StudyNumber = cdAdmissions.StudyNumber(i);
+0054     rowtoadd.Hospital = cdAdmissions.Hospital(i);
+0055     <span class="comment">%rowtoadd.AdmissionID = cdAdmissions.HospitalAdmissionID(i);</span>
+0056     rowtoadd.Admitted = admitted;
+0057     rowtoadd.Discharge = discharge;
+0058     
+0059     <span class="keyword">if</span> (size(idx,1) == 0)
+0060         rowtoadd.RowType = <span class="string">'*** Admission with no treatment ***'</span>;
+0061         fprintf(<span class="string">'%3d: %35s  :  Hospital %8s  Patient ID %3d Admitted  %11s  Discharge  %11s (Study Nbr %s)\n'</span>, <span class="keyword">...</span><span class="comment"> </span>
+0062             i, rowtoadd.RowType, string(rowtoadd.Hospital), scid, datestr(admitted,1), datestr(discharge,1), string(rowtoadd.StudyNumber)); 
+0063         exceptiontable = [exceptiontable;rowtoadd(1,{<span class="string">'RowType'</span>,<span class="string">'Hospital'</span>, <span class="string">'SmartCareID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'AdmissionID'</span>, <span class="string">'Admitted'</span>, <span class="string">'Discharge'</span>})];  
+0064     <span class="keyword">else</span>
+0065         <span class="keyword">for</span> t = 1:size(idx,1)
+0066             rowtoadd.RowType = <span class="string">'OK - Treatment during admission'</span>;
+0067             <span class="comment">%rowtoadd.AntibioticID = cdAntibiotics.AntibioticID(idx(t));</span>
+0068             rowtoadd.AntibioticName = cdAntibiotics.AntibioticName{idx(t)};
+0069             rowtoadd.Route = cdAntibiotics.Route{idx(t)};
+0070             <span class="comment">%rowtoadd.HomeIV = cdAntibiotics.HomeIV_s_{idx(t)};</span>
+0071             rowtoadd.Start = cdAntibiotics.StartDate(idx(t));
+0072             rowtoadd.Stop = cdAntibiotics.StopDate(idx(t));
+0073         
+0074             fprintf(<span class="string">'%3d: %35s  :  Hospital %8s  Patient ID %3d  Admitted  %11s  Discharge  %11s  : %15s %5s Start  %11s  End  %11s (Study Nbr %s)\n'</span>, <span class="keyword">...</span><span class="comment"> </span>
+0075                 i, rowtoadd.RowType, string(rowtoadd.Hospital), scid, datestr(admitted,1), datestr(discharge,1), <span class="keyword">...</span>
+0076                 string(rowtoadd.AntibioticName), string(rowtoadd.Route), datestr(rowtoadd.Start,1), datestr(rowtoadd.Stop,1), string(rowtoadd.StudyNumber)); 
+0077         
+0078             matchtable = [matchtable;rowtoadd];  
+0079         <span class="keyword">end</span>
+0080     <span class="keyword">end</span>
+0081 <span class="keyword">end</span>
+0082 
+0083 toc
+0084 fprintf(<span class="string">'\n'</span>);
+0085 
+0086 tic
+0087 umatchedidx = unique(matchedidx);
+0088 abidx = find(cdAntibiotics.ID);
+0089 residualidx = setdiff(abidx, umatchedidx);
+0090 
+0091 residualtable = table(<span class="string">'Size'</span>,[1 10], <span class="string">'VariableTypes'</span>, {<span class="string">'string(38)'</span>, <span class="string">'string(8)'</span>, <span class="string">'int32'</span>, <span class="string">'string(20)'</span>, <span class="string">'int32'</span>, <span class="string">'string(15)'</span>, <span class="string">'string(5)'</span>, <span class="string">'string(10)'</span>, <span class="string">'datetime'</span>, <span class="string">'datetime'</span>}, <span class="keyword">...</span>
+0092     <span class="string">'VariableNames'</span>, {<span class="string">'RowType'</span>, <span class="string">'Hospital'</span>, <span class="string">'SmartCareID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'AntibioticID'</span>, <span class="string">'AntibioticName'</span>, <span class="string">'Route'</span>, <span class="string">'HomeIV'</span>, <span class="string">'Start'</span>, <span class="string">'Stop'</span>});
+0093 iptable = residualtable;
+0094 rowtoadd = residualtable;
+0095 residualtable(1,:) = [];
+0096 iptable(1,:) = [];
+0097 
+0098 <span class="keyword">for</span> i = 1:size(residualidx,1)
+0099     scid = cdAntibiotics.ID(residualidx(i));
+0100     route = cdAntibiotics.Route{residualidx(i)};
+0101     <span class="keyword">if</span> studynbr == 3 | studynbr == 4
+0102         homeiv = cdAntibiotics.HomeIV_s{residualidx(i)};
+0103     <span class="keyword">else</span>
+0104         homeiv = cdAntibiotics.HomeIV_s_{residualidx(i)};
+0105     <span class="keyword">end</span>
+0106     
+0107     rowtoadd.SmartCareID = scid;
+0108     rowtoadd.StudyNumber = cdAntibiotics.StudyNumber(residualidx(i));
+0109     rowtoadd.Hospital = cdAntibiotics.Hospital{residualidx(i)};
+0110     rowtoadd.Route = route;
+0111     rowtoadd.HomeIV = homeiv;
+0112 
+0113     <span class="keyword">if</span> (isequal(route,<span class="string">'IV'</span>) &amp; ismember(homeiv, {<span class="string">'No'</span>, <span class="string">'part'</span>,<span class="string">'IP+OP'</span>}))
+0114     <span class="comment">%if (isequal(route,'IV'))</span>
+0115         rowtoadd.RowType = <span class="string">'*** Hospital IV with no Admission ***'</span>;
+0116         <span class="comment">%rowtoadd.AntibioticID = cdAntibiotics.AntibioticID(residualidx(i));</span>
+0117         rowtoadd.AntibioticName = cdAntibiotics.AntibioticName{residualidx(i)};
+0118         rowtoadd.Start = cdAntibiotics.StartDate(residualidx(i));
+0119         rowtoadd.Stop = cdAntibiotics.StopDate(residualidx(i));
+0120         
+0121         fprintf(<span class="string">'%38s  :  Hospital %8s  Patient ID %3d  : %15s %5s Start  %11s  End  %11s (Study Nbr %s)\n'</span>, <span class="keyword">...</span><span class="comment"> </span>
+0122                 rowtoadd.RowType, rowtoadd.Hospital, scid, rowtoadd.AntibioticName, route, <span class="keyword">...</span>
+0123                 datestr(rowtoadd.Start,1), datestr(rowtoadd.Stop,1), string(rowtoadd.StudyNumber)); 
+0124         
+0125         iptable = [iptable; rowtoadd];
+0126     <span class="keyword">else</span>
+0127         rowtoadd.RowType = <span class="string">'Ok - Oral or Home IV treatment'</span>;
+0128         <span class="comment">%rowtoadd.AntibioticID = cdAntibiotics.AntibioticID(residualidx(i));</span>
+0129         rowtoadd.AntibioticName = cdAntibiotics.AntibioticName{residualidx(i)};
+0130         rowtoadd.Start = cdAntibiotics.StartDate(residualidx(i));
+0131         rowtoadd.Stop = cdAntibiotics.StopDate(residualidx(i));
+0132         
+0133         fprintf(<span class="string">'%38s  :  Hospital %8s  Patient ID %3d  : %15s %5s Start  %11s  End  %11s (Study Nbr %s)\n'</span>, <span class="keyword">...</span><span class="comment"> </span>
+0134                 rowtoadd.RowType, rowtoadd.Hospital, scid, rowtoadd.AntibioticName, route, <span class="keyword">...</span>
+0135                 datestr(rowtoadd.Start,1), datestr(rowtoadd.Stop,1), string(rowtoadd.StudyNumber)); 
+0136         
+0137         residualtable = [residualtable; rowtoadd];
+0138     <span class="keyword">end</span>
+0139 <span class="keyword">end</span>
+0140 toc
+0141 fprintf(<span class="string">'\n'</span>);
+0142 
+0143 fprintf(<span class="string">'Completeness check - %3d rows missing\n'</span>, size(cdAntibiotics,1) - size(iptable,1) - size(umatchedidx,1) - size(residualtable,1));
+0144 fprintf(<span class="string">'\n'</span>);
+0145 
+0146 tic
+0147 fprintf(<span class="string">'Saving results\n'</span>);
+0148 matchtable = sortrows(matchtable, {<span class="string">'Hospital'</span>,<span class="string">'SmartCareID'</span>,<span class="string">'Admitted'</span>}, <span class="string">'ascend'</span>);
+0149 exceptiontable = sortrows(exceptiontable, {<span class="string">'Hospital'</span>,<span class="string">'SmartCareID'</span>,<span class="string">'Admitted'</span>}, <span class="string">'ascend'</span>);
+0150 residualtable = sortrows(residualtable, {<span class="string">'Hospital'</span>,<span class="string">'SmartCareID'</span>,<span class="string">'Start'</span>}, <span class="string">'ascend'</span>);
+0151 iptable = sortrows(iptable, {<span class="string">'Hospital'</span>,<span class="string">'SmartCareID'</span>,<span class="string">'Start'</span>}, <span class="string">'ascend'</span>);
+0152 
+0153 writetable(exceptiontable, fullfile(basedir, subfolder,outputfilename), <span class="string">'Sheet'</span>, exceptionsheet);
+0154 writetable(iptable,        fullfile(basedir, subfolder,outputfilename), <span class="string">'Sheet'</span>, ipsheet);
+0155 writetable(matchtable,     fullfile(basedir, subfolder,outputfilename), <span class="string">'Sheet'</span>, matchsheet);
+0156 writetable(residualtable,  fullfile(basedir, subfolder,outputfilename), <span class="string">'Sheet'</span>, residualsheet);
+0157 
+0158 
+0159 toc
+0160 fprintf(<span class="string">'\n'</span>);
+0161</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

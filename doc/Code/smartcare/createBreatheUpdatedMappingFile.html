@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createBreatheUpdatedMappingFile</title>
+  <meta name="keywords" content="createBreatheUpdatedMappingFile">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createBreatheUpdatedMappingFile.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createBreatheUpdatedMappingFile
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getLatestBreatheDatesForHosp.html" class="code" title="function [clinprocdate, patientmasterdate, isValid] = getLatestBreatheDatesForHosp(hosp)">getLatestBreatheDatesForHosp</a>	getLatestBreatheDatesForHosp - convenience function to centralise getting the</li><li><a href="loadGUIDFileForHosp.html" class="code" title="function [guidmap] = loadGUIDFileForHosp(study, hosprow, guidmapdate)">loadGUIDFileForHosp</a>	loadGUIDFileForHosp - convenience function to load the guid to email</li><li><a href="selectHospital.html" class="code" title="function [hosprow, isValid] = selectHospital()">selectHospital</a>	selectHospital - choose which hospital to run for</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; clc; close all;
+0002 
+0003 tic
+0004 fprintf(<span class="string">'Loading Breathe Clinical Data\n'</span>);
+0005 fprintf(<span class="string">'-----------------------------\n'</span>);
+0006 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0007 mssubfolder = <span class="string">'MatlabSavedVariables'</span>;
+0008 clinicalmatfile = <span class="string">'breatheclinicaldata.mat'</span>;
+0009 load(fullfile(basedir, mssubfolder, clinicalmatfile));
+0010 fprintf(<span class="string">'Done\n'</span>);
+0011 toc
+0012 fprintf(<span class="string">'\n'</span>);
+0013 
+0014 study = <span class="string">'BR'</span>;
+0015 
+0016 [hosprow, isValid] = <a href="selectHospital.html" class="code" title="function [hosprow, isValid] = selectHospital()">selectHospital</a>();
+0017 <span class="keyword">if</span> ~isValid
+0018     <span class="keyword">return</span>
+0019 <span class="keyword">end</span>
+0020 fprintf(<span class="string">'\n'</span>);
+0021 
+0022 <span class="keyword">for</span> h = 1:size(hosprow, 1)
+0023     tic
+0024     fprintf(<span class="string">'Creating updated mapping file for %s\n'</span>, hosprow.Name{h});
+0025     fprintf(<span class="string">'\n'</span>);
+0026     
+0027     [clindate, guidmapdate] = <a href="getLatestBreatheDatesForHosp.html" class="code" title="function [clinprocdate, patientmasterdate, isValid] = getLatestBreatheDatesForHosp(hosp)">getLatestBreatheDatesForHosp</a>(hosprow.Acronym{h});
+0028     outputfolder = sprintf(<span class="string">'DataFiles/%s/ClinicalData/%s/%sUpd'</span>, study, hosprow.Acronym{h}, clindate);
+0029     <span class="keyword">if</span> ~exist(fullfile(basedir, outputfolder), <span class="string">'dir'</span>)
+0030         mkdir(fullfile(basedir, outputfolder));
+0031     <span class="keyword">end</span>
+0032     
+0033     [guidmap] = <a href="loadGUIDFileForHosp.html" class="code" title="function [guidmap] = loadGUIDFileForHosp(study, hosprow, guidmapdate)">loadGUIDFileForHosp</a>(study, hosprow(h, :), guidmapdate);
+0034     toc
+0035     fprintf(<span class="string">'\n'</span>);
+0036     
+0037     
+0038     consentfile  = sprintf(<span class="string">'Consent_status %s.xlsx'</span>, guidmapdate);
+0039     fprintf(<span class="string">'Loading consent status file %s\n'</span>, consentfile);
+0040     dfsubfolder = sprintf(<span class="string">'DataFiles/%s/ClinicalData/%s'</span>, study, hosprow.Acronym{h});
+0041     consentstatus = readtable(fullfile(basedir, dfsubfolder, consentfile));
+0042     fprintf(<span class="string">'\n'</span>);
+0043 
+0044     hospPatient = brPatient(ismember(brPatient.Hospital, hosprow.Acronym{h}), :);
+0045     npatients = size(hospPatient, 1);
+0046     
+0047     consentstatus.StudyNumber = lower(consentstatus.StudyNumber);
+0048     guidmap.StudyNumber       = lower(guidmap.StudyNumber);
+0049     hospPatient.StudyNumber   = lower(hospPatient.StudyNumber);
+0050     
+0051     patientmaster = outerjoin(consentstatus, guidmap, <span class="string">'LeftKeys'</span>, {<span class="string">'StudyNumber'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'StudyNumber'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'PartitionKey'</span>});
+0052     
+0053     temp = outerjoin(guidmap, consentstatus, <span class="string">'LeftKeys'</span>, {<span class="string">'StudyNumber'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'StudyNumber'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'ConsentStatus'</span>});
+0054     
+0055     fprintf(<span class="string">'Participants with missing partition key:\n'</span>);
+0056     patientmaster(ismember(patientmaster.PartitionKey, {<span class="string">''</span>}), :)
+0057     <span class="comment">%misspartkey = guidmapnew(ismember(guidmapnew.PartitionKey, {''}), :);</span>
+0058     <span class="comment">%guidmapnew(ismember(guidmapnew.PartitionKey, {''}), :) = [];</span>
+0059     
+0060     fprintf(<span class="string">'Partition key mappings with no corresponding consent info:\n'</span>);
+0061     temp(ismember(temp.ConsentStatus, {<span class="string">''</span>}), :)
+0062     missconsstat = temp(ismember(temp.ConsentStatus, {<span class="string">''</span>}), :);
+0063     
+0064     patientmaster = outerjoin(patientmaster, hospPatient, <span class="string">'LeftKeys'</span>, {<span class="string">'StudyNumber'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'StudyNumber'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'ID'</span>, <span class="string">'StudyDate'</span>});
+0065     
+0066     fprintf(<span class="string">'No internal ID assigned yet (ie no clinical spreadsheet received for these participants):\n'</span>);
+0067     patientmaster(isnan(patientmaster.ID),:)
+0068     
+0069     patientmaster = sortrows(patientmaster, {<span class="string">'ID'</span>, <span class="string">'StudyDate'</span>}, <span class="string">'ascend'</span>);
+0070     patientmaster.Hospital(:) = hosprow.Acronym(h);
+0071     patientmaster = patientmaster(:, {<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'StudyDate'</span>, <span class="string">'ConsentStatus'</span>, <span class="string">'ConsentDate'</span>, <span class="string">'WithdrawalDate'</span>, <span class="string">'PartitionKey'</span>});
+0072     
+0073     patientmaster.OldID = patientmaster.ID;
+0074     patientmaster.ID(:) = hosprow.IDOffset(h) + (1:size(patientmaster, 1));
+0075     
+0076     patientmaster
+0077     
+0078     filedate = guidmapdate;
+0079     dfsubfolder = sprintf(<span class="string">'DataFiles/%s/PatientMasterFiles'</span>, study);
+0080     filename    = sprintf(<span class="string">'PBPatientMaster%s%s.xlsx'</span>, hosprow.Acronym{h}, filedate);
+0081     writetable(patientmaster(:, {<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'StudyDate'</span>, <span class="string">'ConsentStatus'</span>, <span class="string">'ConsentDate'</span>, <span class="string">'WithdrawalDate'</span>, <span class="string">'PartitionKey'</span>}), fullfile(basedir, dfsubfolder , filename));
+0082     
+0083 <span class="keyword">end</span>
+0084 
+0085     
+0086</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

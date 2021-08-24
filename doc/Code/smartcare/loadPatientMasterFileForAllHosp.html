@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadPatientMasterFileForAllHosp</title>
+  <meta name="keywords" content="loadPatientMasterFileForAllHosp">
+  <meta name="description" content="loadPatientMasterFileForAllHosp - loads and concatenates the patient">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadPatientMasterFileForAllHosp.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadPatientMasterFileForAllHosp
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>loadPatientMasterFileForAllHosp - loads and concatenates the patient</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [patientmaster] = loadPatientMasterFileForAllHosp(study, hosprows) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> loadPatientMasterFileForAllHosp - loads and concatenates the patient
+ master files for all hospitals</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getLatestBreatheDatesForHosp.html" class="code" title="function [clinprocdate, patientmasterdate, isValid] = getLatestBreatheDatesForHosp(hosp)">getLatestBreatheDatesForHosp</a>	getLatestBreatheDatesForHosp - convenience function to centralise getting the</li><li><a href="loadPatientMasterFileForHosp.html" class="code" title="function [hosppatientmaster] = loadPatientMasterFileForHosp(study, hosprow, patientmasterdate)">loadPatientMasterFileForHosp</a>	loadPatientMasterFileForHosp - convenience function to load the patient</li><li><a href="printPatientMasterStats.html" class="code" title="function printPatientMasterStats(patmaster)">printPatientMasterStats</a>	printPatientMasterStats - prints numbers enrolled, number consented,</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadbreatheclinicaldatanew.html" class="code" title="">loadbreatheclinicaldatanew</a>	loads Breathe clinical data for each patient</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [patientmaster] = loadPatientMasterFileForAllHosp(study, hosprows)</a>
+0002 
+0003 <span class="comment">% loadPatientMasterFileForAllHosp - loads and concatenates the patient</span>
+0004 <span class="comment">% master files for all hospitals</span>
+0005 
+0006 patientmaster = [];
+0007 
+0008 <span class="keyword">for</span> h = 1:size(hosprows, 1)
+0009 
+0010     [~, hosppatmastdate] = <a href="getLatestBreatheDatesForHosp.html" class="code" title="function [clinprocdate, patientmasterdate, isValid] = getLatestBreatheDatesForHosp(hosp)">getLatestBreatheDatesForHosp</a>(hosprows.Acronym{h});
+0011     [hosppatmaster] = <a href="loadPatientMasterFileForHosp.html" class="code" title="function [hosppatientmaster] = loadPatientMasterFileForHosp(study, hosprow, patientmasterdate)">loadPatientMasterFileForHosp</a>(study, hosprows(h, :), hosppatmastdate); 
+0012     patientmaster = [patientmaster; hosppatmaster];
+0013     fprintf(<span class="string">'For %s hospital\n'</span>, hosprows.Name{h});
+0014     <a href="printPatientMasterStats.html" class="code" title="function printPatientMasterStats(patmaster)">printPatientMasterStats</a>(hosppatmaster);
+0015     fprintf(<span class="string">'\n'</span>);
+0016 <span class="keyword">end</span>
+0017 
+0018 fprintf(<span class="string">'Overall\n'</span>);
+0019 <a href="printPatientMasterStats.html" class="code" title="function printPatientMasterStats(patmaster)">printPatientMasterStats</a>(patientmaster);
+0020 fprintf(<span class="string">'\n'</span>);
+0021     
+0022 <span class="keyword">end</span>
+0023</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

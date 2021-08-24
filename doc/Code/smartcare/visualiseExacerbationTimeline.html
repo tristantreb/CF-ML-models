@@ -1,0 +1,287 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of visualiseExacerbationTimeline</title>
+  <meta name="keywords" content="visualiseExacerbationTimeline">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; visualiseExacerbationTimeline.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>visualiseExacerbationTimeline
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>	getColumnForMeasure - returns the column name from physdata for the</li><li><a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>	gets the patient offset table</li><li><a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="mid50mean.html" class="code" title="function y = mid50mean(x)">mid50mean</a>	mid50mean - returns the mean of the mid 50% data points in x (sorted by</li><li><a href="mid50std.html" class="code" title="function y = mid50std(x)">mid50std</a>	mid50std - returns the std of the mid 50% data points in x (sorted by</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>	selectTreatmentGap - enter the gap between the end of a treatment and the</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li><li><a href="setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>	setMinYDisplayRangeForMeasure - sets the minimum range for Y axis for</li><li><a href="setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>	setYDisplayRange - function to scale y axis of plots appropriately</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clc; clear; close all;
+0002 
+0003 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0004 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0005 
+0006 [studynbr, study, ~] = <a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
+0007 chosentreatgap = <a href="selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>();
+0008 [datamatfile, clinicalmatfile, demographicsmatfile] = <a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0009 [physdata, offset, physdata_predateoutlierhandling] = <a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0010 [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP, <span class="keyword">...</span>
+0011     cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght] = <a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0012 ivandmeasuresfile = sprintf(<span class="string">'%sivandmeasures_gap%d.mat'</span>, study, chosentreatgap);
+0013 
+0014 tic
+0015 fprintf(<span class="string">'Loading clinical data\n'</span>);
+0016 load(fullfile(basedir, subfolder, clinicalmatfile));
+0017 fprintf(<span class="string">'Loading measurement data\n'</span>);
+0018 load(fullfile(basedir, subfolder, datamatfile));
+0019 fprintf(<span class="string">'Loading iv treatment and measures prior data\n'</span>);
+0020 load(fullfile(basedir, subfolder, ivandmeasuresfile));
+0021 fprintf(<span class="string">'Loading datademographics by patient\n'</span>);
+0022 load(fullfile(basedir, subfolder, demographicsmatfile));
+0023 toc
+0024 
+0025 tic
+0026 <span class="comment">% sort antibiotic and admission clinical data consistently</span>
+0027 cdAntibiotics = sortrows(cdAntibiotics, {<span class="string">'ID'</span>, <span class="string">'StartDate'</span>, <span class="string">'Route'</span>}, <span class="string">'ascend'</span>);
+0028 cdAdmissions = sortrows(cdAdmissions, {<span class="string">'ID'</span>, <span class="string">'Admitted'</span>}, <span class="string">'ascend'</span>);
+0029 <span class="comment">% add column to admissions to capture event type (for antibiotics, use</span>
+0030 <span class="comment">% Route as event type</span>
+0031 <span class="comment">%cdAdmissions.EventType = cdAdmissions.Hospital;</span>
+0032 cdAdmissions.EventType(:) = {<span class="string">'Admission'</span>};
+0033 
+0034 <span class="comment">% create set of antibiotic treatments</span>
+0035 <span class="comment">%abTreatments = unique(cdAntibiotics(:,{'ID', 'Hospital', 'StartDate'}));</span>
+0036 <span class="comment">%abTreatments.Properties.VariableNames{'ID'} = 'SmartCareID';</span>
+0037 <span class="comment">%abTreatments.IVDateNum = datenum(abTreatments.StartDate) - offset + 1;</span>
+0038 abTreatments = ivandmeasurestable(ivandmeasurestable.DaysWithMeasures &gt;= 15 &amp; ivandmeasurestable.AvgMeasuresPerDay &gt;= 2, {<span class="string">'SmartCareID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>, <span class="string">'IVStartDate'</span>, <span class="string">'IVDateNum'</span>});
+0039 
+0040 <span class="comment">% get the date scaling offset for each patient</span>
+0041 patientoffsets = <a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>(physdata);
+0042 
+0043 <span class="comment">% do inner join to reduce to only patients with enough data</span>
+0044 abTreatments = innerjoin(patientoffsets, abTreatments);
+0045 
+0046 <span class="comment">% set variables to format uipane</span>
+0047 measures = unique(physdata.RecordingType);
+0048 plotsacross = 3;
+0049 plotsdown = ceil((1 + size(measures, 1)) / plotsacross);
+0050 plotsperpage = plotsacross * plotsdown;
+0051 subfolder = sprintf(<span class="string">'Plots/%s'</span>, study);
+0052 
+0053 <span class="comment">% colours</span>
+0054 admcol  = [0.694 0.627 0.78];
+0055 ivcol   = [1     0     0   ];
+0056 oralcol = [1     0.85  0   ];
+0057 
+0058 <span class="comment">% treat all antibiotic treatments within a -7/+25 day window as being part of</span>
+0059 <span class="comment">% the same event</span>
+0060 abpriorwindow = days(-7);
+0061 abpostwindow = days(25);
+0062 measuresstartdn = -40;
+0063 <span class="keyword">for</span> i = 1:size(abTreatments,1)
+0064 <span class="comment">%for i = 41:43</span>
+0065     scid = abTreatments.SmartCareID(i);
+0066     studyid = abTreatments.StudyNumber{i};
+0067     hospital = abTreatments.Hospital{i};
+0068     eventstartdate = abTreatments.IVStartDate(i);
+0069     eventstartdn = datenum(abTreatments.IVStartDate(i)) - offset + 1;
+0070     patientoffset = abTreatments.PatientOffset(i);
+0071     
+0072     fprintf(<span class="string">'Patient: %3d  Hospital: %8s  EventDate: %10s - plotting timeline\n'</span>, scid, hospital, datestr(eventstartdate, 29));
+0073     <span class="comment">% get antibiotics treatments for this event</span>
+0074     <span class="comment">%antibset = cdAntibiotics(cdAntibiotics.ID == scid &amp; cdAntibiotics.StartDate &gt;= (eventstartdate + abpriorwindow) ...</span>
+0075     <span class="comment">%    &amp; cdAntibiotics.StartDate &lt; (eventstartdate + abpostwindow), ...</span>
+0076     antibset = cdAntibiotics(cdAntibiotics.ID == scid &amp; cdAntibiotics.StopDate &gt;= (eventstartdate + measuresstartdn) <span class="keyword">...</span>
+0077         &amp; cdAntibiotics.StartDate &lt; (eventstartdate + abpostwindow), <span class="keyword">...</span>
+0078         {<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StartDate'</span>, <span class="string">'StopDate'</span>, <span class="string">'Route'</span>});
+0079     antibset.Properties.VariableNames{<span class="string">'ID'</span>} = <span class="string">'SmartCareID'</span>;
+0080     antibset.Properties.VariableNames{<span class="string">'Route'</span>} = <span class="string">'EventType'</span>;
+0081     <span class="comment">% get hospital admission for this event</span>
+0082     <span class="comment">%admset = cdAdmissions(cdAdmissions.ID == scid &amp; cdAdmissions.Admitted &gt;= (eventstartdate + abpriorwindow) ...</span>
+0083     <span class="comment">%    &amp; cdAdmissions.Admitted &lt; (eventstartdate + abpostwindow), ...</span>
+0084     admset = cdAdmissions(cdAdmissions.ID == scid &amp; cdAdmissions.Discharge &gt;= (eventstartdate + measuresstartdn) <span class="keyword">...</span>
+0085         &amp; cdAdmissions.Admitted &lt; (eventstartdate + abpostwindow), <span class="keyword">...</span>
+0086         {<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'Admitted'</span>, <span class="string">'Discharge'</span>, <span class="string">'EventType'</span>});
+0087     admset.Properties.VariableNames{<span class="string">'ID'</span>} = <span class="string">'SmartCareID'</span>;
+0088     admset.Properties.VariableNames{<span class="string">'Admitted'</span>} = <span class="string">'StartDate'</span>;
+0089     admset.Properties.VariableNames{<span class="string">'Discharge'</span>} = <span class="string">'StopDate'</span>;
+0090         
+0091     <span class="comment">% concatenate and set relative start/stop dates with zero being the</span>
+0092     <span class="comment">% start date of the current event</span>
+0093     eventtable = [admset ; antibset];
+0094     eventtable.StartDateNum = datenum(eventtable.StartDate) - offset + 1 - eventstartdn;
+0095     eventtable.StopDateNum = datenum(eventtable.StopDate) - offset + 1 - eventstartdn;
+0096         
+0097     eventtable = sortrows(eventtable, {<span class="string">'SmartCareID'</span>,<span class="string">'StartDate'</span>,<span class="string">'EventType'</span>}, <span class="string">'ascend'</span>);
+0098         
+0099     <span class="comment">% set the x range for the plots (always start at -40, and finish at</span>
+0100     <span class="comment">% max stop date of all rows for this event (with a minimum of 20)</span>
+0101     xplotstartdn = measuresstartdn;
+0102     xplotstopdn = max(eventtable.StopDateNum);
+0103     <span class="comment">%xplotstopdn = max(20, xplotstopdn);</span>
+0104     <span class="keyword">if</span> xplotstopdn &gt; 20
+0105         xplotstopdn = 20;
+0106     <span class="keyword">end</span>
+0107     
+0108     f = figure(<span class="string">'Name'</span>,sprintf(<span class="string">'%s-Patient: %s (%d) Hospital: %s  EventDate: %s'</span>, study, studyid, scid, hospital, datestr(eventstartdate, 29)));
+0109     set(gcf, <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="string">'OuterPosition'</span>, [0.45, 0, 0.35, 0.92], <span class="string">'PaperOrientation'</span>, <span class="string">'portrait'</span>, <span class="string">'PaperUnits'</span>, <span class="string">'normalized'</span>,<span class="string">'PaperPosition'</span>,[0, 0, 1, 1], <span class="string">'PaperType'</span>, <span class="string">'a4'</span>);
+0110     <span class="comment">%set(gcf, 'Units', 'normalized', 'OuterPosition', [0.2, 0.2, 0.8, 0.8], 'PaperOrientation', 'portrait', 'PaperUnits', 'normalized','PaperPosition',[0, 0, 1, 1], 'PaperType', 'a4');</span>
+0111     p = uipanel(<span class="string">'Parent'</span>, f, <span class="string">'BorderType'</span>, <span class="string">'none'</span>); 
+0112     p.Title = sprintf(<span class="string">'%s-Patient: %s (%d)  Hospital: %s  EventDate: %s'</span>, study, studyid, scid, hospital, datestr(eventstartdate, 29)); 
+0113     p.TitlePosition = <span class="string">'centertop'</span>;
+0114     p.FontSize = 14;
+0115     p.FontWeight = <span class="string">'bold'</span>;
+0116     ax = subplot(plotsdown, plotsacross, 1,<span class="string">'Parent'</span>,p);
+0117     ax.FontSize = 8;
+0118     hold on;
+0119     xl = [xplotstartdn xplotstopdn];
+0120     xlim(xl);
+0121     <span class="comment">% set y range to be the number of rows in the event table, with a</span>
+0122     <span class="comment">% minimum of 8 if less than this</span>
+0123     yl = [0 max(8,size(eventtable,1))];
+0124     ylim(yl);
+0125     title(ax, <span class="string">'Admissions and Treatments'</span>, <span class="string">'FontSize'</span>, 10);
+0126     xlabel(ax, <span class="string">'Days'</span>, <span class="string">'FontSize'</span>, 8);
+0127     <span class="comment">% plot a horizontal bar for each row in the event table, coloured</span>
+0128     <span class="comment">% according to the type of event.</span>
+0129     <span class="keyword">for</span> a = 1:size(eventtable,1)
+0130         yval = size(eventtable,1) - a + 1;
+0131         <span class="keyword">switch</span> eventtable.EventType{a}
+0132             <span class="keyword">case</span> <span class="string">'Oral'</span>
+0133                 colour = oralcol;
+0134             <span class="keyword">case</span> <span class="string">'IV'</span>
+0135                 colour = ivcol;
+0136             <span class="keyword">case</span> <span class="string">'Admission'</span>
+0137                 colour = admcol;
+0138             <span class="keyword">otherwise</span>
+0139                 colour = <span class="string">'b'</span>;
+0140         <span class="keyword">end</span>
+0141         l(a) = line(ax, [eventtable.StartDateNum(a) eventtable.StopDateNum(a)], [yval, yval], <span class="string">'Color'</span>, colour, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, 6);
+0142     <span class="keyword">end</span>  
+0143     <span class="comment">% add vertical line to mark event date</span>
+0144     line(ax, [0 0], yl, <span class="string">'Color'</span>, <span class="string">'black'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="string">'LineWidth'</span>, 1)
+0145     <span class="comment">% add legend for plot with one of each type of event listed</span>
+0146     [dummy, legendidx] = unique(eventtable.EventType, <span class="string">'stable'</span>);
+0147     legend(ax, l(legendidx), eventtable.EventType(legendidx), <span class="string">'Location'</span>, <span class="string">'west'</span>, <span class="string">'FontSize'</span>, 8);
+0148     hold off    
+0149         
+0150     <span class="comment">% add plots of measures here</span>
+0151     
+0152     <span class="keyword">for</span> b = 1:size(measures,1)
+0153         measure = measures{b};
+0154         column = <a href="getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>(measure);
+0155         scdata = physdata(physdata.SmartCareID == scid &amp; ismember(physdata.RecordingType, measure) &amp; <span class="keyword">...</span>
+0156             physdata.DateNum &gt;= eventstartdn + xplotstartdn &amp; physdata.DateNum &lt;= eventstartdn + xplotstopdn, :);
+0157         scdata = scdata(:, {<span class="string">'SmartCareID'</span>,<span class="string">'DateNum'</span> <span class="string">'Date_TimeRecorded'</span>, column});
+0158         scdata.Properties.VariableNames{column} = <span class="string">'Measurement'</span>;
+0159         scdata.DateNum = scdata.DateNum - eventstartdn;
+0160         <span class="keyword">if</span> size(scdata,1) &gt; 0
+0161             ax = subplot(plotsdown,plotsacross,b+1,<span class="string">'Parent'</span>,p);
+0162             ax.FontSize = 8;
+0163             hold on;
+0164             xl = [xplotstartdn xplotstopdn];
+0165             xlim(xl);
+0166             <span class="comment">% set y range to be the number of rows in the event table, with a</span>
+0167             <span class="comment">% minimum of 8 if less than this</span>
+0168             rangelimit = <a href="setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>(measure);
+0169             yl = <a href="setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>(min(scdata.Measurement), max(scdata.Measurement), rangelimit);
+0170             <span class="comment">%ydisplaymin = min(scdata.Measurement) * .9;</span>
+0171             <span class="comment">%ydisplaymax = max(scdata.Measurement) * 1.1;</span>
+0172             <span class="comment">%if ydisplaymin == 0 &amp;&amp; ydisplaymax == 0</span>
+0173             <span class="comment">%    ydisplaymax = 1;</span>
+0174             <span class="comment">%end</span>
+0175             <span class="comment">%yl = [ydisplaymin ydisplaymax];</span>
+0176             ylim(yl);
+0177             title(ax, strrep(measure, <span class="string">'Recording'</span>, <span class="string">''</span>), <span class="string">'FontSize'</span>, 10);
+0178             xlabel(ax, <span class="string">'Days'</span>, <span class="string">'FontSize'</span>, 8);
+0179             ylabel(ax, <span class="string">'Measure'</span>, <span class="string">'FontSize'</span>, 8);
+0180             plot(ax, scdata.DateNum, scdata.Measurement, <span class="keyword">...</span>
+0181                 <span class="string">'Color'</span>, [0, 0.65, 1], <span class="keyword">...</span>
+0182                 <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="keyword">...</span>
+0183                 <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0184                 <span class="string">'LineWidth'</span>,1,<span class="keyword">...</span>
+0185                 <span class="string">'MarkerSize'</span>,2,<span class="keyword">...</span>
+0186                 <span class="string">'MarkerEdgeColor'</span>,<span class="string">'b'</span>,<span class="keyword">...</span>
+0187                 <span class="string">'MarkerFaceColor'</span>,<span class="string">'g'</span>);
+0188             
+0189             plot(ax, scdata.DateNum, movmean(scdata.Measurement, 4, <span class="string">'omitnan'</span>), <span class="keyword">...</span>
+0190                 <span class="string">'Color'</span>, [0, 0.65, 1], <span class="keyword">...</span>
+0191                 <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0192                 <span class="string">'Marker'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0193                 <span class="string">'LineWidth'</span>, 1);
+0194             
+0195             <span class="comment">% add vertical line to mark event date &amp; IV antibiotics,</span>
+0196             <span class="comment">% &amp; admissions,</span>
+0197             <span class="comment">%admdates = unique([eventtable.StartDateNum(ismember(eventtable.EventType, 'Admission')) ; eventtable.StopDateNum(ismember(eventtable.EventType, 'Admission'))]);</span>
+0198             <span class="comment">%ivdates = unique([eventtable.StartDateNum(ismember(eventtable.EventType, 'IV')) ; eventtable.StopDateNum(ismember(eventtable.EventType, 'IV'))]);</span>
+0199             <span class="comment">%ivdates = setdiff(ivdates, admdates);</span>
+0200             <span class="comment">%line( [0 0], yl, 'Color', 'black', 'LineStyle', ':', 'LineWidth', 1)</span>
+0201             <span class="comment">%for c = 1:size(admdates,1)</span>
+0202             <span class="comment">%    line(ax, [admdates(c) admdates(c)], yl, 'Color', 'r', 'LineStyle', ':', 'LineWidth', 1)</span>
+0203             <span class="comment">%end</span>
+0204             <span class="comment">%for c = 1:size(ivdates,1)</span>
+0205             <span class="comment">%    line(ax, [ivdates(c) ivdates(c)], yl, 'Color', 'm', 'LineStyle', ':', 'LineWidth', 1)</span>
+0206             <span class="comment">%end</span>
+0207             <span class="keyword">for</span> a = 1:size(eventtable,1)
+0208                 <span class="keyword">switch</span> eventtable.EventType{a}
+0209                 <span class="keyword">case</span> <span class="string">'Oral'</span>
+0210                     colour = oralcol;
+0211                 <span class="keyword">case</span> <span class="string">'IV'</span>
+0212                     colour = ivcol;
+0213                 <span class="keyword">case</span> <span class="string">'Admission'</span>
+0214                     colour = admcol;
+0215                 <span class="keyword">otherwise</span>
+0216                     colour = <span class="string">'b'</span>;
+0217                 <span class="keyword">end</span>
+0218                 fill(ax, [eventtable.StartDateNum(a) eventtable.StopDateNum(a) eventtable.StopDateNum(a) eventtable.StartDateNum(a)], <span class="keyword">...</span>
+0219                           [yl(1) yl(1) yl(2) yl(2)], colour, <span class="string">'FaceAlpha'</span>, <span class="string">'0.1'</span>, <span class="string">'EdgeColor'</span>, <span class="string">'none'</span>);
+0220             <span class="keyword">end</span>
+0221             <span class="comment">% add horizontal lines for mid50mean and mid50 min/max</span>
+0222             ddcolumn = sprintf(<span class="string">'Fun_%s'</span>,column);
+0223             <a href="mid50mean.html" class="code" title="function y = mid50mean(x)">mid50mean</a> = demographicstable{demographicstable.SmartCareID == scid &amp; ismember(demographicstable.RecordingType, measure),{ddcolumn}}(5);
+0224             <a href="mid50std.html" class="code" title="function y = mid50std(x)">mid50std</a> = demographicstable{demographicstable.SmartCareID == scid &amp; ismember(demographicstable.RecordingType, measure),{ddcolumn}}(6);
+0225             line(ax, xl, [<a href="mid50mean.html" class="code" title="function y = mid50mean(x)">mid50mean</a> <a href="mid50mean.html" class="code" title="function y = mid50mean(x)">mid50mean</a>] , <span class="string">'Color'</span>, <span class="string">'bl'</span>, <span class="string">'LineStyle'</span>, <span class="string">'--'</span>, <span class="string">'LineWidth'</span>, 1)
+0226             line(ax, xl, [<a href="mid50mean.html" class="code" title="function y = mid50mean(x)">mid50mean</a>-<a href="mid50std.html" class="code" title="function y = mid50std(x)">mid50std</a> <a href="mid50mean.html" class="code" title="function y = mid50mean(x)">mid50mean</a>-<a href="mid50std.html" class="code" title="function y = mid50std(x)">mid50std</a>] , <span class="string">'Color'</span>, <span class="string">'bl'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="string">'LineWidth'</span>, 1)
+0227             line(ax, xl, [<a href="mid50mean.html" class="code" title="function y = mid50mean(x)">mid50mean</a>+<a href="mid50std.html" class="code" title="function y = mid50std(x)">mid50std</a> <a href="mid50mean.html" class="code" title="function y = mid50mean(x)">mid50mean</a>+<a href="mid50std.html" class="code" title="function y = mid50std(x)">mid50std</a>] , <span class="string">'Color'</span>, <span class="string">'bl'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span>, <span class="string">'LineWidth'</span>, 1)
+0228             
+0229             hold off;
+0230         <span class="keyword">end</span>
+0231     <span class="keyword">end</span>
+0232     <span class="comment">% save plot</span>
+0233     imagefilename = sprintf(<span class="string">'%s-ExacerbationTimeline_ID_%d_%s_%s_%11s'</span>, study, scid, studyid, hospital, datestr(eventstartdate, 29));
+0234     <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, imagefilename, subfolder);
+0235     close(f);
+0236 <span class="keyword">end</span>
+0237     
+0238         
+0239         
+0240</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

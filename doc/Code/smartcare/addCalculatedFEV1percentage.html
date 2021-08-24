@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of addCalculatedFEV1percentage</title>
+  <meta name="keywords" content="addCalculatedFEV1percentage">
+  <meta name="description" content="addCalculatedFEV1percentage - adds a column for the calculated FEV1">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; addCalculatedFEV1percentage.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>addCalculatedFEV1percentage
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>addCalculatedFEV1percentage - adds a column for the calculated FEV1</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [physdataout] = addCalculatedFEV1percentage(physdata,cdPatient) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> addCalculatedFEV1percentage - adds a column for the calculated FEV1
+ percentage based on calculated Predicted FEV1 using sex/age/height and
+ the ECSC formulae</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadsmartcaredata.html" class="code" title="">loadsmartcaredata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [physdataout] = addCalculatedFEV1percentage(physdata,cdPatient)</a>
+0002 
+0003 <span class="comment">% addCalculatedFEV1percentage - adds a column for the calculated FEV1</span>
+0004 <span class="comment">% percentage based on calculated Predicted FEV1 using sex/age/height and</span>
+0005 <span class="comment">% the ECSC formulae</span>
+0006 
+0007 tic
+0008 fprintf(<span class="string">'Adding column for calculated FEV1 %%age\n'</span>);
+0009 fprintf(<span class="string">'---------------------------------------\n'</span>);
+0010 
+0011 <span class="comment">% Handle patients with more than one predicted fev value across home</span>
+0012 <span class="comment">% measures differently</span>
+0013 ppredfevvals = unique(physdata(~isnan(physdata.PredictedFEV), {<span class="string">'SmartCareID'</span>, <span class="string">'PredictedFEV'</span>}));
+0014 pfcount = varfun(@sum, ppredfevvals(:,{<span class="string">'SmartCareID'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0015 ppredfevmulti = pfcount.SmartCareID(pfcount.GroupCount &gt; 1);
+0016 
+0017 ppredfevvals = innerjoin(ppredfevvals, cdPatient(:,{<span class="string">'ID'</span>,<span class="string">'FEV1SetAs'</span>,<span class="string">'CalcFEV1SetAs'</span>, <span class="string">'PredictedFEV1'</span>, <span class="string">'CalcPredictedFEV1'</span>}), <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'ID'</span>});
+0018 ppredfevvals.ScalingRatio = ppredfevvals.PredictedFEV ./ ppredfevvals.CalcFEV1SetAs;
+0019 
+0020 pmultivaluepredfev = ppredfevvals(ismember(ppredfevvals.SmartCareID, ppredfevmulti),:);
+0021 psinglevaluepredfev = ppredfevvals(~ismember(ppredfevvals.SmartCareID, ppredfevmulti),:);
+0022 
+0023 <span class="comment">% add dummy rows for the (3) patients that have mutli values of pred fev in</span>
+0024 <span class="comment">% the home measures</span>
+0025 dummyrows = psinglevaluepredfev(1:size(unique(pmultivaluepredfev.SmartCareID),1),:);
+0026 dummyrows{:,:} = 0;
+0027 dummyrows.SmartCareID = unique(pmultivaluepredfev.SmartCareID);
+0028 psinglevaluepredfev = [ psinglevaluepredfev ; dummyrows ];
+0029 
+0030 <span class="comment">% add calc FEV1SetAs, scaling factor and calculated FEV1 % to physdata</span>
+0031 physdata = innerjoin(physdata, psinglevaluepredfev(:,{<span class="string">'SmartCareID'</span>, <span class="string">'CalcFEV1SetAs'</span>, <span class="string">'ScalingRatio'</span>}));
+0032 
+0033 <span class="comment">% clear values from inner join for non LungFunction recording types</span>
+0034 physdata.CalcFEV1SetAs(~ismember(physdata.RecordingType,<span class="string">'LungFunctionRecording'</span>)) = nan;
+0035 physdata.ScalingRatio(~ismember(physdata.RecordingType,<span class="string">'LungFunctionRecording'</span>)) = nan;
+0036 
+0037 <span class="comment">% now handle 3 patients (141, 187, 198) that have multiple values for</span>
+0038 <span class="comment">% predicted FEV1 over the course of the study period</span>
+0039 pmulti = unique(pmultivaluepredfev.SmartCareID);
+0040 <span class="keyword">for</span> i = 1:size(pmulti,1)
+0041     scid = pmulti(i);
+0042     pvals = pmultivaluepredfev(pmultivaluepredfev.SmartCareID == scid,:);
+0043     idx = find(physdata.SmartCareID == scid &amp; ismember(physdata.RecordingType, <span class="string">'LungFunctionRecording'</span>));
+0044     predfev = 0;
+0045     calcfev1setas = 0;
+0046     scalingratio = 0;
+0047     <span class="keyword">for</span> a = 1:size(idx,1)
+0048         <span class="keyword">if</span> ~isnan(physdata.PredictedFEV(idx(a)))
+0049             predfev = physdata.PredictedFEV(idx(a));
+0050             calcfev1setas = pvals.CalcFEV1SetAs(pvals.PredictedFEV == predfev);
+0051             scalingratio = pvals.ScalingRatio(pvals.PredictedFEV == predfev);
+0052         <span class="keyword">end</span>
+0053         physdata.CalcFEV1SetAs(idx(a)) = calcfev1setas;
+0054         physdata.ScalingRatio(idx(a)) = scalingratio;
+0055     <span class="keyword">end</span>
+0056 <span class="keyword">end</span>
+0057 
+0058 <span class="comment">% update Calculated FEV1 %age</span>
+0059 physdata.CalcFEV1_ = physdata.FEV1_ .* physdata.ScalingRatio;
+0060 physdata.CalcFEV1_ = round(physdata.CalcFEV1_);
+0061 
+0062 fprintf(<span class="string">'Done\n'</span>);
+0063 
+0064 toc
+0065 fprintf(<span class="string">'\n'</span>);
+0066 
+0067 physdataout = physdata;
+0068 
+0069 
+0070 <span class="keyword">end</span>
+0071</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of checkDatesIVTreatmentsVsPatientStudyDate</title>
+  <meta name="keywords" content="checkDatesIVTreatmentsVsPatientStudyDate">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; checkDatesIVTreatmentsVsPatientStudyDate.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>checkDatesIVTreatmentsVsPatientStudyDate
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>	gets the patient offset table</li><li><a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clc; clear; close all;
+0002 
+0003 tic
+0004 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0005 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0006 
+0007 [studynbr, study, studyfullname] = <a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
+0008 [datamatfile, clinicalmatfile, demographicsmatfile] = <a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0009 [physdata, offset] = <a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0010 [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP, <span class="keyword">...</span>
+0011     cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght] = <a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0012 
+0013 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0014 subfolder = <span class="string">'ExcelFiles'</span>;
+0015 outputfilename = sprintf(<span class="string">'%s-TreatmentsOutsideStudyPeriodNotionalEnd.xlsx'</span>, study);
+0016 
+0017 tic
+0018 <span class="comment">% get patients with enough data</span>
+0019 patientoffsets = <a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>(physdata);
+0020 patientoffsets.Properties.VariableNames{<span class="string">'SmartCareID'</span>} = <span class="string">'ID'</span>;
+0021 
+0022 <span class="comment">% remove Oral treatments &amp; sort by SmartCareID and StopDate</span>
+0023 ivantibiotics = cdAntibiotics;
+0024 idx = find(ismember(ivantibiotics.Route, {<span class="string">'Oral'</span>}));
+0025 ivantibiotics(idx,:) = [];
+0026 ivantibiotics = sortrows(ivantibiotics, {<span class="string">'ID'</span>,<span class="string">'StopDate'</span>},<span class="string">'ascend'</span>);
+0027 ivantibiotics = innerjoin(ivantibiotics, patientoffsets);
+0028 
+0029 physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'DateNum'</span>, <span class="string">'RecordingType'</span>}, <span class="string">'ascend'</span>);
+0030 
+0031 <span class="comment">% get min and max measurement dates for each SmartCare ID</span>
+0032 minDatesByPatient = varfun(@min, physdata(:,{<span class="string">'SmartCareID'</span>, <span class="string">'Date_TimeRecorded'</span>}), <span class="string">'GroupingVariables'</span>, <span class="string">'SmartCareID'</span>);
+0033 maxDatesByPatient = varfun(@max, physdata(:,{<span class="string">'SmartCareID'</span>, <span class="string">'Date_TimeRecorded'</span>}), <span class="string">'GroupingVariables'</span>, <span class="string">'SmartCareID'</span>);
+0034 
+0035 outputtable = table(<span class="string">'Size'</span>,[1 11], <span class="string">'VariableTypes'</span>, {<span class="string">'string(12)'</span>,<span class="string">'int32'</span>,<span class="string">'int32'</span>,<span class="string">'datetime'</span>,<span class="string">'datetime'</span>,<span class="string">'int32'</span>, <span class="string">'string(14)'</span>,<span class="string">'datetime'</span>,<span class="string">'datetime'</span>,<span class="string">'datetime'</span>,<span class="string">'datetime'</span>}, <span class="keyword">...</span>
+0036     <span class="string">'VariableNames'</span>, {<span class="string">'RowType'</span>,<span class="string">'SmartCareID'</span>,<span class="string">'StudyPeriod'</span>,<span class="string">'StudyStartDate'</span>,<span class="string">'StudyEndDate'</span>,<span class="string">'AntibioticID'</span>,<span class="string">'AntibioticName'</span>,<span class="string">'AntibioticStart'</span>,<span class="string">'AntibioticEnd'</span>,<span class="string">'FirstMeasurement'</span>,<span class="string">'LastMeasurement'</span>});
+0037 rowtoadd = outputtable;
+0038 outputtable(1,:) = [];
+0039 
+0040 
+0041 oldid = ivantibiotics.ID(1);
+0042 <span class="keyword">for</span> i = 1:size(ivantibiotics,1)
+0043     scid = ivantibiotics.ID(i);
+0044     treatmentstart = ivantibiotics.StartDate(i);
+0045     dntreatmentstart = datenum(ivantibiotics.StartDate(i));
+0046     treatmentend = ivantibiotics.StopDate(i);
+0047     dntreatmentend = datenum(ivantibiotics.StopDate(i));
+0048     
+0049     idx = find(cdPatient.ID == scid);
+0050     studystart = cdPatient.StudyDate(idx);
+0051     dnstudystart = ceil(datenum(studystart));
+0052     studyend = dateshift(studystart,<span class="string">'start'</span>,<span class="string">'day'</span>,183);
+0053     dnstudyend = ceil(datenum(studyend));
+0054     
+0055     idx = find(minDatesByPatient.SmartCareID == scid);
+0056     <span class="keyword">if</span> size(idx,1) &gt;0
+0057         firstmeasurement = minDatesByPatient.min_Date_TimeRecorded(idx);
+0058         dnfirstm = ceil(datenum(minDatesByPatient.min_Date_TimeRecorded(idx)));
+0059         lastmeasurement = maxDatesByPatient.max_Date_TimeRecorded(idx);
+0060         dnlastm = ceil(datenum(maxDatesByPatient.max_Date_TimeRecorded(idx)));
+0061     <span class="keyword">else</span>
+0062         firstmeasurement = datetime(0,0,0);
+0063         lastmeasurement = datetime(0,0,0);
+0064     <span class="keyword">end</span>
+0065     
+0066     <span class="keyword">if</span> (dntreatmentend &lt; dnstudystart-1) | (dntreatmentstart &gt; dnstudyend)
+0067         <span class="keyword">if</span> oldid ~= scid
+0068            fprintf(<span class="string">'\n'</span>);
+0069            oldid = scid;
+0070         <span class="keyword">end</span>
+0071         
+0072         rowtoadd.SmartCareID = scid;
+0073         rowtoadd.StudyPeriod = dnstudyend - dnstudystart;
+0074         rowtoadd.StudyStartDate = studystart;
+0075         rowtoadd.StudyEndDate = studyend;
+0076         rowtoadd.AntibioticID = ivantibiotics.AntibioticID(i);
+0077         rowtoadd.AntibioticName = ivantibiotics.AntibioticName{i};
+0078         rowtoadd.AntibioticStart = treatmentstart;
+0079         rowtoadd.AntibioticEnd = treatmentend;
+0080         rowtoadd.FirstMeasurement = firstmeasurement;
+0081         rowtoadd.LastMeasurement = lastmeasurement;
+0082         
+0083         <span class="keyword">if</span> (dntreatmentend &lt; dnstudystart-1)
+0084             fprintf(<span class="string">'Treatment before study  :  Patient ID %3d Study Period %3d days Study Start Date %11s  :  Antibiotic ID %3d %14s End   %11s  :  First Measurement %11s\n'</span>, <span class="keyword">...</span><span class="comment"> </span>
+0085                 scid, dnstudyend - dnstudystart, datestr(studystart,1), ivantibiotics.AntibioticID(i), ivantibiotics.AntibioticName{i}, datestr(treatmentend,1), datestr(firstmeasurement,1)); 
+0086             rowtoadd.RowType = <span class="string">'Treatment before study'</span>;
+0087         <span class="keyword">end</span>
+0088         <span class="keyword">if</span> (dntreatmentstart &gt; dnstudyend) 
+0089             fprintf(<span class="string">'Treatment after  study  :  Patient ID %3d Study Period %3d days   Study End Date %11s  :  Antibiotic ID %3d %14s Start %11s  :   Last Measurement %11s\n'</span>, <span class="keyword">...</span>
+0090                 scid, dnstudyend - dnstudystart, datestr(studyend,1), ivantibiotics.AntibioticID(i), ivantibiotics.AntibioticName{i}, datestr(treatmentstart,1), datestr(lastmeasurement,1)); 
+0091             rowtoadd.RowType = <span class="string">'Treatment after study'</span>;
+0092         <span class="keyword">end</span>
+0093         outputtable = [outputtable;rowtoadd];        
+0094     <span class="keyword">end</span>
+0095 <span class="keyword">end</span>
+0096 
+0097 writetable(outputtable, fullfile(basedir, subfolder,outputfilename));
+0098 
+0099 toc
+0100 
+0101</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

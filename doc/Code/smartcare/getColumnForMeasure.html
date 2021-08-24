@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getColumnForMeasure</title>
+  <meta name="keywords" content="getColumnForMeasure">
+  <meta name="description" content="getColumnForMeasure - returns the column name from physdata for the">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; getColumnForMeasure.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>getColumnForMeasure
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>getColumnForMeasure - returns the column name from physdata for the</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [column] = getColumnForMeasure(measure) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> getColumnForMeasure - returns the column name from physdata for the
+ measure passed in</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/exploration/plotPatientProfiles.html" class="code" title="">plotPatientProfiles</a>	plot a profile of each measures for each patient over the whole enrolment period</li><li><a href="../../Code/pdm/recovery/findDataAnomaliesRecovery.html" class="code" title="">findDataAnomaliesRecovery</a>	highlight data anomalies to be optionnaly excluded prior to run the alignment model</li><li><a href="../../Code/pdm/recovery/updatedModel/calculateMuNormalisationRecovery.html" class="code" title="function [normmean] = calculateMuNormalisationRecovery(amDatacube, amInterventions, measures, demographicstable,dataoutliers, ninterventions, nmeasures, mumethod, study)">calculateMuNormalisationRecovery</a>	populates an array of ninterventions by nmeasures with the additive</li><li><a href="addBreatheRowsForMeasure.html" class="code" title="function [physdata, physdata_deleted] = addBreatheRowsForMeasure(physdata, physdata_deleted, measdata, filetype, recordingtype, delzero)">addBreatheRowsForMeasure</a>	addBreatheRowsForMeasure - adds the rows to physdata (and</li><li><a href="addDupeRows.html" class="code" title="function [alldupeidx, addrows, nsame, nmax, nmean, nsum] = addDupeRows(data, alldupeidx, currdupesetidx, addrows, i, mode, detaillog)">addDupeRows</a>	addDupeRows - adds to dupe rows array and relevant index arrays</li><li><a href="am2PlotsAndSavePredictions.html" class="code" title="function am2PlotsAndSavePredictions(amInterventions, amDatacube, measures, demographicstable, best_histogram, overall_hist, best_offsets, best_profile_post, normmean, ex_start, thisinter, nmeasures, max_offset, align_wind, study)">am2PlotsAndSavePredictions</a>	am2PlotsAndSavePredictions - plots measures prior to</li><li><a href="am3PlotsAndSavePredictions.html" class="code" title="function am3PlotsAndSavePredictions(amInterventions, amDatacube, measures, demographicstable, best_histogram, overall_hist, best_offsets, best_profile_post, normmean, ex_start, thisinter, nmeasures, max_offset, align_wind, study)">am3PlotsAndSavePredictions</a>	am3PlotsAndSavePredictions - plots measures prior to</li><li><a href="amPlotsAndSavePredictions.html" class="code" title="function amPlotsAndSavePredictions(amInterventions, amDatacube, measures, demographicstable, best_histogram, best_offsets, problower, probupper, ex_start, thisinter, nmeasures, max_offset, align_wind)">amPlotsAndSavePredictions</a>	amPlotsAndSavePredictions - plots measures prior to</li><li><a href="analyseStableMeanOptions.html" class="code" title="">analyseStableMeanOptions</a>	</li><li><a href="calculateMuNormalisation.html" class="code" title="function [normmean] = calculateMuNormalisation(amDatacube, amInterventions, measures, demographicstable,dataoutliers, align_wind, ninterventions, nmeasures, mumethod, study)">calculateMuNormalisation</a>	calculateMuNormalisation - - populates an array of ninterventions by</li><li><a href="calculateSigmaNormalisation.html" class="code" title="function [normstd] = calculateSigmaNormalisation(amInterventions, measures, demographicstable, ninterventions, nmeasures, sigmamethod, study)">calculateSigmaNormalisation</a>	calculateSigmaNormalisation - populates an array of ninterventions by</li><li><a href="createInterpMeasure.html" class="code" title="function [clphysdata] = createInterpMeasure(clphysdata, rectype, detaillog)">createInterpMeasure</a>	createInterpMeasure - function to add a new measure of interpolated</li><li><a href="createMeasuresTable.html" class="code" title="function [measures, nmeasures] = createMeasuresTable(physdata)">createMeasuresTable</a>	creates the measures table</li><li><a href="findAndDeleteAnomalousMeasures.html" class="code" title="function [brphysdata, brphysdata_deleted] = findAndDeleteAnomalousMeasures(brphysdata, brphysdata_deleted, recordingtype, lowerthresh, upperthresh)">findAndDeleteAnomalousMeasures</a>	findAndDeleteAnomalousMeasures - finds anomalous values and deletes them</li><li><a href="findDataAnomalies.html" class="code" title="">findDataAnomalies</a>	highlight data anomalies to be optionnaly excluded prior to run the alignment model</li><li><a href="getMeasureOverallMinMax.html" class="code" title="function [measuremin, measuremax] = getMeasureOverallMinMax(demographicstable, measure)">getMeasureOverallMinMax</a>	getMeasureMinMax - returns the min and max value for a measure across all</li><li><a href="loadclimbdata.html" class="code" title="">loadclimbdata</a>	</li><li><a href="printDataDemographics.html" class="code" title="function printDataDemographics(physdata, smartcareID)">printDataDemographics</a>	printDataDemographics - calculates and prints the count, mean, std, min, max</li><li><a href="runAlignmentModel2.html" class="code" title="">runAlignmentModel2</a>	</li><li><a href="runAlignmentModel3.html" class="code" title="">runAlignmentModel3</a>	</li><li><a href="runAlignmentModel4.html" class="code" title="">runAlignmentModel4</a>	</li><li><a href="visualiseExacerbationTimeline.html" class="code" title="">visualiseExacerbationTimeline</a>	</li><li><a href="visualiseMeasures.html" class="code" title="">visualiseMeasures</a>	</li><li><a href="visualiseMeasuresFcn.html" class="code" title="function visualiseMeasuresFcn(physdata, offset, cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits, cdCRP, cdPFT, measures, study)">visualiseMeasuresFcn</a>	visualiseMeasuresFcn - plots clinical and home measures</li><li><a href="visualiseMeasuresForPaperFcn.html" class="code" title="function visualiseMeasuresForPaperFcn(physdata, offset, cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits,cdCRP, cdPFT, cdNewMeds, measures, nmeasures, study)">visualiseMeasuresForPaperFcn</a>	visualiseMeasuresForPaperFcn - plots clinical and home measures</li><li><a href="visualiseMeasuresForPaperFcn2.html" class="code" title="function visualiseMeasuresForPaperFcn2(physdata, offset, amDatacube, cdPatient, cdAntibiotics,cdCRP, cdPFT, cdNewMeds, measures, nmeasures, ndays, study)">visualiseMeasuresForPaperFcn2</a>	visualiseMeasuresForPaperFcn2 - plots clinical and home measures</li><li><a href="visualisePatientSummary.html" class="code" title="">visualisePatientSummary</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [column] = getColumnForMeasure(measure)</a>
+0002 
+0003 <span class="comment">% getColumnForMeasure - returns the column name from physdata for the</span>
+0004 <span class="comment">% measure passed in</span>
+0005 
+0006 <span class="keyword">switch</span> measure
+0007     <span class="keyword">case</span> <span class="string">'ActivityRecording'</span>
+0008         column = <span class="string">'Activity_Steps'</span>;
+0009     <span class="keyword">case</span> {<span class="string">'AppetiteRecording'</span>, <span class="string">'BreathlessnessRecording'</span>, <span class="string">'CoughRecording'</span>,<span class="string">'SleepActivityRecording'</span>, <span class="string">'SputumVolumeRecording'</span>, <span class="string">'TirednessRecording'</span>, <span class="string">'WellnessRecording'</span>}
+0010         column = <span class="string">'Rating'</span>;
+0011     <span class="keyword">case</span> <span class="string">'CalorieRecording'</span>
+0012         column = <span class="string">'Calories'</span>;
+0013     <span class="keyword">case</span> {<span class="string">'FEV1Recording'</span>, <span class="string">'FEF2575Recording'</span>, <span class="string">'FEV075Recording'</span>, <span class="string">'FEV1DivFEV6Recording'</span>, <span class="string">'FEV6Recording'</span>, <span class="string">'InterpFEV1Recording'</span>}
+0014         column = <span class="string">'FEV'</span>;
+0015     <span class="keyword">case</span> {<span class="string">'HasColdOrFluRecording'</span>, <span class="string">'HasHayFeverRecording'</span>}
+0016         column = <span class="string">'HasCondition'</span>;
+0017     <span class="keyword">case</span> <span class="string">'LungFunctionRecording'</span>
+0018         column = <span class="string">'CalcFEV1_'</span>;
+0019     <span class="keyword">case</span> {<span class="string">'MinsAsleepRecording'</span>, <span class="string">'MinsAwakeRecording'</span>}
+0020         column = <span class="string">'Sleep'</span>;
+0021     <span class="keyword">case</span> <span class="string">'O2SaturationRecording'</span>
+0022         column = <span class="string">'O2Saturation'</span>;
+0023     <span class="keyword">case</span> {<span class="string">'PulseRateRecording'</span>, <span class="string">'RestingHRRecording'</span>}
+0024         column = <span class="string">'Pulse_BPM_'</span>;
+0025     <span class="keyword">case</span> <span class="string">'RespiratoryRateRecording'</span>
+0026         column = <span class="string">'BreathsPerMin'</span>;
+0027     <span class="keyword">case</span> <span class="string">'SleepDisturbanceRecording'</span>
+0028         column = <span class="string">'NumSleepDisturb'</span>;
+0029     <span class="keyword">case</span> {<span class="string">'SputumColorRecording'</span>, <span class="string">'SputumColourRecording'</span>}
+0030         column = <span class="string">'SputumColour'</span>;
+0031     <span class="keyword">case</span> {<span class="string">'SputumSampleRecording'</span>}
+0032         column = <span class="string">'SputumSampleTaken_'</span>;
+0033     <span class="keyword">case</span> <span class="string">'TemperatureRecording'</span>
+0034         column = <span class="string">'Temp_degC_'</span>;
+0035     <span class="keyword">case</span> {<span class="string">'WeightRecording'</span>, <span class="string">'InterpWeightRecording'</span>}
+0036         column = <span class="string">'WeightInKg'</span>;
+0037     <span class="keyword">otherwise</span>
+0038         fprintf(<span class="string">'*** Unknown measure %s ***\n'</span>, measure);
+0039         column = <span class="string">''</span>;
+0040 <span class="keyword">end</span>
+0041 
+0042 <span class="keyword">end</span>
+0043</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

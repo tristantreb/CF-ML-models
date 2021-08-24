@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of am3AlignCurves</title>
+  <meta name="keywords" content="am3AlignCurves">
+  <meta name="description" content="am3AlignCurves = function to align measurement curves prior to intervention">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; am3AlignCurves.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>am3AlignCurves
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>am3AlignCurves = function to align measurement curves prior to intervention</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [offsets, profile_pre, profile_post, count_post, std_post, hstg, qual] = am3AlignCurves(amDatacube, amInterventions, measures, normstd, max_offset, align_wind, nmeasures, ninterventions, run_type, detaillog, curveaveragingmethod, sigmamethod) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> am3AlignCurves = function to align measurement curves prior to intervention</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="am3AddToMean.html" class="code" title="function [meancurvedata, meancurvesum, meancurvecount, meancurvestd] = am3AddToMean(meancurvedata, meancurvesum, meancurvecount, meancurvestd, amDatacube, amInterventions, currinter, max_offset, align_wind, nmeasures, curveaveragingmethod)">am3AddToMean</a>	am3AddToMean - add a curve to the mean curve (sum and count)</li><li><a href="am3BestFit.html" class="code" title="function [better_offset, hstg] = am3BestFit(meancurvesum, meancurvecount, meancurvestd, amDatacube, amInterventions, measuresmask, normstd, hstg, currinter, max_offset, align_wind, nmeasures, sigmamethod)">am3BestFit</a>	am3BestFit - calculates the offset for an intervention by minimising the</li><li><a href="am3CalcObjFcn.html" class="code" title="function [dist, hstg] = am3CalcObjFcn(meancurvesum, meancurvecount, meancurvestd, amDatacube, amInterventions, measuresmask, normstd, hstg, currinter, curroffset, max_offset, align_wind, nmeasures, update_histogram, sigmamethod)">am3CalcObjFcn</a>	am3CalcObjFcn - calculates residual sum of squares distance for points in</li><li><a href="am3RemoveFromMean.html" class="code" title="function [meancurvedata, meancurvesum, meancurvecount, meancurvestd] = am3RemoveFromMean(meancurvedata, meancurvesum, meancurvecount, meancurvestd, amDatacube, amInterventions, currinter, max_offset, align_wind, nmeasures, curveaveragingmethod)">am3RemoveFromMean</a>	am3RemoveFromMean - remove a curve from the mean curve (sum and count)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModel3.html" class="code" title="">runAlignmentModel3</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [offsets, profile_pre, profile_post, count_post, std_post, hstg, qual] = am3AlignCurves(amDatacube, amInterventions, measures, normstd, max_offset, align_wind, nmeasures, ninterventions, run_type, detaillog, curveaveragingmethod, sigmamethod)</a>
+0002 
+0003 <span class="comment">% am3AlignCurves = function to align measurement curves prior to intervention</span>
+0004 
+0005 meancurvedata     = nan(max_offset + align_wind, nmeasures, ninterventions);
+0006 meancurvesum      = zeros(max_offset + align_wind, nmeasures);
+0007 meancurvecount    = zeros(max_offset + align_wind, nmeasures);
+0008 meancurvestd      = zeros(max_offset + align_wind, nmeasures);
+0009 offsets           = zeros(ninterventions, 1);
+0010 profile_pre       = zeros(nmeasures, max_offset+align_wind);
+0011 profile_post      = zeros(nmeasures, max_offset+align_wind);
+0012 count_post        = zeros(nmeasures, max_offset+align_wind);
+0013 std_post          = zeros(nmeasures, max_offset+align_wind);
+0014 hstg              = zeros(nmeasures, ninterventions, max_offset);
+0015 
+0016 qual = 0;
+0017 
+0018 <span class="comment">% calculate mean curve over all interventions</span>
+0019 <span class="keyword">for</span> i = 1:ninterventions
+0020     [meancurvedata, meancurvesum, meancurvecount, meancurvestd] = <a href="am3AddToMean.html" class="code" title="function [meancurvedata, meancurvesum, meancurvecount, meancurvestd] = am3AddToMean(meancurvedata, meancurvesum, meancurvecount, meancurvestd, amDatacube, amInterventions, currinter, max_offset, align_wind, nmeasures, curveaveragingmethod)">am3AddToMean</a>(meancurvedata, meancurvesum, meancurvecount, meancurvestd, amDatacube, amInterventions, i, max_offset, <span class="keyword">...</span>
+0021        align_wind, nmeasures, curveaveragingmethod);
+0022 <span class="keyword">end</span>
+0023 
+0024 <span class="comment">% store the mean curves pre-alignment for each measure for plotting</span>
+0025 <span class="keyword">for</span> m = 1:nmeasures
+0026     <span class="keyword">for</span> day = 1:max_offset + align_wind
+0027         profile_pre(m, day) = meancurvesum(day, m) / meancurvecount(day, m);
+0028     <span class="keyword">end</span>
+0029 <span class="keyword">end</span>
+0030 
+0031 <span class="comment">% iterate to convergence</span>
+0032 pnt = 1;
+0033 cnt = 0;
+0034 iter = 0;
+0035 ok  = 0;
+0036 <span class="keyword">while</span> 1
+0037     [meancurvedata, meancurvesum, meancurvecount, meancurvestd] = <a href="am3RemoveFromMean.html" class="code" title="function [meancurvedata, meancurvesum, meancurvecount, meancurvestd] = am3RemoveFromMean(meancurvedata, meancurvesum, meancurvecount, meancurvestd, amDatacube, amInterventions, currinter, max_offset, align_wind, nmeasures, curveaveragingmethod)">am3RemoveFromMean</a>(meancurvedata, meancurvesum, meancurvecount, meancurvestd, amDatacube, amInterventions, pnt, <span class="keyword">...</span>
+0038         max_offset, align_wind, nmeasures, curveaveragingmethod);
+0039     <span class="comment">% check safety</span>
+0040     ok = 1;
+0041     <span class="keyword">for</span> i=2:max_offset + align_wind
+0042         <span class="keyword">for</span> m=1:nmeasures
+0043             <span class="keyword">if</span> meancurvecount(i,m) &lt; 2
+0044                 <span class="comment">%if detaillog</span>
+0045                 <span class="comment">%    fprintf('Intervention %d, Measure %s, dayprior %d &lt;3 datapoints\n', pnt, measures.Name{m}, i);</span>
+0046                 <span class="comment">%end</span>
+0047                 ok = 0;
+0048             <span class="keyword">end</span>
+0049         <span class="keyword">end</span>
+0050     <span class="keyword">end</span>
+0051     
+0052     <span class="keyword">if</span> ok == 1
+0053         <span class="comment">%fprintf('Got here ! Actually doing some shifting....\n');</span>
+0054         <span class="comment">%dummy = input('Continue ?');</span>
+0055         [better_offset, hstg] = <a href="am3BestFit.html" class="code" title="function [better_offset, hstg] = am3BestFit(meancurvesum, meancurvecount, meancurvestd, amDatacube, amInterventions, measuresmask, normstd, hstg, currinter, max_offset, align_wind, nmeasures, sigmamethod)">am3BestFit</a>(meancurvesum, meancurvecount, meancurvestd, amDatacube, <span class="keyword">...</span>
+0056             amInterventions, measures.Mask, normstd, hstg, pnt, max_offset, align_wind, nmeasures, sigmamethod);
+0057     <span class="keyword">else</span>
+0058         better_offset = amInterventions.Offset(pnt);
+0059     <span class="keyword">end</span>
+0060     
+0061     <span class="keyword">if</span> better_offset ~= amInterventions.Offset(pnt)
+0062         amInterventions.Offset(pnt) = better_offset;
+0063         <span class="comment">%if detaillog</span>
+0064         <span class="comment">%    fprintf('amIntervention.Offset(%d) set to %d\n', pnt, better_offset);</span>
+0065         <span class="comment">%end</span>
+0066         cnt = cnt+1;
+0067     <span class="keyword">end</span>
+0068     [meancurvedata, meancurvesum, meancurvecount, meancurvestd] = <a href="am3AddToMean.html" class="code" title="function [meancurvedata, meancurvesum, meancurvecount, meancurvestd] = am3AddToMean(meancurvedata, meancurvesum, meancurvecount, meancurvestd, amDatacube, amInterventions, currinter, max_offset, align_wind, nmeasures, curveaveragingmethod)">am3AddToMean</a>(meancurvedata, meancurvesum, meancurvecount, meancurvestd, <span class="keyword">...</span>
+0069         amDatacube, amInterventions, pnt, max_offset, align_wind, nmeasures, curveaveragingmethod);
+0070         
+0071     pnt = pnt+1;
+0072     <span class="keyword">if</span> pnt &gt; ninterventions
+0073         iter = iter + 1;
+0074         pnt = pnt - ninterventions;
+0075         <span class="keyword">if</span> cnt == 0
+0076             <span class="keyword">if</span> detaillog
+0077                 fprintf(<span class="string">'Converged after %2d iterations\n'</span>, iter);
+0078             <span class="keyword">end</span>
+0079             <span class="keyword">break</span>;
+0080         <span class="keyword">else</span> 
+0081             <span class="keyword">if</span> detaillog
+0082                 fprintf(<span class="string">'Changed %2d offsets on iteration %2d\n'</span>, cnt, iter);
+0083             <span class="keyword">end</span>
+0084             <span class="keyword">if</span> iter &gt; 100
+0085                 <span class="keyword">if</span> detaillog
+0086                     fprintf(<span class="string">'Iteration count limit exceeded - breaking\n'</span>);
+0087                 <span class="keyword">end</span>
+0088                 <span class="keyword">break</span>;
+0089             <span class="keyword">end</span>
+0090             cnt = 0;
+0091         <span class="keyword">end</span>
+0092     <span class="keyword">end</span>
+0093 <span class="keyword">end</span>
+0094 
+0095 <span class="comment">% computing the objective function result for converged offset array</span>
+0096 <span class="comment">% don't update the histogram here to avoid double counting on the best</span>
+0097 <span class="comment">% offset day</span>
+0098 update_histogram = 0;
+0099 
+0100 <span class="keyword">for</span> i=1:ninterventions
+0101     [meancurvedata, meancurvesum, meancurvecount, meancurvestd] = <a href="am3RemoveFromMean.html" class="code" title="function [meancurvedata, meancurvesum, meancurvecount, meancurvestd] = am3RemoveFromMean(meancurvedata, meancurvesum, meancurvecount, meancurvestd, amDatacube, amInterventions, currinter, max_offset, align_wind, nmeasures, curveaveragingmethod)">am3RemoveFromMean</a>(meancurvedata, meancurvesum, meancurvecount, meancurvestd, <span class="keyword">...</span>
+0102         amDatacube, amInterventions, i, max_offset, align_wind, nmeasures, curveaveragingmethod);
+0103     qual = qual + <a href="am3CalcObjFcn.html" class="code" title="function [dist, hstg] = am3CalcObjFcn(meancurvesum, meancurvecount, meancurvestd, amDatacube, amInterventions, measuresmask, normstd, hstg, currinter, curroffset, max_offset, align_wind, nmeasures, update_histogram, sigmamethod)">am3CalcObjFcn</a>(meancurvesum, meancurvecount, meancurvestd, amDatacube, <span class="keyword">...</span>
+0104         amInterventions, measures.Mask, normstd, hstg, i, amInterventions.Offset(i), max_offset, align_wind, nmeasures, update_histogram, sigmamethod);
+0105     [meancurvedata, meancurvesum, meancurvecount, meancurvestd] = <a href="am3AddToMean.html" class="code" title="function [meancurvedata, meancurvesum, meancurvecount, meancurvestd] = am3AddToMean(meancurvedata, meancurvesum, meancurvecount, meancurvestd, amDatacube, amInterventions, currinter, max_offset, align_wind, nmeasures, curveaveragingmethod)">am3AddToMean</a>(meancurvedata, meancurvesum, meancurvecount, meancurvestd, <span class="keyword">...</span>
+0106         amDatacube, amInterventions, i, max_offset, align_wind, nmeasures, curveaveragingmethod);
+0107 <span class="keyword">end</span>
+0108 
+0109 <span class="keyword">for</span> i=1:ninterventions 
+0110     offsets(i) = amInterventions.Offset(i);
+0111 <span class="keyword">end</span>
+0112 
+0113 <span class="comment">% store the mean curves post-alignment for each measure for plotting</span>
+0114 <span class="keyword">for</span> m = 1:nmeasures
+0115     <span class="keyword">for</span> day = 1:max_offset + align_wind
+0116         profile_post(m, day) = meancurvesum(day, m)/meancurvecount(day, m);
+0117         count_post(m, day) = meancurvecount(day, m);
+0118         std_post(m, day) = meancurvestd(day, m);
+0119     <span class="keyword">end</span>
+0120 <span class="keyword">end</span>
+0121 
+0122 <span class="keyword">end</span>
+0123</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

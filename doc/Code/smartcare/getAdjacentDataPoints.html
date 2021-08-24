@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getAdjacentDataPoints</title>
+  <meta name="keywords" content="getAdjacentDataPoints">
+  <meta name="description" content="getAdjacentDataPoints - get and store adjacent data points to a point in the latent">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; getAdjacentDataPoints.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>getAdjacentDataPoints
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>getAdjacentDataPoints - get and store adjacent data points to a point in the latent</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [adjsumsqpt, adjsumpt, adjcountpt, range] = getAdjacentDataPoints(meancurvesumsqrow, meancurvesumrow, meancurvecountrow, thispoint, thismeasure, countthreshold, max_offset, align_wind) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> getAdjacentDataPoints - get and store adjacent data points to a point in the latent
+ curve - to be used when there are too few underlying curves contributing</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMMCFindProblemDataPoints.html" class="code" title="function [pptsstruct] = amEMMCFindProblemDataPoints(meancurvesumsq, meancurvesum, meancurvecount, measuresmask,min_offset, max_offset, align_wind, nmeasures, countthreshold, nlatentcurves)">amEMMCFindProblemDataPoints</a>	amEMMCFindProblemDataPoints - finds datapoints in the average curve that have fewer underlying</li><li><a href="findProblemDataPoints.html" class="code" title="function [ppts] = findProblemDataPoints(meancurvesumsq, meancurvesum, meancurvecount, measuresmask, min_offset, max_offset, align_wind, nmeasures, countthreshold)">findProblemDataPoints</a>	findProblemDataPoints - finds datapoints in the average curve that have fewer underlying</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [adjsumsqpt, adjsumpt, adjcountpt, range] = getAdjacentDataPoints(meancurvesumsqrow, meancurvesumrow, meancurvecountrow, thispoint, thismeasure, countthreshold, max_offset, align_wind)</a>
+0002 
+0003 <span class="comment">% getAdjacentDataPoints - get and store adjacent data points to a point in the latent</span>
+0004 <span class="comment">% curve - to be used when there are too few underlying curves contributing</span>
+0005 
+0006 range = 0;
+0007 adjsumsqpt = 0;
+0008 adjsumpt = 0;
+0009 adjcountpt = 0;
+0010 
+0011 <span class="keyword">while</span> (meancurvecountrow(thispoint) + adjcountpt) &lt; countthreshold
+0012     range = range + 1;
+0013     <span class="keyword">if</span> range &gt; max_offset + align_wind - 1
+0014         <span class="comment">%fprintf('***** Measure %d Day %d, CurveCount %f AdjCount %f, Range %d: Not enough data points to borrow *****\n', thismeasure, thispoint, meancurvecountrow(thispoint), adjcountpt, range);</span>
+0015         <span class="keyword">break</span>
+0016     <span class="keyword">end</span>
+0017     <span class="comment">%if (thispoint + range) &lt;= max_offset + align_wind - 1</span>
+0018     <span class="comment">%    adjsumsqpt = adjsumsqpt + meancurvesumsqrow(thispoint + range);</span>
+0019     <span class="comment">%    adjsumpt   = adjsumpt   + meancurvesumrow(thispoint   + range);</span>
+0020     <span class="comment">%    adjcountpt = adjcountpt + meancurvecountrow(thispoint + range);</span>
+0021     <span class="comment">%end</span>
+0022     <span class="keyword">if</span> (thispoint - range) &gt;= 1
+0023         adjsumsqpt = adjsumsqpt + meancurvesumsqrow(thispoint - range);
+0024         adjsumpt   = adjsumpt   + meancurvesumrow(thispoint   - range);
+0025         adjcountpt = adjcountpt + meancurvecountrow(thispoint - range);
+0026     <span class="keyword">end</span>
+0027 <span class="keyword">end</span>
+0028 
+0029 <span class="comment">%fprintf('Retrieved %d adjacent points to point %d for measure %d: %d addtional points\n', range, thispoint, thismeasure, adjcountpt);</span>
+0030 
+0031 <span class="keyword">end</span>
+0032</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

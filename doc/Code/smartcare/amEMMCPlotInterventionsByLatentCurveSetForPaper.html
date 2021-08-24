@@ -1,0 +1,235 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCPlotInterventionsByLatentCurveSetForPaper</title>
+  <meta name="keywords" content="amEMMCPlotInterventionsByLatentCurveSetForPaper">
+  <meta name="description" content="amEMMCPlotInterventionsByLatentCurveSetForPaper - plots interventions and">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCPlotInterventionsByLatentCurveSetForPaper.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCPlotInterventionsByLatentCurveSetForPaper
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCPlotInterventionsByLatentCurveSetForPaper - plots interventions and</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function amEMMCPlotInterventionsByLatentCurveSetForPaper(pmPatients, amInterventions,ivandmeasurestable, npatients, maxdays, plotname, plotsubfolder, nlatentcurves, plotmode, studymarkermode, pfiltermode) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCPlotInterventionsByLatentCurveSetForPaper - plots interventions and
+ treatments over time for all patients, and colour codes the treatments by
+ latent curve set. Use updated formatting for paper</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>	savePlots - saves the figure to png and svp file types in the specified</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runPlotsForPaperEMMC.html" class="code" title="">runPlotsForPaperEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function amEMMCPlotInterventionsByLatentCurveSetForPaper(pmPatients, amInterventions, </a><span class="keyword">...</span>
+0002     ivandmeasurestable, npatients, maxdays, plotname, plotsubfolder, nlatentcurves, plotmode, studymarkermode, pfiltermode)
+0003 
+0004 <span class="comment">% amEMMCPlotInterventionsByLatentCurveSetForPaper - plots interventions and</span>
+0005 <span class="comment">% treatments over time for all patients, and colour codes the treatments by</span>
+0006 <span class="comment">% latent curve set. Use updated formatting for paper</span>
+0007 
+0008 tempintrcount = varfun(@max, amInterventions, <span class="string">'InputVariables'</span>, {<span class="string">'Pred'</span>}, <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0009 maxpatintr    = max(tempintrcount.GroupCount);
+0010 
+0011 <span class="keyword">if</span> plotmode == 1 <span class="comment">% plot with days scaled to start of study for each patient</span>
+0012     plotmaxdays = maxdays;
+0013     amInterventions.PStartdn     = amInterventions.IVScaledDateNum;
+0014     amInterventions.PPred        = amInterventions.Pred;
+0015     ivandmeasurestable = innerjoin(ivandmeasurestable, unique(amInterventions(:,{<span class="string">'SmartCareID'</span>, <span class="string">'PatientOffset'</span>})), <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'PatientOffset'</span>});
+0016     ivandmeasurestable.IVScaledDateNum = ivandmeasurestable.IVDateNum - ivandmeasurestable.PatientOffset;
+0017     ivandmeasurestable.IVScaledStopDateNum = ivandmeasurestable.IVStopDateNum - ivandmeasurestable.PatientOffset;
+0018     ivandmeasurestable.PStartdn = ivandmeasurestable.IVScaledDateNum;
+0019     ivandmeasurestable.PStopdn  = ivandmeasurestable.IVScaledStopDateNum;
+0020     plottext                     = <span class="string">'RelDays'</span>;
+0021     widthperintr                 = 5;
+0022     divider                      = 5;
+0023     xdisplabels = cell(1, plotmaxdays + divider + (maxpatintr  * widthperintr));
+0024     <span class="keyword">for</span> i = 1:plotmaxdays
+0025         <span class="keyword">if</span> i/50 == round(i/50)
+0026             xdisplabels{i} = num2str(i);
+0027         <span class="keyword">else</span>
+0028             xdisplabels{i} = <span class="string">''</span>;
+0029         <span class="keyword">end</span>
+0030     <span class="keyword">end</span>
+0031     <span class="keyword">for</span> i = plotmaxdays + 1: plotmaxdays + divider + (maxpatintr  * widthperintr)
+0032         xdisplabels{i} = <span class="string">''</span>;
+0033     <span class="keyword">end</span>
+0034 <span class="keyword">elseif</span> plotmode == 2 <span class="comment">% plot real days</span>
+0035     plotmaxdays = max(max(ivandmeasurestable.IVStopDateNum), max(pmPatients.LastMeasdn));
+0036     amInterventions.PStartdn     = amInterventions.IVDateNum;
+0037     amInterventions.PPred        = amInterventions.Pred + amInterventions.PatientOffset;
+0038     ivandmeasurestable.PStartdn = ivandmeasurestable.IVDateNum;
+0039     ivandmeasurestable.PStopdn  = ivandmeasurestable.IVStopDateNum;
+0040     mindate     = amInterventions.IVStartDate(1) - days(amInterventions.IVDateNum(1));
+0041     plottext                     = <span class="string">'AbsDays'</span>;
+0042     widthperintr                 = 10;
+0043     divider                      = 10;
+0044     xdisplabels = cell(1, plotmaxdays + divider + (maxpatintr  * widthperintr));
+0045     <span class="keyword">for</span> i = 1:plotmaxdays
+0046         <span class="keyword">if</span> i/50 == round(i/50)
+0047             xdisplabels{i} = datestr(mindate + days(i), 1);
+0048         <span class="keyword">else</span>
+0049             xdisplabels{i} = <span class="string">''</span>;
+0050         <span class="keyword">end</span>
+0051     <span class="keyword">end</span>
+0052     <span class="keyword">for</span> i = plotmaxdays + 1: plotmaxdays + divider + (maxpatintr  * widthperintr)
+0053         xdisplabels{i} = <span class="string">''</span>;
+0054     <span class="keyword">end</span>
+0055 <span class="keyword">else</span>
+0056     fprintf(<span class="string">'**** Unknown Plot Mode ****\n'</span>);
+0057     <span class="keyword">return</span>
+0058 <span class="keyword">end</span>
+0059 
+0060 <span class="keyword">if</span> studymarkermode == 2
+0061     plottext = sprintf(<span class="string">'%sWithStudy'</span>, plottext);
+0062 <span class="keyword">end</span>
+0063 <span class="keyword">if</span> pfiltermode == 2
+0064     plottext = sprintf(<span class="string">'%sFilt'</span>, plottext);
+0065 <span class="keyword">end</span>
+0066 
+0067 intrarray = ones(npatients, (plotmaxdays + divider + (maxpatintr  * widthperintr)));
+0068 
+0069 <span class="keyword">for</span> p = 1:npatients
+0070     
+0071     <span class="keyword">if</span> plotmode == 1
+0072         prellastmday  = pmPatients.RelLastMeasdn(pmPatients.PatientNbr == p);
+0073         prelfirstmday = 1;
+0074     <span class="keyword">elseif</span> plotmode == 2
+0075         prellastmday  = pmPatients.LastMeasdn(pmPatients.PatientNbr == p);
+0076         prelfirstmday = pmPatients.FirstMeasdn(pmPatients.PatientNbr == p);
+0077     <span class="keyword">else</span>
+0078         <span class="keyword">return</span>;
+0079     <span class="keyword">end</span>
+0080     pabs         = ivandmeasurestable(ivandmeasurestable.SmartCareID == pmPatients.ID(pmPatients.PatientNbr == p),:);
+0081     ampredrows   = amInterventions(amInterventions.SmartCareID == pmPatients.ID(pmPatients.PatientNbr == p), :);
+0082     intrcnt = 1;
+0083     
+0084     <span class="keyword">for</span> d = 1:plotmaxdays
+0085         ampredidx     = find(ampredrows.PPred &lt;= d &amp; ampredrows.PStartdn &gt;= d, 1, <span class="string">'first'</span>);
+0086         ampredidx2    = find(ampredrows.PPred &gt;= d &amp; ampredrows.PStartdn &lt;= d, 1, <span class="string">'first'</span>);
+0087         treatidx      = find(pabs.PStartdn &lt;= d &amp; pabs.PStopdn &gt;= d);
+0088         
+0089         <span class="keyword">if</span> studymarkermode == 2
+0090             <span class="comment">% shade cells in study/measurement period</span>
+0091             <span class="keyword">if</span> d &gt;= prelfirstmday &amp;&amp; d &lt;= max(prellastmday, prelfirstmday + 183)
+0092                 intrarray(p, d) = 2;
+0093             <span class="keyword">end</span>
+0094         <span class="keyword">end</span>
+0095         <span class="comment">% for treatments</span>
+0096         <span class="keyword">if</span> size(treatidx, 1) ~= 0 &amp;&amp; <span class="keyword">...</span>
+0097                 (d &gt;= pabs.PStartdn(treatidx) &amp;&amp; <span class="keyword">...</span>
+0098                  d &lt;= pabs.PStopdn(treatidx))
+0099             intrarray(p, d) = 3;  
+0100         <span class="keyword">end</span>
+0101         <span class="comment">% for good predictions (before treatment date)</span>
+0102         <span class="keyword">if</span> size(ampredidx,1)~=0 &amp;&amp; <span class="keyword">...</span>
+0103                 (d &gt;= ampredrows.PPred(ampredidx) &amp;&amp; <span class="keyword">...</span>
+0104                  d &lt; ampredrows.PStartdn(ampredidx))
+0105             intrarray(p, d) = 3 + ampredrows.LatentCurve(ampredidx);
+0106         <span class="keyword">end</span>
+0107         <span class="comment">% to plot a single day for bad predictions (on or after treatment</span>
+0108         <span class="comment">% date)</span>
+0109         <span class="keyword">if</span> size(ampredidx2,1)~=0 &amp;&amp; <span class="keyword">...</span>
+0110                 (d == ampredrows.PPred(ampredidx2) &amp;&amp; <span class="keyword">...</span>
+0111                  d &gt;= ampredrows.PStartdn(ampredidx2))
+0112             intrarray(p, d) = 3 + ampredrows.LatentCurve(ampredidx2);
+0113         <span class="keyword">end</span>
+0114         <span class="comment">% populate rhs colour boxes for sequence of interventions - first</span>
+0115         <span class="comment">% good predictions</span>
+0116         <span class="keyword">if</span> size(ampredidx,1)~=0 &amp;&amp; (d == ampredrows.PPred(ampredidx) || (d == 1 &amp;&amp; ampredrows.PPred(ampredidx) &lt; 1))
+0117             intrarray(p, (plotmaxdays + divider + ((intrcnt - 1) * widthperintr) + 1):(plotmaxdays + divider + (intrcnt * widthperintr))) = 3 + ampredrows.LatentCurve(ampredidx);
+0118             intrcnt = intrcnt + 1;
+0119         <span class="keyword">end</span>
+0120         <span class="comment">% next for bad predictions</span>
+0121         <span class="keyword">if</span> size(ampredidx2,1)~=0 &amp;&amp; (d == ampredrows.PPred(ampredidx2))
+0122             intrarray(p, (plotmaxdays + divider + ((intrcnt -1) * widthperintr) + 1):(plotmaxdays + divider + (intrcnt * widthperintr))) = 3 + ampredrows.LatentCurve(ampredidx2);
+0123             intrcnt = intrcnt + 1;
+0124         <span class="keyword">end</span>
+0125         
+0126         
+0127     <span class="keyword">end</span>
+0128 <span class="keyword">end</span>
+0129 
+0130 intrcount = varfun(@max, amInterventions, <span class="string">'InputVariables'</span>, {<span class="string">'Pred'</span>}, <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0131 lc = outerjoin(pmPatients, intrcount, <span class="string">'LeftKeys'</span>, {<span class="string">'ID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'GroupCount'</span>});
+0132 lc.GroupCount(isnan(lc.GroupCount)) = 0;
+0133 lc = sortrows(lc, {<span class="string">'GroupCount'</span>, <span class="string">'ID'</span>}, {<span class="string">'descend'</span>, <span class="string">'ascend'</span>});
+0134 <span class="keyword">if</span> pfiltermode == 2
+0135     lc = lc(lc.GroupCount ~= 0, :);
+0136 <span class="keyword">end</span>
+0137 
+0138 colors(1,:) = [1     1     1];      <span class="comment">% white = background</span>
+0139 colors(2,:) = [0.980 0.945 0.921];  <span class="comment">% pale cream = patient study/measurement period</span>
+0140 colors(3,:) = [0.85  0.85  0.85];   <span class="comment">% darker grey  = treatments</span>
+0141 colors(4,:) = [1     0     0];      <span class="comment">% red   = latent curve set 1 (which is group 3 in the paper)</span>
+0142 <span class="keyword">if</span> nlatentcurves &gt; 1
+0143     colors(5,:) = [0    0    1];  <span class="comment">% blue  = latent curve set 2 (which is group 2 in the paper)</span>
+0144 <span class="keyword">end</span>
+0145 <span class="keyword">if</span> nlatentcurves &gt; 2
+0146     colors(6,:) = [0.4, 0.8, 0.2]; <span class="comment">% dark green = latent curve set 3 (which is group 1 in the paper)</span>
+0147 <span class="keyword">end</span>
+0148 <span class="keyword">if</span> nlatentcurves &gt; 3
+0149     colors(7,:) = [1    0    1];  <span class="comment">% magenta = latent curve set 4</span>
+0150 <span class="keyword">end</span>
+0151 
+0152 plottitle = sprintf(<span class="string">'%s - Intr vs LCSet For Paper %s'</span>, plotname, plottext);
+0153 
+0154 <span class="keyword">if</span> pfiltermode == 2
+0155     pghght = 7.5;
+0156 <span class="keyword">else</span>
+0157     pghght = 11;
+0158 <span class="keyword">end</span>
+0159 pgwdth = 8.5;
+0160 fontname = <span class="string">'Arial'</span>;
+0161 
+0162 [f, p] = <a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(<span class="string">''</span>, pgwdth, pghght);
+0163 
+0164 sp(1)    = uipanel(<span class="string">'Parent'</span>, p, <span class="keyword">...</span>
+0165                    <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0166                    <span class="string">'OuterPosition'</span>, [0.0, 0.0, 1.0, 1.0]);
+0167 
+0168 h = heatmap(sp(1), intrarray(lc.PatientNbr,:), <span class="string">'Colormap'</span>, colors);
+0169 h.Title = <span class="string">' '</span>;
+0170 h.FontName = fontname;
+0171 h.FontSize = 8;
+0172 h.XLabel = <span class="string">'Days'</span>;
+0173 h.YLabel = <span class="string">'Patients'</span>;
+0174 h.CellLabelColor = <span class="string">'none'</span>;
+0175 h.GridVisible = <span class="string">'off'</span>;
+0176 h.ColorbarVisible = <span class="string">'off'</span>;
+0177 h.YDisplayLabels = num2cell(lc.ID);
+0178 h.XDisplayLabels = xdisplabels;
+0179 
+0180 <span class="comment">% save plot</span>
+0181 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0182 <a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, plottitle, plotsubfolder);
+0183 close(f);
+0184 
+0185 <span class="keyword">end</span>
+0186</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

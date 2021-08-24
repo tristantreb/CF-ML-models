@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of am3PlotAndSaveAlignedCurves</title>
+  <meta name="keywords" content="am3PlotAndSaveAlignedCurves">
+  <meta name="description" content="am3PlotAndSaveAlignedCurves - plots the curves pre and post alignment for">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; am3PlotAndSaveAlignedCurves.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>am3PlotAndSaveAlignedCurves
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>am3PlotAndSaveAlignedCurves - plots the curves pre and post alignment for</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function am3PlotAndSaveAlignedCurves(profile_pre, profile_post, count_post, std_post, offsets, qual, measures, max_points, max_offset, align_wind, nmeasures, run_type, study, ex_start) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> am3PlotAndSaveAlignedCurves - plots the curves pre and post alignment for
+ each measure, and the histogram of offsets</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModel3.html" class="code" title="">runAlignmentModel3</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function am3PlotAndSaveAlignedCurves(profile_pre, profile_post, count_post, std_post, offsets, qual, measures, max_points, max_offset, align_wind, nmeasures, run_type, study, ex_start)</a>
+0002 
+0003 <span class="comment">% am3PlotAndSaveAlignedCurves - plots the curves pre and post alignment for</span>
+0004 <span class="comment">% each measure, and the histogram of offsets</span>
+0005 
+0006 basedir = <span class="string">'./'</span>;
+0007 subfolder = <span class="string">'Plots'</span>;
+0008 
+0009 plotsacross = 2;
+0010 plotsdown = round((nmeasures + 1) / plotsacross);
+0011 plottitle = sprintf(<span class="string">'%sAlignment Model3 - %s - ErrFcn = %7.4f'</span>, study,run_type, qual);
+0012 
+0013 f = figure;
+0014 set(gcf, <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="string">'OuterPosition'</span>, [0.45, 0, 0.35, 0.92], <span class="string">'PaperOrientation'</span>, <span class="string">'portrait'</span>, <span class="string">'PaperUnits'</span>, <span class="string">'normalized'</span>,<span class="string">'PaperPosition'</span>,[0, 0, 1, 1], <span class="string">'PaperType'</span>, <span class="string">'a4'</span>);
+0015 p = uipanel(<span class="string">'Parent'</span>,f,<span class="string">'BorderType'</span>,<span class="string">'none'</span>); 
+0016 p.Title = plottitle;
+0017 p.TitlePosition = <span class="string">'centertop'</span>; 
+0018 p.FontSize = 16;
+0019 p.FontWeight = <span class="string">'bold'</span>;
+0020 
+0021 <span class="keyword">for</span> m = 1:nmeasures
+0022     xl = [((-1 * (max_offset + align_wind)) - 0.5), -0.5];
+0023     yl = [min(min(profile_pre(m,:)), min(profile_post(m,:) - std_post(m,:))) max(max(profile_pre(m,:)), max(profile_post(m,:) + std_post(m,:)))];
+0024     ax = subplot(plotsdown,plotsacross,m,<span class="string">'Parent'</span>,p);
+0025     
+0026     yyaxis left;
+0027     plot([-1 * (max_offset + align_wind): -1], profile_pre(m,:), <span class="string">'Color'</span>, <span class="string">'red'</span>,<span class="string">'LineStyle'</span>, <span class="string">':'</span>);
+0028     ax.XAxis.FontSize = 8;
+0029     xlabel(<span class="string">'Days prior to Intervention'</span>);
+0030     ax.YAxis(1).Color = <span class="string">'blue'</span>;
+0031     ax.YAxis(1).FontSize = 8;
+0032     ylabel(<span class="string">'Normalised Measure'</span>, <span class="string">'FontSize'</span>, 8);
+0033     xlim(xl);
+0034     ylim(yl);
+0035     hold on;
+0036     plot([-1 * (max_offset + align_wind): -1], smooth(profile_pre(m,:), 5), <span class="string">'Color'</span>, <span class="string">'red'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>);
+0037     plot([-1 * (max_offset + align_wind): -1], profile_post(m,:), <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span>);
+0038     plot([-1 * (max_offset + align_wind): -1], smooth(profile_post(m,:), 5), <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>);
+0039     line([-1 * (max_offset + align_wind): -1], profile_post(m,:) + std_post(m,:), <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span>);
+0040     line([-1 * (max_offset + align_wind): -1], smooth(profile_post(m,:) + std_post(m,:), 5), <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineStyle'</span>, <span class="string">'--'</span>);
+0041     line([-1 * (max_offset + align_wind): -1], profile_post(m,:) - std_post(m,:), <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineStyle'</span>, <span class="string">':'</span>);
+0042     line([-1 * (max_offset + align_wind): -1], smooth(profile_post(m,:) - std_post(m,:), 5), <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineStyle'</span>, <span class="string">'--'</span>);
+0043     
+0044     <span class="keyword">if</span> ex_start ~= 0
+0045         line([ex_start ex_start], yl, <span class="string">'Color'</span>, <span class="string">'blue'</span>, <span class="string">'LineStyle'</span>, <span class="string">'--'</span>);
+0046     <span class="keyword">end</span>
+0047     
+0048     yyaxis right
+0049     ax.YAxis(2).Color = <span class="string">'black'</span>;
+0050     ax.YAxis(2).FontSize = 8;
+0051     ylabel(<span class="string">'Count of Data points'</span>);
+0052     <span class="keyword">if</span> isequal(run_type,<span class="string">'Best Alignment'</span>)
+0053         bar([-1 * (max_offset + align_wind): -1], max_points, 0.5, <span class="string">'FaceColor'</span>, <span class="string">'white'</span>, <span class="string">'FaceAlpha'</span>, 0.1);
+0054     <span class="keyword">end</span>
+0055     bar([-1 * (max_offset + align_wind): -1], count_post(m, :), 0.5, <span class="string">'FaceColor'</span>, <span class="string">'black'</span>, <span class="string">'FaceAlpha'</span>, 0.25, <span class="string">'LineWidth'</span>, 0.2);
+0056     ylim([0 max(count_post(m, :) * 2)]);
+0057     
+0058     <span class="keyword">if</span> measures.Mask(m) == 1
+0059         title(measures.DisplayName(m), <span class="string">'BackgroundColor'</span>, <span class="string">'g'</span>);
+0060     <span class="keyword">else</span>
+0061         title(measures.DisplayName(m));
+0062     <span class="keyword">end</span>
+0063     
+0064     hold off;
+0065     
+0066 <span class="keyword">end</span>
+0067 
+0068 subplot(plotsdown, plotsacross, nmeasures + 1, <span class="string">'Parent'</span>, p)
+0069 histogram(-1 * offsets)
+0070 xlim([(-1 * max_offset) + 0.5, 0.5]);
+0071 ylim([0 50]);
+0072 title(<span class="string">'Histogram of Alignment Offsets'</span>)
+0073 
+0074 filename = sprintf(<span class="string">'%s.png'</span>, plottitle);
+0075 saveas(f,fullfile(basedir, subfolder, filename));
+0076 filename = sprintf(<span class="string">'%s.svg'</span>, plottitle);
+0077 saveas(f,fullfile(basedir, subfolder, filename));
+0078 
+0079 close(f);
+0080 
+0081 <span class="keyword">end</span>
+0082</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

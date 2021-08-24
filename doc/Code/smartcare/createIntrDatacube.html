@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createIntrDatacube</title>
+  <meta name="keywords" content="createIntrDatacube">
+  <meta name="description" content="createIntrDatacube - creates the data cube for offset + alignement window">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createIntrDatacube.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createIntrDatacube
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>createIntrDatacube - creates the data cube for offset + alignement window</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [amIntrDatacube] = createIntrDatacube(amDatacube, amInterventions, align_wind, max_offset, ninterventions, nmeasures, curveaveragingmethod) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> createIntrDatacube - creates the data cube for offset + alignement window
+ by intervention (for each measure)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModelEM.html" class="code" title="">runAlignmentModelEM</a>	</li><li><a href="runAlignmentModelEMFcn.html" class="code" title="function runAlignmentModelEMFcn(amRunParameters)">runAlignmentModelEMFcn</a>	function to run the alignment model (EM version) given a set of run</li><li><a href="runAlignmentModelEMFcnFEV1Split.html" class="code" title="function runAlignmentModelEMFcnFEV1Split(amRunParameters)">runAlignmentModelEMFcnFEV1Split</a>	function to run the alignment model (EM version) given a set of run</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [amIntrDatacube] = createIntrDatacube(amDatacube, amInterventions, align_wind, max_offset, ninterventions, nmeasures, curveaveragingmethod)</a>
+0002 
+0003 <span class="comment">% createIntrDatacube - creates the data cube for offset + alignement window</span>
+0004 <span class="comment">% by intervention (for each measure)</span>
+0005 
+0006 amIntrDatacube = NaN(ninterventions, max_offset + align_wind - 1, nmeasures);
+0007 
+0008 <span class="keyword">for</span> i = 1:ninterventions
+0009     scid   = amInterventions.SmartCareID(i);
+0010     start = amInterventions.IVScaledDateNum(i);
+0011     
+0012     icperiodend = align_wind + max_offset -1;
+0013     dcperiodend = start - 1;
+0014     
+0015     <span class="keyword">if</span> curveaveragingmethod == 1
+0016         icperiodstart = align_wind;
+0017         dcperiodstart = start - align_wind;
+0018     <span class="keyword">else</span>
+0019         icperiodstart = 1;
+0020         dcperiodstart = start - (align_wind + max_offset - 1);
+0021     <span class="keyword">end</span>
+0022     
+0023     <span class="keyword">if</span> dcperiodstart &lt;= 0
+0024         icperiodstart = icperiodstart - dcperiodstart + 1;
+0025         dcperiodstart = 1;
+0026     <span class="keyword">end</span>
+0027     
+0028     <span class="keyword">for</span> m = 1:nmeasures
+0029         amIntrDatacube(i, (icperiodstart:icperiodend), m) = amDatacube(scid, dcperiodstart:dcperiodend, m);
+0030     <span class="keyword">end</span>
+0031 <span class="keyword">end</span>
+0032 
+0033 <span class="keyword">end</span>
+0034</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

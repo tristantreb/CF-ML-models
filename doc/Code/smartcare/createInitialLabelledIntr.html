@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createInitialLabelledIntr</title>
+  <meta name="keywords" content="createInitialLabelledIntr">
+  <meta name="description" content="createInitialLabelledIntr - creates an initial labelled intervention">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createInitialLabelledIntr.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createInitialLabelledIntr
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>createInitialLabelledIntr - creates an initial labelled intervention</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [amLabelledInterventions] = createInitialLabelledIntr(amInterventions) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> createInitialLabelledIntr - creates an initial labelled intervention
+ table from the current interventions table</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [amLabelledInterventions] = createInitialLabelledIntr(amInterventions)</a>
+0002 
+0003 <span class="comment">% createInitialLabelledIntr - creates an initial labelled intervention</span>
+0004 <span class="comment">% table from the current interventions table</span>
+0005 
+0006 amLabelledInterventions = amInterventions;
+0007 amLabelledInterventions.LowerBound1 = [];
+0008 amLabelledInterventions.UpperBound1 = [];
+0009 amLabelledInterventions.LowerBound2 = [];
+0010 amLabelledInterventions.UpperBound2 = [];
+0011 amLabelledInterventions.ConfidenceProb = [];
+0012 amLabelledInterventions.Ex_Start    = [];
+0013 amLabelledInterventions.Pred        = [];
+0014 amLabelledInterventions.RelLB1      = [];
+0015 amLabelledInterventions.RelUB1      = [];
+0016 amLabelledInterventions.RelLB2      = [];
+0017 amLabelledInterventions.RelUB2      = [];
+0018 
+0019 amLabelledInterventions.IncludeInTestSet(:)  = <span class="string">'N'</span>;
+0020 amLabelledInterventions.LowerBound1(:)       = 0;
+0021 amLabelledInterventions.UpperBound1(:)       = 0;
+0022 amLabelledInterventions.LowerBound2(:)       = 0;
+0023 amLabelledInterventions.UpperBound2(:)       = 0;
+0024 
+0025 <span class="keyword">end</span>
+0026</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

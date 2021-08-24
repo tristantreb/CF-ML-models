@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of printSmartCareData</title>
+  <meta name="keywords" content="printSmartCareData">
+  <meta name="description" content="printSmartCareData - a convenience function to print formatted output for">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; printSmartCareData.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>printSmartCareData
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>printSmartCareData - a convenience function to print formatted output for</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function printSmartCareData(sc, rowstoshow) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> printSmartCareData - a convenience function to print formatted output for
+ a set of smart care data rows</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="analyseOvernightMeasures.html" class="code" title="function [physdataout] = analyseOvernightMeasures(physdata, smartcareID, doupdates, detaillog)">analyseOvernightMeasures</a>	analyseOvernightMeasures - analyses measures recorded between 00:00 and</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function printSmartCareData(sc, rowstoshow)</a>
+0002 
+0003 <span class="comment">% printSmartCareData - a convenience function to print formatted output for</span>
+0004 <span class="comment">% a set of smart care data rows</span>
+0005 
+0006 tic
+0007 
+0008 <span class="comment">% limit output to 10 rows for now</span>
+0009 <span class="keyword">if</span> size(sc,1) &gt; rowstoshow
+0010     nrows = rowstoshow;
+0011     truncated = true;
+0012 <span class="keyword">else</span>
+0013     nrows = size(sc,1);
+0014     truncated = false;
+0015 <span class="keyword">end</span>
+0016 
+0017 fprintf(<span class="string">'\n'</span>);
+0018 fprintf(<span class="string">'SmartCareID DateNum    UserName           RecordingType        Date_TimeRecorded  FEV1 PredFEV FEV1_  Weight O2Sat Pulse Rating Temp(C) SputumTaken Activity RespRate SleepDist SputColour\n'</span>);
+0019 fprintf(<span class="string">'___________ _______ ______________ _________________________ ____________________ ____ _______ _____ _______ _____ _____ ______ _______ ___________ ________ ________ _________ __________\n'</span>);
+0020 
+0021 <span class="keyword">for</span> i = 1:nrows
+0022     scId = string(sc.SmartCareID(i));
+0023     scDatenum = string(sc.DateNum(i));
+0024     scDaterec = datestr(sc.Date_TimeRecorded(i));
+0025     scFev1 = <span class="string">' '</span>; scPredfev1 = <span class="string">' '</span>; scFev1_ = <span class="string">' '</span>; scWeight = <span class="string">' '</span>; scO2 = <span class="string">' '</span>; scPulse = <span class="string">' '</span>; <span class="keyword">...</span>
+0026         scRating = <span class="string">' '</span>; scTemp = <span class="string">' '</span>; scSputum = <span class="string">' '</span>; scAct = <span class="string">' '</span>; scRespRate = <span class="string">' '</span>; <span class="keyword">...</span>
+0027         scSleepDist = <span class="string">' '</span>; scSputCol = <span class="string">' '</span>;
+0028     <span class="keyword">switch</span> sc.RecordingType{i}
+0029         <span class="keyword">case</span> <span class="string">'ActivityRecording'</span>
+0030             scAct = sprintf(<span class="string">'%5d'</span>,sc.Activity_Steps(i));
+0031         <span class="keyword">case</span> {<span class="string">'AppetiteRecording'</span>, <span class="string">'BreathlessnessRecording'</span>, <span class="string">'CoughRecording'</span>,<span class="string">'SleepActivityRecording'</span>, <span class="string">'SputumVolumeRecording'</span>, <span class="string">'TirednessRecording'</span>, <span class="string">'WellnessRecording'</span>}
+0032             scRating = sprintf(<span class="string">'%3d'</span>, sc.Rating(i));
+0033         <span class="keyword">case</span> <span class="string">'LungFunctionRecording'</span>
+0034             scFev1 = sprintf(<span class="string">'%1.1f'</span>,sc.CalcFEV1_(i));
+0035             scPredfev1 = sprintf(<span class="string">'%1.1f'</span>,sc.PredictedFEV(i));
+0036             scFev1_ = sprintf(<span class="string">'%1.1f'</span>,sc.FEV1_(i));
+0037         <span class="keyword">case</span> <span class="string">'O2SaturationRecording'</span>
+0038             scO2 = sprintf(<span class="string">'%3d'</span>,sc.O2Saturation(i));
+0039         <span class="keyword">case</span> <span class="string">'PulseRateRecording'</span>
+0040             scPulse = sprintf(<span class="string">'%3d'</span>,sc.Pulse_BPM_(i));
+0041         <span class="keyword">case</span> <span class="string">'RespiratoryRateRecording'</span>
+0042             scRespRate = sprintf(<span class="string">'%3d'</span>, sc.BreathsPerMin(i));
+0043         <span class="keyword">case</span> <span class="string">'SleepDisturbanceRecording'</span>
+0044             scSleepDist = sprintf(<span class="string">'%2d'</span>, sc.NumSleepDisturb(i));
+0045         <span class="keyword">case</span> <span class="string">'SputumColourRecording'</span>
+0046             scSputCol = sprintf(<span class="string">'%6s'</span>, sc.SputumColour{i});
+0047         <span class="keyword">case</span> <span class="string">'SputumSampleRecording'</span>
+0048             scSputum = string(sc.SputumSampleTaken_(i));
+0049         <span class="keyword">case</span> <span class="string">'TemperatureRecording'</span>
+0050             scTemp = sprintf(<span class="string">'%2.2f'</span>,sc.Temp_degC_(i));
+0051         <span class="keyword">case</span> <span class="string">'WeightRecording'</span>
+0052             scWeight = sprintf(<span class="string">'%3.2f'</span>,sc.WeightInKg(i));
+0053         <span class="keyword">otherwise</span>
+0054             fprintf(<span class="string">'Unknown measurement type\n'</span>);
+0055     <span class="keyword">end</span>
+0056     
+0057     fprintf(<span class="string">'%11s %7s %14s %25s %19s %4s %7s %5s %7s %5s %5s %6s %7s %11s %8s %8s %9s %10s\n'</span>, scId, scDatenum, sc.UserName{i}, sc.RecordingType{i}, scDaterec, scFev1, <span class="keyword">...</span>
+0058           scPredfev1, scFev1_, scWeight, scO2, scPulse, scRating, scTemp, scSputum, scAct, scRespRate, scSleepDist, scSputCol);
+0059 
+0060 <span class="keyword">end</span>
+0061 
+0062 <span class="keyword">if</span> truncated
+0063     fprintf(<span class="string">'**** %d additional rows not shown **** \n'</span>, size(sc,1) - rowstoshow);
+0064 <span class="keyword">end</span>
+0065 fprintf(<span class="string">'\n'</span>);
+0066 toc
+0067 fprintf(<span class="string">'\n'</span>);
+0068 
+0069 
+0070 
+0071 
+0072 
+0073 <span class="keyword">end</span>
+0074</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

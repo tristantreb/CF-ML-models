@@ -1,0 +1,600 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery</title>
+  <meta name="keywords" content="amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery">
+  <meta name="description" content="amEMMCPlotVariablesVsLatentCurveSet - compact plots of various variables">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="../index.html">recovery</a> &gt; <a href="index.html">updatedModel</a> &gt; amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../../index.html"><img alt="<" border="0" src="../../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery/updatedModel&nbsp;<img alt=">" border="0" src="../../../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>amEMMCPlotVariablesVsLatentCurveSet - compact plots of various variables</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>function [wcxpvaltable] = amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery(amInterventions, pmPatients, pmPatientMeasStats, ivandmeasurestable,cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder, ninterventions, nlatentcurves, scenario, randomseed, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCPlotVariablesVsLatentCurveSet - compact plots of various variables
+ against latent curve set assigned to try and observe correlations</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="../../../../Code/smartcare/createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="../../../../Code/smartcare/getLCSortOrder.html" class="code" title="function lcsort = getLCSortOrder(amInterventions, nlatentcurves)">getLCSortOrder</a>	getLCSortOrder - returns the latent curve sets sorted from largest</li><li><a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="../../../../Code/smartcare/savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="../../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="../../../../Code/pdm/recovery/relateInferredClassesToPatientFeatures.html" class="code" title="">relateInferredClassesToPatientFeatures</a>	analyse the relation between patient characteristics and subset of interventions</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [wcxpvaltable] = amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery(amInterventions, pmPatients, pmPatientMeasStats, ivandmeasurestable, </a><span class="keyword">...</span>
+0002         cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder, ninterventions, nlatentcurves, scenario, randomseed, study)
+0003     
+0004 <span class="comment">% amEMMCPlotVariablesVsLatentCurveSet - compact plots of various variables</span>
+0005 <span class="comment">% against latent curve set assigned to try and observe correlations</span>
+0006             
+0007 scattervartext = {<span class="string">'Stable FEV1'</span>,            <span class="string">'Box'</span>; <span class="keyword">...</span>
+0008                 <span class="string">'BMI'</span>,                      <span class="string">'Box'</span>;  <span class="keyword">...</span>
+0009                 <span class="string">'Age'</span>,                      <span class="string">'Box'</span>;  <span class="keyword">...</span>
+0010                 <span class="string">'Time to treatment response'</span>, <span class="string">'Box'</span>; <span class="keyword">...</span>
+0011                 <span class="string">'Day of Year'</span>,              <span class="string">'Scatter'</span>; <span class="keyword">...</span>
+0012                 <span class="string">'CRP Adm'</span>,                  <span class="string">'Box'</span>; <span class="keyword">...</span>
+0013                 <span class="string">'CRP Stable'</span>,               <span class="string">'Box'</span>};            
+0014            
+0015 barvartext = {<span class="comment">%'Gender'; ...</span>
+0016               <span class="string">'Pct Gender'</span>; <span class="keyword">...</span>
+0017               <span class="string">'Pct Nbr of IV Treatments'</span>; <span class="keyword">...</span>
+0018               <span class="string">'Pct Nbr of AB Treatments'</span>; <span class="keyword">...</span>
+0019               <span class="comment">%'Nbr of Interventions'; ...</span>
+0020               <span class="string">'Pct Nbr of Interventions'</span>; <span class="keyword">...</span>
+0021               <span class="string">'Pct Pseudomonas'</span>; <span class="keyword">...</span>
+0022               <span class="string">'Pct Staphylococcus'</span>; <span class="keyword">...</span>
+0023               <span class="string">'Pct One or Both'</span>; <span class="keyword">...</span>
+0024               <span class="string">'Time Since Last Ex'</span>; <span class="keyword">...</span>
+0025               <span class="string">'Pct Time Since Last Ex'</span>; <span class="keyword">...</span>
+0026               <span class="string">'Time Since Last Ex or Study Start'</span>; <span class="keyword">...</span>
+0027               <span class="string">'Pct Time Since Last Ex or Study Start'</span>; <span class="keyword">...</span>
+0028               <span class="comment">%'Pct Has Cold or Flu'; ...</span>
+0029               <span class="string">'Mod Therapy'</span>; <span class="keyword">...</span>
+0030               <span class="string">'Pct Mod Therapy'</span>};
+0031           
+0032 polarvartext = {<span class="string">'Day of Year'</span>};
+0033 
+0034 nscattervars   = size(scattervartext, 1);
+0035 scattervardata = zeros(ninterventions, nscattervars);
+0036 
+0037 nbarvars       = size(barvartext, 1);
+0038 
+0039 npolarvars     = size(polarvartext, 1);
+0040 polarvardata   = zeros(ninterventions, npolarvars);
+0041 
+0042 npages = 4;
+0043 page = 1;
+0044 nlccombs = nlatentcurves;
+0045 nkeycols = 1;
+0046 comb = -1 * ones((nscattervars),nlccombs);
+0047 comb = array2table(comb);
+0048 wcxpvaltable = table(<span class="string">'Size'</span>,[(nscattervars), nkeycols], <span class="string">'VariableTypes'</span>, {<span class="string">'cell'</span>}, <span class="string">'VariableNames'</span>, {<span class="string">'VarName'</span>});
+0049 wcxpvaltable = [wcxpvaltable, comb];
+0050 <span class="keyword">for</span> i = 1:nlccombs
+0051     wcxpvaltable.Properties.VariableNames{nkeycols + i} = sprintf(<span class="string">'Group%d_Median'</span>, i);
+0052 <span class="keyword">end</span>
+0053 wcxpvaltable = [wcxpvaltable, comb];
+0054 <span class="keyword">for</span> i = 1:nlccombs
+0055     wcxpvaltable.Properties.VariableNames{nkeycols + nlccombs + i} = sprintf(<span class="string">'Group%d_IQRange'</span>, i);
+0056 <span class="keyword">end</span>
+0057 wcxpvaltable = [wcxpvaltable, comb];
+0058 <span class="keyword">for</span> i = 1:nlccombs
+0059     wcxpvaltable.Properties.VariableNames{nkeycols + (2 * nlccombs) + i} = sprintf(<span class="string">'Group%d_pvalDiffMedian'</span>, i);
+0060 <span class="keyword">end</span>
+0061 
+0062 comb = -1 * ones((nbarvars),nlccombs);
+0063 comb = array2table(comb);
+0064 chisqvaltable = table(<span class="string">'Size'</span>,[(nbarvars), nkeycols], <span class="string">'VariableTypes'</span>, {<span class="string">'cell'</span>}, <span class="string">'VariableNames'</span>, {<span class="string">'VarName'</span>});
+0065 chisqvaltable = [chisqvaltable, comb];
+0066 <span class="keyword">for</span> i = 1:nlccombs
+0067     chisqvaltable.Properties.VariableNames{nkeycols + i} = sprintf(<span class="string">'Group%d_Val'</span>, i);
+0068 <span class="keyword">end</span>
+0069 chisqvaltable = [chisqvaltable, comb];
+0070 <span class="keyword">for</span> i = 1:nlccombs
+0071     chisqvaltable.Properties.VariableNames{nkeycols + nlccombs + i} = sprintf(<span class="string">'Group%d_pvalDiffSeries'</span>, i);
+0072 <span class="keyword">end</span>
+0073 
+0074 lcsort = <a href="../../../../Code/smartcare/getLCSortOrder.html" class="code" title="function lcsort = getLCSortOrder(amInterventions, nlatentcurves)">getLCSortOrder</a>(amInterventions, nlatentcurves);
+0075 amInterventions.OrigLatentCurve = amInterventions.LatentCurve;
+0076 <span class="keyword">for</span> n = 1:nlatentcurves
+0077     amInterventions.LatentCurve(amInterventions.OrigLatentCurve == lcsort(n)) = n;
+0078 <span class="keyword">end</span>
+0079 
+0080 
+0081 <span class="comment">% Scatter plot variables</span>
+0082 <span class="comment">% 1) Robust Max FEV1</span>
+0083 <span class="keyword">if</span> ismember(study, {<span class="string">'SC'</span>, <span class="string">'TM'</span>})
+0084     mfev1idx  = measures.Index(ismember(measures.DisplayName, <span class="string">'LungFunction'</span>));
+0085 <span class="keyword">elseif</span> ismember(study, {<span class="string">'CL'</span>, <span class="string">'BR'</span>})
+0086     mfev1idx  = measures.Index(ismember(measures.DisplayName, <span class="string">'FEV1'</span>));
+0087 <span class="keyword">else</span>
+0088     fprintf(<span class="string">'**** Unknown Study ****\n'</span>);
+0089     <span class="keyword">return</span>
+0090 <span class="keyword">end</span>
+0091 fev1max  = pmPatientMeasStats(pmPatientMeasStats.MeasureIndex == mfev1idx, {<span class="string">'PatientNbr'</span>, <span class="string">'Study'</span>, <span class="string">'ID'</span>, <span class="string">'RobustMax'</span>});
+0092 lc = innerjoin(amInterventions, fev1max, <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'ID'</span>}, <span class="string">'LeftVariables'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'IVStartDate'</span>, <span class="string">'IVScaledDateNum'</span>, <span class="string">'LatentCurve'</span>, <span class="string">'DrugTherapy'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'RobustMax'</span>});
+0093 scattervardata(:, 1) = lc.RobustMax;
+0094 
+0095 <span class="comment">% 2 &amp; 3) BMI, Age</span>
+0096 pmPatients.BMI = pmPatients.Weight ./ ((pmPatients.Height * 0.01) .^ 2);
+0097 lc = innerjoin(lc, pmPatients, <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'ID'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'BMI'</span>, <span class="string">'Sex'</span>, <span class="string">'Age'</span>});
+0098 scattervardata(:, 2) = lc.BMI;
+0099 scattervardata(:, 3) = lc.Age;
+0100 
+0101 <span class="comment">% 4) Duration of Exacerbation</span>
+0102 <span class="comment">%amInterventions.Duration = amInterventions.IVScaledDateNum - amInterventions.Pred;</span>
+0103 <span class="comment">%lc = innerjoin(lc, amInterventions, 'LeftKeys', {'SmartCareID', 'IVScaledDateNum'}, 'RightKeys', {'SmartCareID', 'IVScaledDateNum'}, 'RightVariables', {'Duration'});</span>
+0104 <span class="comment">% scattervardata(:, 4) = lc.Duration;</span>
+0105 <span class="comment">% add time to response to am Interventions</span>
+0106 lc = innerjoin(lc, amInterventions, <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'IVScaledDateNum'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'IVScaledDateNum'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'TimeToResponse'</span>});
+0107 scattervardata(:, 4) = lc.TimeToResponse;
+0108 
+0109 <span class="comment">% 5) Day of year</span>
+0110 lc.DayOfYear = day(lc.IVStartDate, <span class="string">'dayofyear'</span>);
+0111 lc.DaysInYear = day(datetime(year(lc.IVStartDate), 12, 31), <span class="string">'dayofyear'</span>);
+0112 lc.PolarDays = (lc.DayOfYear ./ lc.DaysInYear) * 2 * pi; <span class="comment">% polar plots are in radians</span>
+0113 scattervardata(:, 5) = lc.DayOfYear;
+0114 polarvardata(:, 1) = lc.PolarDays;
+0115 
+0116 <span class="comment">% 6 &amp; 7) CRP on admission &amp; Stable CRP (average on hospital discharge for each patient over study period)</span>
+0117 <span class="keyword">for</span> i = 1:size(lc, 1)
+0118     crpadmidx = find(cdCRP.ID == lc.SmartCareID(i) &amp; cdCRP.CRPDate &gt;= (lc.IVStartDate(i) - days(2)) &amp; cdCRP.CRPDate &lt;= (lc.IVStartDate(i) + days(20)));
+0119     <span class="keyword">if</span> size(crpadmidx, 1) ~= 0
+0120         scattervardata(i, 6) = max(cdCRP.NumericLevel(crpadmidx));
+0121     <span class="keyword">end</span>
+0122     admidx = cdAdmissions.ID == lc.SmartCareID(i) &amp; cdAdmissions.Admitted &gt;= (lc.IVStartDate(i) - days(2)) &amp; cdAdmissions.Admitted &lt;= (lc.IVStartDate(i) + days(20));
+0123     <span class="keyword">if</span> sum(admidx, 1) ~= 0
+0124         dischargedate = max(cdAdmissions.Discharge(admidx));
+0125         crpstabarray = cdCRP.NumericLevel(cdCRP.ID == lc.SmartCareID(i) &amp; cdCRP.CRPDate &gt;= (dischargedate - days(5)) &amp; cdCRP.CRPDate &lt;= (dischargedate + days(5)));
+0126         <span class="keyword">if</span> size(crpstabarray, 1) ~= 0
+0127             scattervardata(i, 7) = mean(crpstabarray);
+0128         <span class="keyword">end</span>
+0129     <span class="keyword">end</span>
+0130 <span class="keyword">end</span>
+0131 
+0132 plotsdown   = 3; 
+0133 plotsacross = 5;
+0134 pointsize = 36;
+0135 <span class="keyword">if</span> nlatentcurves &gt;= 1
+0136     cmap = [ 0.4, 0.8, 0.2 ];
+0137 <span class="keyword">end</span>
+0138 <span class="keyword">if</span> nlatentcurves &gt;= 2
+0139     cmap(2,:) = [ 0, 0, 1 ];
+0140 <span class="keyword">end</span>
+0141 <span class="keyword">if</span> nlatentcurves &gt;= 3
+0142     cmap(3,:) = [ 1, 0, 0 ];
+0143 <span class="keyword">end</span>
+0144 <span class="keyword">if</span> nlatentcurves &gt;= 4
+0145     cmap(4,:) = [ 1 0 1 ];
+0146 <span class="keyword">end</span>
+0147 <span class="keyword">if</span> nlatentcurves &gt;= 5
+0148     fprintf(<span class="string">'Add more colours to the palette\n'</span>);
+0149     <span class="keyword">return</span>;
+0150 <span class="keyword">end</span>
+0151 
+0152 plottitle = sprintf(<span class="string">'%s - Vars vs LC Set FP Pg %d of %d'</span>, plotname, page, npages);
+0153 
+0154 widthinch = 8.5;
+0155 heightinch = 11;
+0156 fontname = <span class="string">'Arial'</span>;
+0157 
+0158 [f, p] = <a href="../../../../Code/smartcare/createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(<span class="string">''</span>, widthinch, heightinch);
+0159 
+0160 colormap(f, cmap);
+0161 thisplot = 1;
+0162 <span class="keyword">for</span> v = 1:nscattervars
+0163     <span class="keyword">if</span> ismember(scattervartext(v, 1), {<span class="string">'BMI'</span>})
+0164         compressrange = [0, 32];
+0165     <span class="keyword">elseif</span> ismember(scattervartext(v, 1), {<span class="string">'CRP Adm'</span>})
+0166         compressrange = [0, 100];
+0167     <span class="keyword">elseif</span> ismember(scattervartext(v, 1), {<span class="string">'CRP Stable'</span>})
+0168         compressrange = [0, 50];
+0169     <span class="keyword">else</span>
+0170        compressrange = [-Inf, Inf];
+0171     <span class="keyword">end</span>
+0172     ax = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>, p);
+0173     <span class="keyword">if</span> ismember(scattervartext(v, 2), <span class="string">'Scatter'</span>)
+0174         scatter(ax, lc.LatentCurve, scattervardata(:, v), pointsize, lc.LatentCurve, <span class="string">'filled'</span>, <span class="string">'MarkerFaceAlpha'</span>, 0.3, <span class="string">'MarkerEdgeAlpha'</span>, 0.3);
+0175     <span class="keyword">elseif</span> ismember(scattervartext(v, 2), <span class="string">'Box'</span>)
+0176         <span class="comment">%boxplot(ax, scattervardata(:, v), lc.LatentCurve, 'Colors', cmap, 'ColorGroup', lc.LatentCurve, ...</span>
+0177         <span class="comment">%    'Notch', 'off', 'DataLim', compressrange, 'ExtremeMode', 'compress', 'Jitter', 1, 'Symbol', 'x');</span>
+0178         scatter(ax, lc.LatentCurve, scattervardata(:, v), pointsize, lc.LatentCurve, <span class="string">'MarkerFaceAlpha'</span>, 0.3, <span class="string">'MarkerEdgeAlpha'</span>, 0.3, <span class="string">'LineWidth'</span>, 1.0);
+0179         hold on;
+0180         boxplot(ax, scattervardata(:, v), lc.LatentCurve, <span class="string">'Colors'</span>, cmap, <span class="string">'ColorGroup'</span>, lc.LatentCurve, <span class="keyword">...</span>
+0181             <span class="string">'Notch'</span>, <span class="string">'off'</span>, <span class="string">'Symbol'</span>, <span class="string">''</span>);
+0182     <span class="keyword">else</span>
+0183         fprintf(<span class="string">'Unknown plot type\n'</span>);
+0184         <span class="keyword">return</span>
+0185     <span class="keyword">end</span>
+0186     ax.FontSize = 6;
+0187     ax.FontName = fontname;
+0188     title(ax, scattervartext{v, 1}, <span class="string">'FontSize'</span>, 8);
+0189     xlim(ax, [0.5 nlatentcurves + 0.5]);
+0190     xlabel(ax, <span class="string">'Latent Curve Set'</span>, <span class="string">'FontSize'</span>, 8);
+0191     ylabel(ax, scattervartext{v, 1}, <span class="string">'FontSize'</span>, 8);
+0192     
+0193     <span class="comment">% store median, inter-quartile range, and p-values for the numeric</span>
+0194     <span class="comment">% series variables</span>
+0195     wcxpvaltable.VarName{v} = scattervartext{v, 1};
+0196     <span class="keyword">for</span> i = 1:nlatentcurves
+0197         wcxpvaltable(v, {sprintf(<span class="string">'Group%d_Median'</span>, i)}) = array2table(median(scattervardata(lc.LatentCurve == i, v)));
+0198         wcxpvaltable(v, {sprintf(<span class="string">'Group%d_IQRange'</span>, i)}) = array2table(iqr(scattervardata(lc.LatentCurve == i, v)));
+0199         [pval, h] = ranksum(scattervardata(lc.LatentCurve == i, v), scattervardata(lc.LatentCurve ~= i, v),0.01);
+0200         wcxpvaltable(v, {sprintf(<span class="string">'Group%d_pvalDiffMedian'</span>, i)}) = array2table(pval);
+0201         <span class="keyword">if</span> h == 1
+0202             flagtext = <span class="string">' *****'</span>;
+0203         <span class="keyword">else</span>
+0204             flagtext = <span class="string">' '</span>;
+0205         <span class="keyword">end</span>
+0206         fprintf(<span class="string">'%24s : Group%d Median %6.2f IQ Range %6.2f pvalDiffMedian : %5.3f%s\n'</span>, scattervartext{v, 1}, i, <span class="keyword">...</span>
+0207             median(scattervardata(lc.LatentCurve == i, v)), <span class="keyword">...</span>
+0208             iqr(scattervardata(lc.LatentCurve == i, v)), <span class="keyword">...</span>
+0209             pval, flagtext);
+0210     <span class="keyword">end</span>
+0211 
+0212     thisplot = thisplot + 1;
+0213     
+0214 <span class="keyword">end</span>
+0215 
+0216 <span class="comment">% save plot</span>
+0217 <a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0218 <a href="../../../../Code/smartcare/savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, plottitle, plotsubfolder);
+0219 close(f);
+0220 page = page + 1;
+0221 thisplot = 1;
+0222 plottitle = sprintf(<span class="string">'%s - Vars vs LC Set FP Pg %d of %d'</span>, plotname, page, npages);
+0223 [f, p] = <a href="../../../../Code/smartcare/createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(<span class="string">''</span>, widthinch, heightinch);
+0224 
+0225 <span class="keyword">for</span> v = 1:nbarvars
+0226     <span class="keyword">if</span> ismember(barvartext(v), {<span class="string">'Gender'</span>, <span class="string">'Pct Gender'</span>})
+0227         nbarsplits = 2;
+0228         barvardata = zeros(nlatentcurves, nbarsplits);
+0229         <span class="keyword">for</span> n = 1:nlatentcurves
+0230             barvardata(n, 1) = sum(lc.LatentCurve == n &amp; ismember(lc.Sex, <span class="string">'Male'</span>));
+0231             barvardata(n, 2) = sum(lc.LatentCurve == n &amp; ismember(lc.Sex, <span class="string">'Female'</span>));
+0232         <span class="keyword">end</span>
+0233         <span class="keyword">if</span> ismember(barvartext(v), <span class="string">'Pct Gender'</span>)
+0234             barvardata = 100 * (barvardata ./ sum(barvardata, 2));
+0235         <span class="keyword">end</span>
+0236         legendtext = {<span class="string">'M'</span>, <span class="string">'F'</span>};
+0237         blc = lc;
+0238         blc.PValCol(:) = 1;
+0239         blc.PValCol(ismember(blc.Sex, <span class="string">'Female'</span>)) = 2; 
+0240         
+0241     <span class="keyword">elseif</span> ismember(barvartext(v), {<span class="string">'Pct Pseudomonas'</span>, <span class="string">'Pct Staphylococcus'</span>, <span class="string">'Pct One or Both'</span>})
+0242         pseudpat = unique(cdMicrobiology.ID(contains(lower(cdMicrobiology.Microbiology), <span class="string">'pseud'</span>)));
+0243         staphpat = unique(cdMicrobiology.ID(contains(lower(cdMicrobiology.Microbiology), <span class="string">'staph'</span>) | contains(lower(cdMicrobiology.Microbiology), <span class="string">'mrsa'</span>)));
+0244         bothpat  = pseudpat(ismember(pseudpat, staphpat));
+0245         onlypseudpat = pseudpat(~ismember(pseudpat, bothpat));
+0246         onlystaphpat = staphpat(~ismember(staphpat, bothpat));
+0247         <span class="keyword">if</span> ismember(barvartext(v), {<span class="string">'Pct Pseudomonas'</span>})
+0248             lc.Microbiology(:) = 2;
+0249             lc.Microbiology(ismember(lc.SmartCareID, pseudpat)) = 1;
+0250             legendtext = {<span class="string">'Yes'</span>, <span class="string">'No'</span>};
+0251         <span class="keyword">elseif</span> ismember(barvartext(v), {<span class="string">'Pct Staphylococcus'</span>})
+0252             lc.Microbiology(:) = 2;
+0253             lc.Microbiology(ismember(lc.SmartCareID, staphpat)) = 1;
+0254             legendtext = {<span class="string">'Yes'</span>, <span class="string">'No'</span>};
+0255         <span class="keyword">elseif</span> ismember(barvartext(v), {<span class="string">'Pct One or Both'</span>})
+0256             lc.Microbiology(:) = 4;
+0257             lc.Microbiology(ismember(lc.SmartCareID, onlystaphpat)) = 3;
+0258             lc.Microbiology(ismember(lc.SmartCareID, onlypseudpat)) = 2;
+0259             lc.Microbiology(ismember(lc.SmartCareID, bothpat)) = 1;
+0260             legendtext = {<span class="string">'Both'</span>, <span class="string">'Pseud'</span>, <span class="string">'Staph'</span>, <span class="string">'Neither'</span>};
+0261         <span class="keyword">end</span>
+0262         nbarsplits = max(lc.Microbiology);
+0263         barvardata = zeros(nlatentcurves, nbarsplits);
+0264         <span class="keyword">for</span> n = 1:nlatentcurves
+0265             <span class="keyword">for</span> b = 1:nbarsplits
+0266                 barvardata(n, b) = sum(lc.LatentCurve == n &amp; lc.Microbiology == b);
+0267             <span class="keyword">end</span>
+0268         <span class="keyword">end</span>
+0269         <span class="keyword">if</span> ismember(barvartext(v), {<span class="string">'Pct Pseudomonas'</span>, <span class="string">'Pct Staphylococcus'</span>, <span class="string">'Pct One or Both'</span>})
+0270             barvardata = 100 * (barvardata ./ sum(barvardata, 2));
+0271         <span class="keyword">end</span>
+0272         blc = lc;
+0273         blc.PValCol = blc.Microbiology;
+0274         lc.Microbiology = [];
+0275         
+0276     <span class="keyword">elseif</span> ismember(barvartext(v), {<span class="string">'Nbr of Interventions'</span>, <span class="string">'Pct Nbr of Interventions'</span>})
+0277         <span class="comment">% amInterventions.Pred   = amInterventions.IVScaledDateNum + amInterventions.Offset</span>
+0278         intrcount = varfun(@max, amInterventions, <span class="string">'InputVariables'</span>, {<span class="string">'Pred'</span>}, <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0279         nbarsplits = max(intrcount.GroupCount);
+0280         blc = innerjoin(lc, intrcount, <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'GroupCount'</span>});
+0281         barvardata = zeros(nlatentcurves, nbarsplits);
+0282         <span class="keyword">for</span> n = 1:nlatentcurves
+0283             <span class="keyword">for</span> b = 1:nbarsplits
+0284                 barvardata(n, b) = sum(blc.LatentCurve == n &amp; blc.GroupCount == b);
+0285             <span class="keyword">end</span>
+0286         <span class="keyword">end</span>
+0287         <span class="keyword">if</span> ismember(barvartext(v), <span class="string">'Pct Nbr of Interventions'</span>)
+0288             barvardata = 100 * (barvardata ./ sum(barvardata, 2));
+0289             
+0290         <span class="keyword">end</span>
+0291         legendtext = {<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'4'</span>, <span class="string">'5'</span>};
+0292         blc.PValCol = blc.GroupCount;
+0293         
+0294     <span class="keyword">elseif</span> ismember(barvartext(v), {<span class="string">'Nbr of IV Treatments'</span>, <span class="string">'Pct Nbr of IV Treatments'</span>, <span class="string">'Nbr of AB Treatments'</span>, <span class="string">'Pct Nbr of AB Treatments'</span>})
+0295         <span class="keyword">if</span> ismember(barvartext(v), {<span class="string">'Nbr of IV Treatments'</span>, <span class="string">'Pct Nbr of IV Treatments'</span>})
+0296             tmpivandmeas = ivandmeasurestable(ivandmeasurestable.Type == 1 | ivandmeasurestable.Type == 3, :);
+0297         <span class="keyword">else</span>
+0298             tmpivandmeas = ivandmeasurestable;
+0299         <span class="keyword">end</span>
+0300         treatcount = varfun(@max, tmpivandmeas, <span class="string">'InputVariables'</span>, {<span class="string">'DaysWithMeasures'</span>}, <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0301         nbarsplits = max(treatcount.GroupCount);
+0302         blc = innerjoin(lc, treatcount, <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'GroupCount'</span>});
+0303         barvardata = zeros(nlatentcurves, nbarsplits);
+0304         <span class="keyword">for</span> n = 1:nlatentcurves
+0305             <span class="keyword">for</span> b = 1:nbarsplits
+0306                 barvardata(n, b) = sum(blc.LatentCurve == n &amp; blc.GroupCount == b);
+0307             <span class="keyword">end</span>
+0308         <span class="keyword">end</span>
+0309         <span class="keyword">if</span> ismember(barvartext(v), {<span class="string">'Pct Nbr of IV Treatments'</span>, <span class="string">'Pct Nbr of AB Treatments'</span>})
+0310             barvardata = 100 * (barvardata ./ sum(barvardata, 2));
+0311         <span class="keyword">end</span>
+0312         legendtext = {<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'4'</span>, <span class="string">'5'</span>, <span class="string">'6'</span>, <span class="string">'7'</span>};
+0313         blc.PValCol = blc.GroupCount;
+0314         
+0315     <span class="keyword">elseif</span> ismember(barvartext(v), {<span class="string">'Time Since Last Ex'</span>, <span class="string">'Time Since Last Ex or Study Start'</span>, <span class="string">'Pct Time Since Last Ex'</span>, <span class="string">'Pct Time Since Last Ex or Study Start'</span>})
+0316         nbarsplits = 2;
+0317         barvardata = zeros(nlatentcurves, nbarsplits);
+0318         
+0319         blc = amInterventions;
+0320         tmpivandmtable = innerjoin(ivandmeasurestable, unique(amInterventions(:,{<span class="string">'SmartCareID'</span>, <span class="string">'PatientOffset'</span>})), <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'PatientOffset'</span>});
+0321         tmpivandmtable.IVScaledDateNum = tmpivandmtable.IVDateNum - tmpivandmtable.PatientOffset;
+0322         tmpivandmtable.IVScaledStopDateNum = tmpivandmtable.IVStopDateNum - tmpivandmtable.PatientOffset;
+0323 
+0324         blc.LastTreatEnd(:)       = -100;
+0325         blc.TimeSinceLastTreat(:) = -100;
+0326         blc.Category(:)           = 0;
+0327         blc.Bucket(:)             = 0;
+0328         bucketedge                = 28;
+0329         
+0330         <span class="keyword">for</span> i = 1:size(blc, 1)
+0331             scid = blc.SmartCareID(i);
+0332             <span class="comment">%pred = blc.Pred(i);</span>
+0333             <span class="comment">%previdx = find(tmpivandmtable.SmartCareID == scid &amp; tmpivandmtable.IVScaledStopDateNum &lt; pred + 5, 1, 'last');</span>
+0334             previdx = find(tmpivandmtable.SmartCareID == scid &amp; tmpivandmtable.IVScaledStopDateNum &lt; blc.IVScaledDateNum(i), 1, <span class="string">'last'</span>);
+0335             <span class="keyword">if</span> size(previdx, 1) ~= 0
+0336                 blc.LastTreatEnd(i)       = tmpivandmtable.IVScaledStopDateNum(previdx);
+0337                 blc.TimeSinceLastTreat(i) = blc.IVScaledDateNum(i) - blc.LastTreatEnd(i);
+0338                 blc.Category(i)           = 1;
+0339             <span class="keyword">else</span> 
+0340                 blc.TimeSinceLastTreat(i) = blc.IVScaledDateNum(i);
+0341                 blc.Category(i)           = 2;
+0342             <span class="keyword">end</span>
+0343         <span class="keyword">end</span>
+0344         <span class="keyword">if</span> ismember(barvartext(v), {<span class="string">'Pct Time Since Last Ex'</span>, <span class="string">'Time Since Last Ex'</span>})
+0345             blc(blc.Category == 2, :) = [];
+0346             blc.Bucket(blc.TimeSinceLastTreat &lt;  bucketedge) = 1;
+0347             blc.Bucket(blc.TimeSinceLastTreat &gt;= bucketedge) = 2;
+0348         <span class="keyword">else</span>
+0349             blc(blc.Category == 2 &amp; blc.TimeSinceLastTreat &lt; bucketedge, :) = [];
+0350             blc.Bucket(blc.TimeSinceLastTreat &lt;  bucketedge) = 1;
+0351             blc.Bucket(blc.TimeSinceLastTreat &gt;= bucketedge) = 2;
+0352         <span class="keyword">end</span>
+0353         
+0354         <span class="keyword">for</span> n = 1:nlatentcurves
+0355             <span class="keyword">for</span> b = 1:nbarsplits
+0356                     <span class="comment">%barvardata(n, b) = 100 * sum(blc.LatentCurve == n &amp; blc.Bucket == b) / sum(blc.LatentCurve == n);</span>
+0357                 <span class="comment">%else</span>
+0358                 barvardata(n, b) = sum(blc.LatentCurve == n &amp; blc.Bucket == b);
+0359             <span class="keyword">end</span>
+0360             fprintf(<span class="string">'For Latent curve set %d, mean time since last treat is %.1f\n'</span>, n, mean(blc.TimeSinceLastTreat(blc.LatentCurve == n)));
+0361         <span class="keyword">end</span>
+0362         <span class="keyword">if</span> ismember(barvartext(v), {<span class="string">'Pct Time Since Last Ex'</span>, <span class="string">'Pct Time Since Last Ex or Study Start'</span>})
+0363             barvardata = 100 * (barvardata ./ sum(barvardata, 2));
+0364         <span class="keyword">end</span>
+0365 
+0366         legendtext = {<span class="string">'&lt; 4wks'</span>, <span class="string">'&gt;= 4wks'</span>};
+0367         blc.PValCol = blc.Bucket;
+0368     <span class="comment">%elseif ismember(barvartext(v), {'Pct Has Cold or Flu'})</span>
+0369     <span class="comment">%    % &lt; needs to be finished - at the moment just cut and pasted from</span>
+0370     <span class="comment">%    % gender &gt;</span>
+0371     <span class="comment">%    nbarsplits = 2;</span>
+0372     <span class="comment">%    barvardata = zeros(nlatentcurves, nbarsplits);</span>
+0373     <span class="comment">%    for n = 1:nlatentcurves</span>
+0374     <span class="comment">%        barvardata(n, 1) = sum(lc.LatentCurve == n &amp; ismember(lc.Sex, 'Male'));</span>
+0375     <span class="comment">%        barvardata(n, 2) = sum(lc.LatentCurve == n &amp; ismember(lc.Sex, 'Female'));</span>
+0376     <span class="comment">%    end</span>
+0377     <span class="comment">%    if ismember(barvartext(v), 'Pct Gender')</span>
+0378     <span class="comment">%        barvardata = 100 * (barvardata ./ sum(barvardata, 2));</span>
+0379     <span class="comment">%    end</span>
+0380     <span class="comment">%    legendtext = {'M', 'F'};</span>
+0381     <span class="comment">%    blc = lc;</span>
+0382     <span class="comment">%    blc.PValCol(:) = 1;</span>
+0383     <span class="comment">%    blc.PValCol(ismember(blc.Sex, 'Female')) = 2;</span>
+0384     <span class="keyword">elseif</span> ismember(barvartext(v), {<span class="string">'Mod Therapy'</span>, <span class="string">'Pct Mod Therapy'</span>})
+0385         nbarsplits = 5;
+0386         barvardata = zeros(nlatentcurves, nbarsplits);
+0387         <span class="keyword">for</span> n = 1:nlatentcurves
+0388             barvardata(n, 1) = sum(lc.LatentCurve == n &amp; ismember(lc.DrugTherapy, <span class="string">'None'</span>));
+0389             barvardata(n, 2) = sum(lc.LatentCurve == n &amp; ismember(lc.DrugTherapy, <span class="string">'Orkambi'</span>));
+0390             barvardata(n, 3) = sum(lc.LatentCurve == n &amp; ismember(lc.DrugTherapy, <span class="string">'Ivacaftor'</span>));
+0391             barvardata(n, 4) = sum(lc.LatentCurve == n &amp; ismember(lc.DrugTherapy, <span class="string">'Symkevi'</span>));
+0392             barvardata(n, 5) = sum(lc.LatentCurve == n &amp; ismember(lc.DrugTherapy, <span class="string">'Triple Therapy'</span>));
+0393         <span class="keyword">end</span>
+0394         <span class="keyword">if</span> ismember(barvartext(v), {<span class="string">'Pct Mod Therapy'</span>})
+0395             barvardata = 100 * (barvardata ./ sum(barvardata, 2));
+0396         <span class="keyword">end</span>
+0397         legendtext = {<span class="string">'None'</span>, <span class="string">'Orkambi'</span>, <span class="string">'Ivacaftor'</span>, <span class="string">'Symkevi'</span>, <span class="string">'Triple'</span>};
+0398         blc = lc;
+0399         blc.PValCol(:) = 1;
+0400         blc.PValCol(ismember(blc.DrugTherapy, <span class="string">'Orkambi'</span>)) = 2;
+0401         blc.PValCol(ismember(blc.DrugTherapy, <span class="string">'Ivacaftor'</span>)) = 3;
+0402         blc.PValCol(ismember(blc.DrugTherapy, <span class="string">'Symkevi'</span>)) = 4;
+0403         blc.PValCol(ismember(blc.DrugTherapy, <span class="string">'Triple Therapy'</span>)) = 5;
+0404             
+0405     <span class="keyword">end</span>
+0406     
+0407     ax = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>, p);
+0408     bar(ax, barvardata, <span class="string">'Stacked'</span>);
+0409     ax.FontSize = 6;
+0410     ax.FontName = fontname;
+0411     title(ax, barvartext{v}, <span class="string">'FontSize'</span>, 6);
+0412     legend(ax, legendtext, <span class="string">'FontSize'</span>, 6);
+0413     xlim(ax, [0.5 nlatentcurves + 0.5]);
+0414     <span class="keyword">if</span> ismember(barvartext(v), {<span class="string">'Pct Gender'</span>, <span class="keyword">...</span>
+0415             <span class="string">'Pct Pseudomonas'</span>, <span class="string">'Pct Staphylococcus'</span>, <span class="string">'Pct One or Both'</span>, <span class="string">'Pct Time Since Last Ex'</span>, <span class="string">'Pct Time Since Last Ex or Study Start'</span>})
+0416         ylim(ax, [0 135]);
+0417     <span class="keyword">elseif</span> ismember(barvartext(v), {<span class="string">'Pct Nbr of Interventions'</span>, <span class="string">'Pct Nbr of IV Treatments'</span>, <span class="string">'Pct Nbr of AB Treatments'</span>})
+0418         ylim(ax, [0 175]);
+0419     <span class="keyword">elseif</span> ismember(barvartext(v), {<span class="string">'Pct Mod Therapy'</span>})
+0420         ylim(ax, [0 150]);
+0421     <span class="keyword">elseif</span> ismember(barvartext(v), {<span class="string">'Time Since Last Ex'</span>, <span class="string">'Time Since Last Ex or Study Start'</span>})
+0422         ylim(ax, [0 60]);
+0423     <span class="keyword">elseif</span> ismember(barvartext(v), {<span class="string">'Mod Therapy'</span>})
+0424         ylim(ax, [0 100]);    
+0425     <span class="keyword">end</span>
+0426     xlabel(ax, <span class="string">'Latent Curve Set'</span>, <span class="string">'FontSize'</span>, 8);
+0427     ylabel(ax, barvartext{v}, <span class="string">'FontSize'</span>, 8);
+0428     
+0429     tempobs = blc(:,{<span class="string">'PValCol'</span>, <span class="string">'LatentCurve'</span>});
+0430     uniquecats = unique(tempobs.PValCol);
+0431     nuniquecats = size(uniquecats, 1);
+0432     chisqvaltable.VarName{v} = strrep(barvartext{v, 1}, <span class="string">'Pct '</span>, <span class="string">''</span>);
+0433     <span class="keyword">for</span> i = 1:nlatentcurves
+0434         tempobsfreq = varfun(@mean, tempobs(tempobs.LatentCurve == i, :), <span class="string">'GroupingVariables'</span>, <span class="string">'PValCol'</span>);
+0435         <span class="comment">%tempexpfreq = varfun(@mean, tempobs(tempobs.LatentCurve ~= i, :), 'GroupingVariables', 'PValCol');</span>
+0436         <span class="comment">%tempexpfreq.GroupCount = tempexpfreq.GroupCount * sum(tempobsfreq.GroupCount) / sum(tempexpfreq.GroupCount);</span>
+0437         tempexpfreq = varfun(@mean, tempobs(tempobs.LatentCurve ~= i, :), <span class="string">'GroupingVariables'</span>, {<span class="string">'PValCol'</span>, <span class="string">'LatentCurve'</span>});
+0438         restlc = unique(tempexpfreq.LatentCurve);
+0439         <span class="keyword">for</span> l = 1:size(restlc, 1)
+0440             thislc = restlc(l);
+0441             tempexpfreq.GroupCount(tempexpfreq.LatentCurve == thislc) = tempexpfreq.GroupCount(tempexpfreq.LatentCurve == thislc) * sum(tempobsfreq.GroupCount) / sum(tempexpfreq.GroupCount(tempexpfreq.LatentCurve == thislc));
+0442         <span class="keyword">end</span>
+0443         tempexpfreq = varfun(@mean, tempexpfreq(:, {<span class="string">'PValCol'</span>, <span class="string">'GroupCount'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'PValCol'</span>});
+0444         tempexpfreq(:, <span class="string">'GroupCount'</span>) = [];
+0445         tempexpfreq.Properties.VariableNames({<span class="string">'mean_GroupCount'</span>}) = {<span class="string">'GroupCount'</span>};
+0446         
+0447         freqtable = table(<span class="string">'Size'</span>,[nuniquecats, 3], <span class="string">'VariableTypes'</span>, {<span class="string">'double'</span>, <span class="string">'double'</span>, <span class="string">'double'</span>}, <span class="string">'VariableNames'</span>, {<span class="string">'Category'</span>, <span class="string">'ObsFreq'</span>, <span class="string">'ExpFreq'</span>});
+0448         freqtable.Category = uniquecats;
+0449         <span class="keyword">for</span> c = 1:size(tempobsfreq, 1)
+0450             catidx  = freqtable.Category == tempobsfreq.PValCol(c);
+0451             freqtable.ObsFreq(catidx)  = tempobsfreq.GroupCount(c);
+0452         <span class="keyword">end</span>
+0453         <span class="keyword">for</span> c = 1:size(tempexpfreq, 1)
+0454             catidx  = freqtable.Category == tempexpfreq.PValCol(c);
+0455             freqtable.ExpFreq(catidx)  = tempexpfreq.GroupCount(c);
+0456         <span class="keyword">end</span>
+0457         [h, pval, ~] = chi2gof(uniquecats, <span class="string">'freq'</span>, freqtable.ObsFreq', <span class="string">'expected'</span>, freqtable.ExpFreq', <span class="string">'ctrs'</span>, uniquecats,<span class="string">'Alpha'</span>, 0.01);
+0458         <span class="keyword">if</span> size(unique(blc.PValCol), 1) &lt;= 2
+0459             chisqvaltable(v, {sprintf(<span class="string">'Group%d_Val'</span>, i)}) = array2table(100 * sum(tempobs.LatentCurve == i &amp; tempobs.PValCol == 1)/sum(tempobs.LatentCurve == i));
+0460         <span class="keyword">elseif</span> size(unique(blc.PValCol), 1) &gt; 2
+0461             chisqvaltable(v, {sprintf(<span class="string">'Group%d_Val'</span>, i)}) = array2table(mean(tempobs.PValCol(tempobs.LatentCurve == i)));
+0462         <span class="keyword">end</span>
+0463         chisqvaltable(v, {sprintf(<span class="string">'Group%d_pvalDiffSeries'</span>, i)}) = array2table(pval);
+0464         <span class="keyword">if</span> h == 1
+0465             flagtext = <span class="string">' *****'</span>;
+0466         <span class="keyword">else</span>
+0467             flagtext = <span class="string">' '</span>;
+0468         <span class="keyword">end</span>
+0469         fprintf(<span class="string">'%24s : Group%d Value %6.2f                 pvalDiffSeries : %5.3f%s\n'</span>, barvartext{v, 1}, i, <span class="keyword">...</span>
+0470             table2array(chisqvaltable(v, {sprintf(<span class="string">'Group%d_Val'</span>, i)})), pval, flagtext);
+0471     <span class="keyword">end</span>
+0472     
+0473     blc = [];
+0474     thisplot = thisplot + 1;    
+0475 <span class="keyword">end</span>
+0476 
+0477 <span class="comment">% save plot</span>
+0478 <a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0479 <a href="../../../../Code/smartcare/savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, plottitle, plotsubfolder);
+0480 close(f);
+0481 
+0482 page = page + 1;
+0483 thisplot = 1;
+0484 plottitle = sprintf(<span class="string">'%s - Vars vs LC Set FP Pg %d of %d'</span>, plotname, page, npages);
+0485 [f, p] = <a href="../../../../Code/smartcare/createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(<span class="string">''</span>, widthinch, heightinch);
+0486 colormap(f, cmap);
+0487 
+0488 <span class="keyword">for</span> v = 1:npolarvars
+0489     ax = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>, p);
+0490     pax = polaraxes(p, <span class="string">'Units'</span>, ax.Units,<span class="string">'Position'</span>, ax.Position);
+0491     delete(ax);
+0492     polarscatter(pax, polarvardata(:, v), (lc.LatentCurve / 5) + 1, pointsize, lc.LatentCurve, <span class="string">'filled'</span>, <span class="string">'MarkerFaceAlpha'</span>, 0.3);
+0493     pax.ThetaZeroLocation = <span class="string">'top'</span>;
+0494     pax.ThetaDir          = <span class="string">'clockwise'</span>;
+0495     pax.ThetaGrid         = <span class="string">'off'</span>;
+0496     pax.RGrid             = <span class="string">'off'</span>;
+0497     pax.RTickLabel        = {};
+0498     pax.FontSize          = 6;
+0499     pax.FontName          = fontname;
+0500     pax.ThetaTick         = [0 90 180 270];
+0501     title(pax, polarvartext{v}, <span class="string">'FontSize'</span>, 8);
+0502     
+0503     <span class="comment">% store p-values for different combinations of comparisons</span>
+0504     <span class="comment">%pvaltable.VarName{thisplot} = polarvartext{v, 1};</span>
+0505     <span class="comment">%for i = 1:nlatentcurves</span>
+0506     <span class="comment">%    [pval, h] = ranksum(polarvardata(lc.LatentCurve == i, v), polarvardata(lc.LatentCurve ~= i, v));</span>
+0507     <span class="comment">%    pvaltable(thisplot, {sprintf('Group%d_pvalDiffMedian', i)}) = array2table(pval);</span>
+0508     <span class="comment">%    if h == 1</span>
+0509     <span class="comment">%        flagtext = ' *****';</span>
+0510     <span class="comment">%    else</span>
+0511     <span class="comment">%        flagtext = ' ';</span>
+0512     <span class="comment">%    end</span>
+0513     <span class="comment">%    fprintf('%24s : Group%d DiffMedian : p-value %5.3f%s\n', polarvartext{v, 1}, i, pval, flagtext);</span>
+0514     <span class="comment">%end</span>
+0515     
+0516     thisplot = thisplot + 1;    
+0517     
+0518 <span class="keyword">end</span>
+0519 
+0520 <span class="comment">% save plot</span>
+0521 <a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0522 <a href="../../../../Code/smartcare/savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, plottitle, plotsubfolder);
+0523 close(f);
+0524 
+0525 page = page + 1;
+0526 plottitle = sprintf(<span class="string">'%s - Vars vs LC Set FP Pg %d of %d'</span>, plotname, page, npages);
+0527 [f, p] = <a href="../../../../Code/smartcare/createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(<span class="string">''</span>, widthinch, heightinch);
+0528 colormap(f, cmap);
+0529 plotsdown   = 3; 
+0530 plotsacross = 3;
+0531 edges = 0:30.5:366;
+0532 
+0533 <span class="keyword">for</span> i = 1:nlatentcurves
+0534     ax = subplot(plotsdown, plotsacross, i, <span class="string">'Parent'</span>, p);
+0535     histogram(ax, scattervardata(lc.LatentCurve == i, 5), edges, <span class="string">'Orientation'</span>, <span class="string">'horizontal'</span>, <span class="string">'Normalization'</span>, <span class="string">'probability'</span>, <span class="string">'FaceColor'</span>, cmap(i, :));
+0536     title(ax, sprintf(<span class="string">'LC Set %d'</span>, i));
+0537     xlabel(ax, <span class="string">'Count'</span>);
+0538     ylabel(ax, <span class="string">'Day of Year'</span>);
+0539 <span class="keyword">end</span>
+0540 
+0541 <span class="comment">% save plot</span>
+0542 <a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0543 close(f);
+0544 
+0545 <span class="comment">% save p-value table</span>
+0546 basedir = <a href="../../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0547 xlfilename = sprintf(<span class="string">'P-Values nl%d_scen%s_rs%d.xlsx'</span>, nlatentcurves, scenario, randomseed);
+0548 writetable(wcxpvaltable, fullfile(basedir, plotsubfolder, xlfilename), <span class="string">'Sheet'</span>, <span class="string">'Numeric'</span>);
+0549 writetable(chisqvaltable, fullfile(basedir, plotsubfolder, xlfilename), <span class="string">'Sheet'</span>, <span class="string">'Non-Numeric'</span>);
+0550 
+0551 <span class="keyword">end</span>
+0552</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

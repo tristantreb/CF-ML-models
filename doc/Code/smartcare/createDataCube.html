@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createDataCube</title>
+  <meta name="keywords" content="createDataCube">
+  <meta name="description" content="createDataCube - populates a 3D array from the measurement data of">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createDataCube.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createDataCube
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>createDataCube - populates a 3D array from the measurement data of</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [datacube] = createDataCube(physdata, measures, npatients, ndays, nmeasures) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> createDataCube - populates a 3D array from the measurement data of
+ appropriate size</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/recovery/createAlignmentModelInputsRecovery.html" class="code" title="">createAlignmentModelInputsRecovery</a>	creates the inputs for the model</li><li><a href="createAlignmentModelInputs.html" class="code" title="">createAlignmentModelInputs</a>	creates the inputs for the model</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [datacube] = createDataCube(physdata, measures, npatients, ndays, nmeasures)</a>
+0002 
+0003 <span class="comment">% createDataCube - populates a 3D array from the measurement data of</span>
+0004 <span class="comment">% appropriate size</span>
+0005 datacube = NaN(npatients, ndays, nmeasures);
+0006 
+0007 physdata = innerjoin(physdata, measures, <span class="string">'LeftKeys'</span>, {<span class="string">'RecordingType'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'Name'</span>});
+0008 
+0009 <span class="keyword">for</span> i=1:size(physdata,1)
+0010     scid = physdata.SmartCareID(i);
+0011     scaleddn = physdata.ScaledDateNum(i);
+0012     index = physdata.Index(i);
+0013     column = physdata.Column{i}; <span class="comment">% brphysdata features (FEV, Sleep, etc)</span>
+0014     
+0015     <span class="comment">% populate the datacube with measured values</span>
+0016     datacube(scid, scaleddn, index) = physdata{i, {column}};
+0017     <span class="comment">%if ~isnan(datacube(scid, scaleddn, index))</span>
+0018     <span class="comment">%    pmmid50mean = demographicstable{demographicstable.SmartCareID == scid &amp; ismember(demographicstable.RecordingType, measure),{ddcolumn}}(5);</span>
+0019     <span class="comment">%    pmstd = demographicstable{demographicstable.SmartCareID == scid &amp; ismember(demographicstable.RecordingType, measure),{ddcolumn}}(2);</span>
+0020     <span class="comment">%    if pmstd == 0</span>
+0021     <span class="comment">%        pmstd = overalltable{ismember(overalltable.RecordingType, measure),{ddcolumn}}(2);</span>
+0022     <span class="comment">%        fprintf('Zero std for patient %d and measure %s - using overall std %d\n', scid, physdata.RecordingType{i}, pmstd);</span>
+0023     <span class="comment">%    end</span>
+0024     <span class="comment">%    normcube(scid, scaleddn, index) = (datacube(scid, scaleddn, index) - pmmid50mean)/pmstd;</span>
+0025     <span class="comment">%end</span>
+0026     <span class="keyword">if</span> (round(i/10000) == i/10000)
+0027         fprintf(<span class="string">'Processed %5d rows\n'</span>, i);
+0028     <span class="keyword">end</span>
+0029 <span class="keyword">end</span>
+0030 
+0031 <span class="keyword">end</span>
+0032</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

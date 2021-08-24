@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of PrePostAnalysisPatientEligibilityScript</title>
+  <meta name="keywords" content="PrePostAnalysisPatientEligibilityScript">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; PrePostAnalysisPatientEligibilityScript.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>PrePostAnalysisPatientEligibilityScript
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="filterPrePostByStudyStart.html" class="code" title="function [brPrePostPat] = filterPrePostByStudyStart(brPrePostPat, minduration, cutoffd)">filterPrePostByStudyStart</a>	filterPrePostByStudyStart - filters the list of patients, removing those who</li><li><a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; clc; close all;
+0002 
+0003 study = <span class="string">'BR'</span>;
+0004 chosentreatgap = 10;
+0005 
+0006 tic
+0007 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0008 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0009 [datamatfile, clinicalmatfile, demographicsmatfile] = <a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0010 [physdata, offset] = <a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0011 [brPatient, brDrugTherapy, ~, brAntibiotics, brAdmissions, brPFT, brCRP, <span class="keyword">...</span>
+0012     brClinicVisits, brOtherVisits, ~, brHghtWght, ~, ~, brUnplannedContact] = <a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0013 
+0014 tic
+0015 ivandmeasuresfile = sprintf(<span class="string">'%sivandmeasures_gap%d.mat'</span>, study, chosentreatgap);
+0016 fprintf(<span class="string">'Loading iv treatment and measures prior data\n'</span>);
+0017 load(fullfile(basedir, subfolder, ivandmeasuresfile));
+0018 toc
+0019 
+0020 cutoffd = datetime(2020, 11, 30); <span class="comment">% cutoff date is last date the data was processed</span>
+0021 
+0022 mintwindow = 6; <span class="comment">% minimum time window for analysis</span>
+0023 
+0024 brPrePostPat = brPatient;
+0025 ntotpats = size(brPrePostPat, 1);
+0026 
+0027 fprintf(<span class="string">'Asof %s: Total patients in Project Breathe                        = %d\n'</span>, datestr(cutoffd, 1), ntotpats);
+0028 [brPrePostPat] = <a href="filterPrePostByStudyStart.html" class="code" title="function [brPrePostPat] = filterPrePostByStudyStart(brPrePostPat, minduration, cutoffd)">filterPrePostByStudyStart</a>(brPrePostPat, mintwindow);
+0029 ndatepats = size(brPrePostPat, 1);
+0030 brPrePostDT    = brDrugTherapy(ismember(brDrugTherapy.ID, brPrePostPat.ID), :);
+0031 
+0032 fprintf(<span class="string">'Subtract patients with study date &lt; 6 months from %s              = %d\n'</span>, datestr(cutoffd, 1), ntotpats - ndatepats);
+0033 fprintf(<span class="string">'Asof %s: Leaving                                                  = %d\n'</span>, datestr(cutoffd, 1), ndatepats);
+0034 
+0035 brPrePostPat = outerjoin(brPrePostPat, brPrePostDT, <span class="string">'LeftKeys'</span>, {<span class="string">'ID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'ID'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'DrugTherapyStartDate'</span>, <span class="string">'DrugTherapyType'</span>, <span class="string">'DrugTherapyComment'</span>});
+0036 
+0037 notreatmentid = unique(brPrePostPat.ID(isnat(brPrePostPat.DrugTherapyStartDate)));
+0038 nnotreatpats = size(notreatmentid, 1);
+0039 fprintf(<span class="string">'Asof %s: Total patients not on treatment                          = %d    ***\n'</span>, datestr(cutoffd, 1), nnotreatpats);
+0040 
+0041 ontreatmentid = unique(brPrePostPat.ID(~ismember(brPrePostPat.ID, notreatmentid)));
+0042 nontreatpats = size(ontreatmentid, 1);
+0043 fprintf(<span class="string">'Asof %s: Total patients on treatment                              = %d\n'</span>, datestr(cutoffd, 1), nontreatpats);
+0044 
+0045 minduration = 6;
+0046 
+0047 excl6mid = unique(brPrePostPat.ID((brPrePostPat.DrugTherapyStartDate &gt;= (brPrePostPat.StudyDate - calmonths(minduration))) <span class="keyword">...</span>
+0048                 &amp; (brPrePostPat.DrugTherapyStartDate &lt; (brPrePostPat.StudyDate + calmonths(minduration)))));
+0049 nexcl6mpats = size(excl6mid, 1);
+0050 fprintf(<span class="string">'Asof %s: Of which, started/changed within +/-%2dm of study date    = %d\n'</span>, datestr(cutoffd, 1), minduration, nexcl6mpats);
+0051 
+0052 ontreatpre6mnochangeid = unique(brPrePostPat.ID(~ismember(brPrePostPat.ID, excl6mid) <span class="keyword">...</span>
+0053                 &amp; (brPrePostPat.DrugTherapyStartDate &lt; (brPrePostPat.StudyDate - calmonths(minduration)))));
+0054 nontreatpre6mnochange = size(ontreatpre6mnochangeid, 1);
+0055 fprintf(<span class="string">'Asof %s: Of which, started earlier than %2dm pre study date        = %d    ***\n'</span>, datestr(cutoffd, 1), minduration, nontreatpre6mnochange);
+0056 
+0057 ontreatpost6mnochangeid = unique(brPrePostPat.ID(~ismember(brPrePostPat.ID, excl6mid) <span class="keyword">...</span>
+0058                 &amp; ~ismember(brPrePostPat.ID, ontreatpre6mnochangeid) <span class="keyword">...</span>
+0059                 &amp; (brPrePostPat.DrugTherapyStartDate &gt;= (brPrePostPat.StudyDate + calmonths(minduration)))));
+0060 nontreatpost6mnochange = size(ontreatpost6mnochangeid, 1);
+0061 fprintf(<span class="string">'Asof %s: Of which, started/changed later than %2dm post study date = %d    ***\n'</span>, datestr(cutoffd, 1), minduration, nontreatpost6mnochange);
+0062 
+0063 fprintf(<span class="string">'\n'</span>);
+0064 fprintf(<span class="string">'Asof %s: Total eligibile patients using +/-%2dm criterion          = %d    ***\n'</span>, datestr(cutoffd, 1), minduration, nnotreatpats + nontreatpre6mnochange + nontreatpost6mnochange);
+0065 
+0066 fprintf(<span class="string">'\n'</span>);
+0067 
+0068 minduration = 12;
+0069 
+0070 excl12mid = unique(brPrePostPat.ID((brPrePostPat.DrugTherapyStartDate &gt;= (brPrePostPat.StudyDate - calmonths(minduration))) <span class="keyword">...</span>
+0071                 &amp; (brPrePostPat.DrugTherapyStartDate &lt; (brPrePostPat.StudyDate + calmonths(minduration)))));
+0072 nexcl12mpats = size(excl12mid, 1);
+0073 fprintf(<span class="string">'Asof %s: Of which, started/changed within +/-%2dm of study date    = %d\n'</span>, datestr(cutoffd, 1), minduration, nexcl12mpats);
+0074 
+0075 ontreatpre12mnochangeid = unique(brPrePostPat.ID(~ismember(brPrePostPat.ID, excl12mid) <span class="keyword">...</span>
+0076                 &amp; (brPrePostPat.DrugTherapyStartDate &lt; (brPrePostPat.StudyDate - calmonths(minduration)))));
+0077 nontreatpre12mnochange = size(ontreatpre12mnochangeid, 1);
+0078 fprintf(<span class="string">'Asof %s: Of which, started earlier than %2dm pre study date        = %d    ***\n'</span>, datestr(cutoffd, 1), minduration, nontreatpre12mnochange);
+0079 
+0080 ontreatpost12mnochangeid = unique(brPrePostPat.ID(~ismember(brPrePostPat.ID, excl12mid) <span class="keyword">...</span>
+0081                 &amp; ~ismember(brPrePostPat.ID, ontreatpre12mnochangeid) <span class="keyword">...</span>
+0082                 &amp; (brPrePostPat.DrugTherapyStartDate &gt;= (brPrePostPat.StudyDate + calmonths(minduration)))));
+0083 nontreatpost12mnochange = size(ontreatpost12mnochangeid, 1);
+0084 fprintf(<span class="string">'Asof %s: Of which, started/changed later than %2dm post study date = %d    ***\n'</span>, datestr(cutoffd, 1), minduration, nontreatpost12mnochange);
+0085 
+0086 fprintf(<span class="string">'\n'</span>);
+0087 fprintf(<span class="string">'Asof %s: Total eligibile patients using +/-%2dm criterion          = %d    ***\n'</span>, datestr(cutoffd, 1), minduration, nnotreatpats + nontreatpre12mnochange + nontreatpost12mnochange);
+0088</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of populateMLTableFromREDCapData</title>
+  <meta name="keywords" content="populateMLTableFromREDCapData">
+  <meta name="description" content="populateMLTableFromREDCapData - given a subset of the redcap data">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; populateMLTableFromREDCapData.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>populateMLTableFromREDCapData
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>populateMLTableFromREDCapData - given a subset of the redcap data</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [mltable] = populateMLTableFromREDCapData(trcdata, mltable, tfieldmap) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> populateMLTableFromREDCapData - given a subset of the redcap data
+ relating to a single instrument, and the field mappings between redcap
+ and matlab for that instrument, populate the corresponding matlab table</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadbreatheclinicalREDCapdata.html" class="code" title="">loadbreatheclinicalREDCapdata</a>	loads Breathe clinical data from REDCap database</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [mltable] = populateMLTableFromREDCapData(trcdata, mltable, tfieldmap)</a>
+0002 
+0003 <span class="comment">% populateMLTableFromREDCapData - given a subset of the redcap data</span>
+0004 <span class="comment">% relating to a single instrument, and the field mappings between redcap</span>
+0005 <span class="comment">% and matlab for that instrument, populate the corresponding matlab table</span>
+0006 
+0007 nfields = size(tfieldmap, 1);
+0008 
+0009 <span class="comment">% first populate ID, Hospital, and Study Number fields - these are required</span>
+0010 <span class="comment">% for all tables but aren't in the redcap mapping table</span>
+0011 mltable.ID = trcdata.ID;
+0012 mltable.Hospital = trcdata.Hospital;
+0013 mltable.StudyNumber = trcdata.StudyNumber;
+0014 
+0015 <span class="comment">% now copy over all columns using the field mapping info</span>
+0016 <span class="keyword">for</span> f = 1:nfields
+0017     rcfield = tfieldmap.redcap_fieldname(f);
+0018     mlcol = tfieldmap.matlab_column(f);
+0019     
+0020     mltable(:, mlcol) = trcdata(:, rcfield);    
+0021 <span class="keyword">end</span>
+0022     
+0023 <span class="keyword">end</span>
+0024</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

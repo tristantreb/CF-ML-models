@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createLabelledInterventionsFromSuperset</title>
+  <meta name="keywords" content="createLabelledInterventionsFromSuperset">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createLabelledInterventionsFromSuperset.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createLabelledInterventionsFromSuperset
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; close all; clc;
+0002 
+0003 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0004 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0005 study = <span class="string">'SC'</span>;
+0006 
+0007 fprintf(<span class="string">'Loading gap 10 labelled interventions using consensus methodology\n'</span>);
+0008 inputfilename = sprintf(<span class="string">'%s_LabelledInterventions_gap10consensus.mat'</span>, study);
+0009 load(fullfile(basedir, subfolder, inputfilename), <span class="string">'amLabelledInterventions'</span>);
+0010 amLabIntrGap10Cons = amLabelledInterventions;
+0011 amLabIntrGap10Cons(:, {<span class="string">'PatientOffset'</span>, <span class="string">'Offset'</span>, <span class="string">'LatentCurve'</span>, <span class="string">'IncludeInTestSet'</span>, <span class="string">'LowerBound1'</span>, <span class="string">'UpperBound1'</span>, <span class="string">'LowerBound2'</span>, <span class="string">'UpperBound2'</span>}) = [];
+0012 
+0013 fprintf(<span class="string">'Loading gap 20 labelled interventions using earliest methodology\n'</span>);
+0014 inputfilename = sprintf(<span class="string">'%s_LabelledInterventions_gap20earliest.mat'</span>, study);
+0015 load(fullfile(basedir, subfolder, inputfilename), <span class="string">'amLabelledInterventions'</span>);
+0016 amLabIntrGap20Earl = amLabelledInterventions;
+0017 
+0018 amLabelledInterventions = outerjoin(amLabIntrGap10Cons, amLabIntrGap20Earl, <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'Hospital'</span>, <span class="string">'IVDateNum'</span>}, <span class="keyword">...</span>
+0019     <span class="string">'RightKeys'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'Hospital'</span>, <span class="string">'IVDateNum'</span>}, <span class="keyword">...</span>
+0020     <span class="string">'RightVariables'</span>, {<span class="string">'IncludeInTestSet'</span>, <span class="string">'LowerBound1'</span>, <span class="string">'UpperBound1'</span>, <span class="string">'LowerBound2'</span>, <span class="string">'UpperBound2'</span>});
+0021 
+0022 fprintf(<span class="string">'Need to manually relabel the following interventions with methodology: earliest\n'</span>);
+0023 fprintf(<span class="string">'\n'</span>);
+0024 amLabelledInterventions(isnan(amLabelledInterventions.LowerBound1), :)
+0025 
+0026 fprintf(<span class="string">'Saving labelled interventions to a separate matlab and excel file\n'</span>);
+0027 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0028 baseoutputfilename = sprintf(<span class="string">'%s_LabelledInterventions_gap10earliest'</span>, study);
+0029 outputfilename = sprintf(<span class="string">'%s%s.mat'</span>, baseoutputfilename, datestr(clock(),30));
+0030 save(fullfile(basedir, subfolder, outputfilename), <span class="string">'amLabelledInterventions'</span>);
+0031 outputfilename = sprintf(<span class="string">'%s.mat'</span>, baseoutputfilename);
+0032 save(fullfile(basedir, subfolder, outputfilename), <span class="string">'amLabelledInterventions'</span>);
+0033 
+0034 outputfilename = sprintf(<span class="string">'%s%s.xlsx'</span>, baseoutputfilename, datestr(clock(),30));
+0035 writetable(amLabelledInterventions, fullfile(basedir, <span class="string">'ExcelFiles'</span>, outputfilename));
+0036 outputfilename = sprintf(<span class="string">'%s.xlsx'</span>, baseoutputfilename);
+0037 writetable(amLabelledInterventions, fullfile(basedir, <span class="string">'ExcelFiles'</span>, outputfilename));</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

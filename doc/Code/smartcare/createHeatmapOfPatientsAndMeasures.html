@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createHeatmapOfPatientsAndMeasures</title>
+  <meta name="keywords" content="createHeatmapOfPatientsAndMeasures">
+  <meta name="description" content="createHeatmapOfPatientsAndMeasures - given a table of SmartCareID's and">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createHeatmapOfPatientsAndMeasures.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createHeatmapOfPatientsAndMeasures
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>createHeatmapOfPatientsAndMeasures - given a table of SmartCareID's and</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [f] = createHeatmapOfPatientsAndMeasures(patientmeasures, colors, title) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> createHeatmapOfPatientsAndMeasures - given a table of SmartCareID's and 
+ ScaledDateNum's corresponding to measurements, creates a heatmap to 
+ visualise the data</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="analyseAndHandleDateOutliers.html" class="code" title="function [physdata] = analyseAndHandleDateOutliers(physdata, study, doupdates)">analyseAndHandleDateOutliers</a>	analyseAndHandleDateOutliers - function to do the following :-</li><li><a href="visualiseHeatmapForStudyPeriod.html" class="code" title="">visualiseHeatmapForStudyPeriod</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [f] = createHeatmapOfPatientsAndMeasures(patientmeasures, colors, title)</a>
+0002 
+0003 <span class="comment">% createHeatmapOfPatientsAndMeasures - given a table of SmartCareID's and</span>
+0004 <span class="comment">% ScaledDateNum's corresponding to measurements, creates a heatmap to</span>
+0005 <span class="comment">% visualise the data</span>
+0006 
+0007 
+0008 dispmin = min(patientmeasures.SmartCareID);
+0009 dispmax = max(patientmeasures.SmartCareID);
+0010 
+0011 <span class="comment">% add dummy rows to create a record for every day in the range of the data</span>
+0012 <span class="comment">% so the heatmap is scaled correctly for missing days</span>
+0013 <span class="comment">% but excluded from display limits so the row doesn't show on the heatmap</span>
+0014 dummyrows = max(patientmeasures.ScaledDateNum);
+0015 dummymeasures = table(<span class="string">'Size'</span>,[dummyrows 2], <span class="string">'VariableTypes'</span>, {<span class="string">'int32'</span>, <span class="string">'int32'</span>}, <span class="string">'VariableNames'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'ScaledDateNum'</span>});
+0016 dummymeasures.SmartCareID(:) = 0;
+0017 <span class="keyword">for</span> i = 1:dummyrows
+0018     dummymeasures.ScaledDateNum(i) = i;
+0019 <span class="keyword">end</span>
+0020 patientmeasures = [patientmeasures;dummymeasures];
+0021 
+0022 
+0023 <span class="comment">% create and format heatmap</span>
+0024 [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(title, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0025 h = heatmap(p, patientmeasures, <span class="string">'ScaledDateNum'</span>, <span class="string">'SmartCareID'</span>, <span class="string">'Colormap'</span>, colors, <span class="string">'MissingDataColor'</span>, <span class="string">'white'</span>);
+0026 h.Title = <span class="string">' '</span>;
+0027 h.XLabel = <span class="string">'Days'</span>;
+0028 h.YLabel = <span class="string">'Patients'</span>;
+0029 h.YLimits = {dispmin,dispmax};
+0030 h.CellLabelColor = <span class="string">'none'</span>;
+0031 h.GridVisible = <span class="string">'off'</span>;
+0032 
+0033 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

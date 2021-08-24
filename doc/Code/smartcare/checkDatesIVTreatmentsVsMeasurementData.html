@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of checkDatesIVTreatmentsVsMeasurementData</title>
+  <meta name="keywords" content="checkDatesIVTreatmentsVsMeasurementData">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; checkDatesIVTreatmentsVsMeasurementData.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>checkDatesIVTreatmentsVsMeasurementData
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clc; clear; close;
+0002 
+0003 tic
+0004 fprintf(<span class="string">'Loading Clinical data\n'</span>);
+0005 load(<span class="string">'clinicaldata.mat'</span>);
+0006 fprintf(<span class="string">'Loading SmartCare measurement data\n'</span>);
+0007 load(<span class="string">'smartcaredata.mat'</span>);
+0008 toc
+0009 
+0010 <span class="comment">% uncomment one or other pair here depending on whether you want actual or</span>
+0011 <span class="comment">% notional end date for measurement period</span>
+0012 <span class="comment">%createnotionalmeasurementend = false;</span>
+0013 <span class="comment">%outputfilename = 'TreatmentsOutsideMeasurementPeriod.xlsx';</span>
+0014 createnotionalmeasurementend = true;
+0015 outputfilename = <span class="string">'TreatmentsOutsideMeasurementPeriodNotionalEnd.xlsx'</span>;
+0016 
+0017 tic
+0018 <span class="comment">% remove Oral treatments &amp; sort by SmartCareID and StopDate</span>
+0019 idx = find(ismember(cdAntibiotics.Route, {<span class="string">'Oral'</span>}));
+0020 cdAntibiotics(idx,:) = [];
+0021 cdAntibiotics = sortrows(cdAntibiotics, {<span class="string">'ID'</span>,<span class="string">'StopDate'</span>},<span class="string">'ascend'</span>);
+0022 
+0023 physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'DateNum'</span>, <span class="string">'RecordingType'</span>}, <span class="string">'ascend'</span>);
+0024 
+0025 <span class="comment">% get min and max measurement dates for each SmartCare ID</span>
+0026 minDatesByPatient = varfun(@min, physdata(:,{<span class="string">'SmartCareID'</span>, <span class="string">'Date_TimeRecorded'</span>}), <span class="string">'GroupingVariables'</span>, <span class="string">'SmartCareID'</span>);
+0027 maxDatesByPatient = varfun(@max, physdata(:,{<span class="string">'SmartCareID'</span>, <span class="string">'Date_TimeRecorded'</span>}), <span class="string">'GroupingVariables'</span>, <span class="string">'SmartCareID'</span>);
+0028 
+0029 outputtable = table(<span class="string">'Size'</span>,[1 9], <span class="string">'VariableTypes'</span>, {<span class="string">'string(12)'</span>,<span class="string">'int32'</span>,<span class="string">'int32'</span>,<span class="string">'datetime'</span>,<span class="string">'datetime'</span>,<span class="string">'int32'</span>, <span class="string">'string(14)'</span>,<span class="string">'datetime'</span>,<span class="string">'datetime'</span>}, <span class="keyword">...</span>
+0030     <span class="string">'VariableNames'</span>, {<span class="string">'RowType'</span>,<span class="string">'SmartCareID'</span>,<span class="string">'StudyPeriod'</span>,<span class="string">'FirstMeasurement'</span>,<span class="string">'LastMeasurement'</span>,<span class="string">'AntibioticID'</span>,<span class="string">'AntibioticName'</span>,<span class="string">'AntibioticStart'</span>,<span class="string">'AntibioticEnd'</span>});
+0031 rowtoadd = outputtable;
+0032 outputtable(1,:) = [];
+0033 
+0034 
+0035 oldid = cdAntibiotics.ID(1);
+0036 <span class="keyword">for</span> i = 1:size(cdAntibiotics,1)
+0037     scid = cdAntibiotics.ID(i);
+0038     treatmentstart = cdAntibiotics.StartDate(i);
+0039     dntreatmentstart = datenum(cdAntibiotics.StartDate(i));
+0040     treatmentend = cdAntibiotics.StopDate(i);
+0041     dntreatmentend = datenum(cdAntibiotics.StopDate(i));
+0042     
+0043     idx = find(minDatesByPatient.SmartCareID == scid);
+0044     firstmeasurement = minDatesByPatient.min_Date_TimeRecorded(idx);
+0045     dnfirstm = ceil(datenum(minDatesByPatient.min_Date_TimeRecorded(idx)));
+0046     lastmeasurement = maxDatesByPatient.max_Date_TimeRecorded(idx);
+0047     dnlastm = ceil(datenum(maxDatesByPatient.max_Date_TimeRecorded(idx)));
+0048     <span class="keyword">if</span> (((dnlastm - dnfirstm) &lt; 183) &amp; createnotionalmeasurementend)
+0049         lastmeasurement = dateshift(firstmeasurement,<span class="string">'start'</span>,<span class="string">'day'</span>,183);
+0050         dnlastm = dnfirstm + 183;
+0051     <span class="keyword">end</span>
+0052     <span class="keyword">if</span> (dntreatmentend &lt; dnfirstm-1) | (dntreatmentstart &gt; dnlastm)
+0053         <span class="keyword">if</span> oldid ~= scid
+0054            fprintf(<span class="string">'\n'</span>);
+0055            oldid = scid;
+0056         <span class="keyword">end</span>
+0057         
+0058         rowtoadd.SmartCareID = scid;
+0059         rowtoadd.StudyPeriod = dnlastm - dnfirstm;
+0060         rowtoadd.FirstMeasurement = firstmeasurement;
+0061         rowtoadd.LastMeasurement = lastmeasurement;
+0062         rowtoadd.AntibioticID = cdAntibiotics.AntibioticID(i);
+0063         rowtoadd.AntibioticName = cdAntibiotics.AntibioticName{i};
+0064         rowtoadd.AntibioticStart = treatmentstart;
+0065         rowtoadd.AntibioticEnd = treatmentend;
+0066         
+0067         <span class="keyword">if</span> (dntreatmentend &lt; dnfirstm-1)
+0068             fprintf(<span class="string">'Treatment before study  :  Patient ID %3d Study Period %3d days First Measurement %11s  :  Antibiotic ID %3d %14s End   %11s\n'</span>, scid, dnlastm - dnfirstm, datestr(firstmeasurement,1), <span class="keyword">...</span>
+0069                 cdAntibiotics.AntibioticID(i), cdAntibiotics.AntibioticName{i}, datestr(treatmentend,1)); 
+0070             rowtoadd.RowType = <span class="string">'Treatment before study'</span>;
+0071         <span class="keyword">end</span>
+0072         <span class="keyword">if</span> (dntreatmentstart &gt; dnlastm) 
+0073             fprintf(<span class="string">'Treatment after  study  :  Patient ID %3d Study Period %3d days  Last Measurement %11s  :  Antibiotic ID %3d %14s Start %11s\n'</span>, scid, dnlastm - dnfirstm, datestr(lastmeasurement,1), <span class="keyword">...</span>
+0074                 cdAntibiotics.AntibioticID(i), cdAntibiotics.AntibioticName{i}, datestr(treatmentstart,1)); 
+0075             rowtoadd.RowType = <span class="string">'Treatment after study'</span>;
+0076         <span class="keyword">end</span>
+0077         outputtable = [outputtable;rowtoadd];        
+0078     <span class="keyword">end</span>
+0079 <span class="keyword">end</span>
+0080 
+0081 writetable(outputtable, outputfilename);
+0082 
+0083 toc
+0084 
+0085</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotAlignedCurveComparison</title>
+  <meta name="keywords" content="plotAlignedCurveComparison">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; plotAlignedCurveComparison.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>plotAlignedCurveComparison
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMMCSelectModelRunFromDir.html" class="code" title="function [modelrun, modelidx, ModelResultFiles] = amEMMCSelectModelRunFromDir(study, loadtype, lcmode, intrfilt, tgapmode, tstlabelmode)">amEMMCSelectModelRunFromDir</a>	amEMMCSelectModelRunFromDir- allows you to load the saved variables from a</li><li><a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>	getInvertedMeasures - returns an array of measure display names that need</li><li><a href="loadModelRunVariables.html" class="code" title="function [meancurvemean1, meancurvecount1, measures1, min_offset1, max_offset1,align_wind1, nmeasures1, ex_start1, countthreshold1] = loadModelRunVariables(basedir, subfolder, modelrun)">loadModelRunVariables</a>	loadModelRunVariables - convenience function to load model run variables</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; close all; clc;
+0002 
+0003 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0004 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0005 [studynbr1, study1, studyfullname1] = <a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
+0006 [modelrun1, modelidx1, models1] = <a href="amEMMCSelectModelRunFromDir.html" class="code" title="function [modelrun, modelidx, ModelResultFiles] = amEMMCSelectModelRunFromDir(study, loadtype, lcmode, intrfilt, tgapmode, tstlabelmode)">amEMMCSelectModelRunFromDir</a>(study1, <span class="string">''</span>,      <span class="string">''</span>, <span class="string">'IntrFilt'</span>, <span class="string">'TGap'</span>,       <span class="string">''</span>);
+0007 
+0008 fprintf(<span class="string">'\n'</span>);
+0009 
+0010 [studynbr2, study2, studyfullname2] = <a href="selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
+0011 [modelrun2, modelidx2, models2] = <a href="amEMMCSelectModelRunFromDir.html" class="code" title="function [modelrun, modelidx, ModelResultFiles] = amEMMCSelectModelRunFromDir(study, loadtype, lcmode, intrfilt, tgapmode, tstlabelmode)">amEMMCSelectModelRunFromDir</a>(study2, <span class="string">''</span>,      <span class="string">''</span>, <span class="string">'IntrFilt'</span>, <span class="string">'TGap'</span>,       <span class="string">''</span>);
+0012 
+0013 [meancurvemean1, meancurvecount1, measures1, min_offset1, max_offset1, <span class="keyword">...</span>
+0014     align_wind1, nmeasures1, ex_start1, countthreshold1] = <a href="loadModelRunVariables.html" class="code" title="function [meancurvemean1, meancurvecount1, measures1, min_offset1, max_offset1,align_wind1, nmeasures1, ex_start1, countthreshold1] = loadModelRunVariables(basedir, subfolder, modelrun)">loadModelRunVariables</a>(basedir, subfolder, modelrun1);
+0015 
+0016 [meancurvemean2, meancurvecount2, measures2, min_offset2, max_offset2, <span class="keyword">...</span>
+0017     align_wind2, nmeasures2, ex_start2, countthreshold2] = <a href="loadModelRunVariables.html" class="code" title="function [meancurvemean1, meancurvecount1, measures1, min_offset1, max_offset1,align_wind1, nmeasures1, ex_start1, countthreshold1] = loadModelRunVariables(basedir, subfolder, modelrun)">loadModelRunVariables</a>(basedir, subfolder, modelrun2);
+0018 
+0019 invmeasarray1 = <a href="getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>(study1);
+0020 pridx1 = measures1.Index(ismember(measures1.DisplayName, invmeasarray1));
+0021 
+0022 invmeasarray2 = <a href="getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>(study2);
+0023 pridx2 = measures2.Index(ismember(measures2.DisplayName, invmeasarray2));
+0024 
+0025 meanwindow = 7;
+0026 smoothwdth = 4;
+0027 compactplot = true;
+0028 shifttext = sprintf(<span class="string">'%ddMeanShift'</span>, meanwindow);
+0029 plottitle   = sprintf(<span class="string">'%svs%s Typical Profile Comparison %s'</span>, study1, study2, shifttext);
+0030 
+0031 <span class="keyword">if</span> ismember(study1, {<span class="string">'SC'</span>}) &amp;&amp; ismember(study2, {<span class="string">'CL'</span>})
+0032     commonmeas = {<span class="string">'Cough'</span>; <span class="string">'O2Saturation'</span>; <span class="string">'PulseRate'</span>; <span class="string">'SleepActivity'</span>; <span class="string">'Weight'</span>; <span class="string">'Wellness'</span>};
+0033     ncommonmeas = size(commonmeas, 1);
+0034 <span class="keyword">elseif</span> ismember(study1, {<span class="string">'CL'</span>}) &amp;&amp; ismember(study2, {<span class="string">'CL'</span>})
+0035     commonmeas = {<span class="string">'Activity'</span>; <span class="string">'Appetite'</span>; <span class="string">'Breathlessness'</span>; <span class="string">'Cough'</span>; <span class="keyword">...</span>
+0036                   <span class="string">'O2Saturation'</span>; <span class="string">'PulseRate'</span>; <span class="string">'RespiratoryRate'</span>; <span class="string">'SleepActivity'</span>; <span class="keyword">...</span>
+0037                   <span class="string">'SleepDisturbance'</span>; <span class="string">'SputumVolume'</span>; <span class="string">'Temperature'</span>; <span class="string">'Tiredness'</span>; <span class="keyword">...</span>
+0038                   <span class="string">'Weight'</span>; <span class="string">'Wellness'</span>};
+0039     ncommonmeas = size(commonmeas, 1);
+0040 <span class="keyword">end</span>
+0041 
+0042 meancurvemean1(1, :, pridx1) = meancurvemean1(1, :, pridx1) * -1;
+0043 <span class="keyword">for</span> m = 1:nmeasures1
+0044     meancurvemean1(1, meancurvecount1(1, :, m) &lt; countthreshold1, m) = NaN;
+0045     meancurvemean1(1, :, m) = movmean(meancurvemean1(1, :, m), smoothwdth, <span class="string">'omitnan'</span>);
+0046     vertshift1 = mean(meancurvemean1(1, (align_wind1 + max_offset1 + ex_start1 - meanwindow):(align_wind1 + max_offset1 + ex_start1), m));
+0047     meancurvemean1(1, :, m) = meancurvemean1(1, :, m) - vertshift1;
+0048     fprintf(<span class="string">'For curve %d and measure %13s, vertical shift is %.3f\n'</span>, 1, measures1.DisplayName{m}, -vertshift1);
+0049 <span class="keyword">end</span>
+0050 
+0051 meancurvemean2(1, :, pridx2) = meancurvemean2(1, :, pridx2) * -1;
+0052 <span class="keyword">for</span> m = 1:nmeasures2
+0053     meancurvemean2(1, meancurvecount2(1, :, m) &lt; countthreshold2, m) = NaN;
+0054     meancurvemean2(1, :, m) = movmean(meancurvemean2(1, :, m), smoothwdth, <span class="string">'omitnan'</span>);
+0055     vertshift2 = mean(meancurvemean2(1, (align_wind2 + max_offset2 + ex_start2 - meanwindow):(align_wind2 + max_offset2 + ex_start2), m));
+0056     meancurvemean2(1, :, m) = meancurvemean2(1, :, m) - vertshift2;
+0057     fprintf(<span class="string">'For curve %d and measure %13s, vertical shift is %.3f\n'</span>, 2, measures2.DisplayName{m}, -vertshift2);
+0058 <span class="keyword">end</span>
+0059 
+0060 <span class="keyword">if</span> ncommonmeas &lt;= 9
+0061     plotsacross = 3;
+0062 <span class="keyword">elseif</span> ncommonmeas &lt;= 16
+0063     plotsacross = 4;
+0064 <span class="keyword">else</span>
+0065     plotsacross = 5;
+0066 <span class="keyword">end</span>
+0067 plotsdown   = ceil(ncommonmeas/plotsacross);
+0068 pghght = 11;
+0069 pgwdth = 8.5;
+0070 
+0071 [f, p] = <a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(<span class="string">''</span>, pgwdth, pghght);
+0072 
+0073 
+0074 <span class="comment">% set the plot range over all curves to ensure comparable visual scaling</span>
+0075 yl = [min(min(min(min(meancurvemean1))), min(min(min(meancurvemean2))) )<span class="keyword">...</span>
+0076       max(max(max(max(meancurvemean1))), max(max(max(meancurvemean1))) )];
+0077 
+0078 xfrom1 = -1 * (align_wind1 + max_offset1 - 1 + ex_start1);
+0079 xto1   = -1 * (1 + ex_start1);
+0080 xfrom2 = -1 * (align_wind2 + max_offset2 - 1 + ex_start2);
+0081 xto2   = -1 * (1 + ex_start2);
+0082 
+0083 xl = [min(xfrom1, xfrom2), max(xto1, xto2)];
+0084 
+0085 
+0086 legendtext = {study1; study2};
+0087 
+0088 
+0089 col1 = [0, 0.447, 0.741];
+0090 col2 = [0.85, 0.325, 0.098];
+0091 lstyle = <span class="string">'-'</span>;
+0092 lwidth = 1.5;
+0093 anchor = 1;
+0094 
+0095 tmp_meancurvemean1  = reshape(meancurvemean1(1, :, :),  [max_offset1 + align_wind1 - 1, nmeasures1]);
+0096 tmp_meancurvemean2  = reshape(meancurvemean2(1, :, :),  [max_offset2 + align_wind2 - 1, nmeasures2]);
+0097 <span class="keyword">for</span> cm = 1:ncommonmeas
+0098     ax = subplot(plotsdown, plotsacross, cm, <span class="string">'Parent'</span>, p);
+0099     ax.FontSize = 8;
+0100     ax.FontName = <span class="string">'Arial'</span>;
+0101     ax.TickDir = <span class="string">'out'</span>;
+0102     
+0103     xlabel(ax, <span class="string">'Days from exacerbation start'</span>);
+0104     ylabel(ax, <span class="string">'Change from stable baseline (s.d.)'</span>);
+0105     <span class="comment">%if cm/plotsacross == round(cm/plotsacross)</span>
+0106     <span class="comment">%    legend(ax, legendtext, 'Location', 'eastoutside', 'FontSize', 6);</span>
+0107     <span class="comment">%end</span>
+0108     title(ax, commonmeas{cm});
+0109     midx1 = measures1.Index(ismember(measures1.DisplayName, commonmeas(cm)));
+0110     midx2 = measures2.Index(ismember(measures2.DisplayName, commonmeas(cm)));
+0111 <span class="comment">%    [xl, yl] = plotLatentCurve(ax, max_offset1, (align_wind1 + ex_start1), (min_offset1 + ex_start1), meancurvemean1(:, midx1), xl, yl, col1, lstyle, lwidth, anchor);</span>
+0112 <span class="comment">%    [xl, yl] = plotLatentCurve(ax, max_offset2, (align_wind2 + ex_start2), (min_offset2 + ex_start2), meancurvemean2(:, midx2), xl, yl, col1, lstyle, lwidth, anchor);</span>
+0113 
+0114     
+0115     dfrom1 = max_offset1 + align_wind1 - 1;
+0116     dto1   = 1;
+0117     line(ax, (-1 * dfrom1):(-1 * dto1), <span class="keyword">...</span>
+0118         tmp_meancurvemean1(:, midx1), <span class="keyword">...</span>
+0119         <span class="string">'Color'</span>, col1, <span class="keyword">...</span>
+0120         <span class="string">'LineStyle'</span>, lstyle, <span class="keyword">...</span>
+0121         <span class="string">'LineWidth'</span>, lwidth);
+0122     
+0123     dfrom2 = max_offset2 + align_wind2 - 1;
+0124     dto2   = 1;
+0125     line(ax, (-1 * dfrom2):(-1 * dto2), <span class="keyword">...</span>
+0126         tmp_meancurvemean2(:,midx2), <span class="keyword">...</span>
+0127         <span class="string">'Color'</span>, col2, <span class="keyword">...</span>
+0128         <span class="string">'LineStyle'</span>, lstyle, <span class="keyword">...</span>
+0129         <span class="string">'LineWidth'</span>, lwidth);
+0130     
+0131 <span class="keyword">end</span>
+0132 
+0133 <span class="comment">% save plot</span>
+0134 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, <span class="string">'Plots'</span>);
+0135 close(f);
+0136</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

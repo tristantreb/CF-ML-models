@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createAndSaveClimbFEVPlots</title>
+  <meta name="keywords" content="createAndSaveClimbFEVPlots">
+  <meta name="description" content="createAndSaveFEVPlots - function to create plots of FEV home vs clinical">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createAndSaveClimbFEVPlots.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createAndSaveClimbFEVPlots
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>createAndSaveFEVPlots - function to create plots of FEV home vs clinical</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function createAndSaveClimbFEVPlots(patientlist, pmeasuresfev, pclinicalfev, pstudydate,mindays, maxdays, plotsacross, plotsdown, plotsperpage, subfolder, filenameprefix) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> createAndSaveFEVPlots - function to create plots of FEV home vs clinical 
+ measures and save results to file</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>	setYDisplayRange - function to scale y axis of plots appropriately</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="checkClimbCalculatedClinicalVsHomeFEV1Measures.html" class="code" title="">checkClimbCalculatedClinicalVsHomeFEV1Measures</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function createAndSaveClimbFEVPlots(patientlist, pmeasuresfev, pclinicalfev, pstudydate, </a><span class="keyword">...</span>
+0002     mindays, maxdays, plotsacross, plotsdown, plotsperpage, subfolder, filenameprefix)
+0003 
+0004 <span class="comment">% createAndSaveFEVPlots - function to create plots of FEV home vs clinical</span>
+0005 <span class="comment">% measures and save results to file</span>
+0006 
+0007 npages = ceil(size(patientlist, 1) / plotsperpage);
+0008 
+0009 page = 1;
+0010 imagefilename = sprintf(<span class="string">'%s - Page %2d of %2d'</span>, filenameprefix, page, npages);
+0011 [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(imagefilename, <span class="string">'Portrait'</span>, <span class="string">'a4'</span>);
+0012 
+0013 <span class="keyword">for</span> i = 1:size(patientlist, 1)
+0014     scid = patientlist(i);
+0015     hospital = pstudydate.Hospital{pstudydate.SmartCareID == scid};
+0016     <span class="comment">% get home weight measures just for current patient</span>
+0017     pmeasures = pmeasuresfev(pmeasuresfev.SmartCareID == scid,:);
+0018     <span class="comment">% get clinical weight measures just for current patient</span>
+0019     pclinical = pclinicalfev(pclinicalfev.SmartCareID == scid,:);
+0020     
+0021     <span class="comment">% get study start and end dates just for current patient</span>
+0022     studystart = pstudydate.ScaledDateNum(i);
+0023     studyend = studystart + 183;
+0024     
+0025     <span class="comment">% store min and max for patient (and handle case where there are no</span>
+0026     <span class="comment">% clinical measures</span>
+0027     <span class="keyword">if</span> size(pmeasures, 1) &gt; 0
+0028         minpmfev = min(pmeasures.FEV1_);
+0029         maxpmfev = max(pmeasures.FEV1_);
+0030     <span class="keyword">else</span>
+0031         minpmfev = 50;
+0032         maxpmfev = 50;
+0033     <span class="keyword">end</span>
+0034     <span class="keyword">if</span> size(pclinical,1) &gt; 0
+0035         minpcfev = min(pclinical.FEV1_);
+0036         maxpcfev = max(pclinical.FEV1_);
+0037     <span class="keyword">else</span>
+0038         minpcfev = minpmfev;
+0039         maxpcfev = maxpmfev;
+0040     <span class="keyword">end</span>
+0041     
+0042     <span class="comment">% plot FEV1 measures</span>
+0043     ax = subplot(plotsdown, plotsacross, i - (page - 1) * plotsperpage, <span class="string">'Parent'</span>, p);
+0044     hold on;
+0045     plot(ax, pmeasures.ScaledDateNum,pmeasures.FEV1_,<span class="string">'y-o'</span>,<span class="keyword">...</span>
+0046         <span class="string">'LineWidth'</span>,1,<span class="keyword">...</span>
+0047         <span class="string">'MarkerSize'</span>,3,<span class="keyword">...</span>
+0048         <span class="string">'MarkerEdgeColor'</span>,<span class="string">'b'</span>,<span class="keyword">...</span>
+0049         <span class="string">'MarkerFaceColor'</span>,<span class="string">'g'</span>);
+0050     plot(ax, pclinical.ScaledDateNum,pclinical.FEV1_,<span class="string">'c-o'</span>,<span class="keyword">...</span>
+0051         <span class="string">'LineWidth'</span>,1,<span class="keyword">...</span>
+0052         <span class="string">'MarkerSize'</span>,3,<span class="keyword">...</span>
+0053         <span class="string">'MarkerEdgeColor'</span>,<span class="string">'m'</span>,<span class="keyword">...</span>
+0054         <span class="string">'MarkerFaceColor'</span>,<span class="string">'w'</span>);
+0055     xl = [mindays maxdays];
+0056     xlim(xl);
+0057     rangelimit = 0.5;
+0058     yl = <a href="setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>(0, max(maxpcfev, maxpmfev), rangelimit);
+0059     ylim(yl);
+0060     title(ax, sprintf(<span class="string">'Patient %3d (%s)'</span>,scid, hospital));
+0061     <span class="comment">% add study start and end as vertical lines</span>
+0062     line(ax, [studystart studystart], yl, <span class="string">'Color'</span>, <span class="string">'g'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, 1);
+0063     line(ax,  [studyend studyend],     yl, <span class="string">'Color'</span>, <span class="string">'g'</span>, <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, 1);
+0064     hold off
+0065     fprintf(<span class="string">'Row %3d, Patient %3d\n'</span>, <span class="keyword">...</span>
+0066         i, scid); 
+0067     
+0068     <span class="comment">% create a new page as necessary</span>
+0069     <span class="keyword">if</span> round((i)/plotsperpage) == (i)/plotsperpage
+0070         <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, imagefilename, subfolder);
+0071         close(f);
+0072         page = page + 1;
+0073         imagefilename = sprintf(<span class="string">'%s - Page %2d of %2d'</span>, filenameprefix, page, npages);
+0074         [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(imagefilename, <span class="string">'Portrait'</span>, <span class="string">'a4'</span>);
+0075         fprintf(<span class="string">'Next Page\n'</span>);
+0076     <span class="keyword">end</span>
+0077     
+0078 <span class="keyword">end</span>
+0079 
+0080 <span class="keyword">if</span> exist(<span class="string">'f'</span>, <span class="string">'var'</span>)
+0081     <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, imagefilename, subfolder);
+0082     close(f);
+0083 <span class="keyword">end</span>
+0084 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

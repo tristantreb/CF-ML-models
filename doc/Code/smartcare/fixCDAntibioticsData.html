@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of fixCDAntibioticsData</title>
+  <meta name="keywords" content="fixCDAntibioticsData">
+  <meta name="description" content="fixAntibioticData - fix data anomalies in Clinical Antibiotics data">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; fixCDAntibioticsData.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>fixCDAntibioticsData
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>fixAntibioticData - fix data anomalies in Clinical Antibiotics data</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [cdAntibioticsOut] = fixCDAntibioticsData(cdAntibiotics) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> fixAntibioticData - fix data anomalies in Clinical Antibiotics data</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadclinicaldata.html" class="code" title="">loadclinicaldata</a>	</li><li><a href="loadupdatedclinicaldata.html" class="code" title="">loadupdatedclinicaldata</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [cdAntibioticsOut] = fixCDAntibioticsData(cdAntibiotics)</a>
+0002 
+0003 <span class="comment">% fixAntibioticData - fix data anomalies in Clinical Antibiotics data</span>
+0004 
+0005 tic
+0006 fprintf(<span class="string">'Fixing Antibiotics data anomalies\n'</span>);
+0007 fprintf(<span class="string">'---------------------------------\n'</span>);
+0008 <span class="comment">% remove duplicate rows</span>
+0009 idx1 = find(cdAntibiotics.ID == 76);
+0010 idx2 = find(ismember(cdAntibiotics.StopDate,{<span class="string">'NULL'</span>, <span class="string">'02-Feb-2017'</span>}));
+0011 idx = intersect(idx1,idx2);
+0012 updates = size(idx,1);
+0013 fprintf(<span class="string">'Removing %2d duplicate rows\n'</span>, updates);
+0014 cdAntibiotics(idx,:) = [];
+0015 
+0016 <span class="comment">% fix NULL StopDate's</span>
+0017 idx1 = find(ismember(cdAntibiotics.StopDate,{<span class="string">'NULL'</span>}));
+0018 idx2 = find(cdAntibiotics.ID == 74);
+0019 idx = intersect(idx1,idx2);
+0020 cdAntibiotics.StopDate(idx) = {<span class="string">'12-Jan-2017'</span>};
+0021 updates = size(idx,1);
+0022 idx2 = find(cdAntibiotics.ID == 241);
+0023 idx = intersect(idx1,idx2);
+0024 cdAntibiotics.StopDate(idx) = {<span class="string">'11-Sep-2016'</span>};
+0025 updates = updates + size(idx,1);
+0026 fprintf(<span class="string">'Fixing %2d NULL StopDates\n'</span>, updates);
+0027 
+0028 <span class="comment">% now can convert StopDate to a datetime format</span>
+0029 cdAntibiotics.StopDate = datetime(cdAntibiotics.StopDate);
+0030 
+0031 <span class="comment">% harmonise 'Intravenous' and 'Iv' to be 'IV'</span>
+0032 idx = find(ismember(cdAntibiotics.Route, {<span class="string">'Intravenous'</span>, <span class="string">'Iv'</span>}));
+0033 cdAntibiotics.Route(idx) = {<span class="string">'IV'</span>};
+0034 updates = size(idx,1);
+0035 <span class="comment">% harmonise 'PO' to be 'Oral'</span>
+0036 idx = find(ismember(cdAntibiotics.Route, {<span class="string">'PO'</span>}));
+0037 cdAntibiotics.Route(idx) = {<span class="string">'Oral'</span>};
+0038 updates = updates + size(idx,1);
+0039 <span class="comment">% fix NULL values in Route, where HomeIV_s_ has the value needed</span>
+0040 idx1 = find(ismember(cdAntibiotics.Route, {<span class="string">'NULL'</span>}));
+0041 idx2 = find(ismember(cdAntibiotics.HomeIV_s_, {<span class="string">'IV'</span>,<span class="string">'Yes'</span>}));
+0042 idx = intersect(idx1,idx2);
+0043 cdAntibiotics.Route(idx) = {<span class="string">'IV'</span>};
+0044 updates = updates + size(idx,1);
+0045 fprintf(<span class="string">'Harmonised %3d values for Route\n'</span>, updates);
+0046 
+0047 <span class="comment">% check this has harmonised/fixed all entries for Route</span>
+0048 <span class="comment">% unique(cdAntibiotics.Route)</span>
+0049 
+0050 <span class="comment">% fix illogical datas</span>
+0051 idx1 = find(cdAntibiotics.ID == 207);
+0052 idx2 = find(cdAntibiotics.AntibioticID &gt;= 468 &amp; cdAntibiotics.AntibioticID &lt;= 470);
+0053 idx = intersect(idx1,idx2);
+0054 updates = size(idx,1);
+0055 cdAntibiotics.StopDate(idx) = datetime(<span class="string">'09-Jun-2016'</span>);
+0056 
+0057 idx1 = find(cdAntibiotics.ID == 32);
+0058 idx2 = find(cdAntibiotics.AntibioticID == 77 | cdAntibiotics.AntibioticID == 78);
+0059 idx = intersect(idx1,idx2);
+0060 updates = updates + size(idx,1);
+0061 cdAntibiotics.StartDate(idx) = datetime(<span class="string">'29-Dec-2015'</span>);
+0062 
+0063 idx1 = find(cdAntibiotics.ID == 68);
+0064 idx2 = find(cdAntibiotics.AntibioticID == 300);
+0065 idx = intersect(idx1,idx2);
+0066 updates = updates + size(idx,1);
+0067 cdAntibiotics.StopDate(idx) = datetime(<span class="string">'28-Jun-2016'</span>);
+0068 
+0069 idx1 = find(cdAntibiotics.ID == 37);
+0070 idx2 = find(cdAntibiotics.AntibioticID == 111 | cdAntibiotics.AntibioticID == 112);
+0071 idx = intersect(idx1,idx2);
+0072 updates = updates + size(idx,1);
+0073 cdAntibiotics.StopDate(idx) = datetime(<span class="string">'18-Jul-2016'</span>);
+0074 
+0075 idx1 = find(cdAntibiotics.ID == 113);
+0076 idx2 = find(cdAntibiotics.AntibioticID == 171 | cdAntibiotics.AntibioticID == 172);
+0077 idx = intersect(idx1,idx2);
+0078 updates = updates + size(idx,1);
+0079 cdAntibiotics.StartDate(idx) = datetime(<span class="string">'18-Dec-2015'</span>);
+0080 
+0081 idx1 = find(cdAntibiotics.ID == 113);
+0082 idx2 = find(cdAntibiotics.AntibioticID == 173);
+0083 idx = intersect(idx1,idx2);
+0084 updates = updates + size(idx,1);
+0085 cdAntibiotics.StartDate(idx) = datetime(<span class="string">'21-Dec-2015'</span>);
+0086 
+0087 idx1 = find(cdAntibiotics.ID == 202);
+0088 idx2 = find(cdAntibiotics.AntibioticID == 384 | cdAntibiotics.AntibioticID == 385);
+0089 idx = intersect(idx1,idx2);
+0090 updates = updates + size(idx,1);
+0091 cdAntibiotics.StartDate(idx) = datetime(<span class="string">'19-Feb-2017'</span>);
+0092 
+0093 idx1 = find(cdAntibiotics.ID == 204);
+0094 idx2 = find(cdAntibiotics.AntibioticID == 373);
+0095 idx = intersect(idx1,idx2);
+0096 updates = updates + size(idx,1);
+0097 cdAntibiotics.StopDate(idx) = datetime(<span class="string">'28-Oct-2016'</span>);
+0098 
+0099 fprintf(<span class="string">'Fixed %2d illogical Start and Stop Dates\n'</span>, updates);
+0100 
+0101 <span class="comment">% check for any remaining date anomalies (expect to see only those for</span>
+0102 <span class="comment">% extended treatments</span>
+0103 idx = find((datenum(cdAntibiotics.StopDate) - datenum(cdAntibiotics.StartDate) &lt; 1) | (datenum(cdAntibiotics.StopDate) - datenum(cdAntibiotics.StartDate) &gt; 30));
+0104 fprintf(<span class="string">'There are %d remaining legitimate long term (&gt; 30 days) Antibiotic treatments\n'</span>, size(idx,1));
+0105 <span class="comment">%cdAntibiotics(idx,:)</span>
+0106 
+0107 cdAntibioticsOut = cdAntibiotics;
+0108 
+0109 toc
+0110 fprintf(<span class="string">'\n'</span>);
+0111 
+0112 <span class="keyword">end</span>
+0113</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

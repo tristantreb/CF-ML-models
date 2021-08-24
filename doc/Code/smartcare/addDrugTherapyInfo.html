@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of addDrugTherapyInfo</title>
+  <meta name="keywords" content="addDrugTherapyInfo">
+  <meta name="description" content="addDrugTherapyInfo - adds a column to the interventions table to store">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; addDrugTherapyInfo.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>addDrugTherapyInfo
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>addDrugTherapyInfo - adds a column to the interventions table to store</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function amInterventions = addDrugTherapyInfo(amInterventions, cdDrugTherapy) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> addDrugTherapyInfo - adds a column to the interventions table to store
+ what CFTR modulator therapy the patient was on at the time of the
+ intervention (if any)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="harmoniseDrugTherapyName.html" class="code" title="function [harmname] = harmoniseDrugTherapyName(rawname)">harmoniseDrugTherapyName</a>	Utility function to harmonise from the various free-form versions to a</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/recovery/createAlignmentModelInputsRecovery.html" class="code" title="">createAlignmentModelInputsRecovery</a>	creates the inputs for the model</li><li><a href="createAlignmentModelInputs.html" class="code" title="">createAlignmentModelInputs</a>	creates the inputs for the model</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function amInterventions = addDrugTherapyInfo(amInterventions, cdDrugTherapy)</a>
+0002 
+0003 <span class="comment">% addDrugTherapyInfo - adds a column to the interventions table to store</span>
+0004 <span class="comment">% what CFTR modulator therapy the patient was on at the time of the</span>
+0005 <span class="comment">% intervention (if any)</span>
+0006 
+0007 fprintf(<span class="string">'Adding drug therapy info\n'</span>);
+0008 
+0009 <span class="comment">% add the new column with a default value of None</span>
+0010 amInterventions.DrugTherapy(:) = {<span class="string">'None'</span>};
+0011 
+0012 <span class="comment">% until we are live on REDCap, we need to harmonise all the variants of the</span>
+0013 <span class="comment">% free form text</span>
+0014 ivalist = {<span class="string">'Ivacaftor'</span>, <span class="string">'ivacaftor'</span>};
+0015 symlist = {<span class="string">'Symkevi'</span>, <span class="string">'Symkevi Modulator'</span>, <span class="string">'symkevi'</span>};
+0016 orklist = {<span class="string">'Orkambi'</span>};
+0017 trplist = {<span class="string">'Triple Therapy'</span>, <span class="string">'Kaftrio'</span>, <span class="string">'Kaftrio + Kalydeco'</span>, <span class="string">'Modulator VX-445,tezacaftor,ivacaftor'</span>, <span class="string">'Trikafta'</span>, <span class="string">'Trikaftor'</span>, <span class="keyword">...</span>
+0018             <span class="string">'Triple therapy'</span>, <span class="string">'VX115 Study Trikafta open label'</span>, <span class="string">'kaftrio'</span>, <span class="string">'triple therapy open label trial'</span>, <span class="string">'Kaftrio/Trikafta/TripleTherapy'</span>};
+0019 
+0020 <span class="keyword">for</span> i = 1:size(amInterventions, 1)
+0021     patdt = cdDrugTherapy(cdDrugTherapy.ID == amInterventions.SmartCareID(i), :);
+0022     <span class="keyword">if</span> size(patdt, 1) &gt; 0
+0023         patdtidx = find(patdt.DrugTherapyStartDate &lt; amInterventions.IVStartDate(i), 1, <span class="string">'last'</span>);
+0024         <span class="keyword">if</span> size(patdtidx, 1) &gt; 0
+0025             amInterventions.DrugTherapy(i) = <a href="harmoniseDrugTherapyName.html" class="code" title="function [harmname] = harmoniseDrugTherapyName(rawname)">harmoniseDrugTherapyName</a>(patdt.DrugTherapyType(patdtidx)); 
+0026         <span class="keyword">end</span>
+0027     <span class="keyword">end</span>
+0028     fprintf(<span class="string">'Intr %3d (%3d/%11s): %s\n'</span>, i, amInterventions.SmartCareID(i), datestr(amInterventions.IVStartDate(i),1), amInterventions.DrugTherapy{i});
+0029 <span class="keyword">end</span>
+0030 
+0031 fprintf(<span class="string">'\n'</span>);
+0032 
+0033 <span class="keyword">end</span>
+0034</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of init</title>
+  <meta name="keywords" content="init">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">exploration</a> &gt; init.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/exploration&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>init
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/FEV1variability/analyseFEV1Variability.html" class="code" title="">analyseFEV1Variability</a>	analysis of FEV1 variability with moving average manually implemented</li><li><a href="../../../Code/pdm/FEV1variability/plotFEV1profiles.html" class="code" title="">plotFEV1profiles</a>	plot FEV1 profiles with modulators and treatments</li><li><a href="createHeatMapInterventions.html" class="code" title="">createHeatMapInterventions</a>	plot heatmap with  #measurements per day for all interventions</li><li><a href="exploreInterventions.html" class="code" title="">exploreInterventions</a>	explores the list of interventions</li><li><a href="patientCommitment.html" class="code" title="">patientCommitment</a>	Insights about the amount of FEV1 recordings per patient across the study</li><li><a href="patientDemographics.html" class="code" title="">patientDemographics</a>	create an excel with current BR patient demographics</li><li><a href="plotPatientProfiles.html" class="code" title="">plotPatientProfiles</a>	plot a profile of each measures for each patient over the whole enrolment period</li><li><a href="../../../Code/pdm/recovery/analyseModelRobustness.html" class="code" title="">analyseModelRobustness</a>	analyse the model robustness (classification consistency for various)</li><li><a href="../../../Code/pdm/recovery/analyseVshift.html" class="code" title="">analyseVshift</a>	used to find the optimal maximum vertical shift value</li><li><a href="../../../Code/pdm/recovery/checkBreatheTreatmentsVsSelectMeasuresPost.html" class="code" title="">checkBreatheTreatmentsVsSelectMeasuresPost</a>	creates list of oral & IV treatments for recovery study</li><li><a href="../../../Code/pdm/recovery/createAlignmentModelInputsRecovery.html" class="code" title="">createAlignmentModelInputsRecovery</a>	creates the inputs for the model</li><li><a href="../../../Code/pdm/recovery/findDataAnomaliesRecovery.html" class="code" title="">findDataAnomaliesRecovery</a>	highlight data anomalies to be optionnaly excluded prior to run the alignment model</li><li><a href="../../../Code/pdm/recovery/generateRecoveryCurve.html" class="code" title="">generateRecoveryCurve</a>	plot an unaligned profile</li><li><a href="../../../Code/pdm/recovery/masterScriptRecovery.html" class="code" title="">masterScriptRecovery</a>	master script to run an alignment model for recovery (post redcap migration)</li><li><a href="../../../Code/pdm/recovery/plotTypicalProfileAndTimeToResponse.html" class="code" title="">plotTypicalProfileAndTimeToResponse</a>	plot typical profile and compute time to response</li><li><a href="../../../Code/pdm/recovery/relateInferredClassesToPatientFeatures.html" class="code" title="">relateInferredClassesToPatientFeatures</a>	analyse the relation between patient characteristics and subset of interventions</li><li><a href="../../../Code/pdm/recovery/runAlignmentModelEMMCScriptRecovery.html" class="code" title="">runAlignmentModelEMMCScriptRecovery</a>	main script to run alignment models (EMMC versions)</li><li><a href="../../../Code/pdm/recovery/runSpecificInterventions.html" class="code" title="">runSpecificInterventions</a>	run a model with a manually selected subset of interventions</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; clc;
+0002 
+0003 <span class="comment">% helpers</span>
+0004 addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/pdm/helperfunctions/;
+0005 addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/smartcare/;
+0006 
+0007 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0008 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0009 study = <span class="string">'BR'</span>;
+0010 plotfolder = <span class="string">'/Users/tristan.trebaol/Documents/PDM/Project/PlotsRecovery/'</span>;
+0011 
+0012 data_window = 20;
+0013 
+0014 <span class="comment">% colors</span>
+0015 <span class="comment">% cvcol   = [0.94  0.52  0.15];</span>
+0016 <span class="comment">% admcol  = [0.694 0.627 0.78];</span>
+0017 <span class="comment">% ivcol   = [1     0     0   ];</span>
+0018 <span class="comment">% oralcol = [1     0.85  0   ];</span>
+0019 <span class="comment">% trplcol = [0     1     0   ];</span>
+0020 <span class="comment">% drugcol = [0     0.8   0.6 ];</span>
+0021 
+0022 <span class="comment">% manually add triple therapy start for 501</span>
+0023 <span class="comment">% manually add predicted FEV1 to 3.69 for 616</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

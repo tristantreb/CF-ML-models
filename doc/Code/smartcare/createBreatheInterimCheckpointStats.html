@@ -1,0 +1,248 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createBreatheInterimCheckpointStats</title>
+  <meta name="keywords" content="createBreatheInterimCheckpointStats">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createBreatheInterimCheckpointStats.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createBreatheInterimCheckpointStats
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="calcDaysInPeriodWithHistogram.html" class="code" title="function [brIntChkptPat, brIntChkptSum] = calcDaysInPeriodWithHistogram(brIntChkptPat, brIntChkptSum, perioddata, study, meastype, period1, period2, twindow, type, cutoffd, plotsubfolder)">calcDaysInPeriodWithHistogram</a>	calcDaysInPeriodWithHistogram - calculate the days on IV for pre and during</li><li><a href="calcNbrCFTRModInPeriod.html" class="code" title="function [brIntChkptPat] = calcNbrCFTRModInPeriod(brIntChkptPat,study, meastype, period1, period2, twindow, bestwind, cutoffd, plotsubfolder)">calcNbrCFTRModInPeriod</a>	calcNbrCFTRModInPeriod - calculates how many patients started CFTR</li><li><a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="plotPointsWithLFitLoop.html" class="code" title="function [brIntChkptPat, brIntChkptSum] = plotPointsWithLFitLoop(brIntChkptPat, brIntChkptSum,mdata1, mdata2, excldata, study, meastype, bestwind, gradtype, comptype, period1, period2, twindow, type, cutoffd, plotsubfolder, offset)">plotPointsWithLFitLoop</a>	plotPointsWithLFitLoop loops over all relevant patients and produces</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; clc; close all;
+0002 
+0003 study = <span class="string">'BR'</span>;
+0004 chosentreatgap = 1;
+0005 smode = input(<span class="string">'Run for 1) all patients or 2) exclude 0-6m CFTR modulator therapy start ? '</span>, <span class="string">'s'</span>);
+0006 
+0007 mode = str2double(smode);
+0008 
+0009 <span class="keyword">if</span> (isnan(mode) || mode &lt; 1 || mode &gt; 2)
+0010     fprintf(<span class="string">'Invalid choice\n'</span>);
+0011     <span class="keyword">return</span>;
+0012 <span class="keyword">elseif</span> mode == 1
+0013     modetext = <span class="string">'All Patients'</span>;
+0014 <span class="keyword">elseif</span> mode == 2
+0015     modetext = <span class="string">'Excluding CFTR Patients'</span>;
+0016 <span class="keyword">end</span>
+0017 
+0018 tic
+0019 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0020 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0021 [datamatfile, clinicalmatfile, demographicsmatfile] = <a href="getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0022 [physdata, offset] = <a href="loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0023 [brPatient, brDrugTherapy, ~, brAntibiotics, brAdmissions, brPFT, brCRP, <span class="keyword">...</span>
+0024     brClinicVisits, brOtherVisits, ~, brHghtWght, ~, ~, brUnplannedContact] = <a href="loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0025 
+0026 tic
+0027 ivandmeasuresfile = sprintf(<span class="string">'%sivandmeasures_gap%d.mat'</span>, study, chosentreatgap);
+0028 fprintf(<span class="string">'Loading iv treatment and measures prior data\n'</span>);
+0029 load(fullfile(basedir, subfolder, ivandmeasuresfile));
+0030 toc
+0031 
+0032 <span class="comment">% set various parameters</span>
+0033 plotsubfolder = sprintf(<span class="string">'Plots/%s/BR Interim Checkpoint/%s'</span>, study, modetext);
+0034 <span class="keyword">if</span> ~exist(fullfile(basedir, plotsubfolder), <span class="string">'dir'</span>)
+0035     mkdir(fullfile(basedir, plotsubfolder));
+0036 <span class="keyword">end</span>
+0037 cutoffd = datetime(2020, 3, 15);
+0038 exclwind = 20;
+0039 clintw  = 3;
+0040 hmtw    = 3;
+0041 ntypes  = 15;
+0042 
+0043 <span class="comment">% set up result tables</span>
+0044 brIntChkptSum = table(<span class="string">'Size'</span>,[ntypes 7], <span class="keyword">...</span>
+0045     <span class="string">'VariableTypes'</span>, {<span class="string">'cell'</span>,     <span class="string">'double'</span>, <span class="string">'double'</span>,      <span class="string">'double'</span>,        <span class="string">'double'</span>,      <span class="string">'double'</span>,        <span class="string">'double'</span>}, <span class="keyword">...</span>
+0046     <span class="string">'VariableNames'</span>, {<span class="string">'DataType'</span>, <span class="string">'n'</span>,      <span class="string">'Period1Mean'</span>, <span class="string">'Period1StdErr'</span>, <span class="string">'Period2Mean'</span>, <span class="string">'Period2StdErr'</span>, <span class="string">'pVal'</span>});
+0047 
+0048 brIntChkptPat = brPatient;
+0049 brIntChkptPat(brIntChkptPat.StudyDate + calmonths(6) &gt; cutoffd,:) = [];
+0050 <span class="comment">%brIntChkptDT = brDrugTherapy(ismember(brDrugTherapy.ID, brIntChkptPat.ID), :);</span>
+0051 
+0052 
+0053 <span class="comment">% set up various input tables in a standardised way</span>
+0054 tmpClinFEV = brPFT;
+0055 tmpClinFEV.Properties.VariableNames({<span class="string">'LungFunctionDate'</span>}) = {<span class="string">'Date'</span>};
+0056 tmpClinFEV.Properties.VariableNames({<span class="string">'FEV1'</span>}) = {<span class="string">'Amount'</span>};
+0057 tmpClinFEV.DateNum = datenum(tmpClinFEV.Date) - offset;
+0058 
+0059 tmpHomeFEV = physdata(ismember(physdata.RecordingType, {<span class="string">'FEV1Recording'</span>}), {<span class="string">'SmartCareID'</span>, <span class="string">'Date_TimeRecorded'</span>, <span class="string">'DateNum'</span>, <span class="string">'FEV'</span>});
+0060 tmpHomeFEV.Properties.VariableNames({<span class="string">'SmartCareID'</span>}) = {<span class="string">'ID'</span>};
+0061 tmpHomeFEV.Properties.VariableNames({<span class="string">'Date_TimeRecorded'</span>}) = {<span class="string">'Date'</span>};
+0062 tmpHomeFEV.Properties.VariableNames({<span class="string">'FEV'</span>}) = {<span class="string">'Amount'</span>};
+0063 
+0064 tmpClinWght = brHghtWght;
+0065 tmpClinWght.Properties.VariableNames({<span class="string">'MeasDate'</span>}) = {<span class="string">'Date'</span>};
+0066 tmpClinWght.Properties.VariableNames({<span class="string">'Weight'</span>}) = {<span class="string">'Amount'</span>};
+0067 tmpClinWght.DateNum = datenum(tmpClinWght.Date) - offset;
+0068 
+0069 tmpHomeWght = physdata(ismember(physdata.RecordingType, {<span class="string">'WeightRecording'</span>}), {<span class="string">'SmartCareID'</span>, <span class="string">'Date_TimeRecorded'</span>, <span class="string">'DateNum'</span>, <span class="string">'WeightInKg'</span>});
+0070 tmpHomeWght.Properties.VariableNames({<span class="string">'SmartCareID'</span>}) = {<span class="string">'ID'</span>};
+0071 tmpHomeWght.Properties.VariableNames({<span class="string">'Date_TimeRecorded'</span>}) = {<span class="string">'Date'</span>};
+0072 tmpHomeWght.Properties.VariableNames({<span class="string">'WeightInKg'</span>}) = {<span class="string">'Amount'</span>};
+0073 
+0074 tmpIVs = ivandmeasurestable(~ismember(ivandmeasurestable.Route, {<span class="string">'Oral'</span>}), {<span class="string">'SmartCareID'</span>, <span class="string">'IVStartDate'</span>, <span class="string">'IVDateNum'</span>, <span class="string">'IVStopDate'</span>, <span class="string">'IVStopDateNum'</span>});
+0075 tmpIVs.Properties.VariableNames({<span class="string">'SmartCareID'</span>})   = {<span class="string">'ID'</span>};
+0076 tmpIVs.Properties.VariableNames({<span class="string">'IVStartDate'</span>})   = {<span class="string">'StartDate'</span>};
+0077 tmpIVs.Properties.VariableNames({<span class="string">'IVStopDate'</span>})    = {<span class="string">'StopDate'</span>};
+0078 tmpIVs.Properties.VariableNames({<span class="string">'IVDateNum'</span>})     = {<span class="string">'StartDateNum'</span>};
+0079 tmpIVs.Properties.VariableNames({<span class="string">'IVStopDateNum'</span>}) = {<span class="string">'StopDateNum'</span>};
+0080 tmpIVs(~ismember(tmpIVs.ID, brIntChkptPat.ID), :) = [];
+0081 
+0082 tmpEmergCont = brUnplannedContact;
+0083 tmpEmergCont.Properties.VariableNames({<span class="string">'ContactDate'</span>}) = {<span class="string">'Date'</span>};
+0084 tmpEmergCont(~ismember(tmpEmergCont.ID, brIntChkptPat.ID), :) = [];
+0085 
+0086 <span class="comment">% Plot nbr of people on drug therapy pre vs during</span>
+0087 meastype = <span class="string">'CFTRMod'</span>;
+0088 bestwind = 6;
+0089 period1  = <span class="string">'Pre'</span>;
+0090 period2  = <span class="string">'Dur'</span>;
+0091 twindow  = 12;
+0092 brIntChkptPat = <a href="calcNbrCFTRModInPeriod.html" class="code" title="function [brIntChkptPat] = calcNbrCFTRModInPeriod(brIntChkptPat,study, meastype, period1, period2, twindow, bestwind, cutoffd, plotsubfolder)">calcNbrCFTRModInPeriod</a>(brIntChkptPat, <span class="keyword">...</span>
+0093     study, meastype, period1, period2, twindow, bestwind, cutoffd, plotsubfolder);
+0094 
+0095 type = 1;
+0096 
+0097 <span class="comment">% 1) FEV1 decline using clinical pre and clinical during, best per 3months</span>
+0098 meastype = <span class="string">'FEV1'</span>;
+0099 bestwind = 3;
+0100 gradtype = sprintf(<span class="string">'Best%dm'</span>, bestwind);
+0101 period1  = <span class="string">'Pre'</span>;
+0102 period2  = <span class="string">'Dur'</span>;
+0103 comptype = <span class="string">'CvC'</span>;
+0104 twindow  = 12;
+0105 [brIntChkptPat, brIntChkptSum] = <a href="plotPointsWithLFitLoop.html" class="code" title="function [brIntChkptPat, brIntChkptSum] = plotPointsWithLFitLoop(brIntChkptPat, brIntChkptSum,mdata1, mdata2, excldata, study, meastype, bestwind, gradtype, comptype, period1, period2, twindow, type, cutoffd, plotsubfolder, offset)">plotPointsWithLFitLoop</a>(brIntChkptPat, brIntChkptSum, <span class="keyword">...</span>
+0106     tmpClinFEV, tmpClinFEV, brAntibiotics, study, meastype, bestwind, gradtype, comptype, period1, period2, twindow, type, cutoffd, plotsubfolder);
+0107 
+0108 <span class="comment">% 2) FEV1 decline using clinical pre and home during, best per 3months</span>
+0109 meastype = <span class="string">'FEV1'</span>;
+0110 bestwind = 3;
+0111 gradtype = sprintf(<span class="string">'Best%dm'</span>, bestwind);
+0112 period1  = <span class="string">'Pre'</span>;
+0113 period2  = <span class="string">'Dur'</span>;
+0114 comptype = <span class="string">'CvH'</span>;
+0115 twindow  = 12;
+0116 type     = type + 1;
+0117 [brIntChkptPat, brIntChkptSum] = <a href="plotPointsWithLFitLoop.html" class="code" title="function [brIntChkptPat, brIntChkptSum] = plotPointsWithLFitLoop(brIntChkptPat, brIntChkptSum,mdata1, mdata2, excldata, study, meastype, bestwind, gradtype, comptype, period1, period2, twindow, type, cutoffd, plotsubfolder, offset)">plotPointsWithLFitLoop</a>(brIntChkptPat, brIntChkptSum, <span class="keyword">...</span>
+0118     tmpClinFEV, tmpHomeFEV, brAntibiotics, study, meastype, bestwind, gradtype, comptype, period1, period2, twindow, type, cutoffd, plotsubfolder);
+0119 
+0120 <span class="comment">% 3) Weight decline using clinical pre and home during, best per 3months</span>
+0121 meastype = <span class="string">'Weight'</span>;
+0122 bestwind = 3;
+0123 gradtype = sprintf(<span class="string">'Best%dm'</span>, bestwind);
+0124 period1  = <span class="string">'Pre'</span>;
+0125 period2  = <span class="string">'Dur'</span>;
+0126 comptype = <span class="string">'CvH'</span>;
+0127 twindow  = 6;
+0128 <span class="comment">%type     = type + 1;</span>
+0129 <span class="comment">%[brIntChkptPat, brIntChkptSum] = plotPointsWithLFitLoop(brIntChkptPat, brIntChkptSum, ...</span>
+0130 <span class="comment">%    tmpClinWght, tmpHomeWght, brAntibiotics, study, meastype, bestwind, gradtype, comptype, period1, period2, twindow, type, cutoffd, plotsubfolder);</span>
+0131 
+0132 <span class="comment">% 4) Weight decline using clinical pre and home during, best per 2months</span>
+0133 meastype = <span class="string">'Weight'</span>;
+0134 bestwind = 2;
+0135 gradtype = sprintf(<span class="string">'Best%dm'</span>, bestwind);
+0136 period1  = <span class="string">'Pre'</span>;
+0137 period2  = <span class="string">'Dur'</span>;
+0138 comptype = <span class="string">'CvH'</span>;
+0139 twindow  = 6;
+0140 type     = type + 1;
+0141 [brIntChkptPat, brIntChkptSum] = <a href="plotPointsWithLFitLoop.html" class="code" title="function [brIntChkptPat, brIntChkptSum] = plotPointsWithLFitLoop(brIntChkptPat, brIntChkptSum,mdata1, mdata2, excldata, study, meastype, bestwind, gradtype, comptype, period1, period2, twindow, type, cutoffd, plotsubfolder, offset)">plotPointsWithLFitLoop</a>(brIntChkptPat, brIntChkptSum, <span class="keyword">...</span>
+0142     tmpClinWght, tmpHomeWght, brAntibiotics, study, meastype, bestwind, gradtype, comptype, period1, period2, twindow, type, cutoffd, plotsubfolder);
+0143 
+0144 <span class="comment">% 5) Weight decline using clinical pre and home during, best per 1month</span>
+0145 meastype = <span class="string">'Weight'</span>;
+0146 bestwind = 1;
+0147 gradtype = sprintf(<span class="string">'Best%dm'</span>, bestwind);
+0148 period1  = <span class="string">'Pre'</span>;
+0149 period2  = <span class="string">'Dur'</span>;
+0150 comptype = <span class="string">'CvH'</span>;
+0151 twindow  = 6;
+0152 type     = type + 1;
+0153 [brIntChkptPat, brIntChkptSum] = <a href="plotPointsWithLFitLoop.html" class="code" title="function [brIntChkptPat, brIntChkptSum] = plotPointsWithLFitLoop(brIntChkptPat, brIntChkptSum,mdata1, mdata2, excldata, study, meastype, bestwind, gradtype, comptype, period1, period2, twindow, type, cutoffd, plotsubfolder, offset)">plotPointsWithLFitLoop</a>(brIntChkptPat, brIntChkptSum, <span class="keyword">...</span>
+0154     tmpClinWght, tmpHomeWght, brAntibiotics, study, meastype, bestwind, gradtype, comptype, period1, period2, twindow, type, cutoffd, plotsubfolder);
+0155 
+0156 <span class="comment">% 6) Nbr days on IV Treatments pre vs during 12 months</span>
+0157 meastype = <span class="string">'IVDays'</span>;
+0158 period1  = <span class="string">'Pre'</span>;
+0159 period2  = <span class="string">'Dur'</span>;
+0160 twindow  = 12;
+0161 <span class="comment">%type     = type + 1;</span>
+0162 <span class="comment">%[brIntChkptPat, brIntChkptSum] = calcDaysInPeriodWithHistogram(brIntChkptPat, brIntChkptSum, ...</span>
+0163 <span class="comment">%    tmpIVs, study, meastype, period1, period2, twindow, type, cutoffd, plotsubfolder);</span>
+0164 
+0165 <span class="comment">% 7) Nbr days on IV Treatments pre vs during 6  months</span>
+0166 meastype = <span class="string">'IVDays'</span>;
+0167 period1  = <span class="string">'Pre'</span>;
+0168 period2  = <span class="string">'Dur'</span>;
+0169 twindow  = 6;
+0170 type     = type + 1;
+0171 [brIntChkptPat, brIntChkptSum] = <a href="calcDaysInPeriodWithHistogram.html" class="code" title="function [brIntChkptPat, brIntChkptSum] = calcDaysInPeriodWithHistogram(brIntChkptPat, brIntChkptSum, perioddata, study, meastype, period1, period2, twindow, type, cutoffd, plotsubfolder)">calcDaysInPeriodWithHistogram</a>(brIntChkptPat, brIntChkptSum, <span class="keyword">...</span>
+0172     tmpIVs, study, meastype, period1, period2, twindow, type, cutoffd, plotsubfolder);
+0173 
+0174 <span class="comment">% 8) Nbr emergency contacts pre vs during 12  months</span>
+0175 meastype = <span class="string">'EmergCont'</span>;
+0176 period1  = <span class="string">'Pre'</span>;
+0177 period2  = <span class="string">'Dur'</span>;
+0178 twindow  = 12;
+0179 <span class="comment">%type     = type + 1;</span>
+0180 <span class="comment">%[brIntChkptPat, brIntChkptSum] = calcDaysInPeriodWithHistogram(brIntChkptPat, brIntChkptSum, ...</span>
+0181 <span class="comment">%    tmpEmergCont, study, meastype, period1, period2, twindow, type, cutoffd, plotsubfolder);</span>
+0182 
+0183 <span class="comment">% 9) Nbr emergency contacts pre vs during 6 mpnths</span>
+0184 meastype = <span class="string">'EmergCont'</span>;
+0185 period1  = <span class="string">'Pre'</span>;
+0186 period2  = <span class="string">'Dur'</span>;
+0187 twindow  = 6;
+0188 type     = type + 1;
+0189 [brIntChkptPat, brIntChkptSum] = <a href="calcDaysInPeriodWithHistogram.html" class="code" title="function [brIntChkptPat, brIntChkptSum] = calcDaysInPeriodWithHistogram(brIntChkptPat, brIntChkptSum, perioddata, study, meastype, period1, period2, twindow, type, cutoffd, plotsubfolder)">calcDaysInPeriodWithHistogram</a>(brIntChkptPat, brIntChkptSum, <span class="keyword">...</span>
+0190     tmpEmergCont, study, meastype, period1, period2, twindow, type, cutoffd, plotsubfolder);
+0191 
+0192 <span class="keyword">for</span> i = 1:type
+0193     fprintf(<span class="string">'%24s: n=%2d Pre Study %+2.5f +/- %2.5f : During Study %+2.5f +/- %2.5f : p-Val %.3f\n'</span>, <span class="keyword">...</span>
+0194                                                             brIntChkptSum.DataType{i}, brIntChkptSum.n(i),<span class="keyword">...</span>
+0195                                                             brIntChkptSum.Period1Mean(i), brIntChkptSum.Period1StdErr(i), <span class="keyword">...</span>
+0196                                                             brIntChkptSum.Period2Mean(i), brIntChkptSum.Period2StdErr(i), <span class="keyword">...</span>
+0197                                                             brIntChkptSum.pVal(i));
+0198 <span class="keyword">end</span>
+0199 
+0200 
+0201</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

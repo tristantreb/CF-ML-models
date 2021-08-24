@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotSuperimposedMeasuresB4IntrForPaper</title>
+  <meta name="keywords" content="plotSuperimposedMeasuresB4IntrForPaper">
+  <meta name="description" content="plotSuperimposedMeasuresB4Intr - plots the measures for the period prior">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; plotSuperimposedMeasuresB4IntrForPaper.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>plotSuperimposedMeasuresB4IntrForPaper
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>plotSuperimposedMeasuresB4Intr - plots the measures for the period prior</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function plotSuperimposedMeasuresB4IntrForPaper(ax, amnormcubesingleintr, amnormcubesingleintrsmth, xl, yl,tmpmeasures, tmpnmeasures, max_offset, align_wind, offset, ex_start, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> plotSuperimposedMeasuresB4Intr - plots the measures for the period prior
+ to a treatment</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getColourForMeasure.html" class="code" title="function [smcolour, rwcolour] = getColourForMeasure(displaymeasure)">getColourForMeasure</a>	getColorForMeasure - returns the RGB value of the colour for a given</li><li><a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>	plotVerticalLine - plots a vertical line</li><li><a href="sortMeasuresForPaper.html" class="code" title="function [measures] = sortMeasuresForPaper(study, measures)">sortMeasuresForPaper</a>	sortMeasuresForPaper - returns a sorted measures table in the order to</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMMCPlotSuperimposedAlignedCurvesForPaper.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper(meancurvemean, meancurvecount, amIntrNormcube, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper</a>	amEMMCPlotSuperimposedAlignedCurves - wrapper around the</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function plotSuperimposedMeasuresB4IntrForPaper(ax, amnormcubesingleintr, amnormcubesingleintrsmth, xl, yl, </a><span class="keyword">...</span>
+0002     tmpmeasures, tmpnmeasures, max_offset, align_wind, offset, ex_start, study)
+0003 
+0004 <span class="comment">% plotSuperimposedMeasuresB4Intr - plots the measures for the period prior</span>
+0005 <span class="comment">% to a treatment</span>
+0006 
+0007 days = xl(1):xl(2);
+0008 
+0009 dfrom = 1; 
+0010 dto   = max_offset + align_wind - 1 - offset;
+0011 
+0012 mfrom = 1 + offset; 
+0013 mto   = max_offset + align_wind - 1;
+0014 
+0015 [tmpmeasures] = <a href="sortMeasuresForPaper.html" class="code" title="function [measures] = sortMeasuresForPaper(study, measures)">sortMeasuresForPaper</a>(study, tmpmeasures);
+0016 
+0017 <span class="keyword">for</span> m = 1:tmpnmeasures
+0018     [smcolour, rwcolour] = <a href="getColourForMeasure.html" class="code" title="function [smcolour, rwcolour] = getColourForMeasure(displaymeasure)">getColourForMeasure</a>(tmpmeasures.DisplayName{m});
+0019     lstyle = <span class="string">'-'</span>;
+0020     lwidth = 1.5;
+0021     <span class="comment">%plot(ax, days, amnormcubesingleintr(:, tmpmeasures.Index(m)), ...</span>
+0022     <span class="comment">%    'Color', rwcolour, ...</span>
+0023     <span class="comment">%    'LineStyle', ':', ...</span>
+0024     <span class="comment">%   'Marker', 'o', ...</span>
+0025     <span class="comment">%    'LineWidth',1,...</span>
+0026     <span class="comment">%    'MarkerSize',2,...</span>
+0027     <span class="comment">%    'MarkerEdgeColor','b',...</span>
+0028     <span class="comment">%    'MarkerFaceColor','g');</span>
+0029 
+0030     plot(ax, days(dfrom:dto), amnormcubesingleintrsmth(mfrom:mto, tmpmeasures.Index(m)), <span class="keyword">...</span>
+0031         <span class="string">'Color'</span>, smcolour, <span class="keyword">...</span>
+0032         <span class="string">'LineStyle'</span>, lstyle, <span class="keyword">...</span>
+0033         <span class="string">'Marker'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0034         <span class="string">'LineWidth'</span>, lwidth);
+0035     
+0036     xlim(ax, xl);
+0037     ylim(ax, yl);
+0038 <span class="keyword">end</span>
+0039 
+0040 <span class="keyword">if</span> ex_start ~= 0
+0041     [~, ~] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax, 0, xl, yl, <span class="string">'black'</span>, <span class="string">'-'</span>, 0.5); <span class="comment">% plot ex_start</span>
+0042 <span class="keyword">end</span>
+0043 
+0044 <span class="keyword">end</span>
+0045</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

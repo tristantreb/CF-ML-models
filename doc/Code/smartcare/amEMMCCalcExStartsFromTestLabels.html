@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCCalcExStartsFromTestLabels</title>
+  <meta name="keywords" content="amEMMCCalcExStartsFromTestLabels">
+  <meta name="description" content="amEMMCCalcExStartsFromTestLabels - wrapper around">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCCalcExStartsFromTestLabels.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCCalcExStartsFromTestLabels
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCCalcExStartsFromTestLabels - wrapper around</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function ex_start = amEMMCCalcExStartsFromTestLabels(amLabelledInterventions, amInterventions, overall_pdoffset,max_offset, plotsubfolder, plotname, ninterventions, nlatentcurves) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCCalcExStartsFromTestLabels - wrapper around
+ calcExStartsFromTestLabels to derive the ex_start point for each set of
+ latent curves</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="calcExStartFromTestLabels.html" class="code" title="function ex_start = calcExStartFromTestLabels(amLabelledInterventions, amInterventions,overall_pdoffset, max_offset, plotsubfolder, modelrun, countthresh)">calcExStartFromTestLabels</a>	calcExStartFromTestLabels - derives the ex_start date for a given</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModelEMMCFcn.html" class="code" title="function runAlignmentModelEMMCFcn(amRunParameters)">runAlignmentModelEMMCFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="runModelUtilityFunctionsEMMC.html" class="code" title="">runModelUtilityFunctionsEMMC</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function ex_start = amEMMCCalcExStartsFromTestLabels(amLabelledInterventions, amInterventions, overall_pdoffset, </a><span class="keyword">...</span>
+0002     max_offset, plotsubfolder, plotname, ninterventions, nlatentcurves)
+0003 
+0004 <span class="comment">% amEMMCCalcExStartsFromTestLabels - wrapper around</span>
+0005 <span class="comment">% calcExStartsFromTestLabels to derive the ex_start point for each set of</span>
+0006 <span class="comment">% latent curves</span>
+0007 
+0008 ex_start = zeros(1, nlatentcurves);
+0009 <span class="keyword">if</span> nlatentcurves &gt; 1
+0010     countthresh = 3;
+0011 <span class="keyword">else</span>
+0012     countthresh = 5;
+0013 <span class="keyword">end</span>
+0014 
+0015 <span class="keyword">for</span> n = 1:nlatentcurves
+0016     tmp_overall_pdoffset = reshape(overall_pdoffset(n,:,:), [ninterventions, max_offset]);
+0017 
+0018     tmp_plotname = sprintf(<span class="string">'%s C%d'</span>, plotname, n);
+0019     
+0020     ex_start(n) = <a href="calcExStartFromTestLabels.html" class="code" title="function ex_start = calcExStartFromTestLabels(amLabelledInterventions, amInterventions,overall_pdoffset, max_offset, plotsubfolder, modelrun, countthresh)">calcExStartFromTestLabels</a>(amLabelledInterventions, amInterventions, <span class="keyword">...</span>
+0021         tmp_overall_pdoffset, max_offset, plotsubfolder, tmp_plotname, countthresh);
+0022 <span class="keyword">end</span>
+0023 
+0024 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

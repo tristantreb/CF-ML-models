@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of patientDemographics</title>
+  <meta name="keywords" content="patientDemographics">
+  <meta name="description" content="create an excel with current BR patient demographics">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">exploration</a> &gt; patientDemographics.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/exploration&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>patientDemographics
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>create an excel with current BR patient demographics</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> create an excel with current BR patient demographics
+ 
+ Examples:
+ - female
+ - age
+ - bmi
+ - FEV1% predicted
+ - CFTR modulators
+ - antibiotics
+ 
+ Input: clinical and home measurements files
+ ------
+ 
+ Output:
+ -------
+ BRPatientDemographics.xlsx</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="getDrugTherapyInfo.html" class="code" title="function [Drugsbypatients, historytable] = getDrugTherapyInfo(brDrugTherapy, brPatient)">getDrugTherapyInfo</a>	all information about CFTR modulator therapies is centralised here</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/helperfunctions/calcBRFEV1PrctPredicted.html" class="code" title="function FEV1prctpredicted = calcBRFEV1PrctPredicted(brphysdata,cdPatient)">calcBRFEV1PrctPredicted</a>	calculates FEV1 % predicted for each patient with values in Breathe data</li><li><a href="../../../Code/pdm/recovery/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function FEV1prctpredicted = getMergedFEV1PercentagePredicted(brphysdata, cdPatient, cdPFT)</a></li><li><a href="#_sub2" class="code">function r = addLine(r,i,characteristic, value)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% create an excel with current BR patient demographics</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% Examples:</span>
+0004 <span class="comment">% - female</span>
+0005 <span class="comment">% - age</span>
+0006 <span class="comment">% - bmi</span>
+0007 <span class="comment">% - FEV1% predicted</span>
+0008 <span class="comment">% - CFTR modulators</span>
+0009 <span class="comment">% - antibiotics</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Input: clinical and home measurements files</span>
+0012 <span class="comment">% ------</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% Output:</span>
+0015 <span class="comment">% -------</span>
+0016 <span class="comment">% BRPatientDemographics.xlsx</span>
+0017 <span class="comment">%</span>
+0018 
+0019 <a href="init.html" class="code" title="">init</a>;
+0020 
+0021 [datamatfile, clinicalmatfile, ~] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0022 [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP, <span class="keyword">...</span>
+0023 cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght] = <a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0024 
+0025 <span class="comment">%% limitation : patients in the clinical data that did not provide any measurement in Breathe</span>
+0026 
+0027 [brphysdata, broffset, ~] = <a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0028 
+0029 <span class="comment">% list and number of patients with no measurement</span>
+0030 N_no_measures= abs(size(cdPatient.ID,1) - size(unique(brphysdata.SmartCareID),1));
+0031 patient_no_measures_list = join(string(cdPatient.ID(not(ismember(cdPatient.ID, brphysdata.SmartCareID)))),<span class="string">','</span>);
+0032 fprintf(<span class="string">'%i patients did not provide any measurement: %s\n'</span>, N_no_measures, patient_no_measures_list);
+0033 <span class="comment">%</span>
+0034 <span class="comment">% % update all tables with clean patient list from cdPatient</span>
+0035 <span class="comment">% cdDrugTherapy = cdDrugTherapy(ismember(cdDrugTherapy.ID, cdPatient.ID),:);</span>
+0036 <span class="comment">% cdMicrobiology = cdMicrobiology(ismember(cdMicrobiology.ID, cdPatient.ID),:);</span>
+0037 <span class="comment">% cdAntibiotics = cdAntibiotics(ismember(cdAntibiotics.ID, cdPatient.ID),:);</span>
+0038 <span class="comment">% cdAdmissions = cdAdmissions(ismember(cdAdmissions.ID, cdPatient.ID),:);</span>
+0039 <span class="comment">% cdPFT = cdPFT(ismember(cdPFT.ID, cdPatient.ID),:);</span>
+0040 <span class="comment">% cdCRP = cdCRP(ismember(cdCRP.ID, cdPatient.ID),:);</span>
+0041 <span class="comment">% cdClinicVisits = cdClinicVisits(ismember(cdClinicVisits.ID, cdPatient.ID),:);</span>
+0042 <span class="comment">% cdOtherVisits = cdOtherVisits(ismember(cdOtherVisits.ID, cdPatient.ID),:);</span>
+0043 <span class="comment">% cdEndStudy = cdEndStudy(ismember(cdEndStudy.ID, cdPatient.ID),:);</span>
+0044 <span class="comment">% cdHghtWght = cdHghtWght(ismember(cdHghtWght.ID, cdPatient.ID),:);</span>
+0045 
+0046 <span class="comment">%%</span>
+0047 N = size(unique(cdPatient.ID),1);
+0048 
+0049 <span class="comment">% Female</span>
+0050 female = sum(ismember(cdPatient.Sex,<span class="string">'Female'</span>));
+0051 
+0052 <span class="comment">% Age (yr)</span>
+0053 age_mean = mean(cdPatient.CalcAgeExact);
+0054 age_std = std(cdPatient.CalcAgeExact);
+0055 
+0056 <span class="comment">% BMI (kg/m2)</span>
+0057 bmi_val = cdPatient.Weight ./ cdPatient.Height.^2 * 10000;
+0058 bmi_mean = mean(bmi_val,<span class="string">'omitnan'</span>);
+0059 bmi_std = std(bmi_val,<span class="string">'omitnan'</span>);
+0060 histogram(sort(bmi_val))
+0061 xlabel(<span class="string">'BMI'</span>);
+0062 ylabel(<span class="string">'Frequency'</span>);
+0063 
+0064 <span class="comment">% FEV1 (% of predicted)</span>
+0065 FEV1PrctPredicted = <a href="#_sub1" class="code" title="subfunction FEV1prctpredicted = getMergedFEV1PercentagePredicted(brphysdata, cdPatient, cdPFT)">getMergedFEV1PercentagePredicted</a>(brphysdata, cdPatient, cdPFT);
+0066 FEV1_mean = mean(FEV1PrctPredicted.Value,<span class="string">'omitnan'</span>);
+0067 FEV1_std = std(FEV1PrctPredicted.Value, <span class="string">'omitnan'</span>);
+0068 NFEV1 = size(FEV1PrctPredicted,1);
+0069 <span class="comment">% -&gt; segment based on volume</span>
+0070 <span class="comment">% &lt;40%</span>
+0071 v40andunder = sum(FEV1PrctPredicted.Value&lt;40);
+0072 <span class="comment">% &gt;=40% to &lt;70%</span>
+0073 v4070 = sum(FEV1PrctPredicted.Value&gt;=40 &amp; FEV1PrctPredicted.Value&lt;70);
+0074 <span class="comment">% &gt;= 70% to &lt;90%</span>
+0075 v7090 = sum(FEV1PrctPredicted.Value&gt;=70 &amp; FEV1PrctPredicted.Value&lt;90);
+0076 <span class="comment">% &gt;= 90%</span>
+0077 v90andover = sum(FEV1PrctPredicted.Value&gt;=90);
+0078 
+0079 <span class="comment">% Genotype</span>
+0080 F508del_homozygous = sum(ismember(cdPatient.CFGene1,<span class="string">'F508del'</span>) &amp; ismember(cdPatient.CFGene2,<span class="string">'F508del'</span>));
+0081 F508del_heterozygous = sum(ismember(cdPatient.CFGene1,<span class="string">'F508del'</span>) | ismember(cdPatient.CFGene2,<span class="string">'F508del'</span>)) - F508del_homozygous;
+0082 other_mutations =  sum(not(ismember(cdPatient.CFGene1,<span class="string">'F508del'</span>)) &amp; not(ismember(cdPatient.CFGene2,<span class="string">'F508del'</span>)));
+0083 fprintf(<span class="string">'\nChecksum on genotype: %i (0 = no error)\n'</span>, F508del_homozygous+F508del_heterozygous+other_mutations - N);
+0084 
+0085 
+0086 <span class="comment">%% Prescribed CFTR modulators</span>
+0087 [Drugsbypatients] = <a href="getDrugTherapyInfo.html" class="code" title="function [Drugsbypatients, historytable] = getDrugTherapyInfo(brDrugTherapy, brPatient)">getDrugTherapyInfo</a>(cdDrugTherapy, cdPatient);
+0088 
+0089 symkevi = sum(contains(Drugsbypatients.History,&quot;Symkevi&quot;));
+0090 trikafta = sum(contains(Drugsbypatients.History,&quot;Trikafta&quot;));
+0091 ivacaftor = sum(contains(Drugsbypatients.History,&quot;Ivacaftor&quot;));
+0092 orkambi = sum(contains(Drugsbypatients.History,&quot;Orkambi&quot;));
+0093 
+0094 <span class="comment">%% Prescribed medication</span>
+0095  
+0096 ab_type = groupsummary(cdAntibiotics,{<span class="string">'ID'</span>,<span class="string">'Route'</span>,<span class="string">'HomeIV_s'</span>});
+0097 
+0098 <span class="comment">% oral</span>
+0099 oral = sum(ismember(ab_type.Route,<span class="string">'Oral'</span>));
+0100 
+0101 <span class="comment">% iv</span>
+0102 iv = sum(ismember(ab_type.Route,<span class="string">'IV'</span>));
+0103 <span class="comment">% iv hospital</span>
+0104 iv_hosp = sum(ismember(ab_type.Route,<span class="string">'IV'</span>) &amp; ismember(ab_type.HomeIV_s,<span class="string">'Yes'</span>));
+0105 <span class="comment">% home ivs</span>
+0106 iv_home = sum(ismember(ab_type.Route,<span class="string">'IV'</span>) &amp; ismember(ab_type.HomeIV_s,<span class="string">'No'</span>));
+0107 fprintf(&quot;\nCheck sum on total IVs: <span class="comment">%i (0 = no error)\n&quot;, iv_hosp + iv_home - sum(ismember(ab_type.Route,'IV')));</span>
+0108 
+0109 <span class="comment">% inhaled</span>
+0110 ab_name_route_list = groupsummary(cdAntibiotics,{<span class="string">'ID'</span>, <span class="string">'AntibioticName'</span>, <span class="string">'Route'</span>});
+0111 inhaled = sum(ismember(ab_name_route_list.Route,<span class="string">'Oral'</span>) <span class="keyword">...</span>
+0112     &amp; ( ismember(ab_name_route_list.AntibioticName, <span class="string">'Colomycin'</span>) <span class="keyword">...</span>
+0113         | ismember(ab_name_route_list.AntibioticName, <span class="string">'Colistin'</span>) <span class="keyword">...</span>
+0114         | ismember(ab_name_route_list.AntibioticName, <span class="string">'Tobramycin'</span>) ));
+0115 
+0116 <span class="comment">% azithromycin</span>
+0117 ab_list = groupsummary(cdAntibiotics,{<span class="string">'ID'</span>, <span class="string">'AntibioticName'</span>});
+0118 azithromycin = sum(ismember(ab_list.AntibioticName,<span class="string">'Azithromycin'</span>)); <span class="comment">% oral or iv</span>
+0119 
+0120 <span class="comment">% list of ab</span>
+0121 ab_list_unique = unique(cdAntibiotics.AntibioticName);
+0122 
+0123 <span class="comment">% list of injected ab</span>
+0124 iv_list_unique = unique(cdAntibiotics.AntibioticName(ismember(cdAntibiotics.Route,<span class="string">'IV'</span>)));
+0125 
+0126 <span class="comment">% list of orally taken ab</span>
+0127 oral_list_unique = unique(cdAntibiotics.AntibioticName(ismember(cdAntibiotics.Route,<span class="string">'Oral'</span>)));
+0128 
+0129 AntibioticList = string(ab_list_unique);
+0130 Count = groupcounts(ab_list.AntibioticName);
+0131 disp(table(AntibioticList, Count));
+0132 
+0133 <span class="comment">%% draw table</span>
+0134 
+0135 alinea = &quot;      &quot;;
+0136 
+0137 r = table(<span class="string">'Size'</span>,[40 2],<span class="keyword">...</span>
+0138     <span class="string">'VariableTypes'</span>,{<span class="string">'string'</span>,<span class="string">'string'</span>},<span class="keyword">...</span>
+0139     <span class="string">'VariableNames'</span>,{<span class="string">'Characteristic'</span>,<span class="string">'Value'</span>});
+0140 
+0141 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,1,&quot;Female&quot;,sprintf(<span class="string">'%i (%.0f%%)'</span>, female, female*100/N));
+0142 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,2,&quot;Age (yr)&quot;,sprintf(<span class="string">'%.1f +/-%.1f'</span>, age_mean, age_std));
+0143 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,3,&quot;BMI (kg/m2)&quot;,sprintf(<span class="string">'%.1f +/-%.1f'</span>, bmi_mean, bmi_std));
+0144 
+0145 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,4,&quot;FEV1 (<span class="comment">% of predicted)&quot;,sprintf('%.1f +/-%.1f', FEV1_mean, FEV1_std));</span>
+0146 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,5,alinea+&quot;Sub-grouping&quot;,&quot;&quot;);
+0147 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,6,alinea+alinea+&quot;&lt; 40<span class="comment">%&quot;,sprintf('%i (%.0f%%)', v40andunder, v40andunder*100/NFEV1));</span>
+0148 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,7,alinea+alinea+&quot;&gt;= 40<span class="comment">% to &lt; 70%&quot;,sprintf('%i (%.0f%%)', v4070, v4070*100/NFEV1));</span>
+0149 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,8,alinea+alinea+&quot;&gt;= 70<span class="comment">% to &lt; 90%&quot;,sprintf('%i (%.0f%%)', v7090, v7090*100/NFEV1));</span>
+0150 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,9,alinea+alinea+&quot;&gt;= 90<span class="comment">%&quot;,sprintf('%i (%.0f%%)', v90andover, v90andover*100/NFEV1));</span>
+0151 
+0152 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,10,&quot;Genotype&quot;,&quot;&quot;);
+0153 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,11,alinea+&quot;F508del homozygous&quot;,sprintf(<span class="string">'%i (%.0f%%)'</span>, F508del_homozygous, F508del_homozygous*100/N));
+0154 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,12,alinea+&quot;F508del heterozygous&quot;,sprintf(<span class="string">'%i (%.0f%%)'</span>, F508del_heterozygous, F508del_heterozygous*100/N));
+0155 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,13,alinea+&quot;Other&quot;,sprintf(<span class="string">'%i (%.0f%%)'</span>, other_mutations, other_mutations*100/N));
+0156 
+0157 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,14,&quot;Prescribed CFTR Modulators&quot;,&quot;&quot;);
+0158 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,15,alinea+&quot;Triple Therapy&quot;,sprintf(<span class="string">'%i (%.0f%%)'</span>, trikafta, trikafta*100/N));
+0159 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,16,alinea+&quot;Symkevi&quot;,sprintf(<span class="string">'%i (%.0f%%)'</span>, symkevi, symkevi*100/N));
+0160 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,17,alinea+&quot;Ivacaftor&quot;,sprintf(<span class="string">'%i (%.0f%%)'</span>, ivacaftor, ivacaftor*100/N));
+0161 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,18,alinea+&quot;Okrambi&quot;,sprintf(<span class="string">'%i (%.0f%%)'</span>, orkambi, orkambi*100/N));
+0162 
+0163 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,19,&quot;N&quot;,sprintf(<span class="string">'%i'</span>, N));
+0164 r = <a href="#_sub2" class="code" title="subfunction r = addLine(r,i,characteristic, value)">addLine</a>(r,20,&quot;Computations of 1) Female, Age, BMI, Genotype, P. CFTR M. with clinical data, 2) FEV1 with home monitoring or clinical data. P. CFTR M. concern any period within the study.&quot;,&quot;&quot;);
+0165 
+0166 <span class="comment">% r = addLine(r,19,&quot;Prescribed Antibiotics&quot;,&quot;&quot;);</span>
+0167 <span class="comment">% r = addLine(r,20,alinea+&quot;Oral&quot;,sprintf('%i (%.0f%%)', oral, oral*100/N));</span>
+0168 <span class="comment">% r = addLine(r,21,alinea+&quot;IVs&quot;,sprintf('%i (%.0f%%)', iv, iv*100/N));</span>
+0169 <span class="comment">% r = addLine(r,22,alinea+&quot;Inhaled antibiotic&quot;,sprintf('%i (%.0f%%)', inhaled, inhaled*100/N));</span>
+0170 <span class="comment">% r = addLine(r,23,alinea+&quot;Azithromycin&quot;,sprintf('%i (%.0f%%)', azithromycin, azithromycin*100/N));</span>
+0171 <span class="comment">% CFQ-R</span>
+0172 <span class="comment">% dornase alfa</span>
+0173 <span class="comment">% hypertonic saline</span>
+0174 <span class="comment">% bronchodilator</span>
+0175 <span class="comment">% employment</span>
+0176 
+0177 <span class="comment">%% save table as excel</span>
+0178 filename = sprintf(<span class="string">'%sPatientDemographics.xlsx'</span>,study);
+0179 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0180 subfolder = <span class="string">'ExcelFiles'</span>;
+0181 writetable(r,fullfile(basedir,subfolder,filename),<span class="string">'Sheet'</span>,1,<span class="string">'Range'</span>,<span class="string">'A1'</span>);
+0182 fprintf(sprintf(<span class="string">'Saved %s as Excel file\n'</span>, filename));
+0183 
+0184 <span class="comment">%% functions</span>
+0185 <a name="_sub0" href="#_subfunctions" class="code">function FEV1prctpredicted = getMergedFEV1PercentagePredicted(brphysdata, cdPatient, cdPFT)</a>
+0186 
+0187 BRPrctPredicted = <a href="../../../Code/pdm/helperfunctions/calcBRFEV1PrctPredicted.html" class="code" title="function FEV1prctpredicted = calcBRFEV1PrctPredicted(brphysdata,cdPatient)">calcBRFEV1PrctPredicted</a>(brphysdata,cdPatient);
+0188 
+0189 <span class="comment">% -&gt; calulate based on clinical data</span>
+0190 func = @(x) mean(x);
+0191 FEV1clinical = varfun(func,cdPFT,<span class="string">'GroupingVariables'</span>,<span class="string">'ID'</span>,<span class="string">'InputVariables'</span>,<span class="string">'FEV1'</span>);
+0192 FEV1clinical = outerjoin(FEV1clinical, cdPatient, <span class="string">'Type'</span>, <span class="string">'Left'</span>, <span class="string">'Keys'</span>, <span class="string">'ID'</span>, <span class="string">'RightVariables'</span>, {<span class="string">'CalcPredictedFEV1'</span>});
+0193 FEV1clinical.PercentagePredicted = FEV1clinical.Fun_FEV1 ./ FEV1clinical.CalcPredictedFEV1 * 100;
+0194 
+0195 <span class="comment">% decide which to use</span>
+0196 n_fev1clinical = sum(ismember(cdPatient.ID, FEV1clinical.ID));
+0197 n_fev1breathe = sum(ismember(cdPatient.ID, BRPrctPredicted.ID));
+0198 fprintf(<span class="string">'Number of patients with FEV1 recording in:\n - the clinical data: %i\n - the breathe data: %i\n'</span>, <span class="keyword">...</span>
+0199     n_fev1clinical, n_fev1breathe);
+0200 n_gain = sum(ismember(cdPatient.ID, FEV1clinical.ID) | ismember(cdPatient.ID, BRPrctPredicted.ID)) - max(n_fev1clinical,n_fev1breathe);
+0201 <span class="comment">% currently more values in breathe data, let's use it as a reference and</span>
+0202 <span class="comment">% add</span>
+0203 fprintf(<span class="string">'We add %i patients by imputing the missing breathe FEV1 data with clinical FEV1\n'</span>, n_gain);
+0204 fprintf(<span class="string">'Patient lung volume semgentation thus uses %i out of %i\n'</span>, n_fev1breathe + n_gain, size(cdPatient,1));
+0205 <span class="comment">% get indexes from both and values fro clinical</span>
+0206 FEV1 = outerjoin(FEV1clinical, BRPrctPredicted, <span class="string">'Keys'</span>, {<span class="string">'ID'</span>}, <span class="string">'MergeKeys'</span>, 1, <span class="string">'LeftVariables'</span>, {<span class="string">'ID'</span>, <span class="string">'PercentagePredicted'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'ID'</span>, <span class="string">'Value'</span>});
+0207 <span class="comment">% impute all breathe not nan indexes into clinical, thereby overwriting</span>
+0208 <span class="comment">% clinical if applicable</span>
+0209 idxtoreplace = isnan(FEV1.Value) &amp; ~isnan(FEV1.PercentagePredicted);
+0210 <span class="comment">%</span>
+0211 FEV1.Value(idxtoreplace) = FEV1.PercentagePredicted(idxtoreplace);
+0212 FEV1prctpredicted = FEV1(:,{<span class="string">'ID'</span>,<span class="string">'Value'</span>});
+0213 
+0214 <span class="keyword">end</span>
+0215 
+0216 <a name="_sub1" href="#_subfunctions" class="code">function r = addLine(r,i,characteristic, value)</a>
+0217     r.Characteristic(i) = characteristic;
+0218     r.Value(i) = value;
+0219 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

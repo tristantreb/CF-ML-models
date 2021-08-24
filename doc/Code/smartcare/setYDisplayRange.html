@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of setYDisplayRange</title>
+  <meta name="keywords" content="setYDisplayRange">
+  <meta name="description" content="setYDisplayRange - function to scale y axis of plots appropriately">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; setYDisplayRange.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>setYDisplayRange
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>setYDisplayRange - function to scale y axis of plots appropriately</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> setYDisplayRange - function to scale y axis of plots appropriately</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="roundRangeScaled.html" class="code" title="function [roundedrange] = roundRangeScaled(lowval, highval, direction)">roundRangeScaled</a>	roundScaled - scale a number appropriate to its magnitude</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/exploration/plotPatientProfiles.html" class="code" title="">plotPatientProfiles</a>	plot a profile of each measures for each patient over the whole enrolment period</li><li><a href="createAndSaveBreatheFEVPlots.html" class="code" title="function createAndSaveBreatheFEVPlots(patientlist, pmeasuresfev, pclinicalfev, pstudydate,plotsacross, plotsdown, plotsperpage, subfolder, filenameprefix)">createAndSaveBreatheFEVPlots</a>	createAndSaveBreatheFEVPlots - function to create plots of FEV home vs clinical</li><li><a href="createAndSaveBreatheWeightPlots.html" class="code" title="function createAndSaveBreatheWeightPlots(patientlist, pmeaswght, pclinwght, pstudydate,plotsacross, plotsdown, plotsperpage, subfolder, filenameprefix)">createAndSaveBreatheWeightPlots</a>	createAndSaveBreatheWeightPlots - function to create plots of weight home vs clinical</li><li><a href="createAndSaveClimbFEVPlots.html" class="code" title="function createAndSaveClimbFEVPlots(patientlist, pmeasuresfev, pclinicalfev, pstudydate,mindays, maxdays, plotsacross, plotsdown, plotsperpage, subfolder, filenameprefix)">createAndSaveClimbFEVPlots</a>	createAndSaveFEVPlots - function to create plots of FEV home vs clinical</li><li><a href="createAndSaveFEVPlots.html" class="code" title="function [figurearray] = createAndSaveFEVPlots(patientlist, pmeasuresfev, pclinicalfev, pstudydate,mindays, maxdays, plotsacross, plotsdown, plotsperpage, basedir, subfolder, filenameprefix)">createAndSaveFEVPlots</a>	createAndSaveFEVPlots - function to create plots of FEV home vs clinical</li><li><a href="createAndSaveWeightPlots.html" class="code" title="function createAndSaveWeightPlots(pmeasuresweight, pstudydateweight,mindays, maxdays, plotsacross, plotsdown, plotsperpage, basedir, subfolder, filenameprefix)">createAndSaveWeightPlots</a>	createAndSaveWeightPlots - function to create plots of Weight home vs clinical</li><li><a href="visualiseExacerbationForPaperFcn.html" class="code" title="function visualiseExacerbationForPaperFcn(amDatacube, amInterventions, measures, nmeasures, npatients, study)">visualiseExacerbationForPaperFcn</a>	visualiseExacerbationForPaperFcn - plots measures around an exacerbation</li><li><a href="visualiseExacerbationForPaperFcn2.html" class="code" title="function visualiseExacerbationForPaperFcn2(amDatacube, amInterventions, measures, nmeasures, npatients, study)">visualiseExacerbationForPaperFcn2</a>	visualiseExacerbationForPaperFcn - plots measures around an exacerbation</li><li><a href="visualiseExacerbationForPaperFcn3.html" class="code" title="function visualiseExacerbationForPaperFcn3(amDatacube, amInterventions, measures, nmeasures, npatients, study)">visualiseExacerbationForPaperFcn3</a>	visualiseExacerbationForPaperFcn3 - plots measures around an exacerbation</li><li><a href="visualiseExacerbationTimeline.html" class="code" title="">visualiseExacerbationTimeline</a>	</li><li><a href="visualiseMeasures.html" class="code" title="">visualiseMeasures</a>	</li><li><a href="visualiseMeasuresFcn.html" class="code" title="function visualiseMeasuresFcn(physdata, offset, cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits, cdCRP, cdPFT, measures, study)">visualiseMeasuresFcn</a>	visualiseMeasuresFcn - plots clinical and home measures</li><li><a href="visualiseMeasuresForPaperFcn.html" class="code" title="function visualiseMeasuresForPaperFcn(physdata, offset, cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits,cdCRP, cdPFT, cdNewMeds, measures, nmeasures, study)">visualiseMeasuresForPaperFcn</a>	visualiseMeasuresForPaperFcn - plots clinical and home measures</li><li><a href="visualiseMeasuresForPaperFcn2.html" class="code" title="function visualiseMeasuresForPaperFcn2(physdata, offset, amDatacube, cdPatient, cdAntibiotics,cdCRP, cdPFT, cdNewMeds, measures, nmeasures, ndays, study)">visualiseMeasuresForPaperFcn2</a>	visualiseMeasuresForPaperFcn2 - plots clinical and home measures</li><li><a href="visualisePatientSummary.html" class="code" title="">visualisePatientSummary</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)</a>
+0002 
+0003 <span class="comment">% setYDisplayRange - function to scale y axis of plots appropriately</span>
+0004 
+0005 <span class="keyword">if</span> (maxy - miny) &gt;= lowrangelimit
+0006     <span class="comment">%scaledunit = (maxy - miny) * 0.1;</span>
+0007     <span class="comment">%ydisplaymin = miny - scaledunit;</span>
+0008     <span class="comment">%ydisplaymax = maxy + scaledunit;</span>
+0009     roundedrange = <a href="roundRangeScaled.html" class="code" title="function [roundedrange] = roundRangeScaled(lowval, highval, direction)">roundRangeScaled</a>(miny, maxy, <span class="string">'outer'</span>);
+0010 <span class="keyword">else</span>
+0011     ydisplaymin = 0.5 * (maxy + miny) - 0.5 * lowrangelimit;
+0012     ydisplaymax = 0.5 * (maxy + miny) + 0.5 * lowrangelimit;
+0013     <span class="keyword">if</span> ydisplaymin &lt; 0
+0014         ydisplaymax = ydisplaymax - ydisplaymin;
+0015         ydisplaymin = 0;
+0016     <span class="keyword">end</span>
+0017     roundedrange = <a href="roundRangeScaled.html" class="code" title="function [roundedrange] = roundRangeScaled(lowval, highval, direction)">roundRangeScaled</a>(ydisplaymin, ydisplaymax, <span class="string">'outer'</span>);
+0018 <span class="keyword">end</span>
+0019 
+0020 <span class="comment">%ydisplayrange = [round(ydisplaymin, 1), round(ydisplaymax, 1)];</span>
+0021 
+0022 
+0023 <span class="keyword">end</span>
+0024</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadbreatheclinicaldatanew</title>
+  <meta name="keywords" content="loadbreatheclinicaldatanew">
+  <meta name="description" content="loads Breathe clinical data for each patient">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadbreatheclinicaldatanew.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadbreatheclinicaldatanew
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>loads Breathe clinical data for each patient</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> loads Breathe clinical data for each patient
+ - concatenates all individual patients' clinical data category by category
+ - performs some field level data quality checks
+ 
+ Input:
+ ------
+ one spreadsheet per patient from the &quot;DataFiles/BR/ClinicalData/&quot; directory,
+ among hospitals list taking part into the study
+
+ Output:
+ -------
+ breatheclinicaldata.mat with the following variables:
+ - brAdmissions          synonym for hospitalisation
+ - brAntibiotics         ab's name, route, homeIV, start/end date
+ - brClinicVisits        date, location (e.g. home or clinic)
+ - brCRP                 CRP measures
+ - brDrugTherapy         CFTR modulators therapy, start/stop date
+ - brEndStudy            empty for Breathe - nonrelevant
+ - brHghWght             height, weight (and seldom BMI, H_z &amp; W_z scores)
+ - brMicrobiology        what bacterias in the lungs
+ - brOtherVisits         e.g. annual reviews, emergencies
+ - brPatient             patient profile (including mutations)
+ - brPFT                 Pulmonary Function Tests
+ - brUnplannedContact    e.g. call
+ - patientmaster         study enrollment start/end dates, StudyNumber (clinical), GUID/Partition Key (MagicBullet server)
+ 
+ Histogram of patient clinical data by month of last update.png - plot</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="checkClinDataCompleteness.html" class="code" title="function checkClinDataCompleteness(patmaster, brPatient)">checkClinDataCompleteness</a>	checkClinDataCompleteness - convenience function to check the integrity</li><li><a href="createBreatheClinicalTables.html" class="code" title="function [brPatient, brDrugTherapy, brAdmissions, brAntibiotics, brClinicVisits, brOtherVisits, brUnplannedContact,brCRP, brPFT, brMicrobiology, brHghtWght, brEndStudy] = createBreatheClinicalTables(nrows)">createBreatheClinicalTables</a>	createBreatheClinicalTables - creates all the clinical</li><li><a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="getLatestBreatheDatesForHosp.html" class="code" title="function [clinprocdate, patientmasterdate, isValid] = getLatestBreatheDatesForHosp(hosp)">getLatestBreatheDatesForHosp</a>	getLatestBreatheDatesForHosp - convenience function to centralise getting the</li><li><a href="getListOfBreatheHospPatFiles.html" class="code" title="function [patfilelist] = getListOfBreatheHospPatFiles(basedir, subfolder)">getListOfBreatheHospPatFiles</a>	getListOfBreathePatFiles - returns a cell array containing the list of</li><li><a href="getListOfBreatheHospitals.html" class="code" title="function [hosplist] = getListOfBreatheHospitals()">getListOfBreatheHospitals</a>	getListOfBreatheHospitals - returns a table containing the acronyms</li><li><a href="loadBreatheClinDataForPatient.html" class="code" title="function [brPatient, brDrugTherapy, brAdmissions, brAntibiotics, brClinicVisits, brOtherVisits,brUnplannedContact, brCRP, brPFT, brMicrobiology, brHghtWght, brEndStudy]= loadBreatheClinDataForPatient(brPatient, brDrugTherapy, brAdmissions, brAntibiotics,brClinicVisits, brOtherVisits, brUnplannedContact, brCRP, brPFT, brMicrobiology,brHghtWght, brEndStudy, patfile, patientmaster, basedir, subfolder)">loadBreatheClinDataForPatient</a>	loadBreatheClinDataForPatient - ingests the clinical data for a given</li><li><a href="loadPatientMasterFileForAllHosp.html" class="code" title="function [patientmaster] = loadPatientMasterFileForAllHosp(study, hosprows)">loadPatientMasterFileForAllHosp</a>	loadPatientMasterFileForAllHosp - loads and concatenates the patient</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% loads Breathe clinical data for each patient</span>
+0002 <span class="comment">% - concatenates all individual patients' clinical data category by category</span>
+0003 <span class="comment">% - performs some field level data quality checks</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Input:</span>
+0006 <span class="comment">% ------</span>
+0007 <span class="comment">% one spreadsheet per patient from the &quot;DataFiles/BR/ClinicalData/&quot; directory,</span>
+0008 <span class="comment">% among hospitals list taking part into the study</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% Output:</span>
+0011 <span class="comment">% -------</span>
+0012 <span class="comment">% breatheclinicaldata.mat with the following variables:</span>
+0013 <span class="comment">% - brAdmissions          synonym for hospitalisation</span>
+0014 <span class="comment">% - brAntibiotics         ab's name, route, homeIV, start/end date</span>
+0015 <span class="comment">% - brClinicVisits        date, location (e.g. home or clinic)</span>
+0016 <span class="comment">% - brCRP                 CRP measures</span>
+0017 <span class="comment">% - brDrugTherapy         CFTR modulators therapy, start/stop date</span>
+0018 <span class="comment">% - brEndStudy            empty for Breathe - nonrelevant</span>
+0019 <span class="comment">% - brHghWght             height, weight (and seldom BMI, H_z &amp; W_z scores)</span>
+0020 <span class="comment">% - brMicrobiology        what bacterias in the lungs</span>
+0021 <span class="comment">% - brOtherVisits         e.g. annual reviews, emergencies</span>
+0022 <span class="comment">% - brPatient             patient profile (including mutations)</span>
+0023 <span class="comment">% - brPFT                 Pulmonary Function Tests</span>
+0024 <span class="comment">% - brUnplannedContact    e.g. call</span>
+0025 <span class="comment">% - patientmaster         study enrollment start/end dates, StudyNumber (clinical), GUID/Partition Key (MagicBullet server)</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">% Histogram of patient clinical data by month of last update.png - plot</span>
+0028 
+0029 
+0030 clear; clc; close all;
+0031 
+0032 study = <span class="string">'BR'</span>;
+0033 
+0034 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0035 subfolder = sprintf(<span class="string">'DataFiles/%s/ClinicalData'</span>, study);
+0036 
+0037 [brPatient, brDrugTherapy, brAdmissions, brAntibiotics, brClinicVisits, brOtherVisits, brUnplannedContact, <span class="keyword">...</span>
+0038     brCRP, brPFT, brMicrobiology, brHghtWght, brEndStudy] = <a href="createBreatheClinicalTables.html" class="code" title="function [brPatient, brDrugTherapy, brAdmissions, brAntibiotics, brClinicVisits, brOtherVisits, brUnplannedContact,brCRP, brPFT, brMicrobiology, brHghtWght, brEndStudy] = createBreatheClinicalTables(nrows)">createBreatheClinicalTables</a>(0);
+0039 
+0040 tic
+0041 <span class="comment">% get list of Project Breathe hospitals</span>
+0042 brhosp = <a href="getListOfBreatheHospitals.html" class="code" title="function [hosplist] = getListOfBreatheHospitals()">getListOfBreatheHospitals</a>();
+0043 
+0044 [patientmaster] = <a href="loadPatientMasterFileForAllHosp.html" class="code" title="function [patientmaster] = loadPatientMasterFileForAllHosp(study, hosprows)">loadPatientMasterFileForAllHosp</a>(study, brhosp);
+0045 
+0046 fprintf(<span class="string">'Loading Project Breathe clinical data\n'</span>);
+0047 fprintf(<span class="string">'------------------------------------\n'</span>);
+0048 
+0049 <span class="comment">% for each hospital, get the list of patient files</span>
+0050 <span class="keyword">for</span> i = 1:size(brhosp, 1)
+0051     <span class="comment">% get latest clinical date for hospital and set correct source directory</span>
+0052     fprintf(<span class="string">'Loading for %s\n'</span>, brhosp.Name{i});
+0053     [clinprocdate, ~] = <a href="getLatestBreatheDatesForHosp.html" class="code" title="function [clinprocdate, patientmasterdate, isValid] = getLatestBreatheDatesForHosp(hosp)">getLatestBreatheDatesForHosp</a>(brhosp.Acronym{i});
+0054     tmpfolder = sprintf(<span class="string">'%s/%s/%s'</span>, subfolder, brhosp.Acronym{i}, clinprocdate);
+0055     patfilelist = <a href="getListOfBreatheHospPatFiles.html" class="code" title="function [patfilelist] = getListOfBreatheHospPatFiles(basedir, subfolder)">getListOfBreatheHospPatFiles</a>(basedir, tmpfolder);
+0056     <span class="keyword">for</span> p = 1:size(patfilelist, 1)
+0057         <span class="comment">% for each patient file, extract the data and store in the clinical data tables</span>
+0058         [brPatient, brDrugTherapy, brAdmissions, brAntibiotics, brClinicVisits, brOtherVisits, brUnplannedContact, brCRP, brPFT, brMicrobiology, brHghtWght, brEndStudy] <span class="keyword">...</span>
+0059             = <a href="loadBreatheClinDataForPatient.html" class="code" title="function [brPatient, brDrugTherapy, brAdmissions, brAntibiotics, brClinicVisits, brOtherVisits,brUnplannedContact, brCRP, brPFT, brMicrobiology, brHghtWght, brEndStudy]= loadBreatheClinDataForPatient(brPatient, brDrugTherapy, brAdmissions, brAntibiotics,brClinicVisits, brOtherVisits, brUnplannedContact, brCRP, brPFT, brMicrobiology,brHghtWght, brEndStudy, patfile, patientmaster, basedir, subfolder)">loadBreatheClinDataForPatient</a>(brPatient, brDrugTherapy, brAdmissions, brAntibiotics, brClinicVisits, brOtherVisits, brUnplannedContact, brCRP, brPFT, <span class="keyword">...</span>
+0060                     brMicrobiology, brHghtWght, brEndStudy, patfilelist{p}, patientmaster, basedir, tmpfolder);
+0061     <span class="keyword">end</span> 
+0062 <span class="keyword">end</span>
+0063 toc
+0064 fprintf(<span class="string">'\n'</span>);
+0065 
+0066 <a href="checkClinDataCompleteness.html" class="code" title="function checkClinDataCompleteness(patmaster, brPatient)">checkClinDataCompleteness</a>(patientmaster, brPatient);
+0067 
+0068 <span class="comment">% sort rows</span>
+0069 brDrugTherapy       = sortrows(brDrugTherapy,      {<span class="string">'ID'</span>, <span class="string">'DrugTherapyStartDate'</span>});
+0070 brAdmissions        = sortrows(brAdmissions,       {<span class="string">'ID'</span>, <span class="string">'Admitted'</span>});
+0071 brAntibiotics       = sortrows(brAntibiotics,      {<span class="string">'ID'</span>, <span class="string">'StartDate'</span>, <span class="string">'AntibioticName'</span>});
+0072 brClinicVisits      = sortrows(brClinicVisits,     {<span class="string">'ID'</span>, <span class="string">'AttendanceDate'</span>});
+0073 brOtherVisits       = sortrows(brOtherVisits,      {<span class="string">'ID'</span>, <span class="string">'AttendanceDate'</span>});
+0074 brUnplannedContact  = sortrows(brUnplannedContact, {<span class="string">'ID'</span>, <span class="string">'ContactDate'</span>});
+0075 brPFT               = sortrows(brPFT,              {<span class="string">'ID'</span>, <span class="string">'LungFunctionDate'</span>});
+0076 brCRP               = sortrows(brCRP,              {<span class="string">'ID'</span>, <span class="string">'CRPDate'</span>});
+0077 brMicrobiology      = sortrows(brMicrobiology,     {<span class="string">'ID'</span>, <span class="string">'DateMicrobiology'</span>});
+0078 brHghtWght          = sortrows(brHghtWght,         {<span class="string">'ID'</span>, <span class="string">'MeasDate'</span>});
+0079 
+0080 <span class="comment">% data integrity checks</span>
+0081 tic
+0082 fprintf(<span class="string">'Data Integrity Checks\n'</span>);
+0083 fprintf(<span class="string">'---------------------\n'</span>);
+0084 <span class="comment">% patient data</span>
+0085 idx = isnat(brPatient.StudyDate) | isnat(brPatient.DOB);
+0086 fprintf(<span class="string">'Found %d Patients with blank dates\n'</span>, sum(idx));
+0087 <span class="keyword">if</span> sum(idx) &gt; 0
+0088     brPatient(idx,{<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'StudyDate'</span>, <span class="string">'DOB'</span>})
+0089     brPatient(idx, :) = [];
+0090 <span class="keyword">end</span>
+0091 idx = brPatient.Height &lt; 120 | brPatient.Height &gt; 220;
+0092 fprintf(<span class="string">'Found %d Patients height &lt; 1.2m or &gt; 2.2m\n'</span>, sum(idx));
+0093 <span class="keyword">if</span> sum(idx) &gt; 0
+0094     brPatient(idx,{<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Height'</span>})
+0095 <span class="keyword">end</span>
+0096 idx = brPatient.Weight &lt; 35 | brPatient.Weight &gt; 120;
+0097 fprintf(<span class="string">'Found %d Patients weight &lt; 35kg or &gt; 120kg\n'</span>, sum(idx));
+0098 <span class="keyword">if</span> sum(idx) &gt; 0
+0099     brPatient(idx,{<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Weight'</span>})
+0100 <span class="keyword">end</span>
+0101 idx = brPatient.Age &lt; 18 | brPatient.Age &gt; 60;
+0102 fprintf(<span class="string">'Found %d Patients aged &lt; 18 or &gt; 60\n'</span>, sum(idx));
+0103 <span class="keyword">if</span> sum(idx) &gt; 0
+0104     brPatient(idx,{<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'StudyDate'</span>, <span class="string">'DOB'</span>, <span class="string">'Age'</span>, <span class="string">'CalcAge'</span>, <span class="string">'CalcAgeExact'</span>})
+0105 <span class="keyword">end</span>
+0106 idx = brPatient.Age ~= brPatient.CalcAge;
+0107 fprintf(<span class="string">'Found %d Patients age inconsistent with age calculated from DOB\n'</span>, sum(idx));
+0108 <span class="keyword">if</span> sum(idx) &gt; 0
+0109     brPatient(idx,{<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'StudyDate'</span>, <span class="string">'DOB'</span>, <span class="string">'Age'</span>, <span class="string">'CalcAge'</span>, <span class="string">'CalcAgeExact'</span>})
+0110 <span class="keyword">end</span>
+0111 idx = abs(brPatient.PredictedFEV1 - brPatient.CalcPredictedFEV1) &gt; 0.05;
+0112 fprintf(<span class="string">'Found %d Patients with predicted FEV1 inconsistent with that calculated from age, height, gender\n'</span>, sum(idx));
+0113 <span class="keyword">if</span> sum(idx) &gt; 0
+0114     brPatient(idx,{<span class="string">'ID'</span>, <span class="string">'Hospital'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Age'</span>, <span class="string">'PredictedFEV1'</span>, <span class="string">'CalcPredictedFEV1'</span>})
+0115 <span class="keyword">end</span>
+0116 
+0117 <span class="comment">% drug therapy data</span>
+0118 <span class="comment">% TODO % clean drug therapy namings (see unique(brDrugTherapy.DrugTherapyType)</span>
+0119 idx = isnat(brDrugTherapy.DrugTherapyStartDate);
+0120 fprintf(<span class="string">'Found %d Drug Therapy rows with blank dates\n'</span>, sum(idx));
+0121 <span class="keyword">if</span> sum(idx) &gt; 0
+0122     brDrugTherapy(idx,:)
+0123     brDrugTherapy(idx, :) = [];
+0124 <span class="keyword">end</span>
+0125 
+0126 <span class="comment">% admission data</span>
+0127 idx = isnat(brAdmissions.Admitted) | isnat(brAdmissions.Discharge);
+0128 fprintf(<span class="string">'Found %d Admissions with blank dates\n'</span>, sum(idx));
+0129 <span class="keyword">if</span> sum(idx) &gt; 0
+0130     brAdmissions(idx,:)
+0131     brAdmissions(idx, :) = [];
+0132 <span class="keyword">end</span>
+0133 idx = brAdmissions.Discharge &lt; brAdmissions.Admitted;
+0134 fprintf(<span class="string">'Found %d Admissions with Discharge before Admission\n'</span>, sum(idx));
+0135 <span class="keyword">if</span> sum(idx) &gt; 0
+0136     brAdmissions(idx,:)
+0137     brAdmissions(idx, :) = [];
+0138 <span class="keyword">end</span>
+0139 idx = days(brAdmissions.Discharge - brAdmissions.Admitted) &gt; 30;
+0140 fprintf(<span class="string">'Found %d Admissions &gt; 1 month duration\n'</span>, sum(idx));
+0141 <span class="keyword">if</span> sum(idx) &gt; 0
+0142     brAdmissions(idx,:)
+0143     <span class="comment">% do not delete this as they may be legitimate</span>
+0144     <span class="comment">% brAdmissions(idx, :) = [];</span>
+0145 <span class="keyword">end</span>
+0146 
+0147 <span class="comment">% antibiotics data</span>
+0148 idx = isnat(brAntibiotics.StartDate) &amp; isnat(brAntibiotics.StopDate);
+0149 fprintf(<span class="string">'Found %d Antibiotics with both blank dates\n'</span>, sum(idx));
+0150 <span class="keyword">if</span> sum(idx) &gt; 0
+0151     brAntibiotics(idx,:)
+0152     brAntibiotics(idx, :) = [];
+0153 <span class="keyword">end</span>
+0154 idx = isnat(brAntibiotics.StartDate) &amp; ~isnat(brAntibiotics.StopDate);
+0155 fprintf(<span class="string">'Found %d Antibiotics with blank start dates\n'</span>, sum(idx));
+0156 <span class="keyword">if</span> sum(idx) &gt; 0
+0157     brAntibiotics(idx,:)
+0158     brAntibiotics(idx, :) = [];
+0159 <span class="keyword">end</span>
+0160 idx = ~isnat(brAntibiotics.StartDate) &amp; isnat(brAntibiotics.StopDate);
+0161 fprintf(<span class="string">'Found %d Antibiotics with blank stop dates\n'</span>, sum(idx));
+0162 <span class="keyword">if</span> sum(idx) &gt; 0
+0163     brAntibiotics(idx,:)
+0164     brAntibiotics(idx, :) = [];
+0165 <span class="keyword">end</span>
+0166 idx = brAntibiotics.StopDate &lt; brAntibiotics.StartDate;
+0167 fprintf(<span class="string">'Found %d Antibiotics with Stop Date before Start Date\n'</span>, sum(idx));
+0168 <span class="keyword">if</span> sum(idx) &gt; 0
+0169     brAntibiotics(idx,:)
+0170     brAntibiotics(idx, :) = [];
+0171 <span class="keyword">end</span>
+0172 idx = days(brAntibiotics.StopDate - brAntibiotics.StartDate) &gt; 30;
+0173 fprintf(<span class="string">'Found %d Antibiotics &gt; 1 month duration\n'</span>, sum(idx));
+0174 <span class="keyword">if</span> sum(idx) &gt; 0
+0175     brAntibiotics(idx,:)
+0176     <span class="comment">% do not delete this as they may be legitimate</span>
+0177     <span class="comment">%brAntibiotics(idx, :) = [];</span>
+0178 <span class="keyword">end</span>
+0179 
+0180 <span class="comment">% microbiology data</span>
+0181 idx = isnat(brMicrobiology.DateMicrobiology);
+0182 fprintf(<span class="string">'Found %d Microbiology records with blank dates\n'</span>, sum(idx));
+0183 <span class="comment">%if sum(idx) &gt; 0</span>
+0184 <span class="comment">%    brMicrobiology(idx,:)</span>
+0185 <span class="comment">%end</span>
+0186 
+0187 <span class="comment">% clinic visits</span>
+0188 idx = isnat(brClinicVisits.AttendanceDate);
+0189 fprintf(<span class="string">'Found %d Clinic Visits with blank dates\n'</span>, sum(idx));
+0190 <span class="keyword">if</span> sum(idx) &gt; 0
+0191     brClinicVisits(idx,:)
+0192     brClinicVisits(idx, :) = [];
+0193 <span class="keyword">end</span>
+0194 
+0195 <span class="comment">% other visits</span>
+0196 idx = isnat(brOtherVisits.AttendanceDate);
+0197 fprintf(<span class="string">'Found %d Other Visits with blank dates\n'</span>, sum(idx));
+0198 <span class="keyword">if</span> sum(idx) &gt; 0
+0199     brOtherVisits(idx,:)
+0200     brOtherVisits(idx, :) = [];
+0201 <span class="keyword">end</span>
+0202 
+0203 <span class="comment">% unplanned contacts</span>
+0204 idx = isnat(brUnplannedContact.ContactDate);
+0205 fprintf(<span class="string">'Found %d Unplanned Contacts with blank dates\n'</span>, sum(idx));
+0206 <span class="keyword">if</span> sum(idx) &gt; 0
+0207     brUnplannedContact(idx,:)
+0208     brUnplannedContact(idx, :) = [];
+0209 <span class="keyword">end</span>
+0210 
+0211 <span class="comment">% pft</span>
+0212 idx = isnat(brPFT.LungFunctionDate);
+0213 fprintf(<span class="string">'Found %d PFT measurements with blank dates\n'</span>, sum(idx));
+0214 <span class="keyword">if</span> sum(idx) &gt; 0
+0215     brPFT(idx,:)
+0216     brPFT(idx, :) = [];
+0217 <span class="keyword">end</span>
+0218 idx = brPFT.FEV1 == 0;
+0219 fprintf(<span class="string">'Found %d zero PFT measurements\n'</span>, sum(idx));
+0220 <span class="keyword">if</span> sum(idx) &gt; 0
+0221     brPFT(idx,:)
+0222     brPFT(idx, :) = [];
+0223 <span class="keyword">end</span>
+0224 idx = brPFT.FEV1 &gt; 6 | brPFT.FEV1 &lt; 0.5;
+0225 fprintf(<span class="string">'Found %d &lt; 0.5l or &gt; 6l PFT Clinical Measurements\n'</span>, sum(idx));
+0226 <span class="keyword">if</span> sum(idx) &gt; 0
+0227     brPFT(idx,:)
+0228     brPFT(idx, :) = [];
+0229 <span class="keyword">end</span>
+0230 
+0231 <span class="comment">% crp</span>
+0232 idx = isnat(brCRP.CRPDate);
+0233 fprintf(<span class="string">'Found %d CRP measurements with blank dates\n'</span>, sum(idx));
+0234 <span class="keyword">if</span> sum(idx) &gt; 0
+0235     brCRP(idx,:)
+0236     brCRP(idx, :) = [];
+0237 <span class="keyword">end</span>
+0238 idx = brCRP.NumericLevel &gt; 200;
+0239 fprintf(<span class="string">'Found %d &gt; 200mg/L CRP measurements\n'</span>, sum(idx));
+0240 <span class="keyword">if</span> sum(idx) &gt; 0
+0241     brCRP(idx,:)
+0242 <span class="keyword">end</span>
+0243 
+0244 <span class="comment">% crp</span>
+0245 idx = isnat(brHghtWght.MeasDate);
+0246 fprintf(<span class="string">'Found %d Height Weight measurements with blank dates\n'</span>, sum(idx));
+0247 <span class="keyword">if</span> sum(idx) &gt; 0
+0248     brHghtWght(idx,:)
+0249     brHghtWght(idx, :) = [];
+0250 <span class="keyword">end</span>
+0251 idx = brHghtWght.Weight &lt; 35 | brHghtWght.Weight &gt; 120;
+0252 fprintf(<span class="string">'Found %d &lt; 35kg or &gt; 120kg Weight measurements\n'</span>, sum(idx));
+0253 <span class="keyword">if</span> sum(idx) &gt; 0
+0254     brHghtWght(idx,:)
+0255 <span class="keyword">end</span>
+0256 toc
+0257 fprintf(<span class="string">'\n'</span>);
+0258 
+0259 tic
+0260 fprintf(<span class="string">'Checking for dates in the future\n'</span>);
+0261 brDrugTherapy(brDrugTherapy.DrugTherapyStartDate &gt; datetime(&quot;today&quot;),:)
+0262 brAdmissions(brAdmissions.Admitted &gt; datetime(&quot;today&quot;),:)
+0263 brAdmissions(brAdmissions.Discharge &gt; datetime(&quot;today&quot;),:)
+0264 brAntibiotics(brAntibiotics.StartDate &gt; datetime(&quot;today&quot;), :)
+0265 brAntibiotics(brAntibiotics.StopDate &gt; datetime(&quot;today&quot;),:)
+0266 brClinicVisits(brClinicVisits.AttendanceDate &gt; datetime(&quot;today&quot;),:)
+0267 brOtherVisits(brOtherVisits.AttendanceDate &gt; datetime(&quot;today&quot;),:)
+0268 brUnplannedContact(brUnplannedContact.ContactDate &gt; datetime(&quot;today&quot;),:)
+0269 brCRP(brCRP.CRPDate &gt; datetime(&quot;today&quot;),:)
+0270 brPFT(brPFT.LungFunctionDate &gt; datetime(&quot;today&quot;),:)
+0271 brHghtWght(brHghtWght.MeasDate &gt; datetime(&quot;today&quot;),:)
+0272 toc
+0273 fprintf(<span class="string">'\n'</span>);
+0274 
+0275 <span class="comment">% save output files</span>
+0276 tic
+0277 fprintf(<span class="string">'\n'</span>);
+0278 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0279 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0280 outputfilename = <span class="string">'breatheclinicaldata.mat'</span>;
+0281 fprintf(<span class="string">'Saving output variables to file %s\n'</span>, outputfilename);
+0282 save(fullfile(basedir, subfolder,outputfilename), <span class="string">'brPatient'</span>, <span class="string">'brDrugTherapy'</span>, <span class="string">'brAdmissions'</span>, <span class="keyword">...</span>
+0283     <span class="string">'brAntibiotics'</span>, <span class="string">'brClinicVisits'</span>, <span class="string">'brOtherVisits'</span>, <span class="string">'brUnplannedContact'</span>, <span class="keyword">...</span>
+0284     <span class="string">'brPFT'</span>, <span class="string">'brCRP'</span>, <span class="string">'brHghtWght'</span>, <span class="string">'brMicrobiology'</span>, <span class="string">'brEndStudy'</span>, <span class="string">'patientmaster'</span>);
+0285 toc
+0286 
+0287 <span class="comment">% plot histograms by hospital and by month of last patient clinical data</span>
+0288 <span class="comment">% update</span>
+0289 
+0290 plotsacross = 2;
+0291 plotsdown   = ceil(size(brhosp, 1)/plotsacross);
+0292 
+0293 pghght = 3 * plotsdown;
+0294 pgwdth = 7;
+0295 
+0296 plottitle = sprintf(<span class="string">'Histogram of patient clinical data by month of last update'</span>);
+0297 [f, p] = <a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(plottitle, pgwdth, pghght);
+0298 
+0299 <span class="keyword">for</span> i = 1:size(brhosp, 1)
+0300 
+0301     ax = subplot(plotsdown, plotsacross, i, <span class="string">'Parent'</span>, p);
+0302 
+0303     histogram(ax, month(brPatient.PatClinDate(ismember(brPatient.Hospital, brhosp.Acronym(i)))));
+0304     
+0305     xlabel(ax, <span class="string">'Month'</span>);
+0306     ylabel(ax, <span class="string">'Count'</span>);
+0307     title(ax, brhosp.Name{i});
+0308     xlim(ax, [1 12]);
+0309     
+0310     
+0311 <span class="keyword">end</span>
+0312 
+0313 plotsubfolder = sprintf(<span class="string">'Plots/%s'</span>, study);
+0314 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0315 close(f);
+0316     
+0317</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

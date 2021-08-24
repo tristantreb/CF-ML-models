@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of am4CalcObjFcn</title>
+  <meta name="keywords" content="am4CalcObjFcn">
+  <meta name="description" content="am4CalcObjFcn - calculates residual sum of squares distance for points in">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; am4CalcObjFcn.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>am4CalcObjFcn
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>am4CalcObjFcn - calculates residual sum of squares distance for points in</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [dist, hstg] = am4CalcObjFcn(meancurvemean, meancurvestd, amIntrCube, measuresmask, normstd, hstg,currinter, curroffset, max_offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> am4CalcObjFcn - calculates residual sum of squares distance for points in
+ curve vs meancurve incorporating offset</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="am4AlignCurves.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount, meancurvemean, meancurvestd, animatedmeancurvemean, profile_pre,offsets, animatedoffsets, hstg, ppts, qual, min_offset] = am4AlignCurves(amIntrCube, amInterventions, measures, normstd, max_offset,align_wind, nmeasures, ninterventions, detaillog, sigmamethod, smoothingmethod, offsetblockingmethod)">am4AlignCurves</a>	am4AlignCurves = function to align measurement curves prior to intervention</li><li><a href="am4BestFit.html" class="code" title="function [better_offset, hstg] = am4BestFit(meancurvemean, meancurvestd, amIntrCube, measuresmask, normstd,hstg, currinter, min_offset, max_offset, align_wind, nmeasures, sigmamethod, smoothingmethod)">am4BestFit</a>	am4BestFit - calculates the offset for an intervention by minimising the</li><li><a href="test_objfcn_script.html" class="code" title="">test_objfcn_script</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [dist, hstg] = am4CalcObjFcn(meancurvemean, meancurvestd, amIntrCube, measuresmask, normstd, hstg, </a><span class="keyword">...</span>
+0002     currinter, curroffset, max_offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod)
+0003 
+0004 <span class="comment">% am4CalcObjFcn - calculates residual sum of squares distance for points in</span>
+0005 <span class="comment">% curve vs meancurve incorporating offset</span>
+0006 
+0007 dist = 0;
+0008 tempmean = zeros(max_offset + align_wind - 1, nmeasures);
+0009 tempstd  = zeros(max_offset + align_wind - 1, nmeasures);
+0010 
+0011 <span class="keyword">if</span> (update_histogram == 1)
+0012     <span class="keyword">for</span> m = 1:nmeasures
+0013         hstg(m, currinter, curroffset + 1) = 0;
+0014     <span class="keyword">end</span>
+0015 <span class="keyword">end</span>
+0016 
+0017 <span class="keyword">for</span> m = 1:nmeasures
+0018     <span class="keyword">if</span> smoothingmethod == 2
+0019         tempmean(:,m) = smooth(meancurvemean(:,m),5);
+0020         tempstd(:,m) = smooth(meancurvestd(:,m),5);
+0021     <span class="keyword">else</span>
+0022         tempmean(:,m) = meancurvemean(:,m);
+0023         tempstd(:,m) = meancurvestd(:,m);
+0024     <span class="keyword">end</span>
+0025 <span class="keyword">end</span>
+0026 
+0027 <span class="keyword">for</span> i = 1:align_wind
+0028     <span class="keyword">for</span> m = 1:nmeasures
+0029         <span class="keyword">if</span> ~isnan(amIntrCube(currinter, max_offset + align_wind - i, m))
+0030             <span class="keyword">if</span> sigmamethod == 4
+0031                 thisdist = (( (tempmean(max_offset + align_wind - i - curroffset, m) - amIntrCube(currinter, max_offset + align_wind - i, m)) ^ 2 ) <span class="keyword">...</span>
+0032                                 / (2 * ( tempstd(max_offset + align_wind - i - curroffset, m) ^ 2 ))) <span class="keyword">...</span>
+0033                             + log(tempstd(max_offset + align_wind - i - curroffset, m)) <span class="keyword">...</span>
+0034                             + log((2 * pi) ^ 0.5);
+0035             <span class="keyword">else</span>
+0036                 thisdist = (( (tempmean(max_offset + align_wind - i - curroffset, m) - amIntrCube(currinter, max_offset + align_wind - i, m)) ^ 2 ) <span class="keyword">...</span>
+0037                                 / (2 * ( normstd(currinter, m) ^ 2 ))) <span class="keyword">...</span>
+0038                             + log(normstd(currinter, m)) <span class="keyword">...</span>
+0039                             + log((2 * pi) ^ 0.5);
+0040             <span class="keyword">end</span>
+0041             <span class="comment">% only include desired measures in overall alignment</span>
+0042             <span class="comment">% optimisation</span>
+0043             <span class="keyword">if</span> measuresmask(m) == 1
+0044                 dist = dist + thisdist;
+0045             <span class="keyword">end</span>
+0046             
+0047             <span class="keyword">if</span> (update_histogram == 1)
+0048                 hstg(m, currinter, curroffset + 1) = hstg(m, currinter, curroffset + 1) + thisdist;
+0049             <span class="keyword">end</span>
+0050         <span class="keyword">end</span>
+0051     <span class="keyword">end</span>
+0052 <span class="keyword">end</span>
+0053 
+0054 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

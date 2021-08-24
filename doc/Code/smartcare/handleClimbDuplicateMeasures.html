@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of handleClimbDuplicateMeasures</title>
+  <meta name="keywords" content="handleClimbDuplicateMeasures">
+  <meta name="description" content="handleClimbDuplicateMeasures -  Analyse and correct for duplicate measures">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; handleClimbDuplicateMeasures.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>handleClimbDuplicateMeasures
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>handleClimbDuplicateMeasures -  Analyse and correct for duplicate measures</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [physdata] = handleClimbDuplicateMeasures(physdata, study, doupdates, detaillog) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> handleClimbDuplicateMeasures -  Analyse and correct for duplicate measures
+ Duplicates are of three types - for a given patient ID and recordingtype :-
+           1) multiple rows with exactly the same date/time
+           2) multiple rows within 60 minutes
+           3) multiple rows for the same day</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="addDupeRows.html" class="code" title="function [alldupeidx, addrows, nsame, nmax, nmean, nsum] = addDupeRows(data, alldupeidx, currdupesetidx, addrows, i, mode, detaillog)">addDupeRows</a>	addDupeRows - adds to dupe rows array and relevant index arrays</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [physdata] = handleClimbDuplicateMeasures(physdata, study, doupdates, detaillog)</a>
+0002 
+0003 <span class="comment">% handleClimbDuplicateMeasures -  Analyse and correct for duplicate measures</span>
+0004 <span class="comment">% Duplicates are of three types - for a given patient ID and recordingtype :-</span>
+0005 <span class="comment">%           1) multiple rows with exactly the same date/time</span>
+0006 <span class="comment">%           2) multiple rows within 60 minutes</span>
+0007 <span class="comment">%           3) multiple rows for the same day</span>
+0008 
+0009 dupefile = sprintf(<span class="string">'%sDuplicates.xlsx'</span>, study);
+0010 <span class="comment">%fitbitrecording = {'CalorieRecording', 'RestingHRRecording', 'MinsAsleepRecording', 'MinsAwakeRecording'};</span>
+0011 
+0012 fprintf(<span class="string">'Handling Breathe Duplicates\n'</span>);
+0013 fprintf(<span class="string">'---------------------------\n'</span>);
+0014 tic
+0015 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0016 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0017 demographicsmatfile = sprintf(<span class="string">'%sdatademographicsbypatient.mat'</span>, study);
+0018 fprintf(<span class="string">'Loading demographic data by patient\n'</span>);
+0019 load(fullfile(basedir, subfolder, demographicsmatfile));
+0020 toc
+0021 fprintf(<span class="string">'\n'</span>);
+0022 
+0023 <span class="comment">% first ensure physdata is sorted correctly</span>
+0024 physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>);
+0025 
+0026 <span class="comment">% 1) Fix all exact date/time dupes</span>
+0027 tic
+0028 fprintf(<span class="string">'1) Exact date/time duplicates\n'</span>);
+0029 dupeidx = [];
+0030 addrows = [];
+0031 currdupeset = [];
+0032 pair = false;
+0033 mode = <span class="string">'max'</span>;
+0034 <span class="keyword">for</span> i = 1:size(physdata, 1) - 1
+0035     <span class="keyword">if</span> (physdata.SmartCareID(i)            == physdata.SmartCareID(i + 1)        &amp;&amp; <span class="keyword">...</span>
+0036         ismember(physdata.RecordingType(i),   physdata.RecordingType(i + 1))     &amp;&amp; <span class="keyword">...</span>
+0037         physdata.Date_TimeRecorded(i)      == physdata.Date_TimeRecorded(i + 1)  )
+0038     
+0039         dupeidx = [dupeidx; i];
+0040         currdupeset = [currdupeset; i];
+0041         pair = true;
+0042     <span class="keyword">else</span>
+0043         <span class="keyword">if</span> pair == true
+0044             [dupeidx, addrows] = <a href="addDupeRows.html" class="code" title="function [alldupeidx, addrows, nsame, nmax, nmean, nsum] = addDupeRows(data, alldupeidx, currdupesetidx, addrows, i, mode, detaillog)">addDupeRows</a>(physdata, dupeidx, currdupeset, addrows, i, mode, detaillog);
+0045         <span class="keyword">end</span>
+0046         pair = false;
+0047         currdupeset = [];
+0048     <span class="keyword">end</span>
+0049 <span class="keyword">end</span>
+0050 <span class="keyword">if</span> pair == true
+0051     i = i + 1;
+0052     [dupeidx, addrows] = <a href="addDupeRows.html" class="code" title="function [alldupeidx, addrows, nsame, nmax, nmean, nsum] = addDupeRows(data, alldupeidx, currdupesetidx, addrows, i, mode, detaillog)">addDupeRows</a>(physdata, dupeidx, currdupeset, addrows, i, mode, detaillog);
+0053 <span class="keyword">end</span>
+0054 
+0055 writetable(physdata(dupeidx, :), fullfile(basedir, <span class="string">'ExcelFiles'</span>, dupefile), <span class="string">'Sheet'</span>, <span class="string">'ExactTimeDupes'</span>);
+0056 
+0057 <span class="comment">% apply necessary updates.</span>
+0058 <span class="keyword">if</span> doupdates
+0059     fprintf(<span class="string">'Deleting %d exact duplicates, and adding back %d single rows\n'</span>, size(dupeidx, 1), size(addrows, 1));
+0060     physdata(dupeidx, :) = [];
+0061     physdata = [physdata; addrows];
+0062     physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>);
+0063 <span class="keyword">end</span>
+0064 toc
+0065 fprintf(<span class="string">'\n'</span>);
+0066 
+0067 <span class="comment">% 2) Fix all similar time dupes</span>
+0068 tic
+0069 fprintf(<span class="string">'2) Similar date/time duplicates\n'</span>);
+0070 dupeidx = [];
+0071 addrows = [];
+0072 currdupeset = [];
+0073 pair = false;
+0074 mode = <span class="string">'max'</span>;
+0075 <span class="keyword">for</span> i = 1:size(physdata, 1) - 1
+0076     <span class="keyword">if</span> (physdata.SmartCareID(i)            == physdata.SmartCareID(i + 1)               &amp;&amp; <span class="keyword">...</span>
+0077         ismember(physdata.RecordingType(i),   physdata.RecordingType(i + 1))            &amp;&amp; <span class="keyword">...</span>
+0078         minutes(physdata.Date_TimeRecorded(i + 1) - physdata.Date_TimeRecorded(i)) &lt; 60 )
+0079     
+0080         dupeidx = [dupeidx; i];
+0081         currdupeset = [currdupeset; i];
+0082         pair = true;
+0083     <span class="keyword">else</span>
+0084         <span class="keyword">if</span> pair == true
+0085             [dupeidx, addrows] = <a href="addDupeRows.html" class="code" title="function [alldupeidx, addrows, nsame, nmax, nmean, nsum] = addDupeRows(data, alldupeidx, currdupesetidx, addrows, i, mode, detaillog)">addDupeRows</a>(physdata, dupeidx, currdupeset, addrows, i, mode, detaillog);
+0086         <span class="keyword">end</span>
+0087         pair = false;
+0088         currdupeset = [];
+0089     <span class="keyword">end</span>
+0090 <span class="keyword">end</span>
+0091 <span class="keyword">if</span> pair == true
+0092     i = i + 1;
+0093     [dupeidx, addrows] = <a href="addDupeRows.html" class="code" title="function [alldupeidx, addrows, nsame, nmax, nmean, nsum] = addDupeRows(data, alldupeidx, currdupesetidx, addrows, i, mode, detaillog)">addDupeRows</a>(physdata, dupeidx, currdupeset, addrows, i, mode, detaillog);
+0094 <span class="keyword">end</span>
+0095 
+0096 writetable(physdata(dupeidx, :), fullfile(basedir, <span class="string">'ExcelFiles'</span>, dupefile), <span class="string">'Sheet'</span>, <span class="string">'SimilarTimeDupes'</span>);
+0097 
+0098 <span class="comment">%temp = physdata(dupeidx, {'SmartCareID', 'RecordingType', 'Date_TimeRecorded', 'DateNum'});</span>
+0099 <span class="comment">%temp2 = varfun(@mean, temp, 'GroupingVariables', {'SmartCareID', 'RecordingType', 'Date_TimeRecorded'});</span>
+0100 <span class="comment">%writetable(temp2(:, {'SmartCareID', 'RecordingType', 'Date_TimeRecorded', 'GroupCount'}), fullfile(basedir, 'ExcelFiles', dupefile), 'Sheet', 'SimilarTimeDupes');</span>
+0101 
+0102 <span class="comment">% apply necessary updates.</span>
+0103 <span class="keyword">if</span> doupdates
+0104     fprintf(<span class="string">'Deleting %d similar time duplicates, and adding back %d single rows\n'</span>, size(dupeidx, 1), size(addrows, 1));
+0105     physdata(dupeidx, :) = [];
+0106     physdata = [physdata; addrows];
+0107 <span class="keyword">end</span>
+0108 physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>);
+0109 toc
+0110 fprintf(<span class="string">'\n'</span>);
+0111 
+0112 <span class="comment">% 3) Fix all same day dupes</span>
+0113 tic
+0114 fprintf(<span class="string">'3) Same day duplicates \n'</span>);
+0115 dupeidx = [];
+0116 addrows = [];
+0117 currdupeset = [];
+0118 pair = false;
+0119 mode = <span class="string">'mean'</span>;
+0120 <span class="keyword">for</span> i = 1:size(physdata, 1) - 1
+0121     <span class="keyword">if</span> (physdata.SmartCareID(i)            == physdata.SmartCareID(i + 1)               &amp;&amp; <span class="keyword">...</span>
+0122         ismember(physdata.RecordingType(i),   physdata.RecordingType(i + 1))            &amp;&amp; <span class="keyword">...</span>
+0123         physdata.DateNum(i + 1)            == physdata.DateNum(i)                       )
+0124     
+0125         dupeidx = [dupeidx; i];
+0126         currdupeset = [currdupeset; i];
+0127         pair = true;
+0128     <span class="keyword">else</span>
+0129         <span class="keyword">if</span> pair == true
+0130             [dupeidx, addrows] = <a href="addDupeRows.html" class="code" title="function [alldupeidx, addrows, nsame, nmax, nmean, nsum] = addDupeRows(data, alldupeidx, currdupesetidx, addrows, i, mode, detaillog)">addDupeRows</a>(physdata, dupeidx, currdupeset, addrows, i, mode, detaillog);
+0131         <span class="keyword">end</span>
+0132         pair = false;
+0133         currdupeset = [];
+0134     <span class="keyword">end</span>
+0135 <span class="keyword">end</span>
+0136 <span class="keyword">if</span> pair == true
+0137     i = i + 1;
+0138     [dupeidx, addrows] = <a href="addDupeRows.html" class="code" title="function [alldupeidx, addrows, nsame, nmax, nmean, nsum] = addDupeRows(data, alldupeidx, currdupesetidx, addrows, i, mode, detaillog)">addDupeRows</a>(physdata, dupeidx, currdupeset, addrows, i, mode, detaillog);
+0139 <span class="keyword">end</span>
+0140 
+0141 writetable(physdata(dupeidx, :), fullfile(basedir, <span class="string">'ExcelFiles'</span>, dupefile), <span class="string">'Sheet'</span>, <span class="string">'SameDayDupes'</span>);
+0142 
+0143 <span class="comment">%temp = physdata(dupeidx, {'SmartCareID', 'RecordingType', 'Date_TimeRecorded', 'DateNum'});</span>
+0144 <span class="comment">%temp2 = varfun(@mean, temp, 'GroupingVariables', {'SmartCareID', 'RecordingType', 'Date_TimeRecorded'});</span>
+0145 <span class="comment">%writetable(temp2(:, {'SmartCareID', 'RecordingType', 'Date_TimeRecorded', 'GroupCount'}), fullfile(basedir, 'ExcelFiles', dupefile), 'Sheet', 'SameDayDupes');</span>
+0146 
+0147 <span class="comment">% apply necessary updates.</span>
+0148 <span class="keyword">if</span> doupdates
+0149     fprintf(<span class="string">'Deleting %d same day duplicates, and adding back %d single rows\n'</span>, size(dupeidx, 1), size(addrows, 1));
+0150     physdata(dupeidx, :) = [];
+0151     physdata = [physdata; addrows];
+0152 <span class="keyword">end</span>
+0153 physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'Date_TimeRecorded'</span>}, <span class="string">'ascend'</span>);
+0154 toc
+0155 fprintf(<span class="string">'\n'</span>);
+0156 
+0157 <span class="keyword">end</span>
+0158</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of checkBreatheTreatmentsVsSelectMeasuresPost</title>
+  <meta name="keywords" content="checkBreatheTreatmentsVsSelectMeasuresPost">
+  <meta name="description" content="creates list of oral &amp; IV treatments for recovery study">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">recovery</a> &gt; checkBreatheTreatmentsVsSelectMeasuresPost.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>checkBreatheTreatmentsVsSelectMeasuresPost
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>creates list of oral &amp; IV treatments for recovery study</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> creates list of oral &amp; IV treatments for recovery study
+
+ 1. filters out all treatments prior to study start
+ 2. collapses down the multiple concurrent/sequential antibiotic treatments
+ 3. creates the initial list of unique treatments for a given treatment gap 
+ 4. creates stats on number of recorded measures in X days post 
+ the treatment start. This is used in the next script to filter out 
+ examples with very sparse data
+ 
+ Input:
+ ------
+ clinical data
+ measurements data
+
+ Output:
+ -------
+ &lt;StudyName&gt;ivandmeasures_gap .mat      stats on #recorded measures
+ MeasuresPostTreatments_gap .xlsx       idem + full measures list</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="../../../Code/smartcare/selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="../../../Code/smartcare/selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>	selectTreatmentGap - enter the gap between the end of a treatment and the</li><li><a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% creates list of oral &amp; IV treatments for recovery study</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% 1. filters out all treatments prior to study start</span>
+0004 <span class="comment">% 2. collapses down the multiple concurrent/sequential antibiotic treatments</span>
+0005 <span class="comment">% 3. creates the initial list of unique treatments for a given treatment gap</span>
+0006 <span class="comment">% 4. creates stats on number of recorded measures in X days post</span>
+0007 <span class="comment">% the treatment start. This is used in the next script to filter out</span>
+0008 <span class="comment">% examples with very sparse data</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% Input:</span>
+0011 <span class="comment">% ------</span>
+0012 <span class="comment">% clinical data</span>
+0013 <span class="comment">% measurements data</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% Output:</span>
+0016 <span class="comment">% -------</span>
+0017 <span class="comment">% &lt;StudyName&gt;ivandmeasures_gap .mat      stats on #recorded measures</span>
+0018 <span class="comment">% MeasuresPostTreatments_gap .xlsx       idem + full measures list</span>
+0019 
+0020 <a href="init.html" class="code" title="">init</a>;
+0021 
+0022 [studynbr, study, studyfullname] = <a href="../../../Code/smartcare/selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
+0023 [datamatfile, clinicalmatfile, ~] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0024 [physdata, offset] = <a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0025 [cdPatient, ~, ~, cdAntibiotics, ~, ~, ~, ~, ~, ~, ~] = <a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0026 
+0027 selectmeas = {<span class="string">'CoughRecording'</span>, <span class="string">'FEV1Recording'</span>, <span class="string">'FEF2575Recording'</span>, <span class="string">'MinsAsleepRecording'</span>, <span class="string">'O2SaturationRecording'</span>, <span class="string">'PulseRateRecording'</span>, <span class="keyword">...</span>
+0028            <span class="string">'TemperatureRecording'</span>, <span class="string">'WellnessRecording'</span>};
+0029 
+0030 tic
+0031 <span class="keyword">if</span> studynbr == 3
+0032     <span class="comment">% extension for non empty reasons</span>
+0033     fprintf(<span class="string">'Loading exacerbation reasons\n'</span>);
+0034     exreasonsfile = <span class="string">'climbexacerbationreasons.mat'</span>;
+0035     load(fullfile(basedir, subfolder, exreasonsfile), <span class="string">'exacerbationreasons'</span>);
+0036     fprintf(<span class="string">'\n'</span>);
+0037     
+0038     ivTreatments               = unique(cdAntibiotics(:,{<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>, <span class="string">'StartDate'</span>, <span class="string">'StopDate'</span>, <span class="string">'Route'</span>, <span class="string">'Reason'</span>}));
+0039 <span class="keyword">else</span>
+0040     ivTreatments               = unique(cdAntibiotics(:,{<span class="string">'ID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>, <span class="string">'StartDate'</span>, <span class="string">'StopDate'</span>, <span class="string">'Route'</span>}));
+0041     ivTreatments.Reason(:)     = {<span class="string">'PE'</span>};
+0042 <span class="keyword">end</span>
+0043 
+0044 ivTreatments.IVDateNum     = datenum(ivTreatments.StartDate) - offset + 1;
+0045 ivTreatments.IVStopDateNum = datenum(ivTreatments.StopDate)  - offset + 1;
+0046 ivTreatments.Type          = zeros(height(ivTreatments),1);
+0047 
+0048 treatgap = <a href="../../../Code/smartcare/selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>();
+0049 <span class="comment">%%</span>
+0050 <span class="comment">% counting and labelling - IVO = 1 , OO = 2, IVPBO = 3</span>
+0051 oldid = 0;
+0052 oldstopdn = 0;
+0053 ooandivpbo = 0;
+0054 ivo = 0;
+0055 ivpbo = 0;
+0056 <span class="keyword">for</span> i = 1:size(ivTreatments,1)
+0057     scid = ivTreatments.ID(i);
+0058     hospital = ivTreatments.Hospital(i);
+0059     startdate = ivTreatments.StartDate(i);
+0060     startdn = ivTreatments.IVDateNum(i);
+0061     stopdn  = ivTreatments.IVStopDateNum(i);
+0062     type = ivTreatments.Route(i);
+0063     
+0064     <span class="keyword">if</span> ( (scid ~= oldid || startdn &gt; oldstopdn + treatgap)  )
+0065         <span class="keyword">if</span> isequal(type,cellstr(<span class="string">'Oral'</span>))
+0066             ooandivpbo = ooandivpbo + 1;
+0067             ivTreatments.Type(i) = 2;
+0068         <span class="keyword">else</span>
+0069             ivo = ivo+1;
+0070             ivTreatments.Type(i) = 1;
+0071         <span class="keyword">end</span>
+0072     <span class="keyword">else</span>
+0073         <span class="keyword">if</span> oldid == scid &amp;&amp; ivTreatments.Type(i - 1) == 2 &amp;&amp; (startdn &lt; oldstopdn + treatgap)
+0074             ivpbo = ivpbo + 1;
+0075             ivTreatments.Type(i - 1) = 3;
+0076             ivTreatments.Route(i - 1) = {<span class="string">'IVPBO'</span>};
+0077             ivTreatments.Type(i) = 4;
+0078         <span class="keyword">end</span>
+0079     <span class="keyword">end</span>
+0080     
+0081     oldid = scid;
+0082     oldstopdn = stopdn;
+0083 <span class="keyword">end</span>
+0084 oo = ooandivpbo - ivpbo/2 ;
+0085 
+0086 physdata = physdata(ismember(physdata.RecordingType, selectmeas), :);
+0087 
+0088 physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'DateNum'</span>, <span class="string">'RecordingType'</span>}, <span class="string">'ascend'</span>);
+0089 numdays = 20; <span class="comment">% parameter</span>
+0090 nkeycols = 13;
+0091 Day = zeros(1,numdays);
+0092 Day = array2table(Day);
+0093 ivandmeasurestable = table(<span class="string">'Size'</span>,[1 nkeycols], <span class="keyword">...</span>
+0094     <span class="string">'VariableTypes'</span>, {<span class="string">'double'</span>,      <span class="string">'cell'</span>,        <span class="string">'cell'</span>,     <span class="string">'datetime'</span>,    <span class="string">'double'</span>,    <span class="string">'datetime'</span>,   <span class="string">'double'</span>,        <span class="string">'double'</span>,           <span class="string">'double'</span>,        <span class="string">'double'</span>,            <span class="string">'cell'</span>,  <span class="string">'double'</span>, <span class="string">'logical'</span>     }, <span class="keyword">...</span>
+0095     <span class="string">'VariableNames'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'StudyNumber'</span>, <span class="string">'Hospital'</span>, <span class="string">'IVStartDate'</span>, <span class="string">'IVDateNum'</span>, <span class="string">'IVStopDate'</span>, <span class="string">'IVStopDateNum'</span>, <span class="string">'DaysWithMeasures'</span>, <span class="string">'TotalMeasures'</span>, <span class="string">'AvgMeasuresPerDay'</span>, <span class="string">'Route'</span>, <span class="string">'Type'</span>,   <span class="string">'ExRelated'</span>});
+0096 <span class="comment">% have to do it this way to get the column type to be a char</span>
+0097 ivandmeasurestable.SequentialIntervention(:) = <span class="string">' '</span>;
+0098 ivandmeasurestable = [ivandmeasurestable Day];
+0099 <span class="keyword">for</span> i = 0:numdays-1
+0100     ivandmeasurestable.Properties.VariableNames{i + nkeycols + 2} = sprintf(<span class="string">'StartPlus%d'</span>,i);
+0101 <span class="keyword">end</span>
+0102 rowtoadd = ivandmeasurestable;
+0103 ivandmeasurestable(1,:) = [];
+0104 
+0105 measuresdetailtable = physdata(1,:);
+0106 measuresdetailtable = [];
+0107 
+0108 
+0109 i = 1;
+0110 
+0111 <span class="comment">% update rowtoadd with first treatment</span>
+0112 <span class="comment">% idx contains all values in [start, start+numdays[;</span>
+0113 idx = find(physdata.SmartCareID == ivTreatments.ID(i) &amp; physdata.DateNum &gt;= ivTreatments.IVDateNum(i) &amp; physdata.DateNum &lt; (ivTreatments.IVDateNum(i) + numdays));
+0114 pdcountmtable = varfun(@max, physdata(idx, {<span class="string">'SmartCareID'</span>,<span class="string">'DateNum'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'DateNum'</span>});
+0115 rowtoadd.SmartCareID       = ivTreatments.ID(i);
+0116 rowtoadd.StudyNumber       = ivTreatments.StudyNumber(i);
+0117 rowtoadd.Hospital          = ivTreatments.Hospital(i);
+0118 rowtoadd.IVStartDate       = ivTreatments.StartDate(i);
+0119 rowtoadd.IVDateNum         = ivTreatments.IVDateNum(i);
+0120 rowtoadd.IVStopDate        = ivTreatments.StopDate(i);
+0121 rowtoadd.IVStopDateNum     = ivTreatments.IVStopDateNum(i);
+0122 rowtoadd.DaysWithMeasures  = size(find(pdcountmtable.GroupCount&gt;0),1);
+0123 rowtoadd.TotalMeasures     = sum(pdcountmtable.GroupCount);
+0124 rowtoadd.AvgMeasuresPerDay = rowtoadd.TotalMeasures/numdays;
+0125 rowtoadd.Route             = ivTreatments.Route(i);
+0126 rowtoadd.Type              = ivTreatments.Type(i);
+0127 <span class="comment">%rowtoadd.ExRelated         = checkTreatmentExRelated(ivTreatments.Reason(i), exacerbationreasons);</span>
+0128 rowtoadd.ExRelated         = 1;
+0129 
+0130 <span class="keyword">if</span> rowtoadd.ExRelated
+0131     exreltxt = <span class="string">'(*)'</span>;
+0132 <span class="keyword">else</span>
+0133     exreltxt = <span class="string">'( )'</span>;
+0134 <span class="keyword">end</span>
+0135 
+0136 <span class="keyword">for</span> a = 0:numdays-1
+0137     colname = sprintf(<span class="string">'StartPlus%d'</span>, a);
+0138     dayidx = (pdcountmtable.SmartCareID == ivTreatments.ID(i)) &amp; (pdcountmtable.DateNum == ivTreatments.IVDateNum(i) + a);
+0139     <span class="keyword">if</span> sum(dayidx,1) &gt; 0
+0140         daymeasures = pdcountmtable.GroupCount(dayidx);
+0141         rowtoadd{1,colname} = daymeasures;
+0142     <span class="keyword">else</span>
+0143         rowtoadd{1,colname} = 0;
+0144     <span class="keyword">end</span>
+0145 <span class="keyword">end</span>
+0146 fprintf(<span class="string">'ID %3d, StartDate %11s, StopDate %11s, Route %4s, Type %d %3s: First Treatment\n'</span>, <span class="keyword">...</span>
+0147             ivTreatments.ID(i), datestr(ivTreatments.StartDate(i), 1), datestr(ivTreatments.StopDate(i), 1), ivTreatments.Route{i}, ivTreatments.Type(i), exreltxt);
+0148 
+0149 <span class="keyword">for</span> i = 2:size(ivTreatments,1)
+0150     
+0151     <span class="keyword">if</span> ivTreatments.ID(i) == ivTreatments.ID(i - 1) &amp;&amp; ivTreatments.IVDateNum(i) &lt; rowtoadd.IVStopDateNum + treatgap
+0152         <span class="keyword">if</span> ivTreatments.IVStopDateNum(i) &gt; rowtoadd.IVStopDateNum
+0153             rowtoadd.IVStopDate        = ivTreatments.StopDate(i);
+0154             rowtoadd.IVStopDateNum     = ivTreatments.IVStopDateNum(i);
+0155             <span class="comment">%rowtoadd.ExRelated         = rowtoadd.ExRelated || checkTreatmentExRelated(ivTreatments.Reason(i), exacerbationreasons);</span>
+0156             rowtoadd.ExRelated         = 1;
+0157             <span class="keyword">if</span> rowtoadd.ExRelated
+0158                 exreltxt = <span class="string">'(*)'</span>;
+0159             <span class="keyword">else</span>
+0160                 exreltxt = <span class="string">'( )'</span>;
+0161             <span class="keyword">end</span>
+0162             fprintf(<span class="string">'ID %3d, StartDate %11s, StopDate %11s, Route %4s, Type %d %3s: Skipping but updating stop date and exrelated\n'</span>, <span class="keyword">...</span>
+0163                 ivTreatments.ID(i), datestr(ivTreatments.StartDate(i), 1), datestr(ivTreatments.StopDate(i), 1), ivTreatments.Route{i}, ivTreatments.Type(i), exreltxt);
+0164         <span class="keyword">end</span>
+0165     <span class="keyword">else</span>
+0166         <span class="comment">% we've hit a new patient or treatment, so add pending rowtoadd</span>
+0167         <span class="comment">% first if it is exacerbation related</span>
+0168         <span class="keyword">if</span> rowtoadd.ExRelated
+0169             ivandmeasurestable = [ivandmeasurestable ; rowtoadd];
+0170             measuresdetailtable = [measuresdetailtable ; physdata(idx,:)];
+0171             fprintf(<span class="string">'ID %3d, StartDate %11s, StopDate %11s, Route %4s, Type %d %3s: ******************************** Adding New Intervention\n'</span>, <span class="keyword">...</span>
+0172             rowtoadd.SmartCareID, datestr(rowtoadd.IVStartDate, 1), datestr(rowtoadd.IVStopDate, 1), rowtoadd.Route{1}, rowtoadd.Type, exreltxt);
+0173         <span class="keyword">else</span>
+0174             fprintf(<span class="string">'ID %3d, StartDate %11s, StopDate %11s, Route %4s, Type %d %3s: ******************************** Skipping - not exacerbation related\n'</span>, <span class="keyword">...</span>
+0175             rowtoadd.SmartCareID, datestr(rowtoadd.IVStartDate, 1), datestr(rowtoadd.IVStopDate, 1), rowtoadd.Route{1}, rowtoadd.Type, exreltxt);
+0176         <span class="keyword">end</span>
+0177         
+0178         <span class="comment">% now update rowtoadd with current row</span>
+0179         idx = find(physdata.SmartCareID == ivTreatments.ID(i) &amp; physdata.DateNum &gt;= ivTreatments.IVDateNum(i) &amp; physdata.DateNum &lt; (ivTreatments.IVDateNum(i) + numdays));
+0180         pdcountmtable = varfun(@max, physdata(idx, {<span class="string">'SmartCareID'</span>,<span class="string">'DateNum'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'DateNum'</span>});
+0181         rowtoadd.SmartCareID       = ivTreatments.ID(i);
+0182         rowtoadd.StudyNumber       = ivTreatments.StudyNumber(i);
+0183         rowtoadd.Hospital          = ivTreatments.Hospital(i);
+0184         rowtoadd.IVStartDate       = ivTreatments.StartDate(i);
+0185         rowtoadd.IVDateNum         = ivTreatments.IVDateNum(i);
+0186         rowtoadd.IVStopDate        = ivTreatments.StopDate(i);
+0187         rowtoadd.IVStopDateNum     = ivTreatments.IVStopDateNum(i);
+0188         rowtoadd.DaysWithMeasures  = size(find(pdcountmtable.GroupCount&gt;0),1);
+0189         rowtoadd.TotalMeasures     = sum(pdcountmtable.GroupCount);
+0190         rowtoadd.AvgMeasuresPerDay = rowtoadd.TotalMeasures/numdays;
+0191         rowtoadd.Route             = ivTreatments.Route(i);
+0192         rowtoadd.Type              = ivTreatments.Type(i);
+0193         <span class="comment">%rowtoadd.ExRelated         = checkTreatmentExRelated(ivTreatments.Reason(i), exacerbationreasons);</span>
+0194         rowtoadd.ExRelated         = 1;
+0195         <span class="keyword">if</span> rowtoadd.ExRelated
+0196             exreltxt = <span class="string">'(*)'</span>;
+0197         <span class="keyword">else</span>
+0198             exreltxt = <span class="string">'( )'</span>;
+0199         <span class="keyword">end</span>
+0200         <span class="keyword">for</span> a = 0:numdays-1
+0201             colname = sprintf(<span class="string">'StartPlus%d'</span>, a);
+0202             dayidx = (pdcountmtable.SmartCareID == ivTreatments.ID(i)) &amp; (pdcountmtable.DateNum == ivTreatments.IVDateNum(i) + a);
+0203             <span class="keyword">if</span> sum(dayidx,1) &gt; 0
+0204                 daymeasures = pdcountmtable.GroupCount(dayidx);
+0205                 rowtoadd{1,colname} = daymeasures;
+0206             <span class="keyword">else</span>
+0207                 rowtoadd{1,colname} = 0;
+0208             <span class="keyword">end</span>
+0209         <span class="keyword">end</span>
+0210         fprintf(<span class="string">'ID %3d, StartDate %11s, StopDate %11s, Route %4s, Type %d %3s: New Treatment\n'</span>, <span class="keyword">...</span>
+0211             ivTreatments.ID(i), datestr(ivTreatments.StartDate(i), 1), datestr(ivTreatments.StopDate(i), 1), ivTreatments.Route{i}, ivTreatments.Type(i), exreltxt);
+0212     <span class="keyword">end</span>
+0213 <span class="keyword">end</span>
+0214 <span class="keyword">if</span> rowtoadd.ExRelated
+0215     ivandmeasurestable = [ivandmeasurestable ; rowtoadd];
+0216     measuresdetailtable = [measuresdetailtable ; physdata(idx,:)];
+0217     fprintf(<span class="string">'ID %3d, StartDate %11s, StopDate %11s, Route %4s, Type %d %3s: ******************************** Adding Final Intervention\n'</span>, <span class="keyword">...</span>
+0218     rowtoadd.SmartCareID, datestr(rowtoadd.IVStartDate, 1), datestr(rowtoadd.IVStopDate, 1), rowtoadd.Route{1}, rowtoadd.Type, exreltxt);
+0219 <span class="keyword">else</span>
+0220     fprintf(<span class="string">'ID %3d, StartDate %11s, StopDate %11s, Route %4s, Type %d %3s: ******************************** Skipping - not exacerbation related\n'</span>, <span class="keyword">...</span>
+0221     rowtoadd.SmartCareID, datestr(rowtoadd.IVStartDate, 1), datestr(rowtoadd.IVStopDate, 1), rowtoadd.Route{1}, rowtoadd.Type, exreltxt);
+0222 <span class="keyword">end</span>
+0223 
+0224 <span class="comment">% hardcode definitions for data window and mean window here - need to</span>
+0225 <span class="comment">% change if these model parameters are changed at any point</span>
+0226 <span class="comment">% align_wind = 20;</span>
+0227 <span class="comment">% meanwindow = 10;</span>
+0228 fprintf(<span class="string">'\n'</span>);
+0229 fprintf(<span class="string">'Checking integrity of results and setting sequential intervention flag\n'</span>);
+0230 <span class="keyword">for</span> i = 2:size(ivandmeasurestable, 1)
+0231     <span class="keyword">if</span> (ivandmeasurestable.SmartCareID(i) == ivandmeasurestable.SmartCareID(i-1) <span class="keyword">...</span>
+0232                 &amp;&amp; ivandmeasurestable.IVDateNum(i) &lt; ivandmeasurestable.IVStopDateNum(i-1))
+0233             fprintf(<span class="string">'*** For patient %d, Start date of current row (%d) is less than the stop date of the prior row (%d) - investigate further ***\n'</span>, <span class="keyword">...</span>
+0234                 ivandmeasurestable.SmartCareID(i), ivandmeasurestable.IVDateNum(i), ivandmeasurestable.IVStopDateNum(i-1));
+0235     <span class="keyword">end</span>
+0236     <span class="keyword">if</span> (ivandmeasurestable.SmartCareID(i) == ivandmeasurestable.SmartCareID(i-1) <span class="keyword">...</span>
+0237                 &amp;&amp; ivandmeasurestable.IVDateNum(i) - ivandmeasurestable.IVStopDateNum(i-1) &lt; (numdays + treatgap))
+0238             ivandmeasurestable.SequentialIntervention(i) = <span class="string">'Y'</span>;
+0239     <span class="keyword">end</span>
+0240 <span class="keyword">end</span>
+0241 
+0242 <span class="comment">% filter all treatments prior to the study start for each patient</span>
+0243 fprintf(<span class="string">'\n'</span>);
+0244 fprintf(<span class="string">'Deleting treatments prior to study start for each patient\n'</span>);
+0245 ivandmeasurestable = outerjoin(ivandmeasurestable, cdPatient, <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'ID'</span>}, <span class="string">'RightVariables'</span>, {<span class="string">'StudyDate'</span>}, <span class="string">'Type'</span>, <span class="string">'left'</span>);
+0246 ivandmeasurestable(ivandmeasurestable.IVStartDate &lt;= ivandmeasurestable.StudyDate, :) = [];
+0247 
+0248 toc
+0249 fprintf(<span class="string">'\n'</span>);
+0250 
+0251 tic
+0252 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0253 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0254 outputfilename = sprintf(<span class="string">'%sivandmeasures_recovery_gap%d.mat'</span>, study, treatgap);
+0255 
+0256 fprintf(<span class="string">'Saving output variables to file %s\n'</span>, outputfilename);
+0257 save(fullfile(basedir, subfolder, outputfilename), <span class="string">'ivandmeasurestable'</span>, <span class="string">'treatgap'</span>);
+0258 
+0259 measuresdetailtable.ScaledDateNum = [];
+0260 measuresdetailtable.DateNum = [];
+0261 
+0262 fprintf(<span class="string">'Saving results to excel\n'</span>);
+0263 
+0264 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0265 subfolder = <span class="string">'ExcelFiles'</span>;
+0266 outputfilename = sprintf(<span class="string">'%sMeasuresPostTreatments_gap%d.xlsx'</span>, study, treatgap);
+0267 summarysheet = <span class="string">'SummaryByTreatment'</span>;
+0268 detailsheet = <span class="string">'MeasuresDetail'</span>;
+0269 
+0270 writetable(ivandmeasurestable,  fullfile(basedir, subfolder, outputfilename), <span class="string">'Sheet'</span>, summarysheet);
+0271 writetable(measuresdetailtable, fullfile(basedir, subfolder, outputfilename), <span class="string">'Sheet'</span>, detailsheet);
+0272 
+0273 toc
+0274 fprintf(<span class="string">'\n'</span>);
+0275     
+0276     
+0277</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of applySmoothMethodToInterpRow</title>
+  <meta name="keywords" content="applySmoothMethodToInterpRow">
+  <meta name="description" content="applySmoothMethodToInterpRow - apply appropriate smoothing method to">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; applySmoothMethodToInterpRow.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>applySmoothMethodToInterpRow
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>applySmoothMethodToInterpRow - apply appropriate smoothing method to</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [outputrow] = applySmoothMethodToInterpRow(interpdatarow, smfunction, smwindow, smlength, m, mfev1idx) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> applySmoothMethodToInterpRow - apply appropriate smoothing method to
+ given interpolated data row (for use in predictive model)
+
+ smfunction        Description
+ ---------------   -----------
+       0           No smoothing
+       1           Mean for all measures
+       2           Median for all measures
+       3           Max for FEV1, mean for all others
+       4           Max for FEV1, none for all others
+
+ smwindow          Description
+ ---------------   -----------
+       1           Centered
+       2           Trailing
+
+ smlength - number of days for window</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [outputrow] = applySmoothMethodToInterpRow(interpdatarow, smfunction, smwindow, smlength, m, mfev1idx)</a>
+0002 
+0003 <span class="comment">% applySmoothMethodToInterpRow - apply appropriate smoothing method to</span>
+0004 <span class="comment">% given interpolated data row (for use in predictive model)</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% smfunction        Description</span>
+0007 <span class="comment">% ---------------   -----------</span>
+0008 <span class="comment">%       0           No smoothing</span>
+0009 <span class="comment">%       1           Mean for all measures</span>
+0010 <span class="comment">%       2           Median for all measures</span>
+0011 <span class="comment">%       3           Max for FEV1, mean for all others</span>
+0012 <span class="comment">%       4           Max for FEV1, none for all others</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% smwindow          Description</span>
+0015 <span class="comment">% ---------------   -----------</span>
+0016 <span class="comment">%       1           Centered</span>
+0017 <span class="comment">%       2           Trailing</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% smlength - number of days for window</span>
+0020 
+0021 <span class="keyword">if</span> smfunction == 0
+0022     outputrow = rawdatarow;
+0023 <span class="keyword">else</span>
+0024     <span class="keyword">if</span> smwindow == 1
+0025         width = smlength;
+0026     <span class="keyword">elseif</span> smwindow == 2
+0027         width = [(smlength - 1) 0];
+0028     <span class="keyword">end</span>
+0029     outputrow = interpdatarow;
+0030     <span class="keyword">if</span> smfunction == 1
+0031         <span class="keyword">if</span> smwindow == 1
+0032             <span class="comment">% for backward compatibility - can remove once prove results</span>
+0033             <span class="comment">% match</span>
+0034             outputrow = smooth(interpdatarow, width);
+0035         <span class="keyword">else</span>
+0036             outputrow = movmean(outputrow, width);
+0037         <span class="keyword">end</span>
+0038     <span class="keyword">elseif</span> smfunction == 2
+0039         outputrow = movmedian(outputrow, width);
+0040     <span class="keyword">elseif</span> smfunction == 3
+0041         <span class="comment">% max smoothing for fev1</span>
+0042         <span class="keyword">if</span> m == mfev1idx
+0043             outputrow = movmax(outputrow, width);
+0044         <span class="keyword">else</span>
+0045             <span class="keyword">if</span> smwindow == 1
+0046                 <span class="comment">% centered window - mean smoothing. For backward compatibility - can remove once prove results</span>
+0047                 <span class="comment">% match</span>
+0048                 outputrow = smooth(interpdatarow, width);
+0049             <span class="keyword">else</span>
+0050                 <span class="comment">% for trailing window - mean smoothing</span>
+0051                 outputrow = movmean(outputrow, width);
+0052             <span class="keyword">end</span>
+0053         <span class="keyword">end</span>
+0054     <span class="keyword">elseif</span> smfunction == 4
+0055         <span class="comment">% max smoothing for fev1</span>
+0056         <span class="keyword">if</span> m == mfev1idx
+0057             outputrow = movmax(outputrow, width);
+0058         <span class="keyword">else</span>
+0059             <span class="comment">% no smoothing for other measures</span>
+0060             outputrow = interpdatarow;
+0061         <span class="keyword">end</span>     
+0062     <span class="keyword">end</span>
+0063 <span class="keyword">end</span>
+0064 
+0065 <span class="keyword">end</span>
+0066</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

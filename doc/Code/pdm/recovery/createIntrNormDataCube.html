@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createIntrNormDataCube</title>
+  <meta name="keywords" content="createIntrNormDataCube">
+  <meta name="description" content="create the array with the normalised data for each intervention">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">recovery</a> &gt; createIntrNormDataCube.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>createIntrNormDataCube
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>create the array with the normalised data for each intervention</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function createIntrNormDataCube(amRunParameters) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> create the array with the normalised data for each intervention
+ 
+ Input:
+ ------
+ amRunParameters                           parameter file
+ *salignmentmodelinputs_recovery_gap*.mat  modelinputsmatfile
+ *datademographicsbypatient.mat            datademographicsfile
+ *dataoutliers_recovery.mat                dataoutliersfile
+ *electivetreatments_gap10.xlsx            electivefile (manually generated)
+  
+ Output:
+ -------
+ intrnormdatacube_recovery.mat</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/recovery/updatedModel/RcreateNormalisedIntrDatacube.html" class="code" title="function [amIntrNormcube] = RcreateNormalisedIntrDatacube(amIntrDatacube, normmean, normstd, ninterventions, nmeasures, measures, sigmamethod)">RcreateNormalisedIntrDatacube</a>	createNormalisedIntrDatacube - creates the normalised data cube by</li><li><a href="../../../Code/pdm/recovery/updatedModel/amEMMCCreateIntrDatacubeRecovery.html" class="code" title="function [amIntrDatacube] = amEMMCCreateIntrDatacubeRecovery(amDatacube, amInterventions, measures, align_wind, offset, ninterventions, nmeasures, curveaveragingmethod, datasmoothmethod)">amEMMCCreateIntrDatacubeRecovery</a>	createIntrDatacube - creates the data cube for offset + alignement window</li><li><a href="../../../Code/pdm/recovery/updatedModel/amEMMCPreprocessMeasuresRecovery.html" class="code" title="function [amDatacube, measures, nmeasures] = amEMMCPreprocessMeasuresRecovery(amDatacube, amInterventions, measures,demographicstable, measuresmask, align_wind, npatients, ndays, ninterventions, nmeasures, study)">amEMMCPreprocessMeasuresRecovery</a>	amEMMCPreprocessMeasures - 1) select a set of measures, 2) filter</li><li><a href="../../../Code/pdm/recovery/updatedModel/amEMMCSetModelRunParametersFromTableRecovery.html" class="code" title="function [mversion, study, treatgap, testlabelmthd, testlabeltxt,modelinputsmatfile, datademographicsfile, dataoutliersfile, labelledinterventionsfile, electivefile,sigmamethod, mumethod, curveaveragingmethod, smoothingmethod, datasmoothmethod,measuresmask, runmode, randomseed, intrmode, modelrun, imputationmode, confidencemode, printpredictions,offset, align_wind, data_wind, outprior, heldbackpct, confidencethreshold, nlatentcurves, countthreshold, scenario, vshiftmode, vshiftmax]= amEMMCSetModelRunParametersFromTableRecovery(amRunParameters)">amEMMCSetModelRunParametersFromTableRecovery</a>	amEMMCSetModelRunParameters - sets the various run parameters for the model</li><li><a href="../../../Code/pdm/recovery/updatedModel/calculateMuNormalisationRecovery.html" class="code" title="function [normmean] = calculateMuNormalisationRecovery(amDatacube, amInterventions, measures, demographicstable,dataoutliers, ninterventions, nmeasures, mumethod, study)">calculateMuNormalisationRecovery</a>	populates an array of ninterventions by nmeasures with the additive</li><li><a href="../../../Code/smartcare/amEMMCPreprocessInterventions.html" class="code" title="function [amInterventions, amIntrDatacube, ninterventions, intrkeepidx] = amEMMCPreprocessInterventions(amInterventions,amIntrDatacube, amElectiveTreatments, measures, nmeasures, max_offset, align_wind, ninterventions,  intrmode, study)">amEMMCPreprocessInterventions</a>	1) for each intervention, calculate data window completeness (without the interpolated measurements)</li><li><a href="../../../Code/smartcare/calculateSigmaNormalisation.html" class="code" title="function [normstd] = calculateSigmaNormalisation(amInterventions, measures, demographicstable, ninterventions, nmeasures, sigmamethod, study)">calculateSigmaNormalisation</a>	calculateSigmaNormalisation - populates an array of ninterventions by</li><li><a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function createIntrNormDataCube(amRunParameters)</a>
+0002 <span class="comment">% create the array with the normalised data for each intervention</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Input:</span>
+0005 <span class="comment">% ------</span>
+0006 <span class="comment">% amRunParameters                           parameter file</span>
+0007 <span class="comment">% *salignmentmodelinputs_recovery_gap*.mat  modelinputsmatfile</span>
+0008 <span class="comment">% *datademographicsbypatient.mat            datademographicsfile</span>
+0009 <span class="comment">% *dataoutliers_recovery.mat                dataoutliersfile</span>
+0010 <span class="comment">% *electivetreatments_gap10.xlsx            electivefile (manually generated)</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% Output:</span>
+0013 <span class="comment">% -------</span>
+0014 <span class="comment">% intrnormdatacube_recovery.mat</span>
+0015 
+0016 <span class="comment">% note amDatacube has 10'512'970 values from which 39'089 zeroes,</span>
+0017 <span class="comment">% 10'137'509 NaN, 375'461 non NaN</span>
+0018 
+0019 <span class="comment">% set the various model run parameters</span>
+0020 [mversion, study, treatgap, testlabelmthd, testlabeltxt, <span class="keyword">...</span>
+0021     modelinputsmatfile, datademographicsfile, dataoutliersfile, labelledinterventionsfile, electivefile, <span class="keyword">...</span>
+0022     sigmamethod, mumethod, curveaveragingmethod, smoothingmethod, datasmoothmethod, <span class="keyword">...</span>
+0023     measuresmask, runmode, randomseed, intrmode, modelrun, imputationmode, confidencemode, printpredictions, <span class="keyword">...</span>
+0024     offset, align_wind, ~, outprior, heldbackpct, confidencethreshold, nlatentcurves, countthreshold, scenario, vshiftmode, vshiftmax] <span class="keyword">...</span>
+0025     = <a href="../../../Code/pdm/recovery/updatedModel/amEMMCSetModelRunParametersFromTableRecovery.html" class="code" title="function [mversion, study, treatgap, testlabelmthd, testlabeltxt,modelinputsmatfile, datademographicsfile, dataoutliersfile, labelledinterventionsfile, electivefile,sigmamethod, mumethod, curveaveragingmethod, smoothingmethod, datasmoothmethod,measuresmask, runmode, randomseed, intrmode, modelrun, imputationmode, confidencemode, printpredictions,offset, align_wind, data_wind, outprior, heldbackpct, confidencethreshold, nlatentcurves, countthreshold, scenario, vshiftmode, vshiftmax]= amEMMCSetModelRunParametersFromTableRecovery(amRunParameters)">amEMMCSetModelRunParametersFromTableRecovery</a>(amRunParameters);
+0026 
+0027 fprintf(<span class="string">'Running Alignment Model %s\n'</span>, mversion);
+0028 fprintf(<span class="string">'\n'</span>);
+0029 
+0030 <span class="comment">% load the required input data</span>
+0031 tic
+0032 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0033 subfolder = <span class="string">'MatlabsavedVariables'</span>;
+0034 fnmodelrun = fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>,modelrun));
+0035 fprintf(<span class="string">'Loading alignment model Inputs data %s\n'</span>, modelinputsmatfile);
+0036 load(fullfile(basedir, subfolder, modelinputsmatfile));
+0037 fprintf(<span class="string">'Loading datademographics by patient %s\n'</span>, datademographicsfile);
+0038 load(fullfile(basedir, subfolder, datademographicsfile));
+0039 fprintf(<span class="string">'Loading data outliers %s\n'</span>, dataoutliersfile);
+0040 load(fullfile(basedir, subfolder, dataoutliersfile));
+0041 <span class="comment">% if ismember(study, {'SC', 'CL', 'BR'})</span>
+0042 <span class="comment">%     fprintf('Loading latest labelled test data file %s\n', labelledinterventionsfile);</span>
+0043 <span class="comment">%     load(fullfile(basedir, subfolder, labelledinterventionsfile), 'amLabelledInterventions');</span>
+0044 <span class="comment">% end</span>
+0045 
+0046 <span class="keyword">if</span> ismember(study, {<span class="string">'BR'</span>, <span class="string">'CL'</span>})
+0047     subfolder = sprintf(<span class="string">'DataFiles/%s'</span>, study);
+0048 <span class="keyword">else</span>
+0049     subfolder = <span class="string">'DataFiles'</span>;
+0050 <span class="keyword">end</span>
+0051 
+0052 fprintf(<span class="string">'Loading elective treatment file %s\n'</span>, electivefile);
+0053 elopts = detectImportOptions(fullfile(basedir, subfolder, electivefile));
+0054 elopts.VariableTypes(:, ismember(elopts.VariableNames, {<span class="string">'Hospital'</span>})) = {<span class="string">'char'</span>};
+0055 elopts.VariableTypes(:, ismember(elopts.VariableNames, {<span class="string">'PatientNbr'</span>, <span class="string">'ID'</span>, <span class="string">'IVScaledDateNum'</span>})) = {<span class="string">'double'</span>};
+0056 amElectiveTreatments = readtable(fullfile(basedir, subfolder, electivefile), elopts);
+0057 amElectiveTreatments.ElectiveTreatment(:) = <span class="string">'Y'</span>;
+0058 toc
+0059 
+0060 tic
+0061 fprintf(<span class="string">'Preparing input data\n'</span>);
+0062 
+0063 baseplotname = sprintf(<span class="string">'%s%s_gp%d_lm%d_sig%d_mu%d_ca%d_sm%d_rm%d_in%d_im%d_cm%d_mm%d_od%d_ou%d_dw%d_nl%d_rs%d_ds%d_ct%d_sc%s_vs%d_vm%.1f'</span>, study, mversion, treatgap, testlabelmthd, sigmamethod, mumethod, curveaveragingmethod, <span class="keyword">...</span>
+0064     smoothingmethod, runmode, intrmode, imputationmode, confidencemode, measuresmask, offset.down, offset.up, align_wind, nlatentcurves, randomseed, datasmoothmethod, countthreshold, scenario, vshiftmode, vshiftmax);
+0065 detaillog = true;
+0066 
+0067 <span class="comment">% 1) select a set of measures, 2) filter corresponding data and</span>
+0068 <span class="comment">% 3) compute high level statistics (for each measure)</span>
+0069 [amDatacube, measures, nmeasures] = <a href="../../../Code/pdm/recovery/updatedModel/amEMMCPreprocessMeasuresRecovery.html" class="code" title="function [amDatacube, measures, nmeasures] = amEMMCPreprocessMeasuresRecovery(amDatacube, amInterventions, measures,demographicstable, measuresmask, align_wind, npatients, ndays, ninterventions, nmeasures, study)">amEMMCPreprocessMeasuresRecovery</a>(amDatacube, amInterventions, measures, <span class="keyword">...</span>
+0070     demographicstable, measuresmask, align_wind, npatients, ndays, ninterventions, nmeasures, study);
+0071 
+0072 <span class="comment">% create cube for data window data by intervention (for each measure)</span>
+0073 [amIntrDatacube] = <a href="../../../Code/pdm/recovery/updatedModel/amEMMCCreateIntrDatacubeRecovery.html" class="code" title="function [amIntrDatacube] = amEMMCCreateIntrDatacubeRecovery(amDatacube, amInterventions, measures, align_wind, offset, ninterventions, nmeasures, curveaveragingmethod, datasmoothmethod)">amEMMCCreateIntrDatacubeRecovery</a>(amDatacube, amInterventions, measures, align_wind, <span class="keyword">...</span>
+0074     offset, ninterventions, nmeasures, curveaveragingmethod, datasmoothmethod);
+0075 
+0076 <span class="comment">% pre-process intervention table and associated measurement data</span>
+0077 
+0078 <span class="comment">% no need to modify max_offset here for Breathe</span>
+0079 <span class="comment">% 1) (not for BR) calculate data window completeness without interpolated measurements (#actual_points/#max_points*100)</span>
+0080 <span class="comment">% 2) merge elective treatments into amInterventions</span>
+0081 <span class="comment">% 3) optionnally remove sequential interventions if intrmode == 2</span>
+0082 <span class="comment">% Interp measures concerns CLIMB</span>
+0083 [amInterventions, amIntrDatacube, ninterventions, intrkeepidx] = <a href="../../../Code/smartcare/amEMMCPreprocessInterventions.html" class="code" title="function [amInterventions, amIntrDatacube, ninterventions, intrkeepidx] = amEMMCPreprocessInterventions(amInterventions,amIntrDatacube, amElectiveTreatments, measures, nmeasures, max_offset, align_wind, ninterventions,  intrmode, study)">amEMMCPreprocessInterventions</a>(amInterventions, <span class="keyword">...</span>
+0084     amIntrDatacube, amElectiveTreatments, measures, nmeasures, offset.span, align_wind, ninterventions, intrmode, study);
+0085 
+0086 <span class="comment">% populate multiplicative normalisation (sigma) values based on methodology</span>
+0087 <span class="comment">% selected</span>
+0088 normstd = <a href="../../../Code/smartcare/calculateSigmaNormalisation.html" class="code" title="function [normstd] = calculateSigmaNormalisation(amInterventions, measures, demographicstable, ninterventions, nmeasures, sigmamethod, study)">calculateSigmaNormalisation</a>(amInterventions, measures, demographicstable, ninterventions, nmeasures, sigmamethod, study);
+0089 
+0090 <span class="comment">% calculate additive normalisation (mu) based on methodology</span>
+0091 <span class="comment">% and then create normalised data cube.</span>
+0092 normmean = <a href="../../../Code/pdm/recovery/updatedModel/calculateMuNormalisationRecovery.html" class="code" title="function [normmean] = calculateMuNormalisationRecovery(amDatacube, amInterventions, measures, demographicstable,dataoutliers, ninterventions, nmeasures, mumethod, study)">calculateMuNormalisationRecovery</a>(amDatacube, amInterventions, measures, demographicstable, <span class="keyword">...</span>
+0093     dataoutliers, ninterventions, nmeasures, mumethod, study);
+0094 
+0095 <span class="comment">% populate normalised data cube by intervention</span>
+0096 [amIntrNormcube] = <a href="../../../Code/pdm/recovery/updatedModel/RcreateNormalisedIntrDatacube.html" class="code" title="function [amIntrNormcube] = RcreateNormalisedIntrDatacube(amIntrDatacube, normmean, normstd, ninterventions, nmeasures, measures, sigmamethod)">RcreateNormalisedIntrDatacube</a>(amIntrDatacube, normmean, normstd, ninterventions, nmeasures, sigmamethod);
+0097 
+0098 tic
+0099 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0100 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0101 outputfilename = sprintf(<span class="string">'%sintrnormdatacube_recovery.mat'</span>, study);
+0102 fprintf(<span class="string">'Saving Intervention Normalised Data Cube to file %s\n'</span>, outputfilename);
+0103 fprintf(<span class="string">'\n'</span>);
+0104 save(fullfile(basedir, subfolder, outputfilename), <span class="string">'amIntrNormcube'</span>, <span class="string">'measures'</span>);
+0105 toc
+0106 <span class="keyword">end</span>
+0107</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

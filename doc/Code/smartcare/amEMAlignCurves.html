@@ -1,0 +1,288 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMAlignCurves</title>
+  <meta name="keywords" content="amEMAlignCurves">
+  <meta name="description" content="amEMAlignCurves - function to align measurement curves prior to intervention">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMAlignCurves.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMAlignCurves
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMAlignCurves - function to align measurement curves prior to intervention</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [meancurvesumsq, meancurvesum, meancurvecount, meancurvemean, meancurvestd, animatedmeancurvemean, profile_pre,offsets, animatedoffsets, hstg, pdoffset, overall_hstg, overall_pdoffset, animated_overall_pdoffset,isOutlier, ppts, qual, min_offset, iter] =amEMAlignCurves(amIntrCube, amHeldBackcube, amInterventions, outprior, measures, normstd, max_offset, align_wind, nmeasures, ninterventions,detaillog, sigmamethod, smoothingmethod, offsetblockingmethod, runmode, fnmodelrun) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMAlignCurves - function to align measurement curves prior to intervention</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="addAdjacentAdjustments.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = addAdjacentAdjustments(meancurvesumsq, meancurvesum, meancurvecount, ppts)">addAdjacentAdjustments</a>	addAdjacentAdjustments - adds the adjustments from adjacent points to the</li><li><a href="amEMAddToMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = amEMAddToMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, currinter, min_offset, max_offset, align_wind, nmeasures)">amEMAddToMean</a>	amEMAddToMean - add an underlying curve to the mean curve (sumsq, sum and count)</li><li><a href="amEMBestFit.html" class="code" title="function [better_offset, hstg, pdoffset, overall_hstg, overall_pdoffset, isOutlier] = amEMBestFit(meancurvemean, meancurvestd,amIntrCube, amHeldBackcube, measuresmask, measuresrange, normstd, hstg, pdoffset, overall_hstg, overall_pdoffset, isOutlier, outprior, currinter, min_offset, max_offset, align_wind,nmeasures, sigmamethod, smoothingmethod, runmode)">amEMBestFit</a>	amEMBestFit - calculates the offset for an intervention by minimising the</li><li><a href="amEMCalcObjFcn.html" class="code" title="function [dist, count, hstg, isOutlier] = amEMCalcObjFcn(meancurvemean, meancurvestd, amIntrCube,amHeldBackcube, isOutlier, outprior, measuresmask, measuresrange, normstd, hstg, currinter,curroffset, max_offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod)">amEMCalcObjFcn</a>	amEMCalcObjFcn - calculates residual sum of squares distance for points in</li><li><a href="amEMRemoveFromMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = amEMRemoveFromMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, currinter, min_offset, max_offset, align_wind, nmeasures)">amEMRemoveFromMean</a>	amEMRemoveFromMean - remove an underlying curve from the meancurve (sumsq, sum and count)</li><li><a href="calcDiffOverallPD.html" class="code" title="function [diff] = calcDiffOverallPD(overall_pd1, overall_pd2)">calcDiffOverallPD</a>	calcDiffProbDistrib  - calculates a measure of difference between two</li><li><a href="calcMeanAndStd.html" class="code" title="function [meancurvemean, meancurvestd] = calcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind)">calcMeanAndStd</a>	am4CalcMeanAndStd - recalc meancurvemean and meancurvestd arrays</li><li><a href="convertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = convertFromLogSpaceAndNormalise(distfcn)">convertFromLogSpaceAndNormalise</a>	convertFromLogSpaceAndNormalise - takes the results from a 'distance'</li><li><a href="findProblemDataPoints.html" class="code" title="function [ppts] = findProblemDataPoints(meancurvesumsq, meancurvesum, meancurvecount, measuresmask, min_offset, max_offset, align_wind, nmeasures, countthreshold)">findProblemDataPoints</a>	findProblemDataPoints - finds datapoints in the average curve that have fewer underlying</li><li><a href="removeAdjacentAdjustments.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = removeAdjacentAdjustments(meancurvesumsq, meancurvesum, meancurvecount, ppts)">removeAdjacentAdjustments</a>	removeAdjacentAdjustments - removes the adjustments from adjacent points from the</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModelEM.html" class="code" title="">runAlignmentModelEM</a>	</li><li><a href="runAlignmentModelEMFcn.html" class="code" title="function runAlignmentModelEMFcn(amRunParameters)">runAlignmentModelEMFcn</a>	function to run the alignment model (EM version) given a set of run</li><li><a href="runAlignmentModelEMFcnFEV1Split.html" class="code" title="function runAlignmentModelEMFcnFEV1Split(amRunParameters)">runAlignmentModelEMFcnFEV1Split</a>	function to run the alignment model (EM version) given a set of run</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [meancurvesumsq, meancurvesum, meancurvecount, meancurvemean, meancurvestd, animatedmeancurvemean, profile_pre, </a><span class="keyword">...</span>
+0002     offsets, animatedoffsets, hstg, pdoffset, overall_hstg, overall_pdoffset, animated_overall_pdoffset, <span class="keyword">...</span>
+0003     isOutlier, ppts, qual, min_offset, iter] = <span class="keyword">...</span>
+0004     amEMAlignCurves(amIntrCube, amHeldBackcube, amInterventions, outprior, measures, normstd, max_offset, align_wind, nmeasures, ninterventions, <span class="keyword">...</span>
+0005     detaillog, sigmamethod, smoothingmethod, offsetblockingmethod, runmode, fnmodelrun)
+0006 
+0007 <span class="comment">% amEMAlignCurves - function to align measurement curves prior to intervention</span>
+0008 
+0009 aniterations      = 2000;
+0010 
+0011 meancurvesum      = zeros(max_offset + align_wind - 1, nmeasures);
+0012 meancurvesumsq    = zeros(max_offset + align_wind - 1, nmeasures);
+0013 meancurvecount    = zeros(max_offset + align_wind - 1, nmeasures);
+0014 meancurvemean     = zeros(max_offset + align_wind - 1, nmeasures);
+0015 meancurvestd      = zeros(max_offset + align_wind - 1, nmeasures);
+0016 animatedmeancurvemean = zeros(max_offset + align_wind - 1, nmeasures, aniterations);
+0017 offsets           = zeros(ninterventions, 1);
+0018 animatedoffsets   = zeros(ninterventions, aniterations);
+0019 hstg              = zeros(nmeasures, ninterventions, max_offset);
+0020 pdoffset          = zeros(nmeasures, ninterventions, max_offset);
+0021 overall_hstg      = zeros(ninterventions, max_offset);
+0022 overall_pdoffset  = zeros(ninterventions, max_offset);
+0023 animated_overall_pdoffset  = zeros(ninterventions, max_offset, aniterations);
+0024 isOutlier         = zeros(ninterventions, align_wind, nmeasures, max_offset);
+0025 
+0026 min_offset = 0; <span class="comment">% start at zero, and only adjust if we encounter too few data points at right hand end of latent curve</span>
+0027 countthreshold    = 5; <span class="comment">% minimum number of undelying curves that must contribute to a point in the average curve</span>
+0028 
+0029 <span class="keyword">if</span> runmode == 6
+0030     load(fnmodelrun);
+0031     overall_hstg = overall_hist;
+0032     <span class="keyword">for</span> i = 1:ninterventions
+0033         overall_pdoffset(i,:) = <a href="convertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = convertFromLogSpaceAndNormalise(distfcn)">convertFromLogSpaceAndNormalise</a>(overall_hstg(i,:));
+0034     <span class="keyword">end</span>
+0035     amInterventions.Offset = offsets;
+0036 <span class="keyword">else</span>    
+0037     <span class="comment">% populate pdoffset &amp; overall_pdoffset with uniform prior distribution</span>
+0038     <span class="keyword">for</span> i = 1:ninterventions
+0039         <span class="keyword">for</span> m = 1:nmeasures
+0040             pdoffset(m, i, :) = <a href="convertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = convertFromLogSpaceAndNormalise(distfcn)">convertFromLogSpaceAndNormalise</a>(hstg(m, i, :));
+0041         <span class="keyword">end</span>
+0042         <span class="keyword">if</span> runmode == 4
+0043             overall_pdoffset(i,:) = <a href="convertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = convertFromLogSpaceAndNormalise(distfcn)">convertFromLogSpaceAndNormalise</a>(overall_hstg(i,:));
+0044         <span class="keyword">else</span>
+0045             overall_pdoffset(i,:) = 0;
+0046             overall_pdoffset(i, 1) = 1;
+0047         <span class="keyword">end</span>
+0048     <span class="keyword">end</span>
+0049 <span class="keyword">end</span>
+0050 
+0051 animated_overall_pdoffset(:, :, 1) = overall_pdoffset;
+0052 
+0053 <span class="comment">% calculate initial mean curve over all interventions &amp; prior prob</span>
+0054 <span class="comment">% distribution for offsets</span>
+0055 <span class="keyword">for</span> i = 1:ninterventions
+0056     [meancurvesumsq, meancurvesum, meancurvecount] = <a href="amEMAddToMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = amEMAddToMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, currinter, min_offset, max_offset, align_wind, nmeasures)">amEMAddToMean</a>(meancurvesumsq, meancurvesum, meancurvecount, <span class="keyword">...</span>
+0057         overall_pdoffset, amIntrCube, amHeldBackcube, i, min_offset, max_offset, align_wind, nmeasures);
+0058 <span class="keyword">end</span>
+0059 [meancurvemean, meancurvestd] = <a href="calcMeanAndStd.html" class="code" title="function [meancurvemean, meancurvestd] = calcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind)">calcMeanAndStd</a>(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind);
+0060 
+0061 <span class="comment">% store the mean curves pre-alignment for each measure for plotting</span>
+0062 profile_pre = meancurvemean;
+0063 
+0064 <span class="comment">% iterate to convergence</span>
+0065 pnt = 1;
+0066 cnt = 0;
+0067 iter = 0;
+0068 pddiff = 100;
+0069 prior_overall_pdoffset = overall_pdoffset;
+0070 miniiter = 0;
+0071 
+0072 <span class="keyword">while</span> (pddiff &gt; 0.00001 &amp;&amp; iter &lt; 200)
+0073     ok = 1;
+0074     block_offset = 0;
+0075     
+0076     <span class="comment">% remove current curve from the sum, sumsq, count average curve arrays</span>
+0077     <span class="comment">% before doing bestfit alignment</span>
+0078     [meancurvesumsq, meancurvesum, meancurvecount] = <a href="amEMRemoveFromMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = amEMRemoveFromMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, currinter, min_offset, max_offset, align_wind, nmeasures)">amEMRemoveFromMean</a>(meancurvesumsq, meancurvesum, meancurvecount, <span class="keyword">...</span>
+0079         overall_pdoffset, amIntrCube, amHeldBackcube, pnt, min_offset, max_offset, align_wind, nmeasures);
+0080     
+0081     <span class="comment">% find and keep track of points that have too few data points contributing</span>
+0082     <span class="comment">% to them</span>
+0083     [ppts] = <a href="findProblemDataPoints.html" class="code" title="function [ppts] = findProblemDataPoints(meancurvesumsq, meancurvesum, meancurvecount, measuresmask, min_offset, max_offset, align_wind, nmeasures, countthreshold)">findProblemDataPoints</a>(meancurvesumsq, meancurvesum, meancurvecount, measures.Mask, min_offset, max_offset, align_wind, nmeasures, countthreshold);
+0084     
+0085     <span class="comment">% uncomment this if we need to enable offset blocking in the future</span>
+0086     <span class="comment">%if size(ppts,1) &gt;= 1</span>
+0087     <span class="comment">%    block_offset = 1;</span>
+0088     <span class="comment">%end</span>
+0089     
+0090     <span class="comment">% add the adjustments to the various meancurve arrays</span>
+0091     <span class="comment">% and recalc mean and std arrays</span>
+0092     [meancurvesumsq, meancurvesum, meancurvecount] = <a href="addAdjacentAdjustments.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = addAdjacentAdjustments(meancurvesumsq, meancurvesum, meancurvecount, ppts)">addAdjacentAdjustments</a>(meancurvesumsq, meancurvesum, meancurvecount, ppts);
+0093     [meancurvemean, meancurvestd] = <a href="calcMeanAndStd.html" class="code" title="function [meancurvemean, meancurvestd] = calcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind)">calcMeanAndStd</a>(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind);
+0094     
+0095     <span class="comment">% ******** Offset blocking should not be used - leaving the code here</span>
+0096     <span class="comment">% in case it's useful in the future but it should not be executed</span>
+0097     <span class="keyword">if</span> offsetblockingmethod == 2 &amp;&amp; block_offset == 1 &amp;&amp; min_offset &lt; 3
+0098         
+0099         fprintf(<span class="string">'Blocking offset %d\n'</span>, min_offset);
+0100 
+0101         <span class="comment">% put current intervention back in mean curve temporarily</span>
+0102         [meancurvesumsq, meancurvesum, meancurvecount] = <a href="removeAdjacentAdjustments.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = removeAdjacentAdjustments(meancurvesumsq, meancurvesum, meancurvecount, ppts)">removeAdjacentAdjustments</a>(meancurvesumsq, meancurvesum, meancurvecount, ppts);
+0103         [meancurvesumsq, meancurvesum, meancurvecount] = <a href="amEMAddToMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = amEMAddToMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, currinter, min_offset, max_offset, align_wind, nmeasures)">amEMAddToMean</a>(meancurvesumsq, meancurvesum, meancurvecount, <span class="keyword">...</span><span class="comment"> </span>
+0104             overall_pdoffset, amIntrCube, amHeldBackcube, pnt, min_offset, max_offset, align_wind, nmeasures);
+0105         <span class="comment">%[meancurvemean, meancurvestd] = calcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind);</span>
+0106 
+0107         <span class="comment">% for all interventions remove from mean</span>
+0108         <span class="comment">% **** avoids small number inaccuracies - just zero out all the</span>
+0109         <span class="comment">% meancurve arrays</span>
+0110         <span class="comment">%</span>
+0111         <span class="comment">% zero out min_offset day from pdoffset, overall_pdoffset, hstg,</span>
+0112         <span class="comment">% overall hstg</span>
+0113         <span class="comment">% renormalise pdoffset and overall_pdoffset</span>
+0114         <span class="comment">%</span>
+0115         <span class="comment">% for all interventions, add to mean with min_offset incremented</span>
+0116         
+0117         meancurvesum(:,:)   = 0;
+0118         meancurvesumsq(:,:) = 0;
+0119         meancurvecount(:,:) = 0;
+0120         meancurvemean(:,:)  = 0;
+0121         meancurvestd(:,:)   = 0;
+0122         
+0123         hstg(:, :, min_offset + 1) = 0;
+0124         overall_hstg(:, min_offset + 1) = 0;
+0125         pdoffset(:, :, min_offset + 1) = 0;
+0126         overall_pdoffset(:, min_offset + 1) = 0;
+0127         
+0128         min_offset = min_offset + 1;
+0129         
+0130         <span class="keyword">for</span> i = 1:ninterventions
+0131             <span class="keyword">for</span> m = 1:nmeasures
+0132                 pdoffset(m, i, (min_offset + 1):max_offset) = pdoffset(m, i, (min_offset + 1):max_offset) ./ sum(pdoffset(m, i, (min_offset + 1):max_offset));
+0133             <span class="keyword">end</span>
+0134             overall_pdoffset(i, (min_offset + 1):max_offset) = overall_pdoffset(i, (min_offset + 1):max_offset) ./ sum(overall_pdoffset(i, (min_offset + 1):max_offset));
+0135             
+0136             [meancurvesumsq, meancurvesum, meancurvecount] = <a href="amEMAddToMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = amEMAddToMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, currinter, min_offset, max_offset, align_wind, nmeasures)">amEMAddToMean</a>(meancurvesumsq, meancurvesum, meancurvecount, <span class="keyword">...</span>
+0137                 overall_pdoffset, amIntrCube, amHeldBackcube, i, min_offset, max_offset, align_wind, nmeasures);
+0138             
+0139         <span class="keyword">end</span>
+0140         [meancurvemean, meancurvestd] = <a href="calcMeanAndStd.html" class="code" title="function [meancurvemean, meancurvestd] = calcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind)">calcMeanAndStd</a>(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind);
+0141         
+0142         <span class="comment">% remove current intervention from mean curve before</span>
+0143         <span class="comment">% proceeding</span>
+0144         [meancurvesumsq, meancurvesum, meancurvecount] = <a href="amEMRemoveFromMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = amEMRemoveFromMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, currinter, min_offset, max_offset, align_wind, nmeasures)">amEMRemoveFromMean</a>(meancurvesumsq, meancurvesum, meancurvecount, <span class="keyword">...</span>
+0145             overall_pdoffset, amIntrCube, amHeldBackcube, pnt, min_offset, max_offset, align_wind, nmeasures);
+0146         [meancurvesumsq, meancurvesum, meancurvecount] = <a href="addAdjacentAdjustments.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = addAdjacentAdjustments(meancurvesumsq, meancurvesum, meancurvecount, ppts)">addAdjacentAdjustments</a>(meancurvesumsq, meancurvesum, meancurvecount, ppts);
+0147         [meancurvemean, meancurvestd] = <a href="calcMeanAndStd.html" class="code" title="function [meancurvemean, meancurvestd] = calcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind)">calcMeanAndStd</a>(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind);
+0148     <span class="keyword">end</span>
+0149      
+0150     <span class="keyword">if</span> ok == 1
+0151         [better_offset, hstg, pdoffset, overall_hstg, overall_pdoffset, isOutlier] = <a href="amEMBestFit.html" class="code" title="function [better_offset, hstg, pdoffset, overall_hstg, overall_pdoffset, isOutlier] = amEMBestFit(meancurvemean, meancurvestd,amIntrCube, amHeldBackcube, measuresmask, measuresrange, normstd, hstg, pdoffset, overall_hstg, overall_pdoffset, isOutlier, outprior, currinter, min_offset, max_offset, align_wind,nmeasures, sigmamethod, smoothingmethod, runmode)">amEMBestFit</a>(meancurvemean, meancurvestd, amIntrCube, amHeldBackcube, <span class="keyword">...</span>
+0152             measures.Mask, measures.OverallRange, normstd, hstg, pdoffset, overall_hstg, overall_pdoffset, isOutlier, outprior, <span class="keyword">...</span>
+0153             pnt, min_offset, max_offset, align_wind, nmeasures, sigmamethod, smoothingmethod, runmode);
+0154     <span class="keyword">else</span>
+0155         better_offset = amInterventions.Offset(pnt);
+0156     <span class="keyword">end</span>
+0157     
+0158     <span class="keyword">if</span> better_offset ~= amInterventions.Offset(pnt)
+0159         <span class="keyword">if</span> detaillog
+0160             fprintf(<span class="string">'amIntervention.Offset(%d) updated from %d to %d\n'</span>, pnt, amInterventions.Offset(pnt), better_offset);
+0161         <span class="keyword">end</span>
+0162         amInterventions.Offset(pnt) = better_offset;
+0163         cnt = cnt+1;
+0164         miniiter = miniiter+1;
+0165         <span class="keyword">if</span> miniiter &lt; aniterations
+0166             animatedmeancurvemean(:, :, miniiter) = meancurvemean;
+0167             animatedoffsets(:,miniiter) = amInterventions.Offset;
+0168             animated_overall_pdoffset(:, :, miniiter+1) = overall_pdoffset;
+0169         <span class="keyword">else</span>
+0170             fprintf(<span class="string">'Exceeded storage for animated iterations\n'</span>);
+0171         <span class="keyword">end</span>
+0172     <span class="keyword">end</span>
+0173     [meancurvesumsq, meancurvesum, meancurvecount] = <a href="removeAdjacentAdjustments.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = removeAdjacentAdjustments(meancurvesumsq, meancurvesum, meancurvecount, ppts)">removeAdjacentAdjustments</a>(meancurvesumsq, meancurvesum, meancurvecount, ppts);
+0174     [meancurvesumsq, meancurvesum, meancurvecount] = <a href="amEMAddToMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = amEMAddToMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, currinter, min_offset, max_offset, align_wind, nmeasures)">amEMAddToMean</a>(meancurvesumsq, meancurvesum, meancurvecount, <span class="keyword">...</span>
+0175         overall_pdoffset, amIntrCube, amHeldBackcube, pnt, min_offset, max_offset, align_wind, nmeasures);
+0176     [meancurvemean, meancurvestd] = <a href="calcMeanAndStd.html" class="code" title="function [meancurvemean, meancurvestd] = calcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind)">calcMeanAndStd</a>(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind);
+0177     
+0178     pnt = pnt+1;
+0179     <span class="keyword">if</span> pnt &gt; ninterventions
+0180         iter = iter + 1;
+0181         pnt = pnt - ninterventions;
+0182         miniiter = miniiter+1;
+0183         <span class="keyword">if</span> miniiter &lt; aniterations
+0184             animatedmeancurvemean(:, :, miniiter) = meancurvemean;
+0185             animatedoffsets(:,miniiter) = amInterventions.Offset;
+0186             animated_overall_pdoffset(:, :, miniiter+1) = overall_pdoffset;
+0187         <span class="keyword">else</span>
+0188             fprintf(<span class="string">'Exceeded storage for animated iterations\n'</span>);
+0189         <span class="keyword">end</span>
+0190         
+0191         pddiff = <a href="calcDiffOverallPD.html" class="code" title="function [diff] = calcDiffOverallPD(overall_pd1, overall_pd2)">calcDiffOverallPD</a>(overall_pdoffset, prior_overall_pdoffset);
+0192         <span class="comment">% compute the overall objective function each time we've iterated</span>
+0193         <span class="comment">% through the full set of interventions</span>
+0194         <span class="comment">% ** don't update the histogram here to avoid double counting on the best</span>
+0195         <span class="comment">% offset day **</span>
+0196         update_histogram = 0;
+0197         qual = 0;
+0198         qualcount = 0;
+0199         <span class="keyword">for</span> i=1:ninterventions
+0200             [meancurvesumsq, meancurvesum, meancurvecount] = <a href="amEMRemoveFromMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = amEMRemoveFromMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, currinter, min_offset, max_offset, align_wind, nmeasures)">amEMRemoveFromMean</a>(meancurvesumsq, meancurvesum, meancurvecount, <span class="keyword">...</span>
+0201                 overall_pdoffset, amIntrCube, amHeldBackcube, i, min_offset, max_offset, align_wind, nmeasures);
+0202             [meancurvesumsq, meancurvesum, meancurvecount] = <a href="addAdjacentAdjustments.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = addAdjacentAdjustments(meancurvesumsq, meancurvesum, meancurvecount, ppts)">addAdjacentAdjustments</a>(meancurvesumsq, meancurvesum, meancurvecount, ppts);
+0203             [meancurvemean, meancurvestd] = <a href="calcMeanAndStd.html" class="code" title="function [meancurvemean, meancurvestd] = calcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind)">calcMeanAndStd</a>(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind);
+0204     
+0205             [iqual, icount] = <a href="amEMCalcObjFcn.html" class="code" title="function [dist, count, hstg, isOutlier] = amEMCalcObjFcn(meancurvemean, meancurvestd, amIntrCube,amHeldBackcube, isOutlier, outprior, measuresmask, measuresrange, normstd, hstg, currinter,curroffset, max_offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod)">amEMCalcObjFcn</a>(meancurvemean, meancurvestd, amIntrCube, amHeldBackcube, isOutlier, outprior, measures.Mask, measures.OverallRange, normstd, <span class="keyword">...</span>
+0206                 hstg, i, amInterventions.Offset(i), max_offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod);
+0207             
+0208             qual = qual + iqual;
+0209             qualcount = qualcount + icount;
+0210             
+0211             <span class="comment">%fprintf('Intervention %d, qual = %.4f\n', i, qual/qualcount);</span>
+0212     
+0213             [meancurvesumsq, meancurvesum, meancurvecount] = <a href="removeAdjacentAdjustments.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = removeAdjacentAdjustments(meancurvesumsq, meancurvesum, meancurvecount, ppts)">removeAdjacentAdjustments</a>(meancurvesumsq, meancurvesum, meancurvecount, ppts);
+0214             [meancurvesumsq, meancurvesum, meancurvecount] = <a href="amEMAddToMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = amEMAddToMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, currinter, min_offset, max_offset, align_wind, nmeasures)">amEMAddToMean</a>(meancurvesumsq, meancurvesum, meancurvecount, <span class="keyword">...</span>
+0215                 overall_pdoffset, amIntrCube, amHeldBackcube, i, min_offset, max_offset, align_wind, nmeasures);
+0216             [meancurvemean, meancurvestd] = <a href="calcMeanAndStd.html" class="code" title="function [meancurvemean, meancurvestd] = calcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind)">calcMeanAndStd</a>(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind);
+0217         <span class="keyword">end</span>
+0218         
+0219         qual = qual / qualcount;
+0220         
+0221         <span class="keyword">if</span> cnt == 0
+0222             fprintf(<span class="string">'No changes on iteration %2d, obj fcn = %.8f, prob distrib diff = %.6f\n'</span>, iter, qual, pddiff);
+0223         <span class="keyword">else</span>
+0224             fprintf(<span class="string">'Changed %2d offsets on iteration %2d, obj fcn = %.8f, prob distrib diff = %.6f\n'</span>, cnt, iter, qual, pddiff);
+0225         <span class="keyword">end</span>
+0226         cnt = 0;
+0227         prior_overall_pdoffset = overall_pdoffset;
+0228         
+0229         <span class="comment">%temp = input('Continue ? ');</span>
+0230     <span class="keyword">end</span>
+0231 <span class="keyword">end</span>
+0232 
+0233 [meancurvesumsq, meancurvesum, meancurvecount] = <a href="addAdjacentAdjustments.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = addAdjacentAdjustments(meancurvesumsq, meancurvesum, meancurvecount, ppts)">addAdjacentAdjustments</a>(meancurvesumsq, meancurvesum, meancurvecount, ppts);
+0234 [meancurvemean, meancurvestd] = <a href="calcMeanAndStd.html" class="code" title="function [meancurvemean, meancurvestd] = calcMeanAndStd(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind)">calcMeanAndStd</a>(meancurvesumsq, meancurvesum, meancurvecount, min_offset, max_offset, align_wind);
+0235 
+0236 <span class="keyword">for</span> i=1:ninterventions 
+0237     offsets(i) = amInterventions.Offset(i);
+0238 <span class="keyword">end</span>
+0239 
+0240 <span class="keyword">end</span>
+0241</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

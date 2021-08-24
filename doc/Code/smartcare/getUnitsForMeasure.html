@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getUnitsForMeasure</title>
+  <meta name="keywords" content="getUnitsForMeasure">
+  <meta name="description" content="getUnitsForMeasure - returns the units for a given measure">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; getUnitsForMeasure.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>getUnitsForMeasure
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>getUnitsForMeasure - returns the units for a given measure</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [units] = getUnitsForMeasure(displaymeasure) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> getUnitsForMeasure - returns the units for a given measure</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../Code/pdm/recovery/updatedModel/amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery(meancurvemean, meancurvecount, amIntrNormcube, amInterventions, normmean, normstd,measures, offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery</a>	amEMMCPlotSuperimposedAlignedCurves3 - wrapper around the</li><li><a href="amEMMCPlotSuperimposedAlignedCurvesForPaper2.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper2(meancurvemean, meancurvecount, amIntrNormcube, amInterventions,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper2</a>	amEMMCPlotSuperimposedAlignedCurves2 - wrapper around the</li><li><a href="amEMMCPlotSuperimposedAlignedCurvesForPaper3.html" class="code" title="function amEMMCPlotSuperimposedAlignedCurvesForPaper3(meancurvemean, meancurvecount, amIntrNormcube, amInterventions, normmean, normstd,measures, min_offset, max_offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples)">amEMMCPlotSuperimposedAlignedCurvesForPaper3</a>	amEMMCPlotSuperimposedAlignedCurves3 - wrapper around the</li><li><a href="testLayoutScript.html" class="code" title="">testLayoutScript</a>	</li><li><a href="visualiseExacerbationForPaperFcn.html" class="code" title="function visualiseExacerbationForPaperFcn(amDatacube, amInterventions, measures, nmeasures, npatients, study)">visualiseExacerbationForPaperFcn</a>	visualiseExacerbationForPaperFcn - plots measures around an exacerbation</li><li><a href="visualiseExacerbationForPaperFcn2.html" class="code" title="function visualiseExacerbationForPaperFcn2(amDatacube, amInterventions, measures, nmeasures, npatients, study)">visualiseExacerbationForPaperFcn2</a>	visualiseExacerbationForPaperFcn - plots measures around an exacerbation</li><li><a href="visualiseExacerbationForPaperFcn3.html" class="code" title="function visualiseExacerbationForPaperFcn3(amDatacube, amInterventions, measures, nmeasures, npatients, study)">visualiseExacerbationForPaperFcn3</a>	visualiseExacerbationForPaperFcn3 - plots measures around an exacerbation</li><li><a href="visualiseMeasuresFcn.html" class="code" title="function visualiseMeasuresFcn(physdata, offset, cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits, cdCRP, cdPFT, measures, study)">visualiseMeasuresFcn</a>	visualiseMeasuresFcn - plots clinical and home measures</li><li><a href="visualiseMeasuresForPaperFcn.html" class="code" title="function visualiseMeasuresForPaperFcn(physdata, offset, cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits,cdCRP, cdPFT, cdNewMeds, measures, nmeasures, study)">visualiseMeasuresForPaperFcn</a>	visualiseMeasuresForPaperFcn - plots clinical and home measures</li><li><a href="visualiseMeasuresForPaperFcn2.html" class="code" title="function visualiseMeasuresForPaperFcn2(physdata, offset, amDatacube, cdPatient, cdAntibiotics,cdCRP, cdPFT, cdNewMeds, measures, nmeasures, ndays, study)">visualiseMeasuresForPaperFcn2</a>	visualiseMeasuresForPaperFcn2 - plots clinical and home measures</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [units] = getUnitsForMeasure(displaymeasure)</a>
+0002 
+0003 <span class="comment">% getUnitsForMeasure - returns the units for a given measure</span>
+0004 
+0005 <span class="keyword">if</span> ismember(displaymeasure, {<span class="string">'Clinical CRP'</span>})
+0006     units = <span class="string">'mg/L'</span>;
+0007 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'Clinical FEV1'</span>, <span class="string">'LungFunction'</span>})
+0008     units = <span class="string">'percent predicted'</span>;
+0009 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'FEV1'</span>, <span class="string">'FEV6'</span>, <span class="string">'FEF2575'</span>, <span class="string">'FEV075'</span>})
+0010     units = <span class="string">'ltr'</span>;
+0011 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'Activity'</span>})
+0012     units = <span class="string">'steps'</span>;
+0013 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'Calorie'</span>})
+0014     units = <span class="string">'cal'</span>;
+0015 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'Cough'</span>, <span class="string">'SleepActivity'</span>, <span class="string">'Wellness'</span>})
+0016     units = <span class="string">'percent'</span>;
+0017 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'MinsAsleep'</span>, <span class="string">'MinsAwake'</span>})
+0018     units = <span class="string">'mins'</span>;
+0019 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'O2Saturation'</span>})
+0020     units = <span class="string">'percent'</span>;
+0021 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'PulseRate'</span>, <span class="string">'RestingHR'</span>})
+0022     units = <span class="string">'bpm'</span>;
+0023 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'Temperature'</span>})
+0024     units = sprintf(<span class="string">'%sC'</span>, char(176));
+0025 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'Weight'</span>})
+0026     units = <span class="string">'kg'</span>;
+0027 <span class="keyword">elseif</span> ismember(displaymeasure, {<span class="string">'Prediction'</span>})
+0028     units = <span class="string">'percent'</span>;
+0029 <span class="keyword">else</span>
+0030     fprintf(<span class="string">'**** Unknown Measure ****\n'</span>);
+0031     units = <span class="string">' '</span>;
+0032 <span class="keyword">end</span>
+0033     
+0034 <span class="keyword">end</span>
+0035</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

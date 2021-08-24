@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotOutlierDataPoints</title>
+  <meta name="keywords" content="plotOutlierDataPoints">
+  <meta name="description" content="plotDataOutliers - plots the outliers in the measurement data">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; plotOutlierDataPoints.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>plotOutlierDataPoints
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>plotDataOutliers - plots the outliers in the measurement data</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function plotOutlierDataPoints(ax, days, mdata, outliers, max_offset, align_wind, colour, linestyle, linewidth, marker, markersize, markerec, markerfc) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> plotDataOutliers - plots the outliers in the measurement data</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMMCPlotsAndSavePredictions.html" class="code" title="function amEMMCPlotsAndSavePredictions(amInterventions, amIntrcube, measures, pdoffset,overall_pdoffset, hstg, overall_hist, vshift, meancurvemean, normmean, normstd, isOutlier,ex_start_array, thisinter, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder, normmode)">amEMMCPlotsAndSavePredictions</a>	amEMMCPlotsAndSavePredictions - plots measures prior to</li><li><a href="amEMPlotsAndSavePredictions.html" class="code" title="function amEMPlotsAndSavePredictions(amInterventions, amIntrDatacube, measures, pdoffset,overall_pdoffset, hstg, overall_hist, meancurvemean, normmean, normstd, isOutlier,ex_start, thisinter, nmeasures, max_offset, align_wind, sigmamethod, plotname, plotsubfolder)">amEMPlotsAndSavePredictions</a>	amEMPlotsAndSavePredictions - plots measures prior to</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function plotOutlierDataPoints(ax, days, mdata, outliers, max_offset, align_wind, colour, linestyle, linewidth, marker, markersize, markerec, markerfc)</a>
+0002 
+0003 <span class="comment">% plotDataOutliers - plots the outliers in the measurement data</span>
+0004 
+0005 tmpoutlieridx = logical(zeros(1, max_offset + align_wind - 1));
+0006 tmpoutlieridx(max_offset:max_offset + align_wind - 1) = logical(outliers);
+0007 
+0008 <span class="comment">% plot measurement data</span>
+0009 line(ax, days(tmpoutlieridx), mdata(tmpoutlieridx), <span class="keyword">...</span>
+0010     <span class="string">'Color'</span>, colour, <span class="keyword">...</span>
+0011     <span class="string">'LineStyle'</span>, linestyle, <span class="keyword">...</span>
+0012     <span class="string">'LineWidth'</span>, linewidth, <span class="keyword">...</span>
+0013     <span class="string">'Marker'</span>, marker, <span class="keyword">...</span>
+0014     <span class="string">'MarkerSize'</span>, markersize,<span class="keyword">...</span>
+0015     <span class="string">'MarkerEdgeColor'</span>, markerec, <span class="keyword">...</span>
+0016     <span class="string">'MarkerFaceColor'</span>, markerfc);
+0017 
+0018 noutliers = sum(outliers);
+0019 
+0020 <span class="keyword">end</span>
+0021</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

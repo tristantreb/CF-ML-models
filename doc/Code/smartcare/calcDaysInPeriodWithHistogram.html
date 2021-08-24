@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calcDaysInPeriodWithHistogram</title>
+  <meta name="keywords" content="calcDaysInPeriodWithHistogram">
+  <meta name="description" content="calcDaysInPeriodWithHistogram - calculate the days on IV for pre and during">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; calcDaysInPeriodWithHistogram.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>calcDaysInPeriodWithHistogram
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>calcDaysInPeriodWithHistogram - calculate the days on IV for pre and during</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [brIntChkptPat, brIntChkptSum] = calcDaysInPeriodWithHistogram(brIntChkptPat, brIntChkptSum, perioddata, study, meastype, period1, period2, twindow, type, cutoffd, plotsubfolder) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> calcDaysInPeriodWithHistogram - calculate the days on IV for pre and during
+ study and plot histogram for each</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="calcDaysOnIVForPatient.html" class="code" title="function nivdays = calcDaysOnIVForPatient(pivdata, fromd, tod)">calcDaysOnIVForPatient</a>	calcDaysOnIVForPatient - calculate the number of days on ivs for a given</li><li><a href="calcEmergContForPatient.html" class="code" title="function nec = calcEmergContForPatient(pecdata, fromd, tod)">calcEmergContForPatient</a>	calcEmergContForPatient - calculate the number emergency contacts for a given</li><li><a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createBreatheInterimCheckpointStats.html" class="code" title="">createBreatheInterimCheckpointStats</a>	</li><li><a href="createBreathePrePostStats.html" class="code" title="">createBreathePrePostStats</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [brIntChkptPat, brIntChkptSum] = calcDaysInPeriodWithHistogram(brIntChkptPat, brIntChkptSum, perioddata, study, meastype, period1, period2, twindow, type, cutoffd, plotsubfolder)</a>
+0002 
+0003 <span class="comment">% calcDaysInPeriodWithHistogram - calculate the days on IV for pre and during</span>
+0004 <span class="comment">% study and plot histogram for each</span>
+0005 
+0006 twtext = sprintf(<span class="string">'%dm'</span>, twindow);
+0007 pghght = 6;
+0008 pgwdth = 8.5;
+0009 plotsacross = 2;
+0010 plotsdown = 1;
+0011 npat = size(brIntChkptPat, 1);
+0012 
+0013 name = sprintf(<span class="string">'%s %s %s %s vs %s'</span>, study, meastype, twtext, period1, period2);
+0014 fprintf(<span class="string">'1) %s\n'</span>, name);
+0015 [fig, pan] = <a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(name, pgwdth, pghght);
+0016 colname1 = sprintf(<span class="string">'%s%s%s'</span>, meastype, twtext, period1);
+0017 colname2 = sprintf(<span class="string">'%s%s%s'</span>, meastype, twtext, period2);
+0018 brIntChkptPat{:, {colname1}} = 0.0;
+0019 brIntChkptPat{:, {colname2}} = 0.0;
+0020 
+0021 <span class="keyword">for</span> p = 1:npat
+0022 
+0023     scid    = brIntChkptPat.ID(p);
+0024     studyd  = brIntChkptPat.StudyDate(p);
+0025     fromd = brIntChkptPat.StudyDate(p) - calmonths(twindow);
+0026     tod   = brIntChkptPat.StudyDate(p) + calmonths(twindow);
+0027     <span class="keyword">if</span> tod &gt; cutoffd
+0028         tod = cutoffd;
+0029     <span class="keyword">end</span>
+0030     
+0031     fprintf(<span class="string">'%2d: ID %d, Study Date %11s '</span>, p, scid, datestr(studyd, 1));
+0032 
+0033     pperioddata = perioddata(perioddata.ID == scid, :);
+0034 
+0035     <span class="keyword">if</span> ismember(meastype, {<span class="string">'IVDays'</span>})
+0036 
+0037         fprintf(<span class="string">': %s '</span>, period1);
+0038         brIntChkptPat{p, {colname1}} = <a href="calcDaysOnIVForPatient.html" class="code" title="function nivdays = calcDaysOnIVForPatient(pivdata, fromd, tod)">calcDaysOnIVForPatient</a>(pperioddata,  fromd,  studyd);
+0039 
+0040         fprintf(<span class="string">': %s '</span>, period2);
+0041         brIntChkptPat{p, {colname2}} = <a href="calcDaysOnIVForPatient.html" class="code" title="function nivdays = calcDaysOnIVForPatient(pivdata, fromd, tod)">calcDaysOnIVForPatient</a>(pperioddata,  studyd,    tod);
+0042     <span class="keyword">elseif</span> ismember(meastype, {<span class="string">'EmergCont'</span>})
+0043         fprintf(<span class="string">': %s '</span>, period1);
+0044         brIntChkptPat{p, {colname1}} = <a href="calcEmergContForPatient.html" class="code" title="function nec = calcEmergContForPatient(pecdata, fromd, tod)">calcEmergContForPatient</a>(pperioddata, fromd,  studyd);
+0045 
+0046         fprintf(<span class="string">': %s '</span>, period2);
+0047         brIntChkptPat{p, {colname2}} = <a href="calcEmergContForPatient.html" class="code" title="function nec = calcEmergContForPatient(pecdata, fromd, tod)">calcEmergContForPatient</a>(pperioddata, studyd,    tod);
+0048     <span class="keyword">else</span>
+0049         fprintf(<span class="string">'Unknown meastype %s\n'</span>, meastype);
+0050         <span class="keyword">return</span>
+0051     <span class="keyword">end</span>
+0052 
+0053     fprintf(<span class="string">'\n'</span>);
+0054 <span class="keyword">end</span>
+0055 
+0056 <span class="comment">% plot histogram for each period</span>
+0057 thisplot = 1;
+0058 ax = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>, pan);
+0059 <span class="keyword">if</span> ismember(meastype, {<span class="string">'IVDays'</span>})
+0060     h = histogram(ax, brIntChkptPat{:, {colname1}}, <span class="string">'NumBins'</span>, 4);
+0061 <span class="keyword">else</span>
+0062     h = histogram(ax, brIntChkptPat{:, {colname1}});
+0063 <span class="keyword">end</span>
+0064 ax.FontSize = 8;
+0065 ax.FontName = <span class="string">'Arial'</span>;
+0066 title(ax, sprintf(<span class="string">'%s %s %s'</span>, meastype, twtext, period1));
+0067 xlabel(ax, sprintf(<span class="string">'%s %s %s'</span>, meastype, twtext, period1), <span class="string">'FontSize'</span>, 8);
+0068 ylabel(ax, <span class="string">'Count'</span>, <span class="string">'FontSize'</span>, 8);
+0069 
+0070 thisplot = 2;
+0071 ax = subplot(plotsdown, plotsacross, thisplot, <span class="string">'Parent'</span>, pan);
+0072 <span class="keyword">if</span> ismember(meastype, {<span class="string">'IVDays'</span>})
+0073     h = histogram(ax, brIntChkptPat{:, {colname2}}, <span class="string">'NumBins'</span>, 4);
+0074 <span class="keyword">else</span>
+0075     h = histogram(ax, brIntChkptPat{:, {colname2}});
+0076 <span class="keyword">end</span>
+0077     
+0078 ax.FontSize = 8;
+0079 ax.FontName = <span class="string">'Arial'</span>;
+0080 title(ax, sprintf(<span class="string">'%s %s %s'</span>, meastype, twtext, period2));
+0081 xlabel(ax, sprintf(<span class="string">'%s %s %s'</span>, meastype, twtext, period2), <span class="string">'FontSize'</span>, 8);
+0082 ylabel(ax, <span class="string">'Count'</span>, <span class="string">'FontSize'</span>, 8);
+0083 
+0084 <span class="comment">% save plot and close</span>
+0085 <span class="keyword">if</span> exist(<span class="string">'fig'</span>, <span class="string">'var'</span>)
+0086     <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(fig, name, plotsubfolder);
+0087     close(fig);
+0088 <span class="keyword">end</span>
+0089 
+0090 <span class="comment">% calc paired t-test and store results + demographics</span>
+0091 [~, pval] = ttest(brIntChkptPat{:, {colname1}}, brIntChkptPat{:, {colname2}});
+0092 brIntChkptSum.DataType(type)       = {sprintf(<span class="string">'%s%s T-Test'</span>, meastype, twtext)};
+0093 brIntChkptSum.n(type)              = npat;
+0094 brIntChkptSum.Period1Mean(type)    = mean(brIntChkptPat{:, {colname1}});
+0095 brIntChkptSum.Period2Mean(type)    = mean(brIntChkptPat{:, {colname2}});
+0096 brIntChkptSum.Period1StdErr(type)  =  std(brIntChkptPat{:, {colname1}}) / (npat ^ 0.5);
+0097 brIntChkptSum.Period2StdErr(type)  =  std(brIntChkptPat{:, {colname2}}) / (npat ^ 0.5);
+0098 brIntChkptSum.pVal(type)           = pval;</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

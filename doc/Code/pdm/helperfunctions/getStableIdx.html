@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getStableIdx</title>
+  <meta name="keywords" content="getStableIdx">
+  <meta name="description" content="filters indexes corresponding to patient's stable days">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">helperfunctions</a> &gt; getStableIdx.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/helperfunctions&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>getStableIdx
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>filters indexes corresponding to patient's stable days</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [idx2keep, days_t, days_m] = getStableIdx(patient, FEVdata,treatments_table, nprior_t, npost_t, modulators_table, npost_m, filter) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> filters indexes corresponding to patient's stable days
+ 
+ Input:
+ ------
+ patient             -
+ FEVdata             FEV data, uses serial date only
+ treatments_table    ivandmeasures
+ n_prior_t           #days prior to treatment start
+ n_post_t            #days after modulator end
+ modulators_table    brDrugTherapy
+ npost_m             #days after modulator start
+ filter              1 applies t and m, 2 applies t, 3 applies m</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/FEV1variability/analyseFEV1Variability.html" class="code" title="">analyseFEV1Variability</a>	analysis of FEV1 variability with moving average manually implemented</li><li><a href="../../../Code/pdm/FEV1variability/analyseFEV1Variability_old.html" class="code" title="">analyseFEV1Variability_old</a>	analysis of FEV1 variability with smoothing spline and movmean</li><li><a href="../../../Code/pdm/FEV1variability/plotFEV1profiles.html" class="code" title="">plotFEV1profiles</a>	plot FEV1 profiles with modulators and treatments</li><li><a href="../../../Code/pdm/exploration/patientCommitment.html" class="code" title="">patientCommitment</a>	Insights about the amount of FEV1 recordings per patient across the study</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% filters indexes corresponding to patient's stable days</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% Input:</span>
+0004 <span class="comment">% ------</span>
+0005 <span class="comment">% patient             -</span>
+0006 <span class="comment">% FEVdata             FEV data, uses serial date only</span>
+0007 <span class="comment">% treatments_table    ivandmeasures</span>
+0008 <span class="comment">% n_prior_t           #days prior to treatment start</span>
+0009 <span class="comment">% n_post_t            #days after modulator end</span>
+0010 <span class="comment">% modulators_table    brDrugTherapy</span>
+0011 <span class="comment">% npost_m             #days after modulator start</span>
+0012 <span class="comment">% filter              1 applies t and m, 2 applies t, 3 applies m</span>
+0013 
+0014 <span class="comment">% Output: for selected patient</span>
+0015 <span class="comment">% -------</span>
+0016 <span class="comment">% idx2keep          stable days period - over whole FEVdata vector</span>
+0017 <span class="comment">% days_t            treatments' influence time window</span>
+0018 <span class="comment">% days_m            modulators' influence time window</span>
+0019 
+0020 <a name="_sub0" href="#_subfunctions" class="code">function [idx2keep, days_t, days_m] = getStableIdx(patient, FEVdata, </a><span class="keyword">...</span>
+0021     treatments_table, nprior_t, npost_t, modulators_table, npost_m, filter)
+0022 
+0023     <span class="comment">% concatenate days to remove for treatments</span>
+0024     days_t=[];
+0025     treatments_table = treatments_table(treatments_table.SmartCareID == patient,:); <span class="comment">% faster</span>
+0026     <span class="keyword">for</span> i = 1:size(treatments_table,1)
+0027         days_t = [days_t (treatments_table.IVDateNum(i) - nprior_t) <span class="keyword">...</span>
+0028             : (treatments_table.IVStopDateNum(i) + npost_t)];
+0029     <span class="keyword">end</span>
+0030     days_t = unique(days_t); <span class="comment">% remove duplicates</span>
+0031     
+0032     <span class="comment">% idem for modulators</span>
+0033     days_m=[];
+0034     modulators_table = modulators_table(modulators_table.ID == patient, :);
+0035     <span class="keyword">for</span> i = 1:size(modulators_table,1)
+0036         days_m = [days_m modulators_table.DateNum(i): <span class="keyword">...</span>
+0037             modulators_table.DateNum(i) + npost_m];
+0038     <span class="keyword">end</span>
+0039     days_m = unique(days_m); <span class="comment">% remove duplicates</span>
+0040     
+0041     <span class="comment">% create mask with corresponding idx</span>
+0042     <span class="keyword">switch</span> filter
+0043         <span class="keyword">case</span> 1 <span class="comment">% treatments and modulators</span>
+0044             idx2keep = FEVdata(:,1) == patient <span class="keyword">...</span>
+0045                 &amp; not(ismember(FEVdata(:,2), days_t)) <span class="keyword">...</span>
+0046                 &amp; not(ismember(FEVdata(:,2), days_m));
+0047         <span class="keyword">case</span> 2 <span class="comment">% only treatments</span>
+0048             idx2keep = FEVdata(:,1) == patient <span class="keyword">...</span>
+0049                 &amp; not(ismember(FEVdata(:,2), days_t));
+0050         <span class="keyword">case</span> 3 <span class="comment">% only modulators</span>
+0051             idx2keep = FEVdata(:,1) == patient <span class="keyword">...</span>
+0052                 &amp; not(ismember(FEVdata(:,2), days_m));
+0053     <span class="keyword">end</span>
+0054 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of am4PlotsAndSavePredictions</title>
+  <meta name="keywords" content="am4PlotsAndSavePredictions">
+  <meta name="description" content="am4PlotsAndSavePredictions - plots measures prior to">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; am4PlotsAndSavePredictions.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>am4PlotsAndSavePredictions
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>am4PlotsAndSavePredictions - plots measures prior to</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function am4PlotsAndSavePredictions(amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset,overall_pdoffset_all, overall_pdoffset_xAL, hstg, overall_hist, overall_hist_all, overall_hist_xAL, offsets,meancurvemean, normmean, ex_start, thisinter, nmeasures, max_offset, align_wind, study, version) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> am4PlotsAndSavePredictions - plots measures prior to
+ treatment with alignment model predictions and overlaid with the mean
+ curve for visual comparison, as well as plots of the posterior
+ probability distributions by measure</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="plotExStart.html" class="code" title="function [xl, yl] = plotExStart(ax, ex_start, offset, xl, yl, colour, linestyle, linewidth)">plotExStart</a>	plotExStart - plots the predicted exacerbation start plus average</li><li><a href="plotHorizontalLine.html" class="code" title="function [xl, yl] = plotHorizontalLine(ax, yval, xl, yl, colour, linestyle, linewidth)">plotHorizontalLine</a>	plotHotizontalLine - plots a horizontal line</li><li><a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>	plotLatentCurve - plots the latent curve actual and smoothed</li><li><a href="plotMeasurementData.html" class="code" title="function [xl, yl] = plotMeasurementData(ax, days, mdata, xl, yl, measure, colour, linestyle, linewidth, marker, markersize, markerec, markerfc)">plotMeasurementData</a>	plotMeasurementDataAndMean - plots the measurement data along with the mean and</li><li><a href="plotProbDistribution.html" class="code" title="function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc)">plotProbDistribution</a>	plotProbDistribution - plots a prob distribution</li><li><a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>	plotVerticalLine - plots a vertical line</li><li><a href="savePlot.html" class="code" title="function savePlot(f, name)">savePlot</a>	savePlots - saves the figure to png and svp file types</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModel4.html" class="code" title="">runAlignmentModel4</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function am4PlotsAndSavePredictions(amInterventions, amIntrDatacube, measures, pdoffset, overall_pdoffset, </a><span class="keyword">...</span>
+0002     overall_pdoffset_all, overall_pdoffset_xAL, hstg, overall_hist, overall_hist_all, overall_hist_xAL, offsets, <span class="keyword">...</span>
+0003     meancurvemean, normmean, ex_start, thisinter, nmeasures, max_offset, align_wind, study, version)
+0004 
+0005 <span class="comment">% am4PlotsAndSavePredictions - plots measures prior to</span>
+0006 <span class="comment">% treatment with alignment model predictions and overlaid with the mean</span>
+0007 <span class="comment">% curve for visual comparison, as well as plots of the posterior</span>
+0008 <span class="comment">% probability distributions by measure</span>
+0009 
+0010 plotsdown = 9;
+0011 plotsacross = 5;
+0012 mpos = [ 1 2 6 7 ; 3 4 8 9 ; 11 12 16 17 ; 13 14 18 19 ; 21 22 26 27 ; 23 24 28 29 ; 31 32 36 37 ; 33 34 38 39];
+0013 hpos = [ 5 ; 10 ; 15 ; 20 ; 25 ; 30 ; 35 ; 40 ; 45 ; 44 ; 43 ; 42 ; 41 ];
+0014 days = [-1 * (max_offset + align_wind - 1): -1];
+0015 anchor = 0; <span class="comment">% latent curve is to be shifted by offset on the plot</span>
+0016 
+0017 scid = amInterventions.SmartCareID(thisinter);
+0018 name = sprintf(<span class="string">'%s_AM%s Exacerbation %d - ID %d Date %s, Offset %d'</span>, study, version, thisinter, scid, datestr(amInterventions.IVStartDate(thisinter),29), offsets(thisinter));
+0019 fprintf(<span class="string">'%s - Best Offset = %d\n'</span>, name, offsets(thisinter));
+0020 
+0021 [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(name, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0022 
+0023 <span class="keyword">for</span> m = 1:nmeasures
+0024     <span class="keyword">if</span> all(isnan(amIntrDatacube(thisinter, :, m)))
+0025         <span class="keyword">continue</span>;
+0026     <span class="keyword">end</span>
+0027     <span class="comment">% initialise plot areas</span>
+0028     xl = [0 0];
+0029     yl = [min((meancurvemean(1:max_offset + align_wind - 1 - offsets(thisinter), m) + normmean(thisinter, m)) * .99) <span class="keyword">...</span>
+0030           max((meancurvemean(1:max_offset + align_wind - 1 - offsets(thisinter), m) + normmean(thisinter, m)) * 1.01)];
+0031     
+0032     <span class="comment">% create subplot and plot required data arrays</span>
+0033     ax = subplot(plotsdown, plotsacross, mpos(m,:), <span class="string">'Parent'</span>,p);               
+0034     [xl, yl] = <a href="plotMeasurementData.html" class="code" title="function [xl, yl] = plotMeasurementData(ax, days, mdata, xl, yl, measure, colour, linestyle, linewidth, marker, markersize, markerec, markerfc)">plotMeasurementData</a>(ax, days, amIntrDatacube(thisinter, :, m), xl, yl, measures(m,:), [0, 0.65, 1], <span class="string">'-'</span>, 1.0, <span class="string">'o'</span>, 2.0, <span class="string">'blue'</span>, <span class="string">'green'</span>);
+0035     [xl, yl] = <a href="plotHorizontalLine.html" class="code" title="function [xl, yl] = plotHorizontalLine(ax, yval, xl, yl, colour, linestyle, linewidth)">plotHorizontalLine</a>(ax, normmean(thisinter, m), xl, yl, <span class="string">'blue'</span>, <span class="string">'--'</span>, 0.5); <span class="comment">% plot mean</span>
+0036     [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, offsets(thisinter), (meancurvemean(:, m) + normmean(thisinter, m)), xl, yl, <span class="string">'red'</span>, <span class="string">':'</span>, 1.0, anchor);
+0037     [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, offsets(thisinter), smooth(meancurvemean(:, m) + normmean(thisinter, m),5), xl, yl, <span class="string">'red'</span>, <span class="string">'-'</span>, 1.0, anchor);
+0038     [xl, yl] = <a href="plotExStart.html" class="code" title="function [xl, yl] = plotExStart(ax, ex_start, offset, xl, yl, colour, linestyle, linewidth)">plotExStart</a>(ax, ex_start, offsets(thisinter), xl, yl,  <span class="string">'green'</span>, <span class="string">'-'</span>, 0.5);            
+0039     [xl, yl] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax, 0, xl, yl, <span class="string">'cyan'</span>, <span class="string">'-'</span>, 0.5); <span class="comment">% plot treatment start</span>
+0040                     
+0041     xl2 = [0 max_offset-1];
+0042     yl2 = [0 0.25];            
+0043     ax2 = subplot(plotsdown, plotsacross, hpos(m,:),<span class="string">'Parent'</span>,p);           
+0044     [xl2, yl2] = <a href="plotProbDistribution.html" class="code" title="function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc)">plotProbDistribution</a>(ax2, max_offset, pdoffset(m, thisinter,:), xl2, yl2, <span class="string">'o'</span>, 0.5, 2.0, <span class="string">'blue'</span>, <span class="string">'blue'</span>);
+0045     [xl2, yl2] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax2, offsets(thisinter), xl2, yl2, <span class="string">'green'</span>, <span class="string">'-'</span>, 0.5); <span class="comment">% plot predicted offset</span>
+0046                     
+0047     set(gca,<span class="string">'fontsize'</span>,6);
+0048     <span class="keyword">if</span> measures.Mask(m) == 1
+0049         title(sprintf(<span class="string">'%s (%.1f)'</span>, measures.DisplayName{m}, hstg(m, thisinter, offsets(thisinter) + 1)), <span class="string">'BackgroundColor'</span>, <span class="string">'g'</span>);
+0050     <span class="keyword">else</span>
+0051         title(sprintf(<span class="string">'%s (%.1f)'</span>, measures.DisplayName{m}, hstg(m, thisinter, offsets(thisinter) + 1)));
+0052     <span class="keyword">end</span>
+0053                     
+0054 <span class="keyword">end</span>
+0055 
+0056 <span class="comment">% plot the overall posterior distributions</span>
+0057 xl2 = [0 max_offset-1];
+0058 yl2 = [0 0.25];
+0059 ax2 = subplot(plotsdown, plotsacross, hpos(nmeasures + 1,:),<span class="string">'Parent'</span>,p); 
+0060 [xl2, yl2] = <a href="plotProbDistribution.html" class="code" title="function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc)">plotProbDistribution</a>(ax2, max_offset, overall_pdoffset(thisinter,:), xl2, yl2, <span class="string">'o'</span>, 0.5, 2.0, <span class="string">'blue'</span>, <span class="string">'blue'</span>);                
+0061 [xl2, yl2] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax2, offsets(thisinter), xl2, yl2, <span class="string">'green'</span>, <span class="string">'-'</span>, 0.5); <span class="comment">% plot predicted offset</span>
+0062 set(gca,<span class="string">'fontsize'</span>,6);
+0063 title(sprintf(<span class="string">'Overall (%.1f)'</span>, overall_hist(thisinter, offsets(thisinter) + 1)), <span class="string">'BackgroundColor'</span>, <span class="string">'g'</span>);
+0064 
+0065 xl2 = [0 max_offset-1];
+0066 yl2 = [0 0.25];
+0067 ax2 = subplot(plotsdown, plotsacross, hpos(nmeasures + 2,:),<span class="string">'Parent'</span>,p); 
+0068 [xl2, yl2] = <a href="plotProbDistribution.html" class="code" title="function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc)">plotProbDistribution</a>(ax2, max_offset, overall_pdoffset_all(thisinter,:), xl2, yl2, <span class="string">'o'</span>, 0.5, 2.0, <span class="string">'blue'</span>, <span class="string">'blue'</span>);                
+0069 [xl2, yl2] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax2, offsets(thisinter), xl2, yl2, <span class="string">'green'</span>, <span class="string">'-'</span>, 0.5); <span class="comment">% plot predicted offset</span>
+0070 set(gca,<span class="string">'fontsize'</span>,6);
+0071 title(sprintf(<span class="string">'Overall - All (%.1f)'</span>, overall_hist_all(thisinter, offsets(thisinter) + 1)));
+0072 
+0073 xl2 = [0 max_offset-1];
+0074 yl2 = [0 0.25];
+0075 ax2 = subplot(plotsdown, plotsacross, hpos(nmeasures + 3,:),<span class="string">'Parent'</span>,p); 
+0076 [xl2, yl2] = <a href="plotProbDistribution.html" class="code" title="function [xl, yl] = plotProbDistribution(ax, max_offset, pdoffset, xl, yl, marker, linewidth, markersize, markerec, markerfc)">plotProbDistribution</a>(ax2, max_offset, overall_pdoffset_xAL(thisinter,:), xl2, yl2, <span class="string">'o'</span>, 0.5, 2.0, <span class="string">'blue'</span>, <span class="string">'blue'</span>);                
+0077 [xl2, yl2] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax2, offsets(thisinter), xl2, yl2, <span class="string">'green'</span>, <span class="string">'-'</span>, 0.5); <span class="comment">% plot predicted offset</span>
+0078 set(gca,<span class="string">'fontsize'</span>,6);
+0079 title(sprintf(<span class="string">'Overall - xAL (%.1f)'</span>, overall_hist_xAL(thisinter, offsets(thisinter) + 1)));
+0080 
+0081 <span class="comment">% save plot</span>
+0082 <a href="savePlot.html" class="code" title="function savePlot(f, name)">savePlot</a>(f, name);
+0083 close(f);
+0084 
+0085 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of checkPosteriorProbabilities</title>
+  <meta name="keywords" content="checkPosteriorProbabilities">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; checkPosteriorProbabilities.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>checkPosteriorProbabilities
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="am4RemoveFromMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = am4RemoveFromMean(meancurvesumsq, meancurvesum, meancurvecount,amIntrCube, offset, currinter, min_offset, max_offset, align_wind, nmeasures)">am4RemoveFromMean</a>	am4RemoveFromMean - remove an underlying curve from the meancurve (sumsq, sum and count)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 fprintf(<span class="string">'Enter the data for the intervention and measure to be analysed\n'</span>);
+0003 intervention = input(<span class="string">'Intervention Nbr ? '</span>);
+0004 <span class="keyword">if</span> intervention &gt; ninterventions
+0005     fprintf(<span class="string">'Invalid selection\n'</span>);
+0006     <span class="keyword">return</span>;
+0007 <span class="keyword">end</span>
+0008 
+0009 measure = input(<span class="string">'Measure ? '</span>);
+0010 <span class="keyword">if</span> measure &gt; nmeasures
+0011     fprintf(<span class="string">'Invalid selection\n'</span>);
+0012     <span class="keyword">return</span>;
+0013 <span class="keyword">end</span>
+0014 
+0015 temp_meancurvedata = best_meancurvedata;
+0016 temp_meancurvesum = best_meancurvesum;
+0017 temp_meancurvecount = best_meancurvecount;
+0018 temp_meancurvemean = best_meancurvemean;
+0019 temp_meancurvestd = best_meancurvestd;
+0020 
+0021 [temp_meancurvedata, temp_meancurvesum, temp_meancurvecount, temp_meancurvemean, temp_meancurvestd] = <a href="am4RemoveFromMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = am4RemoveFromMean(meancurvesumsq, meancurvesum, meancurvecount,amIntrCube, offset, currinter, min_offset, max_offset, align_wind, nmeasures)">am4RemoveFromMean</a>(temp_meancurvedata, temp_meancurvesum, <span class="keyword">...</span>
+0022         temp_meancurvecount, temp_meancurvemean, temp_meancurvestd, amNormcube, amInterventions, intervention, <span class="keyword">...</span>
+0023         max_offset, align_wind, nmeasures, curveaveragingmethod, smoothingmethod);
+0024 
+0025 scid   = amInterventions.SmartCareID(intervention);
+0026 start  = amInterventions.IVScaledDateNum(intervention);
+0027 <span class="comment">%offset = best_offsets(intervention);</span>
+0028 
+0029 nondaycols1 = 3;
+0030 Day1 = zeros(1,align_wind);
+0031 Day1 = array2table(Day1);
+0032 datawindowtable = table(<span class="string">'Size'</span>,[1 nondaycols1], <span class="keyword">...</span>
+0033     <span class="string">'VariableTypes'</span>, {<span class="string">'double'</span>, <span class="string">'cell'</span>, <span class="string">'double'</span>}, <span class="keyword">...</span>
+0034     <span class="string">'VariableNames'</span>, {<span class="string">'Offset'</span>, <span class="string">'RowType'</span>, <span class="string">'CalcValue'</span>});
+0035 datawindowtable = [datawindowtable Day1];
+0036 <span class="keyword">for</span> i = 1:align_wind
+0037     datawindowtable.Properties.VariableNames{i+nondaycols1} = sprintf(<span class="string">'D_%d'</span>,i);
+0038 <span class="keyword">end</span>
+0039 rowtoadd1 = datawindowtable;
+0040 datawindowtable(1,:) = [];
+0041 
+0042 nondaycols2 = 1;
+0043 Day2 = zeros(1,max_offset);
+0044 Day2 = array2table(Day2);
+0045 offsettable = table(<span class="string">'Size'</span>,[1 nondaycols2], <span class="keyword">...</span>
+0046     <span class="string">'VariableTypes'</span>, {<span class="string">'cell'</span>}, <span class="keyword">...</span>
+0047     <span class="string">'VariableNames'</span>, {<span class="string">'RowType'</span>});
+0048 offsettable = [offsettable Day2];
+0049 <span class="keyword">for</span> i = 1:max_offset
+0050     offsettable.Properties.VariableNames{i+nondaycols2} = sprintf(<span class="string">'O_%d'</span>,i-1);
+0051 <span class="keyword">end</span>
+0052 rowtoadd2 = offsettable;
+0053 offsettable(1,:) = [];
+0054 
+0055 <span class="keyword">for</span> offset = 0:max_offset-1
+0056     rowtoadd1.Offset = offset;
+0057     
+0058     rowtoadd1.RowType = <span class="string">'Raw Data'</span>;
+0059     rowtoadd1.CalcValue = 0;
+0060     rowtoadd1(:,nondaycols1+1:nondaycols1+align_wind) = array2table(amDatacube(scid, start-align_wind:start-1, measure));
+0061     datawindowtable = [datawindowtable ; rowtoadd1];
+0062 
+0063     rowtoadd1.RowType = <span class="string">'Mu'</span>;
+0064     rowtoadd1.CalcValue = 0;
+0065     rowtoadd1(:,nondaycols1+1:nondaycols1+align_wind) = array2table(normmean(intervention, measure));
+0066     datawindowtable = [datawindowtable ; rowtoadd1];
+0067 
+0068     rowtoadd1.RowType = <span class="string">'Normalised Data'</span>;
+0069     rowtoadd1.CalcValue = 0;
+0070     rowtoadd1(:,nondaycols1+1:nondaycols1+align_wind) = array2table(amNormcube(scid, start-align_wind:start-1, measure));
+0071     datawindowtable = [datawindowtable ; rowtoadd1];
+0072 
+0073     rowtoadd1.RowType = <span class="string">'Mean Curve Data'</span>;
+0074     rowtoadd1.CalcValue = 0;
+0075     <span class="keyword">if</span> smoothingmethod == 2
+0076         tempmean = smooth(temp_meancurvemean(:,measure),3);
+0077     <span class="keyword">else</span>
+0078         tempmean = temp_meancurvemean(:,measure);
+0079     <span class="keyword">end</span>
+0080     rowtoadd1(:,nondaycols1+1:nondaycols1+align_wind) = array2table(reshape(tempmean(max_offset+1-offset:max_offset+align_wind-offset), [1 align_wind]));
+0081     datawindowtable = [datawindowtable ; rowtoadd1];
+0082 
+0083     rowtoadd1.RowType = <span class="string">'Sigma'</span>;
+0084     rowtoadd1.CalcValue = 0;
+0085     <span class="keyword">if</span> sigmamethod == 4
+0086         rowtoadd1(:,nondaycols1+1:nondaycols1+align_wind) = array2table(reshape(temp_meancurvestd(max_offset+1-offset:max_offset+align_wind-offset, measure), [1 align_wind]));
+0087     <span class="keyword">else</span>
+0088         rowtoadd1(:,nondaycols1+1:nondaycols1+align_wind) = array2table(normstd(intervention, measure));
+0089     <span class="keyword">end</span>
+0090     datawindowtable = [datawindowtable ; rowtoadd1];
+0091 
+0092     rowtoadd1.RowType = <span class="string">'CalcObjFcn'</span>;
+0093     dist = 0;
+0094     <span class="keyword">for</span> i = 1:align_wind
+0095         <span class="keyword">if</span> ~isnan(amNormcube(scid, start - i, m))
+0096             <span class="keyword">if</span> sigmamethod == 4
+0097                 thisdist = ((tempmean((max_offset + align_wind + 1) - i - offset) - amNormcube(scid, start-i, measure)) ^ 2) <span class="keyword">...</span>
+0098                 / (temp_meancurvestd((max_offset + align_wind + 1) - i - offset, measure) ^ 2);
+0099             <span class="keyword">else</span>
+0100                 thisdist = ((tempmean((max_offset + align_wind + 1) - i - offset) - amNormcube(scid, start-i, measure)) ^ 2) <span class="keyword">...</span>
+0101                 / (normstd(intervention, measure ^ 2));
+0102             <span class="keyword">end</span>
+0103             dist = dist + thisdist;
+0104         <span class="keyword">end</span>
+0105     <span class="keyword">end</span>
+0106     rowtoadd1.CalcValue = dist;
+0107     rowtoadd1(:,nondaycols1+1:nondaycols1+align_wind) = array2table([0]);
+0108     datawindowtable = [datawindowtable ; rowtoadd1];
+0109 
+0110     rowtoadd1.RowType = <span class="string">'ObjFcn'</span>;
+0111     rowtoadd1.CalcValue = hstgorig(measure, intervention,offset+1);
+0112     rowtoadd1(:,nondaycols1+1:nondaycols1+align_wind) = array2table([0]);
+0113     datawindowtable = [datawindowtable ; rowtoadd1];
+0114     
+0115     rowtoadd1.RowType = <span class="string">'ExpObjFcn'</span>;
+0116     rowtoadd1.CalcValue = exp(-1 * (hstgorig(m, j, offset+1) - min(hstgorig(m, j, offset+1))));
+0117     rowtoadd1(:,nondaycols1+1:nondaycols1+align_wind) = array2table([0]);
+0118     datawindowtable = [datawindowtable ; rowtoadd1];
+0119     
+0120     rowtoadd1.RowType = <span class="string">'PosteriorProb'</span>;
+0121     rowtoadd1.CalcValue = best_histogram(measure, intervention,offset+1);
+0122     rowtoadd1(:,nondaycols1+1:nondaycols1+align_wind) = array2table([0]);
+0123     datawindowtable = [datawindowtable ; rowtoadd1];
+0124 
+0125 <span class="keyword">end</span>
+0126 
+0127 rowtoadd2.RowType = <span class="string">'CalcObjFcn'</span>;
+0128 <span class="keyword">for</span> offset = 0:max_offset-1
+0129     rowtoadd2(:,nondaycols2+offset+1) = array2table(datawindowtable.CalcValue(datawindowtable.Offset==offset &amp; ismember(datawindowtable.RowType, {rowtoadd2.RowType})));
+0130 <span class="keyword">end</span>
+0131 offsettable = [offsettable ; rowtoadd2];
+0132 
+0133 rowtoadd2.RowType = <span class="string">'ObjFcn'</span>;
+0134 <span class="keyword">for</span> offset = 0:max_offset-1
+0135     rowtoadd2(:,nondaycols2+offset+1) = array2table(datawindowtable.CalcValue(datawindowtable.Offset==offset &amp; ismember(datawindowtable.RowType, {rowtoadd2.RowType})));
+0136 <span class="keyword">end</span>
+0137 offsettable = [offsettable ; rowtoadd2];
+0138 
+0139 rowtoadd2.RowType = <span class="string">'ExpObjFcn'</span>;
+0140 <span class="keyword">for</span> offset = 0:max_offset-1
+0141     rowtoadd2(:,nondaycols2+offset+1) = array2table(datawindowtable.CalcValue(datawindowtable.Offset==offset &amp; ismember(datawindowtable.RowType, {rowtoadd2.RowType})));
+0142 <span class="keyword">end</span>
+0143 offsettable = [offsettable ; rowtoadd2];
+0144 
+0145 rowtoadd2.RowType = <span class="string">'PosteriorProb'</span>;
+0146 <span class="keyword">for</span> offset = 0:max_offset-1
+0147     rowtoadd2(:,nondaycols2+offset+1) = array2table(datawindowtable.CalcValue(datawindowtable.Offset==offset &amp; ismember(datawindowtable.RowType, {rowtoadd2.RowType})));
+0148 <span class="keyword">end</span>
+0149 offsettable = [offsettable ; rowtoadd2];
+0150 
+0151 
+0152 <span class="keyword">for</span> currinter = 1:ninterventions
+0153     <span class="keyword">for</span> m = 1:nmeasures
+0154         pdoffset(m, currinter, :) = exp(-1 * (hstg(m, currinter, :) - max(hstg(m, currinter, :))));
+0155         pdoffset(m, currinter, :) = pdoffset(m, currinter, :) / sum(pdoffset(m, currinter, :));
+0156     <span class="keyword">end</span>
+0157 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotSuperimposedMeasuresB4Intr</title>
+  <meta name="keywords" content="plotSuperimposedMeasuresB4Intr">
+  <meta name="description" content="plotSuperimposedMeasuresB4Intr - plots the measures for the period prior">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; plotSuperimposedMeasuresB4Intr.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>plotSuperimposedMeasuresB4Intr
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>plotSuperimposedMeasuresB4Intr - plots the measures for the period prior</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function plotSuperimposedMeasuresB4Intr(ax, amnormcubesingleintr, amnormcubesingleintrsmth, xl, yl,measures, max_offset, align_wind, ex_start, offset, plottitle) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> plotSuperimposedMeasuresB4Intr - plots the measures for the period prior
+ to a treatment</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>	plotVerticalLine - plots a vertical line</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMMCPlotSuperimposedMeasuresB4Intr.html" class="code" title="function amEMMCPlotSuperimposedMeasuresB4Intr(amIntrNormcube, amInterventions,measures, max_offset, align_wind, nmeasures, ninterventions, ex_start, plotsubfolder, shiftmode)">amEMMCPlotSuperimposedMeasuresB4Intr</a>	amEMMCPlotSuperimposedAlignedCurves - wrapper around the</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function plotSuperimposedMeasuresB4Intr(ax, amnormcubesingleintr, amnormcubesingleintrsmth, xl, yl, </a><span class="keyword">...</span>
+0002     measures, max_offset, align_wind, ex_start, offset, plottitle)
+0003 
+0004 <span class="comment">% plotSuperimposedMeasuresB4Intr - plots the measures for the period prior</span>
+0005 <span class="comment">% to a treatment</span>
+0006 
+0007 days = -1 * (max_offset + align_wind - 1): -1;
+0008 
+0009 <span class="comment">% comment out/uncomment out one of these depending on whether all measures</span>
+0010 <span class="comment">% wanted or just those used for alignment</span>
+0011 tmpmeasures = measures;
+0012 tmpmeasures = measures(logical(measures.Mask), :);
+0013 tmpnmeasures = size(tmpmeasures, 1);
+0014 
+0015 <span class="comment">% add colour array here and use it in the call to plotLatentCurve</span>
+0016 <span class="comment">% lines only has 7 unique colours, so change line style after this</span>
+0017 colorthresh = 7;
+0018 colors = lines(tmpnmeasures);
+0019 
+0020 <span class="comment">% add legend text cell array</span>
+0021 legendtext = tmpmeasures.DisplayName;
+0022 pridx = ismember(tmpmeasures.DisplayName, {<span class="string">'PulseRate'</span>});
+0023 legendtext{pridx} = sprintf(<span class="string">'%s %s'</span>, legendtext{pridx}, <span class="string">'(Inverted)'</span>);
+0024 legendtext = [legendtext; {<span class="string">'ExStart'</span>}];
+0025 
+0026 <span class="keyword">for</span> m = 1:tmpnmeasures 
+0027     <span class="keyword">if</span> m &lt;= colorthresh
+0028         lstyle = <span class="string">'-'</span>;
+0029     <span class="keyword">else</span>
+0030         lstyle = <span class="string">'-.'</span>;
+0031     <span class="keyword">end</span>
+0032     <span class="comment">%plot(ax, days, amnormcubesingleintr(:, tmpmeasures.Index(m)), ...</span>
+0033     <span class="comment">%    'Color', colors(m, :), ...</span>
+0034     <span class="comment">%    'LineStyle', ':', ...</span>
+0035     <span class="comment">%   'Marker', 'o', ...</span>
+0036     <span class="comment">%    'LineWidth',1,...</span>
+0037     <span class="comment">%    'MarkerSize',2,...</span>
+0038     <span class="comment">%    'MarkerEdgeColor','b',...</span>
+0039     <span class="comment">%    'MarkerFaceColor','g');</span>
+0040 
+0041     plot(ax, days, amnormcubesingleintrsmth(:, tmpmeasures.Index(m)), <span class="keyword">...</span>
+0042         <span class="string">'Color'</span>, colors(m, :), <span class="keyword">...</span>
+0043         <span class="string">'LineStyle'</span>, lstyle, <span class="keyword">...</span>
+0044         <span class="string">'Marker'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0045         <span class="string">'LineWidth'</span>, 1);
+0046     
+0047     xlim(ax, xl);
+0048     ylim(ax, yl);
+0049 <span class="keyword">end</span>
+0050 
+0051 <span class="keyword">if</span> ex_start ~= 0
+0052     [~, ~] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax, ex_start + offset, xl, yl, <span class="string">'black'</span>, <span class="string">':'</span>, 0.5); <span class="comment">% plot ex_start</span>
+0053 <span class="keyword">end</span>
+0054 
+0055 legend(ax, legendtext, <span class="string">'Location'</span>, <span class="string">'southwest'</span>, <span class="string">'FontSize'</span>, 6);
+0056 
+0057 ax.XAxis.FontSize = 6;
+0058 xlabel(ax, <span class="string">'Days before treatment'</span>);
+0059 ax.YAxis.FontSize = 6;
+0060 ylabel(ax, <span class="string">'Number of standard deviation moves'</span>);
+0061 title(ax, plottitle, <span class="string">'FontSize'</span>, 8);
+0062 <span class="keyword">end</span>
+0063</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

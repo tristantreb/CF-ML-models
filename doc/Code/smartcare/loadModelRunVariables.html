@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadModelRunVariables</title>
+  <meta name="keywords" content="loadModelRunVariables">
+  <meta name="description" content="loadModelRunVariables - convenience function to load model run variables">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadModelRunVariables.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadModelRunVariables
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>loadModelRunVariables - convenience function to load model run variables</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [meancurvemean1, meancurvecount1, measures1, min_offset1, max_offset1,align_wind1, nmeasures1, ex_start1, countthreshold1] = loadModelRunVariables(basedir, subfolder, modelrun) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> loadModelRunVariables - convenience function to load model run variables</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="plotAlignedCurveComparison.html" class="code" title="">plotAlignedCurveComparison</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [meancurvemean1, meancurvecount1, measures1, min_offset1, max_offset1, </a><span class="keyword">...</span>
+0002     align_wind1, nmeasures1, ex_start1, countthreshold1] = loadModelRunVariables(basedir, subfolder, modelrun)
+0003 
+0004 <span class="comment">% loadModelRunVariables - convenience function to load model run variables</span>
+0005 
+0006 fprintf(<span class="string">'Loading output from model run1\n'</span>);
+0007 load(fullfile(basedir, subfolder, sprintf(<span class="string">'%s.mat'</span>, modelrun)), <span class="string">'meancurvemean'</span>, <span class="string">'meancurvecount'</span>, <span class="keyword">...</span>
+0008     <span class="string">'measures'</span>, <span class="string">'min_offset'</span>, <span class="string">'max_offset'</span>, <span class="string">'align_wind'</span>, <span class="string">'nmeasures'</span>, <span class="string">'ex_start'</span>, <span class="string">'countthreshold'</span>);
+0009 
+0010 meancurvemean1  = meancurvemean;
+0011 meancurvecount1 = meancurvecount;
+0012 measures1       = measures;
+0013 min_offset1     = min_offset;
+0014 max_offset1     = max_offset;
+0015 align_wind1     = align_wind;
+0016 nmeasures1      = nmeasures;
+0017 ex_start1       = ex_start;
+0018 countthreshold1 = countthreshold;
+0019 
+0020 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

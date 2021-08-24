@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMPlotAndSaveAlignedCurvesRecovery</title>
+  <meta name="keywords" content="amEMPlotAndSaveAlignedCurvesRecovery">
+  <meta name="description" content="amEMPlotAndSaveAlignedCurves - plots the curves pre and post alignment for">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="../index.html">recovery</a> &gt; <a href="index.html">updatedModel</a> &gt; amEMPlotAndSaveAlignedCurvesRecovery.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../../index.html"><img alt="<" border="0" src="../../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery/updatedModel&nbsp;<img alt=">" border="0" src="../../../../right.png"></a></td></tr></table>-->
+
+<h1>amEMPlotAndSaveAlignedCurvesRecovery
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>amEMPlotAndSaveAlignedCurves - plots the curves pre and post alignment for</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>function amEMPlotAndSaveAlignedCurvesRecovery(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets,measures, max_points, offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMPlotAndSaveAlignedCurves - plots the curves pre and post alignment for
+ each measure, and the histogram of offsets</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="amEMPlotAlignedCurveRecovery.html" class="code" title="function amEMPlotAlignedCurveRecovery(ax, mprofile_pre, mmeancurvemean, mmeancurvecount, mmeancurvestd,measure, max_points, offset, align_wind, run_type, ex_start, sigmamethod, anchor, subplottitle)">amEMPlotAlignedCurveRecovery</a>	amEMPlotAlignedCurve - plots a latent curve for a given measure (pre and post alignment)</li><li><a href="amEMPlotOffsetHistogramRecovery.html" class="code" title="function amEMPlotOffsetHistogramRecovery(ax, offsets)">amEMPlotOffsetHistogramRecovery</a>	amEMPlotOffsetHistogram - plots the histogram of offsets for a given</li><li><a href="../../../../Code/smartcare/createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="amEMMCPlotAndSaveAlignedCurvesRecovery.html" class="code" title="function amEMMCPlotAndSaveAlignedCurvesRecovery(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets, latentcurves,measures, max_points, offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder, nlatentcurves)">amEMMCPlotAndSaveAlignedCurvesRecovery</a>	amEMMCPlotAndSaveAlignedCurves - wrapper around the</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function amEMPlotAndSaveAlignedCurvesRecovery(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets, </a><span class="keyword">...</span>
+0002     measures, max_points, offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder)
+0003 
+0004 <span class="comment">% amEMPlotAndSaveAlignedCurves - plots the curves pre and post alignment for</span>
+0005 <span class="comment">% each measure, and the histogram of offsets</span>
+0006 
+0007 <span class="keyword">if</span> (nmeasures + 1) &lt;= 9
+0008     plotsacross = 3;
+0009 <span class="keyword">else</span>
+0010     plotsacross = 4;
+0011 <span class="keyword">end</span>
+0012 plotsdown = ceil((nmeasures + 1) / plotsacross);
+0013 
+0014 plottitle = sprintf(<span class="string">'%s - %s'</span>, plotname, run_type);
+0015 anchor = 1; <span class="comment">% latent curve is to be anchored on the plot (right side at offset.min)</span>
+0016 
+0017 [f, p] = <a href="../../../../Code/smartcare/createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0018 
+0019 <span class="keyword">for</span> m = 1:nmeasures    
+0020     subplottitle = measures.DisplayName{m};
+0021     ax = subplot(plotsdown,plotsacross,m,<span class="string">'Parent'</span>,p);
+0022     <a href="amEMPlotAlignedCurveRecovery.html" class="code" title="function amEMPlotAlignedCurveRecovery(ax, mprofile_pre, mmeancurvemean, mmeancurvecount, mmeancurvestd,measure, max_points, offset, align_wind, run_type, ex_start, sigmamethod, anchor, subplottitle)">amEMPlotAlignedCurveRecovery</a>(ax, profile_pre(:, m), meancurvemean(:, m), meancurvecount(:, m), meancurvestd(:, m), <span class="keyword">...</span>
+0023         measures(m, :), max_points, offset, align_wind, run_type, ex_start, sigmamethod, anchor, subplottitle); 
+0024 <span class="keyword">end</span>
+0025 
+0026 ax = subplot(plotsdown, plotsacross, nmeasures + 1, <span class="string">'Parent'</span>, p);
+0027 <a href="amEMPlotOffsetHistogramRecovery.html" class="code" title="function amEMPlotOffsetHistogramRecovery(ax, offsets)">amEMPlotOffsetHistogramRecovery</a>(ax, offsets);
+0028 
+0029 <span class="comment">% save plot</span>
+0030 <a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0031 close(f);
+0032 
+0033 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

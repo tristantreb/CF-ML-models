@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCInitialiseAlignment</title>
+  <meta name="keywords" content="amEMMCInitialiseAlignment">
+  <meta name="description" content="amEMMCInitialiseAlignment - function to initialise the various variables">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amEMMCInitialiseAlignment.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCInitialiseAlignment
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amEMMCInitialiseAlignment - function to initialise the various variables</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [meancurvesumsq, meancurvesum, meancurvecount, amInterventions, initial_offsets, initial_latentcurve,animatedmeancurvemean, animatedoffsets, animatedlc, hstg, pdoffset, overall_hist, overall_pdoffset, animated_overall_pdoffset,vshift, isOutlier, min_offset, aniterations, run_type] =amEMMCInitialiseAlignment(amIntrCube, amHeldBackcube, amInterventions, measures, max_offset, align_wind,nmeasures, ninterventions, nlatentcurves, runmode, randomseed) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCInitialiseAlignment - function to initialise the various variables
+ used in the alignment process</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMMCAddToMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = amEMMCAddToMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, vshift, currinter, min_offset, max_offset, align_wind, nmeasures, nlatentcurves)">amEMMCAddToMean</a>	amEMMCAddToMean - add an underlying curve to each set of mean curves (sumsq, sum and count)</li><li><a href="amEMMCConvertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = amEMMCConvertFromLogSpaceAndNormalise(distfcn)">amEMMCConvertFromLogSpaceAndNormalise</a>	amEMMCConvertFromLogSpaceAndNormalise - takes the results from a 'distance'</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModelEMMCFcn.html" class="code" title="function runAlignmentModelEMMCFcn(amRunParameters)">runAlignmentModelEMMCFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="runAlignmentModelEMMCFcnSplit.html" class="code" title="function runAlignmentModelEMMCFcnSplit(amRunParameters)">runAlignmentModelEMMCFcnSplit</a>	function to run the alignment model (EM version) given a set of run</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [meancurvesumsq, meancurvesum, meancurvecount, amInterventions, initial_offsets, initial_latentcurve, </a><span class="keyword">...</span>
+0002     animatedmeancurvemean, animatedoffsets, animatedlc, hstg, pdoffset, overall_hist, overall_pdoffset, animated_overall_pdoffset, <span class="keyword">...</span>
+0003     vshift, isOutlier, min_offset, aniterations, run_type] = <span class="keyword">...</span>
+0004     amEMMCInitialiseAlignment(amIntrCube, amHeldBackcube, amInterventions, measures, max_offset, align_wind, <span class="keyword">...</span>
+0005     nmeasures, ninterventions, nlatentcurves, runmode, randomseed)
+0006 
+0007 <span class="comment">% amEMMCInitialiseAlignment - function to initialise the various variables</span>
+0008 <span class="comment">% used in the alignment process</span>
+0009 
+0010 aniterations      = 5000;
+0011 
+0012 meancurvesum      = zeros(nlatentcurves, max_offset + align_wind - 1, nmeasures);
+0013 meancurvesumsq    = zeros(nlatentcurves, max_offset + align_wind - 1, nmeasures);
+0014 meancurvecount    = zeros(nlatentcurves, max_offset + align_wind - 1, nmeasures);
+0015 
+0016 hstg              = zeros(nlatentcurves, nmeasures, ninterventions, max_offset);
+0017 pdoffset          = zeros(nlatentcurves, nmeasures, ninterventions, max_offset);
+0018 overall_hist      = zeros(nlatentcurves, ninterventions, max_offset);
+0019 overall_pdoffset  = zeros(nlatentcurves, ninterventions, max_offset);
+0020 
+0021 vshift            = zeros(nlatentcurves, ninterventions, nmeasures, max_offset);
+0022 
+0023 animatedmeancurvemean      = zeros(nlatentcurves, max_offset + align_wind - 1, nmeasures, aniterations);
+0024 animated_overall_pdoffset  = zeros(nlatentcurves, ninterventions, max_offset, aniterations);
+0025 animatedoffsets            = zeros(ninterventions, aniterations);
+0026 animatedlc                 = zeros(ninterventions, aniterations);
+0027 
+0028 isOutlier         = zeros(nlatentcurves, ninterventions, align_wind, nmeasures, max_offset);
+0029 
+0030 min_offset     = 0; <span class="comment">% start at zero and no longer changes as offset blocking was removed.</span>
+0031 
+0032 <span class="keyword">if</span> runmode == 6
+0033     <span class="comment">% *** need to initialise amInterventions.LatentCurve and also change how ***</span>
+0034     <span class="comment">% *** the pdoffset and overall pdoffset are initialised to include extra ***</span>
+0035     <span class="comment">% *** dimension ***</span>
+0036     <span class="comment">%run_type = 'Pre-selected Start';</span>
+0037     <span class="comment">% save off amInterventions so it doesn't get overwritten</span>
+0038     <span class="comment">%tempamintr = amInterventions;</span>
+0039     <span class="comment">%load(fnmodelrun, 'overall_hist', 'amInterventions');</span>
+0040     <span class="comment">%overall_hstg = overall_hist;</span>
+0041     <span class="comment">%for i = 1:ninterventions</span>
+0042     <span class="comment">%    overall_pdoffset(i,:) = convertFromLogSpaceAndNormalise(overall_hstg(i,:));</span>
+0043     <span class="comment">%end</span>
+0044     <span class="comment">%tempamintr.Offset = amInterventions.Offset;</span>
+0045     <span class="comment">%tempamintr.LatentCurve = amInterventions.LatentCurve;</span>
+0046     <span class="comment">%amInterventions = tempamintr;</span>
+0047 <span class="keyword">elseif</span> runmode == 7 || runmode == 8 || runmode == 10 || runmode == 11
+0048     <span class="keyword">if</span> runmode == 7
+0049         run_type = <span class="string">'O-Uniform LC-FEV1Split PM'</span>;
+0050         ntiles = nlatentcurves;
+0051     <span class="keyword">elseif</span> runmode == 8
+0052         run_type = <span class="string">'O-Uniform LC-Elec_ FEV1Split PM'</span>;
+0053         ntiles = nlatentcurves - 1;
+0054     <span class="keyword">elseif</span> runmode == 10
+0055         run_type = <span class="string">'O-Uniform LC-FEV1Split SP'</span>;
+0056         ntiles = nlatentcurves; 
+0057     <span class="keyword">elseif</span> runmode == 11
+0058         run_type = <span class="string">'O-Uniform LC-Elec_ FEV1Split SP'</span>;
+0059         ntiles = nlatentcurves - 1;
+0060     <span class="keyword">end</span>
+0061     fprintf(<span class="string">'Creating Upper and Lower 50%% splits for FEV1\n'</span>);
+0062     fprintf(<span class="string">'Loading Predictive Model Patient Measures Stats\n'</span>);
+0063     basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0064     subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0065     load(fullfile(basedir, subfolder, <span class="string">'SCpredictivemodelinputs.mat'</span>), <span class="string">'pmPatientMeasStats'</span>);
+0066     npmpatients = size(unique(pmPatientMeasStats.PatientNbr),1);
+0067     mfev1idx  = measures.Index(ismember(measures.DisplayName, <span class="string">'LungFunction'</span>));
+0068     fev1max  = pmPatientMeasStats(pmPatientMeasStats.MeasureIndex == mfev1idx, {<span class="string">'PatientNbr'</span>, <span class="string">'Study'</span>, <span class="string">'ID'</span>, <span class="string">'RobustMax'</span>});
+0069     fev1max = sortrows(fev1max, {<span class="string">'RobustMax'</span>}, <span class="string">'ascend'</span>);
+0070     fev1max.NTile(:) = 0;
+0071     <span class="keyword">for</span> i = 1:npmpatients
+0072         fev1max.NTile(i) = ceil((i * ntiles)/ npmpatients);
+0073     <span class="keyword">end</span>
+0074     fev1max = sortrows(fev1max, {<span class="string">'Study'</span>, <span class="string">'ID'</span>}, <span class="string">'ascend'</span>);
+0075     lc = innerjoin(amInterventions, fev1max, <span class="string">'LeftKeys'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'ID'</span>}, <span class="string">'LeftVariables'</span>, {<span class="string">'SmartCareID'</span>}, <span class="string">'RightVariables'</span>, <span class="string">'NTile'</span>);
+0076     amInterventions.Offset(:) = 0;
+0077     amInterventions.LatentCurve = lc.NTile;
+0078     <span class="keyword">if</span> runmode == 8 || runmode == 11
+0079         amInterventions.LatentCurve(amInterventions.ElectiveTreatment == <span class="string">'Y'</span>) = ntiles + 1;   
+0080     <span class="keyword">end</span>    
+0081 <span class="keyword">elseif</span> runmode == 4 || runmode == 5 || runmode == 9   
+0082     <span class="comment">% populate pdoffset &amp; overall_pdoffset with uniform prior distribution</span>
+0083     
+0084     <span class="comment">% *** need to initialise amInterventions.LatentCurve and also change how ***</span>
+0085     <span class="comment">% *** the pdoffset and overall pdoffset are initialised to include extra ***</span>
+0086     <span class="comment">% *** dimension ***</span>
+0087     rng(randomseed);
+0088     fprintf(<span class="string">'Setting random seed to %d\n'</span>, randomseed);
+0089     run_type = <span class="string">'O-Uniform LC-Random'</span>;
+0090     amInterventions.Offset(:) = 0;
+0091     amInterventions.LatentCurve(:) = randi([1, nlatentcurves], [ninterventions, 1]);
+0092 <span class="keyword">else</span>
+0093     fprintf(<span class="string">'Unsupported runmode for this version of the alignment model\n'</span>);
+0094     <span class="keyword">return</span>;
+0095 <span class="keyword">end</span>
+0096 
+0097 <span class="keyword">for</span> i = 1:ninterventions
+0098     <span class="keyword">if</span> runmode == 9 || runmode == 10 || runmode == 11
+0099         upd = <a href="amEMMCConvertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = amEMMCConvertFromLogSpaceAndNormalise(distfcn)">amEMMCConvertFromLogSpaceAndNormalise</a>(zeros(1, max_offset)) / (nlatentcurves + 2);
+0100         <span class="keyword">for</span> m = 1:nmeasures
+0101             <span class="keyword">for</span> lc = 1:nlatentcurves
+0102                 pdoffset(lc, m, i, :) = upd;
+0103             <span class="keyword">end</span>
+0104             pdoffset(amInterventions.LatentCurve(i), m, i, :) = upd * 3;   
+0105         <span class="keyword">end</span>
+0106         <span class="keyword">for</span> lc = 1:nlatentcurves
+0107             overall_pdoffset(lc, i,:) = upd;
+0108         <span class="keyword">end</span>
+0109         overall_pdoffset(amInterventions.LatentCurve(i), i, :) = upd * 3;
+0110     <span class="keyword">else</span>
+0111         <span class="keyword">for</span> m = 1:nmeasures
+0112             pdoffset(amInterventions.LatentCurve(i), m, i, :) = <a href="amEMMCConvertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = amEMMCConvertFromLogSpaceAndNormalise(distfcn)">amEMMCConvertFromLogSpaceAndNormalise</a>(zeros(1, max_offset));
+0113         <span class="keyword">end</span>
+0114         <span class="keyword">if</span> runmode == 5
+0115             overall_pdoffset(:, i, :) = 0;
+0116             overall_pdoffset(amInterventions.LatentCurve(i), i, 1) = 1;
+0117         <span class="keyword">else</span>
+0118             overall_pdoffset(amInterventions.LatentCurve(i), i, :) = <a href="amEMMCConvertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = amEMMCConvertFromLogSpaceAndNormalise(distfcn)">amEMMCConvertFromLogSpaceAndNormalise</a>(zeros(1, max_offset));
+0119         <span class="keyword">end</span>
+0120     <span class="keyword">end</span>
+0121 <span class="keyword">end</span>
+0122 
+0123 initial_offsets = amInterventions.Offset;
+0124 initial_latentcurve = amInterventions.LatentCurve;
+0125 
+0126 animated_overall_pdoffset(:, :, :, 1) = overall_pdoffset;
+0127 
+0128 <span class="comment">% calculate initial mean curve over all interventions &amp; prior prob</span>
+0129 <span class="comment">% distribution for offsets</span>
+0130 <span class="keyword">for</span> i = 1:ninterventions
+0131     [meancurvesumsq, meancurvesum, meancurvecount] = <a href="amEMMCAddToMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = amEMMCAddToMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, vshift, currinter, min_offset, max_offset, align_wind, nmeasures, nlatentcurves)">amEMMCAddToMean</a>(meancurvesumsq, meancurvesum, meancurvecount, <span class="keyword">...</span>
+0132         overall_pdoffset, amIntrCube, amHeldBackcube, vshift, i, min_offset, max_offset, align_wind, nmeasures, nlatentcurves);
+0133 <span class="keyword">end</span>
+0134 
+0135 <span class="keyword">end</span>
+0136 
+0137</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

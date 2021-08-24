@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calcSmartCareDataStats</title>
+  <meta name="keywords" content="calcSmartCareDataStats">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; calcSmartCareDataStats.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>calcSmartCareDataStats
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 clc; clear; close;
+0003 
+0004 tic
+0005 fprintf(<span class="string">'Loading Clinical data\n'</span>);
+0006 load(<span class="string">'clinicaldata.mat'</span>);
+0007 fprintf(<span class="string">'Loading SmartCare measurement data\n'</span>);
+0008 load(<span class="string">'smartcaredata.mat'</span>);
+0009 toc
+0010 
+0011 <span class="comment">% handle duplicates - first analyse how many by recording type</span>
+0012 fprintf(<span class="string">'Handling duplicates - first look at demographics of duplicates\n'</span>);
+0013 physdata = sortrows(physdata, {<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'DateNum'</span>}, <span class="string">'ascend'</span>);
+0014 t = physdata(:,:);
+0015 [tunique, tI, tJ] = unique(t(:,{<span class="string">'SmartCareID'</span>, <span class="string">'RecordingType'</span>, <span class="string">'DateNum'</span>}));
+0016 
+0017 number = zeros(size(tunique,1),5);
+0018 number = array2table(number);
+0019 number.Properties.VariableNames{1} = <span class="string">'Count'</span>;
+0020 number.Properties.VariableNames{2} = <span class="string">'Mean'</span>;
+0021 number.Properties.VariableNames{3} = <span class="string">'Std'</span>;
+0022 number.Properties.VariableNames{4} = <span class="string">'Min'</span>;
+0023 number.Properties.VariableNames{5} = <span class="string">'Max'</span>;
+0024 tunique = [tunique number];
+0025 
+0026 physdupes = physdata;
+0027 physdupes(:,:) = [];
+0028 <span class="comment">%for i = 1:size(tunique,1)</span>
+0029 <span class="keyword">for</span> i = 1:1
+0030     idx = find(tJ==i);
+0031     tunique.Count(i) = size(idx,1);
+0032     <span class="keyword">if</span> size(idx,1) &gt; 1
+0033         <span class="keyword">switch</span> tunique.RecordingType{i}
+0034             <span class="keyword">case</span> <span class="string">'ActivityRecording'</span>
+0035                 tunique.Mean(i) = mean(t.Activity_Steps(idx));
+0036                 tunique.Std(i) = std(t.Activity_Steps(idx));
+0037                 tunique.Min(i) = min(t.Activity_Steps(idx));
+0038                 tunique.Max(i) = max(t.Activity_Steps(idx));
+0039             <span class="keyword">case</span> {<span class="string">'CoughRecording'</span>,<span class="string">'SleepActivityRecording'</span>,<span class="string">'WellnessRecording'</span>}
+0040                 tunique.Mean(i) = mean(t.Rating(idx));
+0041                 tunique.Std(i) = std(t.Rating(idx));
+0042                 tunique.Min(i) = min(t.Rating(idx));
+0043                 tunique.Max(i) = max(t.Rating(idx));
+0044             <span class="keyword">case</span> <span class="string">'LungFunctionRecording'</span>
+0045                 tunique.Mean(i) = mean(t.FEV1_(idx));
+0046                 tunique.Std(i) = std(t.FEV1_(idx));
+0047                 tunique.Min(i) = min(t.FEV1_(idx));
+0048                 tunique.Max(i) = max(t.FEV1_(idx));
+0049             <span class="keyword">case</span> <span class="string">'O2SaturationRecording'</span>
+0050                 tunique.Mean(i) = mean(t.O2Saturation(idx));
+0051                 tunique.Std(i) = std(t.O2Saturation(idx));
+0052                 tunique.Min(i) = min(t.O2Saturation(idx));
+0053                 tunique.Max(i) = max(t.O2Saturation(idx));
+0054             <span class="keyword">case</span> <span class="string">'PulseRateRecording'</span>
+0055                 tunique.Mean(i) = mean(t.Pulse_BPM_(idx));
+0056                 tunique.Std(i) = std(t.Pulse_BPM_(idx));
+0057                 tunique.Min(i) = min(t.Pulse_BPM_(idx));
+0058                 tunique.Max(i) = max(t.Pulse_BPM_(idx));
+0059             <span class="keyword">case</span> <span class="string">'SputumSampleRecording'</span>
+0060                 tunique.Mean(i) = 0;
+0061                 tunique.Std(i) = 0;
+0062                 tunique.Min(i) = 0;
+0063                 tunique.Max(i) = 0;
+0064             <span class="keyword">case</span> <span class="string">'TemperatureRecording'</span>
+0065                 tunique.Mean(i) = mean(t.Temp_degC_(idx));
+0066                 tunique.Std(i) = std(t.Temp_degC_(idx));
+0067                 tunique.Min(i) = min(t.Temp_degC_(idx));
+0068                 tunique.Max(i) = max(t.Temp_degC_(idx));
+0069             <span class="keyword">case</span> <span class="string">'WeightRecording'</span>
+0070                 tunique.Mean(i) = mean(t.WeightInKg(idx));
+0071                 tunique.Std(i) = std(t.WeightInKg(idx));
+0072                 tunique.Min(i) = min(t.WeightInKg(idx));
+0073                 tunique.Max(i) = max(t.WeightInKg(idx));
+0074             <span class="keyword">otherwise</span>
+0075                 mmean = -1;
+0076                 mstd = -1;
+0077                 mmin = -1;
+0078                 mmax = -1; 
+0079         <span class="keyword">end</span>
+0080         physdupes = [physdupes;t(idx,:)];
+0081     <span class="keyword">end</span>
+0082     <span class="keyword">if</span> (round(i/1000) == i/1000)
+0083             fprintf(<span class="string">'Processed %5d rows\n'</span>, i);
+0084     <span class="keyword">end</span> 
+0085 <span class="keyword">end</span>
+0086 toc
+0087 fprintf(<span class="string">'\n'</span>); 
+0088</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

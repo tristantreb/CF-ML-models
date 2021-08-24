@@ -1,0 +1,182 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of loadclimbclinicaldata</title>
+  <meta name="keywords" content="loadclimbclinicaldata">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; loadclimbclinicaldata.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>loadclimbclinicaldata
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createClimbClinicalTables.html" class="code" title="function [clPatient, clAdmissions, clAntibiotics, clClinicVisits, clOtherVisits,clCRP, clPFT, clMicrobiology, clHghtWght, clOthClinMeas, clEndStudy] = createClimbClinicalTables(nrows)">createClimbClinicalTables</a>	createClimbClinicalTables - creates empty copies of all the clinical</li><li><a href="getClimbAntibioticNameTable.html" class="code" title="function [clABTable] = getClimbAntibioticNameTable()">getClimbAntibioticNameTable</a>	getClimbAntibioticNameTable - returns a table with the antibiotic names and</li><li><a href="getListOfClimbHospPatFiles.html" class="code" title="function [patfilelist] = getListOfClimbHospPatFiles(basedir, subfolder)">getListOfClimbHospPatFiles</a>	getListOfClimbHospPatFiles - returns a cell array containing the list of</li><li><a href="getListOfClimbHospitals.html" class="code" title="function [hosplist] = getListofClimbHospitals()">getListOfClimbHospitals</a>	getListofClimbHospitals - returns a table containing the acronyms</li><li><a href="loadClimbClinDataForPatient.html" class="code" title="function [cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits, cdPFT, cdMicrobiology, cdHghtWght, cdOthClinMeas] =loadClimbClinDataForPatient(cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits, cdPFT, cdMicrobiology,cdHghtWght, cdOthClinMeas, clABNameTable, patfile, basedir, subfolder, userid)">loadClimbClinDataForPatient</a>	loadClimbClinDataForPatient - populate the clinical data tables for a given</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 clear; clc; close all;
+0002 
+0003 study = <span class="string">'CL'</span>;
+0004 
+0005 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0006 subfolder = sprintf(<span class="string">'DataFiles/%s/Proformas final'</span>, study);
+0007 
+0008 [clABNameTable] = <a href="getClimbAntibioticNameTable.html" class="code" title="function [clABTable] = getClimbAntibioticNameTable()">getClimbAntibioticNameTable</a>();
+0009 [clPatient, clAdmissions, clAntibiotics, clClinicVisits, clOtherVisits, clCRP, clPFT, clMicrobiology, clHghtWght, clOthClinMeas, clEndStudy] = <a href="createClimbClinicalTables.html" class="code" title="function [clPatient, clAdmissions, clAntibiotics, clClinicVisits, clOtherVisits,clCRP, clPFT, clMicrobiology, clHghtWght, clOthClinMeas, clEndStudy] = createClimbClinicalTables(nrows)">createClimbClinicalTables</a>(0);
+0010 userid = 301;
+0011 
+0012 tic
+0013 <span class="comment">% get list of Project Climb hospitals</span>
+0014 cbhosp = <a href="getListOfClimbHospitals.html" class="code" title="function [hosplist] = getListofClimbHospitals()">getListOfClimbHospitals</a>();
+0015 
+0016 
+0017 
+0018 <span class="comment">% for each hospital, get the list of patient files</span>
+0019 <span class="keyword">for</span> i = 1:size(cbhosp, 1)
+0020     tmpfolder = sprintf(<span class="string">'%s/%s'</span>, subfolder, cbhosp.Acronym{i});
+0021     patfilelist = <a href="getListOfClimbHospPatFiles.html" class="code" title="function [patfilelist] = getListOfClimbHospPatFiles(basedir, subfolder)">getListOfClimbHospPatFiles</a>(basedir, tmpfolder);
+0022     <span class="keyword">for</span> p = 1:size(patfilelist, 1)
+0023         <span class="comment">% for each patient file, extract the data and store in the clinical</span>
+0024         <span class="comment">% data tables</span>
+0025         [clPatient, clAdmissions, clAntibiotics, clClinicVisits, clPFT, clMicrobiology, clHghtWght, clOthClinMeas] = <a href="loadClimbClinDataForPatient.html" class="code" title="function [cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits, cdPFT, cdMicrobiology, cdHghtWght, cdOthClinMeas] =loadClimbClinDataForPatient(cdPatient, cdAdmissions, cdAntibiotics, cdClinicVisits, cdPFT, cdMicrobiology,cdHghtWght, cdOthClinMeas, clABNameTable, patfile, basedir, subfolder, userid)">loadClimbClinDataForPatient</a>(clPatient, clAdmissions, clAntibiotics, clClinicVisits, clPFT, clMicrobiology, clHghtWght, clOthClinMeas, clABNameTable, patfilelist{p}, basedir, tmpfolder, userid);
+0026         userid = userid + 1;
+0027     <span class="keyword">end</span> 
+0028 <span class="keyword">end</span>
+0029 
+0030 <span class="comment">% sort rows</span>
+0031 clAdmissions   = sortrows(clAdmissions,   {<span class="string">'ID'</span>, <span class="string">'Admitted'</span>});
+0032 clAntibiotics  = sortrows(clAntibiotics,  {<span class="string">'ID'</span>, <span class="string">'StartDate'</span>, <span class="string">'AntibioticName'</span>});
+0033 clClinicVisits = sortrows(clClinicVisits, {<span class="string">'ID'</span>, <span class="string">'AttendanceDate'</span>});
+0034 clPFT          = sortrows(clPFT,          {<span class="string">'ID'</span>, <span class="string">'LungFunctionDate'</span>});
+0035 clMicrobiology = sortrows(clMicrobiology, {<span class="string">'ID'</span>, <span class="string">'DateMicrobiology'</span>});
+0036 clHghtWght     = sortrows(clHghtWght,     {<span class="string">'ID'</span>, <span class="string">'MeasDate'</span>});
+0037 
+0038 toc
+0039 fprintf(<span class="string">'\n'</span>);
+0040 
+0041 <span class="comment">% add checks for data integrity issues</span>
+0042 <span class="comment">% cdPatient</span>
+0043 <span class="comment">%      - zero/missing height, weight, predictedFEV1, FEV1SetAs - summarise</span>
+0044 <span class="comment">%      list of patients (ignore lung function where Too Young == 'Yes'</span>
+0045 <span class="comment">%      - PredictedFEV1 &gt; 6l</span>
+0046 <span class="comment">%      - Study Date &lt; Jun 2016 or &gt; Jun 2019</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">% otherTables</span>
+0049 <span class="comment">%      - Dates &lt; Jun 2016 or &gt; Jun 2019</span>
+0050 <span class="comment">%      - zero height/weight measures</span>
+0051 <span class="comment">%      - values out of tolerance (eg height &gt; 200cm or &lt; 50cm,</span>
+0052 <span class="comment">%      weight &gt; 75kg or &lt; 10kg</span>
+0053 
+0054 <span class="comment">% potentially replace codes with decoded values for admission reason,</span>
+0055 <span class="comment">% antibiotics etc</span>
+0056 
+0057 idx = clPFT.FEV1 == 0;
+0058 fprintf(<span class="string">'Removing %d zero PFT Clinical Measurements\n'</span>, sum(idx));
+0059 clPFT(idx,:) = [];
+0060 
+0061 idx =  clPFT.FEV1 &gt; 4;
+0062 fprintf(<span class="string">'Removing %d Anomalous PFT Clinical Measurements (&gt;4l)\n'</span>, sum(idx));
+0063 clPFT(idx,:) = [];
+0064 
+0065 <span class="comment">% admission data</span>
+0066 idx = isnat(clAdmissions.Admitted) | isnat(clAdmissions.Discharge);
+0067 fprintf(<span class="string">'Found %d Admissions with blank dates\n'</span>, sum(idx));
+0068 <span class="keyword">if</span> sum(idx) &gt; 0
+0069     clAdmissions(idx,:)
+0070     <span class="comment">%clAdmissions(idx, :) = [];</span>
+0071 <span class="keyword">end</span>
+0072 
+0073 idx = clAdmissions.Discharge &lt; clAdmissions.Admitted;
+0074 fprintf(<span class="string">'Found %d Admissions with Discharge before Admission\n'</span>, sum(idx));
+0075 <span class="keyword">if</span> sum(idx) &gt; 0
+0076     clAdmissions(idx,:)
+0077 <span class="keyword">end</span>
+0078 
+0079 idx = days(clAdmissions.Discharge - clAdmissions.Admitted) &gt; 30;
+0080 fprintf(<span class="string">'Found %d Admissions &gt; 1 month duration\n'</span>, sum(idx));
+0081 <span class="keyword">if</span> sum(idx) &gt; 0
+0082     clAdmissions(idx,:)
+0083     <span class="comment">%clAdmissions(idx, :) = [];</span>
+0084 <span class="keyword">end</span>
+0085 
+0086 <span class="comment">% antibiotics data</span>
+0087 idx = isnat(clAntibiotics.StartDate) | isnat(clAntibiotics.StopDate);
+0088 fprintf(<span class="string">'Found %d Antibiotics with blank dates\n'</span>, sum(idx));
+0089 <span class="keyword">if</span> sum(idx) &gt; 0
+0090     clAntibiotics(idx,:)
+0091     <span class="comment">%clAntibiotics(idx, :) = [];</span>
+0092 <span class="keyword">end</span>
+0093 
+0094 idx = clAntibiotics.StopDate &lt; clAntibiotics.StartDate;
+0095 fprintf(<span class="string">'Found %d Antibiotic Treatments with Stop Date before Start Date\n'</span>, sum(idx));
+0096 <span class="keyword">if</span> sum(idx) &gt; 0
+0097     clAntibiotics(idx,:)
+0098 <span class="keyword">end</span>
+0099 
+0100 idx = days(clAntibiotics.StopDate - clAntibiotics.StartDate) &gt; 30;
+0101 fprintf(<span class="string">'Found %d Antibiotics &gt; 1 month duration\n'</span>, sum(idx));
+0102 <span class="keyword">if</span> sum(idx) &gt; 0
+0103     clAntibiotics(idx,:)
+0104     <span class="comment">%clAntibiotics(idx, :) = [];</span>
+0105 <span class="keyword">end</span>
+0106 
+0107 <span class="comment">% find any treatments that finished before the study start date for each</span>
+0108 <span class="comment">% patient</span>
+0109 tempab = join(clAntibiotics, clPatient, <span class="string">'LeftKeys'</span>, <span class="string">'ID'</span>, <span class="string">'RightKeys'</span>, <span class="string">'ID'</span>, <span class="string">'RightVariables'</span>, {<span class="string">'StudyNumber'</span>, <span class="string">'StudyDate'</span>});
+0110 idx = tempab.StopDate &lt; tempab.StudyDate;
+0111 fprintf(<span class="string">'\n'</span>);
+0112 fprintf(<span class="string">'Deleting %d antibiotic treatments before study start'</span>, sum(idx));
+0113 clAntibiotics(idx,:) = [];
+0114 
+0115 tic
+0116 subfolder = <span class="string">'ExcelFiles'</span>;
+0117 outputfilename = <span class="string">'CLantibiotictreatments.xlsx'</span>;
+0118 fprintf(<span class="string">'\n'</span>);
+0119 fprintf(<span class="string">'Saving antibiotics treatments to excel file %s\n'</span>, outputfilename);
+0120 writetable(clAntibiotics(~ismember(clAntibiotics.Route, <span class="string">'IV'</span>), :), fullfile(basedir, subfolder,outputfilename), <span class="string">'Sheet'</span>, <span class="string">'Oral'</span>);
+0121 writetable(clAntibiotics(ismember(clAntibiotics.Route, <span class="string">'IV'</span>), :), fullfile(basedir, subfolder,outputfilename), <span class="string">'Sheet'</span>, <span class="string">'IV'</span>);
+0122 writetable(tempab(idx,:), fullfile(basedir, subfolder,outputfilename), <span class="string">'Sheet'</span>, <span class="string">'ABbeforeStudyStart'</span>);
+0123 
+0124 toc
+0125 
+0126 tic
+0127 fprintf(<span class="string">'\n'</span>);
+0128 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0129 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0130 outputfilename = <span class="string">'climbclinicaldata.mat'</span>;
+0131 fprintf(<span class="string">'Saving output variables to file %s\n'</span>, outputfilename);
+0132 save(fullfile(basedir, subfolder,outputfilename), <span class="string">'clPatient'</span>, <span class="string">'clMicrobiology'</span>, <span class="string">'clClinicVisits'</span>, <span class="keyword">...</span>
+0133     <span class="string">'clOtherVisits'</span>,<span class="string">'clPFT'</span>, <span class="string">'clHghtWght'</span>, <span class="string">'clAdmissions'</span>, <span class="string">'clAntibiotics'</span>, <span class="string">'clCRP'</span>, <span class="string">'clOthClinMeas'</span>, <span class="string">'clEndStudy'</span>, <span class="string">'clABNameTable'</span>);
+0134 toc
+0135</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

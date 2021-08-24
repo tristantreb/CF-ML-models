@@ -1,0 +1,304 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of visualiseExacerbationForPaperFcn2</title>
+  <meta name="keywords" content="visualiseExacerbationForPaperFcn2">
+  <meta name="description" content="visualiseExacerbationForPaperFcn - plots measures around an exacerbation">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; visualiseExacerbationForPaperFcn2.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>visualiseExacerbationForPaperFcn2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>visualiseExacerbationForPaperFcn - plots measures around an exacerbation</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function visualiseExacerbationForPaperFcn2(amDatacube, amInterventions, measures, nmeasures, npatients, study) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> visualiseExacerbationForPaperFcn - plots measures around an exacerbation
+ time</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="formatTexDisplayMeasure.html" class="code" title="function [displaynameformatted] = formatTexDisplayMeasure(displaymeasure)">formatTexDisplayMeasure</a>	formatTexDisplayMeasure - adds final formatting for displaying measure name</li><li><a href="getColourForMeasure.html" class="code" title="function [smcolour, rwcolour] = getColourForMeasure(displaymeasure)">getColourForMeasure</a>	getColorForMeasure - returns the RGB value of the colour for a given</li><li><a href="getUnitsForMeasure.html" class="code" title="function [units] = getUnitsForMeasure(displaymeasure)">getUnitsForMeasure</a>	getUnitsForMeasure - returns the units for a given measure</li><li><a href="plotFillArea.html" class="code" title="function plotFillArea(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillArea</a>	plotFillArea - plots a shaded area on the graph (eg for confidence bounds</li><li><a href="plotFillAreaForPaper.html" class="code" title="function plotFillAreaForPaper(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillAreaForPaper</a>	plotFillAreaForPaper - plots a shaded area on the graph</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li><li><a href="setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>	setMinYDisplayRangeForMeasure - sets the minimum range for Y axis for</li><li><a href="setTicks.html" class="code" title="function [ticks] = setTicks(minval, maxval, nticks)">setTicks</a>	setTicks - create an array of ticks for a plot axis</li><li><a href="setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>	setYDisplayRange - function to scale y axis of plots appropriately</li><li><a href="xb25mean.html" class="code" title="function y = xb25mean(x)">xb25mean</a>	xb25mean - returns the mean of the data points excluding the bottom 25% in x (sorted by</li><li><a href="xb25std.html" class="code" title="function y = xb25std(x)">xb25std</a>	xb25std - returns the std of the data points excluding the bottom 25% in x (sorted by</li><li><a href="xu25mean.html" class="code" title="function y = xu25mean(x)">xu25mean</a>	xu25mean - returns the mean of the data points excluding the upper 25% in x (sorted by</li><li><a href="xu25std.html" class="code" title="function y = xu25std(x)">xu25std</a>	xu25std - returns the std of the data points excluding the upper 25% in x (sorted by</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function visualiseExacerbationForPaperFcn2(amDatacube, amInterventions, measures, nmeasures, npatients, study)</a>
+0002 
+0003 <span class="comment">% visualiseExacerbationForPaperFcn - plots measures around an exacerbation</span>
+0004 <span class="comment">% time</span>
+0005 
+0006 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0007 subfolder = sprintf(<span class="string">'Plots/%s'</span>, study);
+0008 <span class="keyword">if</span> ~exist(strcat(basedir, subfolder), <span class="string">'dir'</span>)
+0009     mkdir(strcat(basedir, subfolder));
+0010 <span class="keyword">end</span>
+0011 
+0012 
+0013 titlefontsize = 14;
+0014 labelfontsize = 12;
+0015 axisfontsize = 10;
+0016 unitfontsize = 10;
+0017 
+0018 widthinch = 6;
+0019 heightinch = 3.5;
+0020 name = <span class="string">''</span>;
+0021 singlehght = 1/5.5;
+0022 halfhght = singlehght * 0.5;
+0023 doublehght = singlehght * 2;
+0024 twoandhalfhght = singlehght * 2.5;
+0025 triplehght = singlehght * 3;
+0026 plotwidth  = 0.85/2;
+0027 labelwidth = 0.15;
+0028 
+0029 ntitles = 3;
+0030 nlabels = 2;
+0031 nplots = 4;
+0032 nfooters = 3;
+0033 
+0034 typearray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+0035 
+0036 typehght = [singlehght, singlehght, singlehght, doublehght, doublehght, doublehght, doublehght, doublehght, doublehght, halfhght, halfhght, halfhght];
+0037 
+0038 imagefilename = sprintf(<span class="string">'%s - Early and Late Exacerbation Examples'</span>, study);
+0039 
+0040 [f, p] = <a href="createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(name, widthinch, heightinch);
+0041 
+0042 currhght = 1.0;
+0043 subsetintr = [6, 1];
+0044 subsetmeasures = {<span class="string">'Cough'</span>, <span class="string">'Wellness'</span>};
+0045 intridx = ismember(1:size(amInterventions, 1), subsetintr);
+0046 measidx = ismember(measures.DisplayName, subsetmeasures);
+0047 scids   = amInterventions.SmartCareID(intridx);
+0048 scididx = ismember(1:npatients, scids);
+0049 
+0050 miny = min(min(min(amDatacube(scididx, :, measidx), [], 1, <span class="string">'omitnan'</span>), [], 2, <span class="string">'omitnan'</span>), [], 3, <span class="string">'omitnan'</span>);
+0051 maxy = max(max(max(amDatacube(scididx, :, measidx), [], 1, <span class="string">'omitnan'</span>), [], 2, <span class="string">'omitnan'</span>), [], 3, <span class="string">'omitnan'</span>);
+0052 
+0053 
+0054 <span class="keyword">for</span> i = 1:(ntitles + nlabels + nplots + nfooters)
+0055     type = typearray(i);
+0056     <span class="keyword">if</span> type == 1
+0057         <span class="comment">% title 1</span>
+0058         currhght = currhght - typehght(type);
+0059         sp(i) = uipanel(<span class="string">'Parent'</span>, p, <span class="keyword">...</span>
+0060                         <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0061                         <span class="string">'BackgroundColor'</span>, <span class="string">'white'</span>, <span class="keyword">...</span>
+0062                         <span class="string">'OuterPosition'</span>, [0, currhght, labelwidth, typehght(type)]);
+0063     <span class="keyword">elseif</span> type == 2 || type == 3
+0064         <span class="comment">% title 2 &amp; 3</span>
+0065         <span class="keyword">if</span> type ==  2
+0066             displaytext = <span class="string">'Early'</span>;
+0067             afrom = labelwidth;
+0068             awidth = plotwidth;
+0069         <span class="keyword">elseif</span> type == 3
+0070             displaytext = <span class="string">'Late'</span>;
+0071             afrom = labelwidth + plotwidth;
+0072             awidth = plotwidth;
+0073         <span class="keyword">end</span>   
+0074         sp(i) = uipanel(<span class="string">'Parent'</span>, p, <span class="keyword">...</span>
+0075                         <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0076                         <span class="string">'BackgroundColor'</span>, <span class="string">'white'</span>, <span class="keyword">...</span>
+0077                         <span class="string">'OuterPosition'</span>, [afrom, currhght, awidth, typehght(type)]);
+0078         annotation(sp(i), <span class="string">'textbox'</span>,  <span class="keyword">...</span>
+0079                         <span class="string">'String'</span>, displaytext, <span class="keyword">...</span>
+0080                         <span class="string">'Interpreter'</span>, <span class="string">'tex'</span>, <span class="keyword">...</span>
+0081                         <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="keyword">...</span>
+0082                         <span class="string">'Position'</span>, [0, 0, 1, 1], <span class="keyword">...</span>
+0083                         <span class="string">'HorizontalAlignment'</span>, <span class="string">'center'</span>, <span class="keyword">...</span>
+0084                         <span class="string">'VerticalAlignment'</span>, <span class="string">'middle'</span>, <span class="keyword">...</span>
+0085                         <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0086                         <span class="string">'FontSize'</span>, labelfontsize, <span class="keyword">...</span>
+0087                         <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+0088     <span class="keyword">elseif</span> type == 4 || type == 7
+0089         <span class="comment">% label</span>
+0090         currhght = currhght - typehght(type);
+0091         sp(i) = uipanel(<span class="string">'Parent'</span>, p, <span class="keyword">...</span>
+0092                         <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0093                         <span class="string">'BackgroundColor'</span>, <span class="string">'white'</span>, <span class="keyword">...</span>
+0094                         <span class="string">'OuterPosition'</span>, [0, currhght, labelwidth, typehght(type)]);
+0095         <span class="keyword">if</span> type == 4
+0096             ltext = subsetmeasures{1};
+0097         <span class="keyword">elseif</span> type == 7
+0098             ltext = subsetmeasures{2};
+0099         <span class="keyword">end</span>
+0100         displaytext = {<a href="formatTexDisplayMeasure.html" class="code" title="function [displaynameformatted] = formatTexDisplayMeasure(displaymeasure)">formatTexDisplayMeasure</a>(ltext); sprintf(<span class="string">'\\fontsize{%d} (%s)'</span>, unitfontsize, <a href="getUnitsForMeasure.html" class="code" title="function [units] = getUnitsForMeasure(displaymeasure)">getUnitsForMeasure</a>(ltext))};
+0101         
+0102         annotation(sp(i), <span class="string">'textbox'</span>,  <span class="keyword">...</span>
+0103                         <span class="string">'String'</span>, displaytext, <span class="keyword">...</span>
+0104                         <span class="string">'Interpreter'</span>, <span class="string">'tex'</span>, <span class="keyword">...</span>
+0105                         <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="keyword">...</span>
+0106                         <span class="string">'Position'</span>, [0, 0, 1, 1], <span class="keyword">...</span>
+0107                         <span class="string">'HorizontalAlignment'</span>, <span class="string">'center'</span>, <span class="keyword">...</span>
+0108                         <span class="string">'VerticalAlignment'</span>, <span class="string">'middle'</span>, <span class="keyword">...</span>
+0109                         <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0110                         <span class="string">'FontSize'</span>, labelfontsize, <span class="keyword">...</span>
+0111                         <span class="string">'FontWeight'</span>, <span class="string">'bold'</span>);
+0112     <span class="keyword">elseif</span> type == 5 || type == 6 || type == 8 || type == 9
+0113         <span class="keyword">if</span> type == 5 || type == 8
+0114             intr = subsetintr(1);
+0115             afrom = labelwidth;
+0116             awidth = plotwidth;
+0117         <span class="keyword">elseif</span> type == 6 || type == 9
+0118             intr = subsetintr(2);
+0119             afrom = labelwidth + plotwidth;
+0120             awidth = plotwidth;
+0121         <span class="keyword">end</span>
+0122         <span class="keyword">if</span> type == 5 || type == 6
+0123             m = measures.Index(ismember(measures.DisplayName, subsetmeasures(1)));
+0124         <span class="keyword">elseif</span> type == 8 || type == 9
+0125             m = measures.Index(ismember(measures.DisplayName, subsetmeasures(2)));
+0126         <span class="keyword">end</span>
+0127         <span class="comment">% early or late plot</span>
+0128         sp(i) = uipanel(<span class="string">'Parent'</span>, p, <span class="keyword">...</span>
+0129                         <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0130                         <span class="string">'BackgroundColor'</span>, <span class="string">'white'</span>, <span class="keyword">...</span>
+0131                         <span class="string">'OuterPosition'</span>, [afrom, currhght, awidth, typehght(type)]);
+0132         
+0133         ax = subplot(1, 1, 1, <span class="string">'Parent'</span>, sp(i));
+0134 
+0135         scid         = amInterventions.SmartCareID(intr);
+0136         hospital     = amInterventions.Hospital{intr};
+0137         trstartdn    = amInterventions.IVScaledDateNum(intr);
+0138         trstopdn     = amInterventions.IVScaledStopDateNum(intr);
+0139         daysfrom     = max(1, trstartdn - 40);
+0140         daysto       = trstartdn + 1;
+0141         dispdaysfrom = daysfrom - trstartdn;
+0142         dispdaysto   = daysto - trstartdn;
+0143         xl           = [dispdaysfrom, dispdaysto];
+0144         
+0145         fprintf(<span class="string">'Visualising measures for exacerbation %d, patient %d, hospital %s, date %s\n'</span>, intr, scid, hospital, datestr(amInterventions.IVStartDate(intr), 29));
+0146         
+0147         allpatdata = amDatacube(scid, :, m);
+0148         measdata = amDatacube(scid, daysfrom:daysto, m);
+0149         rangelimit = <a href="setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>(measures.Name{m});
+0150         <span class="keyword">if</span> sum(~isnan(measdata)) &gt; 0
+0151             yl = <a href="setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>(miny, maxy, rangelimit);
+0152         <span class="keyword">else</span>
+0153             yl = [0, rangelimit];
+0154         <span class="keyword">end</span>
+0155         tablemeasure   = measures.Name{m};
+0156         displaymeasure = measures.DisplayName{m};
+0157         units          = <a href="getUnitsForMeasure.html" class="code" title="function [units] = getUnitsForMeasure(displaymeasure)">getUnitsForMeasure</a>(displaymeasure);
+0158         [smcolour, rwcolour] = <a href="getColourForMeasure.html" class="code" title="function [smcolour, rwcolour] = getColourForMeasure(displaymeasure)">getColourForMeasure</a>(displaymeasure);
+0159         ax.FontSize = axisfontsize;
+0160         yticks = <a href="setTicks.html" class="code" title="function [ticks] = setTicks(minval, maxval, nticks)">setTicks</a>(yl(1), yl(2), 3);
+0161         ax.YTick = yticks;
+0162         ax.TickDir = <span class="string">'out'</span>;
+0163         <span class="keyword">if</span> type == 5 || type == 6
+0164             ax.XTickLabel = <span class="string">''</span>;
+0165             ax.XColor = <span class="string">'white'</span>;
+0166         <span class="keyword">end</span>
+0167         xlim(xl);
+0168         ylim(yl);
+0169                 
+0170         <span class="keyword">if</span> sum(~isnan(measdata)) &gt; 0
+0171             actx = find(~isnan(measdata));
+0172             acty = measdata(~isnan(measdata));
+0173             fullx = (1:size(measdata, 2));
+0174             fully = interp1(actx, acty, fullx, <span class="string">'linear'</span>);
+0175             hold on;
+0176             plot(ax, dispdaysfrom:dispdaysto, fully, <span class="keyword">...</span>
+0177                 <span class="string">'Color'</span>, rwcolour, <span class="keyword">...</span>
+0178                 <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0179                 <span class="string">'Marker'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0180                 <span class="string">'LineWidth'</span>,1, <span class="keyword">...</span>
+0181                 <span class="string">'MarkerSize'</span>,2, <span class="keyword">...</span>
+0182                 <span class="string">'MarkerEdgeColor'</span>, rwcolour, <span class="keyword">...</span>
+0183                 <span class="string">'MarkerFaceColor'</span>, rwcolour);
+0184             plot(ax, dispdaysfrom:dispdaysto, measdata, <span class="keyword">...</span>
+0185                 <span class="string">'Color'</span>, smcolour, <span class="keyword">...</span>
+0186                 <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0187                 <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0188                 <span class="string">'LineWidth'</span>,1, <span class="keyword">...</span>
+0189                 <span class="string">'MarkerSize'</span>,2, <span class="keyword">...</span>
+0190                 <span class="string">'MarkerEdgeColor'</span>, smcolour, <span class="keyword">...</span>
+0191                 <span class="string">'MarkerFaceColor'</span>, smcolour);
+0192 
+0193             <span class="comment">%plot(ax, dispdaysfrom:dispdaysto, movmean(fully, 4, 'omitnan'), ...</span>
+0194             <span class="comment">%    'Color', smcolour, ...</span>
+0195             <span class="comment">%    'LineStyle', '-', ...</span>
+0196             <span class="comment">%    'Marker', 'none', ...</span>
+0197             <span class="comment">%    'LineWidth', 2);</span>
+0198 
+0199             <a href="plotFillAreaForPaper.html" class="code" title="function plotFillAreaForPaper(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillAreaForPaper</a>(ax, 0, min(dispdaysto, trstopdn), <span class="keyword">...</span>
+0200                 yl(1), yl(2), <span class="string">'red'</span>, <span class="string">'0.1'</span>, <span class="string">'none'</span>);
+0201                     
+0202             <span class="comment">% use exclude upper quartile mean/std for pulse rate,</span>
+0203             <span class="comment">% otherwise use exclude bottom quartile mean/std</span>
+0204             <span class="keyword">if</span> ismember(displaymeasure, {<span class="string">'PulseRate'</span>})
+0205                 mmean = <a href="xu25mean.html" class="code" title="function y = xu25mean(x)">xu25mean</a>(allpatdata(~isnan(allpatdata)));
+0206                 mstd  = <a href="xu25std.html" class="code" title="function y = xu25std(x)">xu25std</a>(allpatdata(~isnan(allpatdata)));
+0207             <span class="keyword">else</span>
+0208                 mmean = <a href="xb25mean.html" class="code" title="function y = xb25mean(x)">xb25mean</a>(allpatdata(~isnan(allpatdata)));
+0209                 mstd  = <a href="xb25std.html" class="code" title="function y = xb25std(x)">xb25std</a>(allpatdata(~isnan(allpatdata)));
+0210             <span class="keyword">end</span>
+0211             <a href="plotFillArea.html" class="code" title="function plotFillArea(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillArea</a>(ax, xl(1), xl(2), <span class="keyword">...</span>
+0212                 mmean - (0.5 * mstd), mmean + (0.5 * mstd), [0.4, 0.4, 0.4], <span class="string">'0.2'</span>, <span class="string">'none'</span>);
+0213             line(xl, [mmean mmean] , <span class="string">'Color'</span>, [0.6, 0.6, 0.6], <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, .5)
+0214             hold off;
+0215         <span class="keyword">end</span>
+0216     <span class="keyword">elseif</span> type == 10
+0217         <span class="comment">% footer 1</span>
+0218         currhght = currhght - typehght(type);
+0219         sp(i) = uipanel(<span class="string">'Parent'</span>, p, <span class="keyword">...</span>
+0220                         <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0221                         <span class="string">'BackgroundColor'</span>, <span class="string">'white'</span>, <span class="keyword">...</span>
+0222                         <span class="string">'OuterPosition'</span>, [0, currhght, labelwidth, typehght(type)]);
+0223     <span class="keyword">elseif</span> type == 11 || type == 12
+0224         <span class="comment">% footer 2 &amp; 3</span>
+0225         <span class="keyword">if</span> type ==  11           
+0226             afrom = labelwidth;
+0227             awidth = plotwidth;
+0228         <span class="keyword">elseif</span> type == 12
+0229             afrom = labelwidth + plotwidth;
+0230             awidth = plotwidth;
+0231         <span class="keyword">end</span>   
+0232         sp(i) = uipanel(<span class="string">'Parent'</span>, p, <span class="keyword">...</span>
+0233                         <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0234                         <span class="string">'BackgroundColor'</span>, <span class="string">'white'</span>, <span class="keyword">...</span>
+0235                         <span class="string">'OuterPosition'</span>, [afrom, currhght, awidth, typehght(type)]);
+0236         displaytext = <span class="string">'Days prior to treatment'</span>;
+0237         annotation(sp(i), <span class="string">'textbox'</span>,  <span class="keyword">...</span>
+0238                         <span class="string">'String'</span>, displaytext, <span class="keyword">...</span>
+0239                         <span class="string">'Interpreter'</span>, <span class="string">'tex'</span>, <span class="keyword">...</span>
+0240                         <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="keyword">...</span>
+0241                         <span class="string">'Position'</span>, [0, 0, 1, 1], <span class="keyword">...</span>
+0242                         <span class="string">'HorizontalAlignment'</span>, <span class="string">'center'</span>, <span class="keyword">...</span>
+0243                         <span class="string">'VerticalAlignment'</span>, <span class="string">'top'</span>, <span class="keyword">...</span>
+0244                         <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0245                         <span class="string">'FontSize'</span>, axisfontsize);                
+0246     <span class="keyword">end</span>
+0247 <span class="keyword">end</span>
+0248 
+0249 <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, imagefilename, subfolder);
+0250 <a href="savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, imagefilename, subfolder);
+0251 close(f);
+0252 
+0253     
+0254 <span class="keyword">end</span>
+0255 
+0256</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of setResultTableDisplayRow</title>
+  <meta name="keywords" content="setResultTableDisplayRow">
+  <meta name="description" content="setResultTableDisplayRow - creates the tabular record for the model run,">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; setResultTableDisplayRow.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>setResultTableDisplayRow
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>setResultTableDisplayRow - creates the tabular record for the model run,</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [resultrow] = setResultTableDisplayRow(mversion, study, treatgap, testlabelmthd, sigmamethod, mumethod,curveaveragingmethod, smoothingmethod, datasmoothmethod, measuresmask, runmode, randomseed,intrmode, imputationmode, confidencemode, max_offset, align_wind, outprior, heldbackpct,confidencethreshold, countthreshold, nlatentcurves, niterations, vshiftmode, vshiftmax, scenario, ex_start, qual,testsetmatch, testsetsize, testsetdist, measures, nmeasures) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> setResultTableDisplayRow - creates the tabular record for the model run,
+ including run parameters, obj fcn, ex starts, and scores vs labelled test data</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getShortNameForMeasure.html" class="code" title="function [shortname] = getShortNameForMeasure(measure)">getShortNameForMeasure</a>	getShortNameForMeasure - returns the short name from physdata for the</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amEMMCCompareMultipleModelRunToTestData.html" class="code" title="function [lcbymodelrun, offsetbymodelrun] = amEMMCCompareMultipleModelRunToTestData(amLabelledInterventions, modelrun, modelidx, models, plotmode, study)">amEMMCCompareMultipleModelRunToTestData</a>	amEMMCCompareMultipleModelRunToTestData - compares the output of multiple model runs to</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [resultrow] = setResultTableDisplayRow(mversion, study, treatgap, testlabelmthd, sigmamethod, mumethod, </a><span class="keyword">...</span>
+0002     curveaveragingmethod, smoothingmethod, datasmoothmethod, measuresmask, runmode, randomseed, <span class="keyword">...</span>
+0003     intrmode, imputationmode, confidencemode, max_offset, align_wind, outprior, heldbackpct, <span class="keyword">...</span>
+0004     confidencethreshold, countthreshold, nlatentcurves, niterations, vshiftmode, vshiftmax, scenario, ex_start, qual, <span class="keyword">...</span>
+0005     testsetmatch, testsetsize, testsetdist, measures, nmeasures)
+0006 
+0007 <span class="comment">% setResultTableDisplayRow - creates the tabular record for the model run,</span>
+0008 <span class="comment">% including run parameters, obj fcn, ex starts, and scores vs labelled test data</span>
+0009 
+0010 resultrow = table(<span class="string">'Size'</span>,[1 31], <span class="keyword">...</span>
+0011                  <span class="string">'VariableTypes'</span>, {<span class="string">'cell'</span>, <span class="string">'cell'</span>, <span class="string">'double'</span>, <span class="string">'cell'</span>, <span class="string">'cell'</span>, <span class="string">'cell'</span>, <span class="string">'cell'</span>, <span class="keyword">...</span>
+0012                       <span class="string">'cell'</span>, <span class="string">'double'</span>, <span class="string">'cell'</span>, <span class="string">'cell'</span>, <span class="string">'cell'</span>, <span class="keyword">...</span>
+0013                       <span class="string">'cell'</span>, <span class="string">'cell'</span>, <span class="string">'double'</span>, <span class="string">'cell'</span>, <span class="string">'double'</span>, <span class="keyword">...</span>
+0014                       <span class="string">'cell'</span>, <span class="string">'cell'</span>, <span class="string">'double'</span>, <span class="string">'cell'</span>, <span class="string">'double'</span>, <span class="string">'cell'</span>, <span class="string">'double'</span>, <span class="string">'cell'</span>, <span class="keyword">...</span>
+0015                       <span class="string">'double'</span>, <span class="string">'cell'</span>, <span class="string">'double'</span>, <span class="string">'double'</span>, <span class="string">'double'</span>, <span class="string">'double'</span>}, <span class="keyword">...</span>
+0016                  <span class="string">'VariableNames'</span>, {<span class="string">'Version'</span>, <span class="string">'Study'</span>, <span class="string">'TreatGap'</span>, <span class="string">'TstLbl'</span>, <span class="string">'Sigma'</span>, <span class="string">'Mu'</span>, <span class="string">'CurveAvg'</span>, <span class="keyword">...</span>
+0017                       <span class="string">'LCSmooth'</span>,  <span class="string">'DataWindow'</span>, <span class="string">'Imputation'</span>, <span class="string">'HeldBackPct'</span>, <span class="string">'OutPrior'</span>, <span class="keyword">...</span>
+0018                       <span class="string">'ConfMode'</span>, <span class="string">'ConfThresh'</span>, <span class="string">'NumLCSets'</span>, <span class="string">'Measures'</span>, <span class="string">'MaxOffset'</span>, <span class="keyword">...</span>
+0019                       <span class="string">'DataSmooth'</span>, <span class="string">'RunMode'</span>, <span class="string">'RandomSeed'</span>, <span class="string">'IntrMode'</span>, <span class="string">'CountThresh'</span>, <span class="string">'VShift'</span>, <span class="string">'VShiftMax'</span>, <span class="string">'Scenario'</span>, <span class="keyword">...</span>
+0020                       <span class="string">'NumIterations'</span>, <span class="string">'ExStarts'</span>, <span class="string">'ObjFcn'</span>, <span class="string">'TestSetMatch'</span>, <span class="string">'TestSetSize'</span>, <span class="string">'TestSetDist'</span>});
+0021 
+0022 resultrow.Version = mversion;
+0023 resultrow.Study   = study;
+0024 
+0025 resultrow.TreatGap = treatgap;
+0026 
+0027 <span class="keyword">if</span> testlabelmthd == 1
+0028     resultrow.TstLbl = {<span class="string">'1:Consensus'</span>};
+0029 <span class="keyword">elseif</span> testlabelmthd == 2
+0030     resultrow.TstLbl = {<span class="string">'2:Earliest'</span>};
+0031 <span class="keyword">end</span>
+0032 
+0033 <span class="keyword">if</span> sigmamethod == 1
+0034     resultrow.Sigma = {<span class="string">'1:StdMeasDataWindow'</span>};
+0035 <span class="keyword">elseif</span> sigmamethod  == 2
+0036     resultrow.Sigma = {<span class="string">'2:StdMeasStudy'</span>};
+0037 <span class="keyword">elseif</span> sigmamethod  == 3
+0038     resultrow.Sigma = {<span class="string">'3:StdMeasPatient'</span>};
+0039 <span class="keyword">elseif</span> sigmamethod  == 4
+0040     resultrow.Sigma = {<span class="string">'4:StdMeasDataPoint'</span>};
+0041 <span class="keyword">end</span>
+0042 
+0043 <span class="keyword">if</span> mumethod == 1
+0044     resultrow.Mu = {<span class="string">'1:8dMean'</span>};
+0045 <span class="keyword">elseif</span> mumethod  == 2
+0046     resultrow.Mu = {<span class="string">'2:20dUQMean'</span>};
+0047 <span class="keyword">elseif</span> mumethod  == 3
+0048     resultrow.Mu = {<span class="string">'3:10dMeanXBQ'</span>};
+0049 <span class="keyword">elseif</span> mumethod  == 4
+0050     resultrow.Mu = {<span class="string">'4:10dMeanXBQXOut'</span>};
+0051 <span class="keyword">elseif</span> mumethod  == 5
+0052     resultrow.Mu = {<span class="string">'5:10dMeanXBQXOutOrU50Pat'</span>};
+0053 <span class="keyword">end</span>
+0054 
+0055 <span class="keyword">if</span> curveaveragingmethod == 1
+0056     resultrow.CurveAvg = {<span class="string">'1:DW'</span>};
+0057 <span class="keyword">elseif</span> curveaveragingmethod == 2
+0058     resultrow.CurveAvg = {<span class="string">'2:DW+Left'</span>};
+0059 <span class="keyword">end</span>
+0060 
+0061 <span class="keyword">if</span> smoothingmethod == 1
+0062     resultrow.LCSmooth = {<span class="string">'1:None'</span>};
+0063 <span class="keyword">elseif</span> smoothingmethod == 2
+0064     resultrow.LCSmooth = {<span class="string">'2:5dMean'</span>};
+0065 <span class="keyword">end</span>
+0066 
+0067 resultrow.DataWindow = align_wind;
+0068 
+0069 <span class="keyword">if</span> imputationmode == 1
+0070     resultrow.Imputation = {<span class="string">'1:No'</span>};
+0071     resultrow.HeldBackPct = sprintf(<span class="string">'%.1f%%'</span>, 0);
+0072 <span class="keyword">elseif</span> imputationmode == 2
+0073     resultrow.Imputation = {<span class="string">'2:Yes'</span>};
+0074     resultrow.HeldBackPct = sprintf(<span class="string">'%.1f%%'</span>, heldbackpct * 100);
+0075 <span class="keyword">end</span>
+0076 
+0077 resultrow.OutPrior = sprintf(<span class="string">'%.1f%%'</span>, outprior * 100);
+0078 
+0079 <span class="keyword">if</span> confidencemode == 1
+0080     resultrow.ConfMode = {<span class="string">'1:Contig'</span>};
+0081 <span class="keyword">elseif</span> confidencemode == 2
+0082     resultrow.ConfMode = {<span class="string">'2:Max'</span>};
+0083 <span class="keyword">end</span>
+0084 
+0085 resultrow.ConfThresh = sprintf(<span class="string">'%.1f%%'</span>, confidencethreshold * 100);
+0086 
+0087 resultrow.NumLCSets = nlatentcurves;
+0088 
+0089 
+0090 <span class="keyword">if</span> sum(measures.Mask) == 0
+0091     rawtext = <span class="string">'None'</span>;
+0092 <span class="keyword">elseif</span> sum(measures.Mask) == nmeasures
+0093     rawtext = <span class="string">'All'</span>;
+0094 <span class="keyword">elseif</span> (sum(measures.Mask) &gt; 0)
+0095     rawtext = <span class="string">''</span>;
+0096     <span class="keyword">for</span> m = 1:nmeasures
+0097         <span class="keyword">if</span> logical(measures.Mask(m))
+0098             rawtext = sprintf(<span class="string">'%s%s'</span>, rawtext, <a href="getShortNameForMeasure.html" class="code" title="function [shortname] = getShortNameForMeasure(measure)">getShortNameForMeasure</a>(measures.Name{m}));
+0099         <span class="keyword">end</span>
+0100     <span class="keyword">end</span>
+0101     <span class="comment">%temp = extractBefore(measures.DisplayName(logical(measures.Mask)),3);</span>
+0102     <span class="comment">%rawtext = strcat(temp{:});</span>
+0103     <span class="comment">%rawtext = strrep(rawtext, 'WeWe', 'WtWe');</span>
+0104 <span class="keyword">end</span>
+0105 resultrow.Measures = {sprintf(<span class="string">'%d:%s'</span>, measuresmask, rawtext)};
+0106 
+0107 resultrow.MaxOffset = max_offset;
+0108 
+0109 <span class="keyword">if</span> datasmoothmethod == 1
+0110     resultrow.DataSmooth = {<span class="string">'1:None'</span>};
+0111 <span class="keyword">elseif</span> datasmoothmethod == 2
+0112     resultrow.DataSmooth = {<span class="string">'2:FEV1Max2d'</span>};
+0113 <span class="keyword">elseif</span> datasmoothmethod == 3
+0114     resultrow.DataSmooth = {<span class="string">'3:FEV1Max3d'</span>};
+0115 <span class="keyword">end</span>
+0116 
+0117 <span class="keyword">if</span> runmode == 4
+0118     resultrow.RunMode = {<span class="string">'4:OffUPDLCRandPM'</span>};
+0119 <span class="keyword">elseif</span> runmode == 5
+0120     resultrow.RunMode = {<span class="string">'5:Off0PM'</span>};
+0121 <span class="keyword">elseif</span> runmode == 6
+0122     resultrow.RunMode = {<span class="string">'6:***DONOTUSE***'</span>};
+0123 <span class="keyword">elseif</span> runmode == 7
+0124     resultrow.RunMode = {<span class="string">'7:OffUPDLCFEV1PM'</span>};
+0125 <span class="keyword">elseif</span> runmode == 8
+0126     resultrow.RunMode = {<span class="string">'8:OffUPDLCFEV1ElecPM'</span>};
+0127 <span class="keyword">elseif</span> runmode == 9
+0128     resultrow.RunMode = {<span class="string">'9:OffUPDLCRandPD'</span>};
+0129 <span class="keyword">elseif</span> runmode == 10
+0130     resultrow.RunMode = {<span class="string">'10:OffUPDLCFEV1ElecPD'</span>};    
+0131 <span class="keyword">elseif</span> runmode == 11
+0132     resultrow.RunMode = {<span class="string">'11:OffUPDLCFEV1ElecPD'</span>};    
+0133 <span class="keyword">end</span>
+0134 
+0135 resultrow.RandomSeed = randomseed;
+0136 
+0137 <span class="keyword">if</span> intrmode == 1
+0138     resultrow.IntrMode = {<span class="string">'1:None'</span>};
+0139 <span class="keyword">elseif</span> intrmode == 2
+0140     resultrow.IntrMode = {<span class="string">'2:xSeq'</span>};
+0141 <span class="keyword">elseif</span> intrmode == 3
+0142     resultrow.IntrMode = {<span class="string">'3:xElec'</span>};
+0143 <span class="keyword">elseif</span> intrmode == 4
+0144     resultrow.IntrMode = {<span class="string">'3:xSeqxElec'</span>};
+0145 <span class="keyword">end</span>
+0146 
+0147 resultrow.CountThresh = countthreshold;
+0148 
+0149 resultrow.NumIterations = niterations;
+0150 
+0151 <span class="keyword">if</span> vshiftmode == 0
+0152     resultrow.VShift = {<span class="string">'0:None'</span>};
+0153 <span class="keyword">elseif</span> vshiftmode == 1
+0154     resultrow.VShift = {<span class="string">'1:Start'</span>};
+0155 <span class="keyword">elseif</span> vshiftmode == 2
+0156     resultrow.VShift = {<span class="string">'2:End'</span>};
+0157 <span class="keyword">end</span>
+0158 
+0159 resultrow.VShiftMax = vshiftmax;
+0160     
+0161 resultrow.Scenario = {scenario};
+0162 
+0163 resultrow.ExStarts = {sprintf(<span class="string">'%d'</span>, ex_start)};
+0164 
+0165 resultrow.ObjFcn = qual;
+0166 
+0167 resultrow.TestSetMatch = testsetmatch;
+0168 resultrow.TestSetSize  = testsetsize;
+0169 resultrow.TestSetDist  = testsetdist;
+0170 
+0171 <span class="keyword">end</span>
+0172</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of RgetAdjacentDataPoints</title>
+  <meta name="keywords" content="RgetAdjacentDataPoints">
+  <meta name="description" content="getAdjacentDataPoints - get and store adjacent data points to a point in the latent">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="../index.html">recovery</a> &gt; <a href="index.html">updatedModel</a> &gt; RgetAdjacentDataPoints.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../../index.html"><img alt="<" border="0" src="../../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery/updatedModel&nbsp;<img alt=">" border="0" src="../../../../right.png"></a></td></tr></table>-->
+
+<h1>RgetAdjacentDataPoints
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>getAdjacentDataPoints - get and store adjacent data points to a point in the latent</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>function [adjsumsqpt, adjsumpt, adjcountpt, range] = RgetAdjacentDataPoints(meancurvesumsqrow, meancurvesumrow, meancurvecountrow, thispoint, thismeasure, countthreshold, align_wind) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> getAdjacentDataPoints - get and store adjacent data points to a point in the latent
+ curve - to be used when there are too few underlying curves contributing</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="RamEMMCFindProblemDataPoints.html" class="code" title="function [pptsstruct] = RamEMMCFindProblemDataPoints(meancurvesumsq, meancurvesum, meancurvecount, measuresmask,align_wind, nmeasures, countthreshold, nlatentcurves)">RamEMMCFindProblemDataPoints</a>	amEMMCFindProblemDataPoints - finds datapoints in the average curve that have fewer underlying</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [adjsumsqpt, adjsumpt, adjcountpt, range] = RgetAdjacentDataPoints(meancurvesumsqrow, meancurvesumrow, meancurvecountrow, thispoint, thismeasure, countthreshold, align_wind)</a>
+0002 
+0003 <span class="comment">% getAdjacentDataPoints - get and store adjacent data points to a point in the latent</span>
+0004 <span class="comment">% curve - to be used when there are too few underlying curves contributing</span>
+0005 
+0006 i = 1;
+0007 range = 0;
+0008 adjsumsqpt = 0;
+0009 adjsumpt = 0;
+0010 adjcountpt = 0;
+0011 
+0012 <span class="comment">% concept:</span>
+0013 <span class="comment">% idx(i) is odd -&gt; borrow from the right</span>
+0014 <span class="comment">% idx(i) is even -&gt; borrow from the left</span>
+0015 
+0016 <span class="comment">% define boundaries</span>
+0017 maxright = align_wind-thispoint;
+0018 maxleft = thispoint-1;
+0019 idx = 1:2*max(maxright, maxleft);
+0020 
+0021 <span class="comment">% create idx sequence: 1 -1 2 -2 3 -3 etc</span>
+0022 idx = ceil(idx/2) .* round(double(mod(idx,2) - 0.5));
+0023 
+0024 <span class="comment">% remove idx outside align_wind</span>
+0025 idx(idx &lt; -maxleft | idx &gt; maxright)=[]; 
+0026 
+0027 <span class="keyword">while</span> (meancurvecountrow(thispoint) + adjcountpt) &lt; countthreshold
+0028 
+0029     <span class="keyword">if</span> i &gt; length(idx)
+0030         i = 1;
+0031     <span class="keyword">end</span>
+0032     range = idx(i);
+0033     adjsumsqpt = adjsumsqpt + meancurvesumsqrow(thispoint + range);
+0034     adjsumpt   = adjsumpt   + meancurvesumrow(thispoint   + range);
+0035     adjcountpt = adjcountpt + meancurvecountrow(thispoint + range);
+0036     i = i + 1;
+0037 <span class="keyword">end</span>
+0038 
+0039 <span class="comment">%fprintf('Retrieved %d adjacent points to point %d for measure %d: %d addtional points\n', range, thispoint, thismeasure, adjcountpt);</span>
+0040 
+0041 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

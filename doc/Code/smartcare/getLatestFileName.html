@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getLatestFileName</title>
+  <meta name="keywords" content="getLatestFileName">
+  <meta name="description" content="getLatestFileName - returns the name of the most recent version of a file">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; getLatestFileName.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>getLatestFileName
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>getLatestFileName - returns the name of the most recent version of a file</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [latestfname, filefound] = getLatestFileName(basedir, subfolder, fnamematchstring) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> getLatestFileName - returns the name of the most recent version of a file
+ in a given directory matching a particular wildcard string match</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="loadREDCapDataExportFile.html" class="code" title="function [redcapdata, redcapinstrcounts] = loadREDCapDataExportFile(basedir, subfolder, redcapdict)">loadREDCapDataExportFile</a>	loadREDCapDataExportFile - loads the latest REDCap data export file</li><li><a href="loadREDCapDictionaryFile.html" class="code" title="function [redcapdict] = loadREDCapDictionaryFile(basedir, subfolder)">loadREDCapDictionaryFile</a>	loadREDCapDictionaryFile - loads the latest REDCap dictionary file</li><li><a href="loadREDCapFieldMapFile.html" class="code" title="function [redcaptablemap, redcapfieldmap] = loadREDCapFieldMapFile(basedir, subfolder)">loadREDCapFieldMapFile</a>	loadREDCapFieldMapFile - loads the latest REDCap field mapping file</li><li><a href="loadREDCapPatientIDMapFile.html" class="code" title="function [redcapidmap] = loadREDCapPatientIDMapFile(basedir, subfolder)">loadREDCapPatientIDMapFile</a>	loadREDCapPatientIDMapFile - loads the latest REDCap patient id mapping</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [latestfname, filefound] = getLatestFileName(basedir, subfolder, fnamematchstring)</a>
+0002 
+0003 <span class="comment">% getLatestFileName - returns the name of the most recent version of a file</span>
+0004 <span class="comment">% in a given directory matching a particular wildcard string match</span>
+0005 
+0006 filelisting = dir(fullfile(basedir, subfolder, sprintf(<span class="string">'%s'</span>, fnamematchstring)));
+0007 
+0008 <span class="keyword">if</span> size(filelisting, 1) &gt; 0
+0009     filetable = cell2table(struct2cell(filelisting)');
+0010     filetable.fname = filetable.Var1;
+0011     filetable.moddate = filetable.Var3;
+0012     filetable.moddate = datetime(filetable.moddate);
+0013     filetable = filetable(:, {<span class="string">'fname'</span>, <span class="string">'moddate'</span>});
+0014     filetable = sortrows(filetable, {<span class="string">'moddate'</span>}, <span class="string">'descend'</span>);    
+0015 
+0016     latestfname = filetable.fname{1};
+0017     filefound = true;
+0018     
+0019 <span class="keyword">else</span>
+0020     latestfname = <span class="string">''</span>;
+0021     filefound = false;
+0022 <span class="keyword">end</span>
+0023 
+0024 <span class="keyword">end</span>
+0025</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createMeasuresHeatmapWithStudyPeriodByHospital</title>
+  <meta name="keywords" content="createMeasuresHeatmapWithStudyPeriodByHospital">
+  <meta name="description" content="createMeasuresHeatmapWithStudyPeriod - creates the Patient/Measures">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createMeasuresHeatmapWithStudyPeriodByHospital.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createMeasuresHeatmapWithStudyPeriodByHospital
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>createMeasuresHeatmapWithStudyPeriod - creates the Patient/Measures</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function createMeasuresHeatmapWithStudyPeriodByHospital(physdata, offset, cdPatient) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> createMeasuresHeatmapWithStudyPeriod - creates the Patient/Measures
+ heatmap, and overlays study period start and end</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>	gets the patient offset table</li><li><a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function createMeasuresHeatmapWithStudyPeriodByHospital(physdata, offset, cdPatient)</a>
+0002 
+0003 <span class="comment">% createMeasuresHeatmapWithStudyPeriod - creates the Patient/Measures</span>
+0004 <span class="comment">% heatmap, and overlays study period start and end</span>
+0005 
+0006 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0007 subfolder = <span class="string">'Plots'</span>;
+0008 
+0009 temp = hsv;
+0010 brightness = .75;
+0011 <span class="comment">%colors(1,:)  = [0 0 0];     % black for no measures</span>
+0012 colors(1,:)  = temp(4,:)  .* brightness;
+0013 colors(2,:)  = temp(6,:)  .* brightness;
+0014 colors(3,:)  = temp(8,:)  .* brightness;
+0015 colors(4,:)  = temp(10,:) .* brightness;
+0016 colors(5,:)  = temp(12,:) .* brightness;
+0017 colors(6,:)  = temp(14,:) .* brightness;
+0018 colors(7,:)  = temp(16,:) .* brightness;
+0019 colors(8,:)  = temp(18,:) .* brightness;
+0020 colors(9,:)  = temp(20,:) .* brightness;
+0021 colors(10,:)  = [1 0 1];
+0022 
+0023 <span class="comment">% get the date scaling offset for each patient</span>
+0024 patientoffsets = <a href="getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>(physdata);
+0025 
+0026 <span class="comment">% create a table of counts of measures by patient/day (@max function here</span>
+0027 <span class="comment">% is irrelevant as we just want the group counts</span>
+0028 pdcountmtable = varfun(@max, physdata(:, {<span class="string">'SmartCareID'</span>,<span class="string">'ScaledDateNum'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'ScaledDateNum'</span>});
+0029 
+0030 <span class="comment">% extract study date and join with offsets to keep only those patients who</span>
+0031 <span class="comment">% have enough data (ie the patients left after outlier date handling</span>
+0032 patientstudydate = sortrows(cdPatient(:,{<span class="string">'Hospital'</span>, <span class="string">'ID'</span>, <span class="string">'StudyDate'</span>}), <span class="string">'ID'</span>, <span class="string">'ascend'</span>);
+0033 patientstudydate.Properties.VariableNames{<span class="string">'ID'</span>} = <span class="string">'SmartCareID'</span>;
+0034 patientstudydate = innerjoin(patientoffsets, patientstudydate);
+0035 
+0036 <span class="comment">% create a scaleddatenum to translate the study date to the same normalised</span>
+0037 <span class="comment">% scale as measurement data scaled date num</span>
+0038 patientstudydate.ScaledDateNum = datenum(patientstudydate.StudyDate) - offset - patientstudydate.PatientOffset;
+0039 
+0040 <span class="comment">% add rows to the count table to mark the study start and end dates (use a count</span>
+0041 <span class="comment">% of 10 to allow it to be highlighted in a different colour on the heatmap</span>
+0042 studyduration = 183;
+0043 fixedcount = ones(size(patientstudydate,1),1)*10;
+0044 fixedcount = array2table(fixedcount);
+0045 fixedcount.Properties.VariableNames{<span class="string">'fixedcount'</span>} = <span class="string">'GroupCount'</span>;
+0046 rowstoadd = [patientstudydate(:,{<span class="string">'SmartCareID'</span>, <span class="string">'ScaledDateNum'</span>}) fixedcount];   
+0047 pdcountmtable = [pdcountmtable ; rowstoadd];
+0048 rowstoadd.ScaledDateNum = rowstoadd.ScaledDateNum + studyduration;
+0049 pdcountmtable = [pdcountmtable ; rowstoadd];
+0050 
+0051 filenameprefix = <span class="string">'Heatmap of Measures with Study Period'</span>;
+0052 <span class="comment">% loop over each hospital, and create a heatmap for each</span>
+0053 figurearray = [];
+0054 page = 0;
+0055 hospitals = unique(patientstudydate.Hospital);
+0056 
+0057 <span class="keyword">for</span> a = 1:size(hospitals,1)
+0058         
+0059     <span class="comment">% create count table for patients just from current hospital</span>
+0060     hospital = hospitals{a};
+0061     hpatients = patientstudydate.SmartCareID(ismember(patientstudydate.Hospital, hospital));
+0062     hpdcountmtable = pdcountmtable(ismember(pdcountmtable.SmartCareID, hpatients),:);
+0063     
+0064     <span class="comment">% create different flavors of sort order</span>
+0065     <span class="comment">% 1) total number of measures</span>
+0066     hpcountmtable = varfun(@sum, hpdcountmtable(:,{<span class="string">'SmartCareID'</span>, <span class="string">'GroupCount'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0067     hpcountmtable = sortrows(hpcountmtable, <span class="string">'sum_GroupCount'</span>, <span class="string">'descend'</span>);
+0068     ysortmostmeasures = hpcountmtable.SmartCareID;
+0069     
+0070     <span class="comment">% 2) days with measurements</span>
+0071     hpcountmtable = varfun(@sum, hpdcountmtable(:,{<span class="string">'SmartCareID'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0072     hpcountmtable = sortrows(hpcountmtable, <span class="string">'GroupCount'</span>, <span class="string">'descend'</span>);
+0073     ysortmostdays = hpcountmtable.SmartCareID;
+0074     
+0075     <span class="comment">% 3) days with 4 or more measures</span>
+0076     hpcountmtable = varfun(@sum, hpdcountmtable(hpdcountmtable.GroupCount &gt;=4,{<span class="string">'SmartCareID'</span>}), <span class="string">'GroupingVariables'</span>, {<span class="string">'SmartCareID'</span>});
+0077     hpcountmtable = sortrows(hpcountmtable, <span class="string">'GroupCount'</span>, <span class="string">'descend'</span>);
+0078     ysort4mdays = hpcountmtable.SmartCareID;
+0079     
+0080     <span class="comment">% create the min and max smartcareid to allow me to hide the dummy row below</span>
+0081     dispmin = min(hpdcountmtable.SmartCareID);
+0082     dispmax = max(hpdcountmtable.SmartCareID);
+0083 
+0084     <span class="comment">% add dummy rows to create a record for every day in the range of the data</span>
+0085     <span class="comment">% so the heatmap is scaled correctly for missing days</span>
+0086     <span class="comment">% but excluded from display limits so the row doesn't show on the heatmap</span>
+0087     dummymin = min(hpdcountmtable.ScaledDateNum);
+0088     dummymax = max(hpdcountmtable.ScaledDateNum);
+0089     dummymeasures = hpdcountmtable(1:dummymax-dummymin+1,:);
+0090     dummymeasures.SmartCareID(:) = 0;
+0091     dummymeasures.GroupCount(:) = 1;
+0092     <span class="keyword">for</span> i = 1:dummymax-dummymin+1
+0093         dummymeasures.ScaledDateNum(i) = i+dummymin-1;
+0094     <span class="keyword">end</span>
+0095     hpdcountmtable = [hpdcountmtable ; dummymeasures];
+0096 
+0097     <span class="comment">% create the heatmap</span>
+0098     fprintf(<span class="string">'Creating heatmap for hospital %s\n'</span>, hospital);
+0099     figurearray(a) = figure(<span class="string">'Name'</span>, sprintf(<span class="string">'%s - %s'</span>, filenameprefix, hospital));
+0100     p = uipanel(<span class="string">'Parent'</span>,figurearray(a),<span class="string">'BorderType'</span>,<span class="string">'none'</span>); 
+0101     p.Title = sprintf(<span class="string">'%s - %s'</span>, filenameprefix, hospital); 
+0102     p.TitlePosition = <span class="string">'centertop'</span>;
+0103     p.FontSize = 20;
+0104     p.FontWeight = <span class="string">'bold'</span>; 
+0105     set(gcf, <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="string">'OuterPosition'</span>, [0.2, 0.2, 0.8, 0.8], <span class="string">'PaperOrientation'</span>, <span class="string">'portrait'</span>, <span class="keyword">...</span>
+0106         <span class="string">'PaperUnits'</span>, <span class="string">'normalized'</span>,<span class="string">'PaperPosition'</span>,[0, 0, 1, 0.5], <span class="string">'PaperType'</span>, <span class="string">'a4'</span>);
+0107     h = heatmap(p, hpdcountmtable, <span class="string">'ScaledDateNum'</span>, <span class="string">'SmartCareID'</span>, <span class="string">'Colormap'</span>, colors, <span class="string">'MissingDataColor'</span>, <span class="string">'black'</span>, <span class="keyword">...</span>
+0108         <span class="string">'ColorVariable'</span>,<span class="string">'GroupCount'</span>,<span class="string">'ColorMethod'</span>,<span class="string">'max'</span>, <span class="string">'MissingDataLabel'</span>, <span class="string">'No data'</span>);
+0109     h.Title = <span class="string">' '</span>;
+0110     h.XLabel = <span class="string">'Days'</span>;
+0111     h.YLabel = <span class="string">'Patients'</span>;
+0112     h.YDisplayData = ysort4mdays;
+0113     <span class="comment">%h.YLimits = {dispmin,dispmax};</span>
+0114     h.CellLabelColor = <span class="string">'none'</span>;
+0115     h.GridVisible = <span class="string">'off'</span>;
+0116 
+0117 <span class="keyword">end</span>
+0118 
+0119 <span class="comment">% save results</span>
+0120 fprintf(<span class="string">'Saving files\n'</span>);
+0121 <span class="keyword">for</span> a = 1:size(figurearray,2)
+0122     imagefilename = sprintf(<span class="string">'%s-%s'</span>, filenameprefix, hospitals{a});
+0123     <a href="savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(figurearray(a), imagefilename, subfolder);
+0124     close(figurearray(a));
+0125 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

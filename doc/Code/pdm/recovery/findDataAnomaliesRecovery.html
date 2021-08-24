@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of findDataAnomaliesRecovery</title>
+  <meta name="keywords" content="findDataAnomaliesRecovery">
+  <meta name="description" content="highlight data anomalies to be optionnaly excluded prior to run the alignment model">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">recovery</a> &gt; findDataAnomaliesRecovery.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>findDataAnomaliesRecovery
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>highlight data anomalies to be optionnaly excluded prior to run the alignment model</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> highlight data anomalies to be optionnaly excluded prior to run the alignment model
+
+ used to exclude certain outlier points in the model alignment process if 
+ exclude anomalies is chosen as a run parameter
+ 
+ Input:
+ ------
+ *alignmentmodelinputs_gap*.mat    alignment model inptus
+ *datademographicsbypatient.mat    created in loadbreathedata
+
+ Output:
+ -------
+ *dataoutliers.mat     MAT-file storing data outliers</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/smartcare/getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>	getColumnForMeasure - returns the column name from physdata for the</li><li><a href="../../../Code/smartcare/selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="../../../Code/smartcare/selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>	selectTreatmentGap - enter the gap between the end of a treatment and the</li><li><a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% highlight data anomalies to be optionnaly excluded prior to run the alignment model</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% used to exclude certain outlier points in the model alignment process if</span>
+0004 <span class="comment">% exclude anomalies is chosen as a run parameter</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Input:</span>
+0007 <span class="comment">% ------</span>
+0008 <span class="comment">% *alignmentmodelinputs_gap*.mat    alignment model inptus</span>
+0009 <span class="comment">% *datademographicsbypatient.mat    created in loadbreathedata</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Output:</span>
+0012 <span class="comment">% -------</span>
+0013 <span class="comment">% *dataoutliers.mat     MAT-file storing data outliers</span>
+0014 
+0015 <a href="init.html" class="code" title="">init</a>;
+0016 
+0017 [studynbr, study, studyfullname] = <a href="../../../Code/smartcare/selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
+0018 chosentreatgap = <a href="../../../Code/smartcare/selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>();
+0019 
+0020 modelinputsmatfile = sprintf(<span class="string">'%salignmentmodelinputs_recovery_gap%d_datawind%i.mat'</span>, study, chosentreatgap, data_window);
+0021 datademographicsfile = sprintf(<span class="string">'%sdatademographicsbypatient.mat'</span>, study);
+0022 fprintf(<span class="string">'\n'</span>);
+0023 
+0024 tic
+0025 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0026 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0027 fprintf(<span class="string">'Loading alignment model Inputs data\n'</span>);
+0028 load(fullfile(basedir, subfolder, modelinputsmatfile));
+0029 fprintf(<span class="string">'Loading datademographics by patient\n'</span>);
+0030 load(fullfile(basedir, subfolder, datademographicsfile));
+0031 toc
+0032 
+0033 patientlist = unique(amInterventions.SmartCareID);
+0034 
+0035 <span class="comment">% **** Moved logic down inside the measures loop to now skip these measures</span>
+0036 <span class="comment">% rather than delete them - because otherwise it leaves the wrong measures ID on</span>
+0037 <span class="comment">% the outliers !!! ****</span>
+0038 
+0039 <span class="comment">% delete temperature recordings for smartcare and telemed due to only</span>
+0040 <span class="comment">% portion of patients completing this meaasure</span>
+0041 <span class="comment">%if (studynbr == 1 || studynbr == 2)</span>
+0042 <span class="comment">%    idx = ismember(measures.DisplayName, {'Temperature'});</span>
+0043 <span class="comment">%    amDatacube(:,:,measures.Index(idx)) = [];</span>
+0044 <span class="comment">%    measures(idx,:) = [];</span>
+0045 <span class="comment">%    nmeasures = size(measures,1);</span>
+0046 <span class="comment">%   measures.Index = [1:nmeasures]';</span>
+0047 <span class="comment">%end</span>
+0048 
+0049 <span class="comment">% delete binary measurement types for Project Breathe (HasColdOrFlu,</span>
+0050 <span class="comment">% HasHayFever</span>
+0051 <span class="comment">%if (studynbr == 4)</span>
+0052 <span class="comment">%    idx = ismember(measures.DisplayName, {'HasColdOrFlu', 'HasHayFever'});</span>
+0053 <span class="comment">%    amDatacube(:,:,measures.Index(idx)) = [];</span>
+0054 <span class="comment">%    measures(idx,:) = [];</span>
+0055 <span class="comment">%    nmeasures = size(measures,1);</span>
+0056 <span class="comment">%    measures.Index = [1:nmeasures]';</span>
+0057 <span class="comment">%end</span>
+0058 
+0059 dataoutliers = table(<span class="string">'Size'</span>,[1 8], <span class="keyword">...</span>
+0060     <span class="string">'VariableTypes'</span>, {<span class="string">'double'</span>,      <span class="string">'double'</span>,    <span class="string">'cell'</span>,    <span class="string">'double'</span>, <span class="string">'double'</span>,         <span class="string">'double'</span> ,     <span class="string">'double'</span>, <span class="string">'double'</span>}, <span class="keyword">...</span>
+0061     <span class="string">'VariableNames'</span>, {<span class="string">'SmartCareID'</span>, <span class="string">'MeasureID'</span>, <span class="string">'Measure'</span>, <span class="string">'Day'</span>,    <span class="string">'NStdDevOutlier'</span>, <span class="string">'Measurement'</span>, <span class="string">'Mean'</span>,   <span class="string">'StdDev'</span>});
+0062 
+0063 rowtoadd = dataoutliers;
+0064 dataoutliers(1:size(dataoutliers,1),:) = [];
+0065 
+0066 
+0067 <span class="keyword">for</span> a = 1:npatients
+0068     <span class="keyword">if</span> ismember(a, patientlist)
+0069         <span class="keyword">for</span> m = 1:nmeasures
+0070             <span class="keyword">if</span> (ismember(study, {<span class="string">'SC'</span>, <span class="string">'TM'</span>}) &amp;&amp; ismember(measures.DisplayName(m), {<span class="string">'Temperature'</span>})) || <span class="keyword">...</span>
+0071                (ismember(study, {<span class="string">'BR'</span>})       &amp;&amp; ismember(measures.DisplayName(m), {<span class="string">'HasColdOrFlu'</span>, <span class="string">'HasHayFever'</span>}))
+0072                fprintf(<span class="string">'Skipping measure %s for study %s\n'</span>, measures.DisplayName{m}, study)
+0073             <span class="keyword">else</span>
+0074                 <span class="comment">% get overall mean and std for the patient and measure</span>
+0075                 column = <a href="../../../Code/smartcare/getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>(measures.Name{m});
+0076                 ddcolumn = sprintf(<span class="string">'Fun_%s'</span>,column);
+0077                 <span class="keyword">if</span> size(find(demographicstable.SmartCareID == a &amp; ismember(demographicstable.RecordingType, measures.Name{m})),1) == 0
+0078                     fprintf(<span class="string">'Could not find mean &amp; std for patient %d and measure %d so using overall mean &amp; std instead\n'</span>, a, m);
+0079                     tempdata = reshape(amDatacube(:, :, m), npatients * ndays, 1);
+0080                     pmmean   = mean(tempdata(~isnan(tempdata)));
+0081                     pmstd    = std(tempdata(~isnan(tempdata)));
+0082                 <span class="keyword">else</span>
+0083                     pmmean   = demographicstable{demographicstable.SmartCareID == a &amp; ismember(demographicstable.RecordingType, measures.Name{m}),{ddcolumn}}(1);
+0084                     pmstd    = demographicstable{demographicstable.SmartCareID == a &amp; ismember(demographicstable.RecordingType, measures.Name{m}),{ddcolumn}}(2);
+0085                 <span class="keyword">end</span>
+0086                 rowtoadd.SmartCareID = a;
+0087                 rowtoadd.MeasureID   = m;
+0088                 rowtoadd.Measure     = measures.Name(m);
+0089                 <span class="keyword">for</span> i = 1:ndays
+0090                     <span class="keyword">if</span> ~isnan(amDatacube(a, i, m))
+0091                         rowtoadd.Day = i;
+0092                         <span class="keyword">for</span> n = 3:8
+0093                             <span class="comment">% catch values more extreme than n std</span>
+0094                             <span class="keyword">if</span> (amDatacube(a, i, m) &gt; pmmean + (n * pmstd)) || (amDatacube(a, i, m) &lt; pmmean - (n * pmstd))
+0095                                 rowtoadd.NStdDevOutlier = n;
+0096                                 rowtoadd.Measurement    = amDatacube(a, i, m);
+0097                                 rowtoadd.Mean           = pmmean;
+0098                                 rowtoadd.StdDev         = pmstd;
+0099                                 dataoutliers = [dataoutliers ; rowtoadd];
+0100                             <span class="keyword">end</span>
+0101                         <span class="keyword">end</span>
+0102                     <span class="keyword">end</span>
+0103                 <span class="keyword">end</span>
+0104             <span class="keyword">end</span>
+0105         <span class="keyword">end</span>
+0106     <span class="keyword">end</span>
+0107 <span class="keyword">end</span>
+0108 
+0109 tic
+0110 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0111 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0112 outputfilename = sprintf(<span class="string">'%sdataoutliers_recovery.mat'</span>, study);
+0113 fprintf(<span class="string">'Saving data outliers to file %s\n'</span>, outputfilename);
+0114 fprintf(<span class="string">'\n'</span>);
+0115 save(fullfile(basedir, subfolder, outputfilename), <span class="string">'dataoutliers'</span>);
+0116 toc
+0117 fprintf(<span class="string">'\n'</span>);
+0118</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

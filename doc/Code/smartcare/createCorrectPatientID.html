@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of createCorrectPatientID</title>
+  <meta name="keywords" content="createCorrectPatientID">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; createCorrectPatientID.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>createCorrectPatientID
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 clc; clear; close all;
+0003 
+0004 basedir = <a href="setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0005 clinicalmatfile = <span class="string">'clinicaldata.mat'</span>;
+0006 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0007 fprintf(<span class="string">'Loading clinical data\n'</span>);
+0008 load(fullfile(basedir, subfolder, clinicalmatfile));
+0009 datamatfile = <span class="string">'smartcaredata.mat'</span>;
+0010 fprintf(<span class="string">'Loading measurement data\n'</span>);
+0011 load(fullfile(basedir, subfolder, datamatfile));
+0012 
+0013 subfolder = <span class="string">'DataFiles'</span>;
+0014 patientidxlsxfile = <span class="string">'PatientIDs.xlsx'</span>;
+0015 patientidnew = readtable(fullfile(basedir, subfolder, patientidxlsxfile));
+0016 patientidnew.SmartCareID(:) = -1;
+0017 
+0018 npatids = size(patientidnew, 1);
+0019 
+0020 hospitals   = [{<span class="string">'BRISTOL'</span> } ;
+0021                {<span class="string">'BROMP'</span>   } ;
+0022                {<span class="string">'FRIMLEYP'</span>} ;
+0023                {<span class="string">'KINGSCOL'</span>} ;
+0024                {<span class="string">'LEEDS'</span>   } ;
+0025                {<span class="string">'PAP'</span>     } ;
+0026                {<span class="string">'SOUTHAM'</span> }];
+0027            
+0028 hospstdytxt = [{<span class="string">'BRISTOLSC'</span>} ;
+0029                {<span class="string">'Brompton'</span>   } ;
+0030                {<span class="string">'FPH'</span>        } ;
+0031                {<span class="string">'Kings'</span>      } ;
+0032                {<span class="string">'Leeds'</span>      } ;
+0033                {<span class="string">'Papworth'</span>   } ;
+0034                {<span class="string">'Wessex'</span>     }];
+0035 
+0036 nhospitals = size(hospitals, 1);
+0037            
+0038 <span class="keyword">for</span> p = 1:npatids
+0039     <span class="keyword">for</span> i = 1:nhospitals
+0040         <span class="keyword">if</span> strfind(patientidnew.Study_ID{p}, hospstdytxt{i})
+0041             <span class="keyword">break</span>
+0042         <span class="keyword">end</span>
+0043     <span class="keyword">end</span>
+0044     <span class="comment">% remove hospital study text</span>
+0045     scidstr = strrep(patientidnew.Study_ID{p}, hospstdytxt{i}, <span class="string">'  '</span>);
+0046     <span class="comment">% remove zero padding</span>
+0047     scidstr = strrep(scidstr, <span class="string">'  000'</span>, <span class="string">''</span>);
+0048     scidstr = strrep(scidstr, <span class="string">'  00'</span>, <span class="string">''</span>);
+0049     scidstr = strrep(scidstr, <span class="string">'  0'</span>, <span class="string">''</span>);
+0050     <span class="comment">% fix kings anomaly</span>
+0051     scidstr = strrep(scidstr, <span class="string">'v2'</span>, <span class="string">''</span>);
+0052     <span class="comment">% fix leeds anomalies</span>
+0053     scidstr = strrep(scidstr, <span class="string">'1642a'</span>, <span class="string">'1642'</span>);
+0054     scidstr = strrep(scidstr, <span class="string">'1730'</span>, <span class="string">'173'</span>);
+0055     scidstr = strrep(scidstr, <span class="string">'1523a'</span>, <span class="string">'01523a'</span>);
+0056     
+0057     
+0058     fprintf(<span class="string">'For patientID row %3d, found hospstdy text %9s - %12s to %6s '</span>, p, hospstdytxt{i}, patientidnew.Study_ID{p}, scidstr);
+0059     
+0060     patrow = cdPatient(ismember(cdPatient.Hospital, hospitals(i)) &amp; ismember(cdPatient.StudyNumber, scidstr), :);
+0061     <span class="keyword">if</span> size(patrow, 1) == 1
+0062         fprintf(<span class="string">'Hospital %8s, Study Number %6s, ID %3d\n'</span>, patrow.Hospital{1}, patrow.StudyNumber{1}, patrow.ID);
+0063         patientidnew.SmartCareID(p) = patrow.ID;
+0064     <span class="keyword">elseif</span> size(patrow, 1) &gt; 1
+0065         fprintf(<span class="string">'***** MULTIPLE MATCHES - INVESTIGATE ******\n'</span>);
+0066     <span class="keyword">elseif</span> size(patrow, 1) == 0
+0067         fprintf(<span class="string">'***** NO MATCHES - INVESTIGATE ******\n'</span>);
+0068     <span class="keyword">else</span>
+0069         fprintf(<span class="string">'***** SHOULD NOT GET HERE - INVESTIGATE ******\n'</span>);
+0070     <span class="keyword">end</span>
+0071     
+0072 <span class="keyword">end</span>
+0073 
+0074 writetable(patientidnew, fullfile(basedir, <span class="string">'DataFiles'</span>, sprintf(<span class="string">'%s.xlsx'</span>, <span class="string">'patientidnew'</span>)));
+0075 
+0076 temppatidnew = patientidnew;
+0077 <span class="keyword">for</span> n = 1:size(temppatidnew, 1)
+0078     temppatidnew.Study_ID{n} = upper(temppatidnew.Study_ID{n});
+0079 <span class="keyword">end</span>
+0080 temppatid    = patientid;
+0081 <span class="keyword">for</span> n = 1:size(temppatid, 1)
+0082     temppatid.Study_ID{n} = upper(temppatid.Study_ID{n});
+0083 <span class="keyword">end</span>
+0084 
+0085 temp = outerjoin(temppatidnew, temppatid, <span class="string">'LeftKeys'</span>, {<span class="string">'Study_ID'</span>}, <span class="string">'RightKeys'</span>, {<span class="string">'Study_ID'</span>});
+0086 
+0087 mismatchids = temp(temp.SmartCareID_temppatidnew ~= temp.SmartCareID_temppatid,:);
+0088 fprintf(<span class="string">'\n'</span>);
+0089 fprintf(<span class="string">'Potentially %d mismatched ids in previous dataset\n'</span>, size(mismatchids, 1));
+0090 
+0091 <span class="keyword">for</span> i = 1:size(mismatchids, 1)
+0092     measurecount = sum(physdata.SmartCareID == mismatchids.SmartCareID_temppatidnew(i));
+0093     measurecount2 = sum(ismember(physdata_original.UserID, mismatchids.Patient_ID_temppatidnew(i)));
+0094     
+0095     fprintf(<span class="string">'For SmartCareID %3d (old id = %3d, measure count orig = %5d measure count pre-proc %5d\n'</span>, mismatchids.SmartCareID_temppatidnew(i), mismatchids.SmartCareID_temppatid(i), measurecount2, measurecount);
+0096 
+0097 <span class="keyword">end</span>
+0098 
+0099 cdAntibiotics(ismember(cdAntibiotics.ID, [193, 195, 196, 197, 198, 199, 201]),:)</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

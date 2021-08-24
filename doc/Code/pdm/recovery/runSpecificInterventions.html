@@ -1,0 +1,230 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of runSpecificInterventions</title>
+  <meta name="keywords" content="runSpecificInterventions">
+  <meta name="description" content="run a model with a manually selected subset of interventions">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="index.html">recovery</a> &gt; runSpecificInterventions.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>runSpecificInterventions
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>run a model with a manually selected subset of interventions</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> run a model with a manually selected subset of interventions
+ 
+ it creates all subset of x interventions at once and then run a model for 
+ each of them based on a reference parameter file. 
+ currently 5 general groups for segmentation:
+ - behaviour during intervention
+ - volumes
+ - treatment type and CFTR modulator therapies
+ - data quality and duration
+ 
+ Note: in the end only faillist was used, not enough data for most others
+ 
+ Input:
+ ------
+ BRTreatmentsObservation.xlsx        excel file with results of expert eye observation
+ clinical and home measurements data
+ parameter file
+ 
+ Output: x models run with runFastAlignmentModelEMMCRecoveryFcn
+ -------</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/helperfunctions/calcBRFEV1PrctPredicted.html" class="code" title="function FEV1prctpredicted = calcBRFEV1PrctPredicted(brphysdata,cdPatient)">calcBRFEV1PrctPredicted</a>	calculates FEV1 % predicted for each patient with values in Breathe data</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="runFastAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runFastAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist, nameaddendum)">runFastAlignmentModelEMMCRecoveryFcn</a>	fast version with 1 plot (typical profile) + alignment result matfile</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function labels = getLabelsCount(list)</a></li><li><a href="#_sub2" class="code">function [yeslist, nolist, s] = getLists(mask, table)</a></li><li><a href="#_sub3" class="code">function [yeslist, s] = getVolumeList(mask, Vtable, IntrTable)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% run a model with a manually selected subset of interventions</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% it creates all subset of x interventions at once and then run a model for</span>
+0004 <span class="comment">% each of them based on a reference parameter file.</span>
+0005 <span class="comment">% currently 5 general groups for segmentation:</span>
+0006 <span class="comment">% - behaviour during intervention</span>
+0007 <span class="comment">% - volumes</span>
+0008 <span class="comment">% - treatment type and CFTR modulator therapies</span>
+0009 <span class="comment">% - data quality and duration</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Note: in the end only faillist was used, not enough data for most others</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% Input:</span>
+0014 <span class="comment">% ------</span>
+0015 <span class="comment">% BRTreatmentsObservation.xlsx        excel file with results of expert eye observation</span>
+0016 <span class="comment">% clinical and home measurements data</span>
+0017 <span class="comment">% parameter file</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% Output: x models run with runFastAlignmentModelEMMCRecoveryFcn</span>
+0020 <span class="comment">% -------</span>
+0021 
+0022 <a href="init.html" class="code" title="">init</a>;
+0023 subfolder = <span class="string">'ExcelFiles'</span>;
+0024 filename = <span class="string">'BRTreatmentsObservation.xlsx'</span>;
+0025 treatobs = readtable(fullfile(basedir, subfolder, filename), <span class="string">'Sheet'</span>, <span class="string">'recovery new'</span>);
+0026 
+0027 <span class="comment">% get labels</span>
+0028 before = <a href="#_sub1" class="code" title="subfunction labels = getLabelsCount(list)">getLabelsCount</a>(treatobs.LabelBeforeTreatment);
+0029 during = <a href="#_sub1" class="code" title="subfunction labels = getLabelsCount(list)">getLabelsCount</a>(treatobs.LabelDuringTreatment);
+0030 after = <a href="#_sub1" class="code" title="subfunction labels = getLabelsCount(list)">getLabelsCount</a>(treatobs.LabelAfterTreatment);
+0031 
+0032 <span class="comment">% load brphysdata for volume segmentation</span>
+0033 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0034 [datamatfile, clinicalmatfile, ~] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0035 [brphysdata, broffset, ~] = <a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0036 cdPatient = <a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0037 
+0038 
+0039 <span class="comment">%% treatobs statistics</span>
+0040 
+0041 ninterventions = size(treatobs,1);
+0042 fprintf(<span class="string">'Before: %i decline, %i stable, %i improves, %i undefined\n'</span>, before.d, before.s, before.i,ninterventions-before.d-before.s-before.i);
+0043 fprintf(<span class="string">'During: %i decline, %i stable, %i improves, %i undefined\n'</span>, during.d, during.s, during.i, ninterventions-during.d-during.s-during.i);
+0044 fprintf(<span class="string">'After: %i decline, %i stable, %i improves, %i undefined\n'</span>, after.d, after.s, after.i, ninterventions-after.d-after.s-after.i);
+0045 
+0046 fprintf(<span class="string">'average measures per day %.1f +/- %.1f, days with measures %.1f +/- %.1f\n'</span>, mean(treatobs.DaysWithMeasures), std(treatobs.DaysWithMeasures), mean(treatobs.AvgMeasuresPerDay), std(treatobs.AvgMeasuresPerDay));
+0047 fprintf(<span class="string">'interventions with few measures (&lt;4 per day) %i\n'</span>, sum(treatobs.AvgMeasuresPerDay&lt;4));
+0048 
+0049 <span class="comment">%% behaviour during intervention</span>
+0050 
+0051 <span class="comment">% with ape, without ape</span>
+0052 [intr.tb_apelist, intr.tb_apenolist, tb_apenbr] = <a href="#_sub2" class="code" title="subfunction [yeslist, nolist, s] = getLists(mask, table)">getLists</a>(contains(treatobs.LabelBeforeTreatment,&quot;d&quot;), treatobs);
+0053 
+0054 <span class="comment">% improvement during</span>
+0055 [intr.tb_improvlist, intr.tb_improvnolist, tb_improvnbr] = <a href="#_sub2" class="code" title="subfunction [yeslist, nolist, s] = getLists(mask, table)">getLists</a>( contains(treatobs.LabelDuringTreatment,&quot;i&quot;), treatobs);
+0056 
+0057 <span class="comment">% successful recovery, i during and i or s after</span>
+0058 [intr.tb_successlist, intr.tb_successnolist, tb_successnbr] = <a href="#_sub2" class="code" title="subfunction [yeslist, nolist, s] = getLists(mask, table)">getLists</a>( contains(treatobs.LabelDuringTreatment,&quot;i&quot;) <span class="keyword">...</span>
+0059     &amp; not(contains(treatobs.LabelAfterTreatment,&quot;i&quot;)) &amp; not(contains(treatobs.LabelAfterTreatment,&quot;s&quot;)), treatobs);
+0060 
+0061 <span class="comment">% decline after or during</span>
+0062 [intr.tb_faillist, intr.tb_failnolist, tb_failnbr] = <a href="#_sub2" class="code" title="subfunction [yeslist, nolist, s] = getLists(mask, table)">getLists</a>( contains(treatobs.LabelAfterTreatment,&quot;d&quot;) <span class="keyword">...</span>
+0063     | contains(treatobs.LabelDuringTreatment,&quot;d&quot;), treatobs);
+0064 
+0065 <span class="comment">%% treatment type and CFTR modulator therapies</span>
+0066 
+0067 <span class="comment">%IVPBO, Oral, IV</span>
+0068 t1_ivpbomask = contains(treatobs.Route, &quot;IVPBO&quot;);
+0069 t1_oralmask = contains(treatobs.Route, &quot;Oral&quot;);
+0070 t1_ivpbo_nbr = sum(t1_ivpbomask);
+0071 intr.t1_ivpbolist = treatobs.IntrNbr(t1_ivpbomask);
+0072 t1_iv_nbr = sum(not(t1_ivpbomask|t1_oralmask));
+0073 intr.t1_ivlist = treatobs.IntrNbr(not(t1_ivpbomask|t1_oralmask));
+0074 t1_oral_nbr = sum(t1_oralmask);
+0075 intr.t1_orallist = treatobs.IntrNbr(t1_oralmask);
+0076 
+0077 <span class="comment">% under triple therapy</span>
+0078 [intr.t2_tripllist, intr.t2_nottriplelist, t2_triple_nbr] = <a href="#_sub2" class="code" title="subfunction [yeslist, nolist, s] = getLists(mask, table)">getLists</a>( contains(treatobs.DrugTherapy,&quot;Triple Therapy&quot;), treatobs);
+0079 
+0080 <span class="comment">%% volumes</span>
+0081 FEV1PrctPredicted = <a href="../../../Code/pdm/helperfunctions/calcBRFEV1PrctPredicted.html" class="code" title="function FEV1prctpredicted = calcBRFEV1PrctPredicted(brphysdata,cdPatient)">calcBRFEV1PrctPredicted</a>(brphysdata,cdPatient);
+0082 
+0083 <span class="comment">% &lt;40%</span>
+0084 [intr.v50andunderlist, v50andunder_nbr] = <a href="#_sub3" class="code" title="subfunction [yeslist, s] = getVolumeList(mask, Vtable, IntrTable)">getVolumeList</a>(FEV1PrctPredicted.Value&lt;50, FEV1PrctPredicted, treatobs);
+0085 <span class="comment">% &gt;=40% to &lt;70%</span>
+0086 [intr.v5080list, v5080_nbr] = <a href="#_sub3" class="code" title="subfunction [yeslist, s] = getVolumeList(mask, Vtable, IntrTable)">getVolumeList</a>(FEV1PrctPredicted.Value&gt;=50 &amp; FEV1PrctPredicted.Value&lt;80, FEV1PrctPredicted, treatobs);
+0087 <span class="comment">% &gt;= 70%</span>
+0088 [intr.v80andoverlist, v80andover_nbr] = <a href="#_sub3" class="code" title="subfunction [yeslist, s] = getVolumeList(mask, Vtable, IntrTable)">getVolumeList</a>(FEV1PrctPredicted.Value&gt;=80, FEV1PrctPredicted, treatobs);
+0089 
+0090 <span class="comment">%% data quality and duration</span>
+0091 
+0092 [intr.td_avg4, intr.td_notavg4, td_avg4_nbr] = <a href="#_sub2" class="code" title="subfunction [yeslist, nolist, s] = getLists(mask, table)">getLists</a>(treatobs.AvgMeasuresPerDay &gt;= 4, treatobs);
+0093 
+0094 <span class="comment">% look at sequential interventions - sum(contains(treatobs.Sequential,'Y'));</span>
+0095 
+0096 <span class="comment">%% run specific interventions</span>
+0097 
+0098 <span class="comment">% check if amInterventions and treatobs are the same arrays. This is</span>
+0099 <span class="comment">% necessary to be able to transfer the indexes of treatobs to amIntr...</span>
+0100 subfolder = <span class="string">'MatlabSavedVariables'</span>;
+0101 filename = <span class="string">'BRalignmentmodelinputs_recovery_gap10_datawind20.mat'</span>;
+0102 load(fullfile(basedir,subfolder, filename),<span class="string">'amInterventions'</span>);
+0103 
+0104 tempdate = split(string(treatobs.StartDate),&quot;<span class="string">'&quot;);</span>
+0105 <span class="keyword">if</span> sum(amInterventions.IVStartDate == datetime(tempdate(:,2))) == size(amInterventions, 1)
+0106     <span class="comment">% get parameter file</span>
+0107     subfolder = <span class="string">'DataFiles/Recovery'</span>;
+0108     parameterfile = <span class="string">'BRRunParameters_gp10_reference.xlsx'</span>;
+0109     amRunParameters = readtable(fullfile(basedir, subfolder, parameterfile));
+0110 
+0111     <span class="comment">% get the names of the fields</span>
+0112     fields = fieldnames(intr);
+0113     <span class="comment">% loop over fields</span>
+0114     <span class="keyword">for</span> nfield=1:length(fields)
+0115         interventions = getfield(intr, fields{nfield});
+0116 
+0117         <a href="runFastAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runFastAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist, nameaddendum)">runFastAlignmentModelEMMCRecoveryFcn</a>(amRunParameters,interventions,string(fields(nfield)+&quot;_&quot;));
+0118     <span class="keyword">end</span>
+0119 <span class="keyword">else</span>
+0120     fprintf(&quot;Cannot run, amInterventions and treatobs don't match\n&quot;)
+0121 <span class="keyword">end</span>
+0122 
+0123 <span class="comment">%% write treatobs table</span>
+0124 
+0125 <span class="comment">%  writetable(treatobs, fullfile(basedir, subfolder, filename),'Sheet','recovery new');</span>
+0126  
+0127  
+0128 <span class="comment">%% estimate acceptable offset amount at boundaries</span>
+0129 <span class="comment">%</span>
+0130 <span class="comment">% % an offset can be found only for treatments that have show an &quot;i&quot; during</span>
+0131 <span class="comment">% % treatment</span>
+0132 <span class="comment">% % when offset can't be found -&gt; permanent decline shifted down, permanent</span>
+0133 <span class="comment">% % improve shifted up</span>
+0134 <span class="comment">% proportion_no_offset = 1-during.i/(during.d + during.i + during.i);</span>
+0135 <span class="comment">%</span>
+0136 <span class="comment">% % let's calculate what's the reasonnable amount of interventions where the</span>
+0137 <span class="comment">% % offset cannot be found</span>
+0138 <span class="comment">% sum(Count)*proportion_no_offset</span>
+0139 <span class="comment">%</span>
+0140 <span class="comment">% % 34/2 + 8 = 25 is acceptable</span>
+0141 
+0142 <span class="comment">%% functions</span>
+0143 <a name="_sub0" href="#_subfunctions" class="code">function labels = getLabelsCount(list)</a>
+0144 labels.d = sum(contains(list,&quot;d&quot;));
+0145 labels.s = sum(contains(list,&quot;s&quot;));
+0146 labels.i = sum(contains(list,&quot;i&quot;));
+0147 labels.no = sum(contains(list,&quot;&quot;) | contains(list,&quot;-&quot;)); <span class="comment">% check this one</span>
+0148 <span class="keyword">end</span>
+0149 
+0150 <a name="_sub1" href="#_subfunctions" class="code">function [yeslist, nolist, s] = getLists(mask, table)</a>
+0151 s = sum(mask);
+0152 yeslist = table.IntrNbr(mask);
+0153 nolist = table.IntrNbr(not(mask));
+0154 <span class="keyword">end</span>
+0155 
+0156 <a name="_sub2" href="#_subfunctions" class="code">function [yeslist, s] = getVolumeList(mask, Vtable, IntrTable)</a>
+0157 s = sum(mask);
+0158 <span class="comment">% get id</span>
+0159 idlist = Vtable.ID(mask);
+0160 <span class="comment">% get intervention number</span>
+0161 yeslist = IntrTable.IntrNbr(ismember(IntrTable.ID, idlist));
+0162 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

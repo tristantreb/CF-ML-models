@@ -1,0 +1,500 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery</title>
+  <meta name="keywords" content="amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery">
+  <meta name="description" content="amEMMCPlotSuperimposedAlignedCurves3 - wrapper around the">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="#">pdm</a> &gt; <a href="../index.html">recovery</a> &gt; <a href="index.html">updatedModel</a> &gt; amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../../index.html"><img alt="<" border="0" src="../../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/pdm/recovery/updatedModel&nbsp;<img alt=">" border="0" src="../../../../right.png"></a></td></tr></table>-->
+
+<h1>amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>amEMMCPlotSuperimposedAlignedCurves3 - wrapper around the</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>function amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery(meancurvemean, meancurvecount, amIntrNormcube, amInterventions, normmean, normstd,measures, offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves,countthreshold, shiftmode, study, examplemode, lcexamples) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amEMMCPlotSuperimposedAlignedCurves3 - wrapper around the
+ plotSuperimposedAlignedCurves to plot for each set of latent curves along
+ with examples below</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="../../../../Code/smartcare/arrow.html" class="code" title="function [h,yy,zz] = arrow(varargin)">arrow</a>	ARROW  Draw a line with an arrowhead.</li><li><a href="../../../../Code/smartcare/createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="../../../../Code/smartcare/formatDisplayMeasure.html" class="code" title="function [displaynameformatted] = formatDisplayMeasure(displaymeasure)">formatDisplayMeasure</a>	formatDisplayMeasure - adds final formatting for displaying measure name</li><li><a href="../../../../Code/smartcare/formatTexDisplayMeasure.html" class="code" title="function [displaynameformatted] = formatTexDisplayMeasure(displaymeasure)">formatTexDisplayMeasure</a>	formatTexDisplayMeasure - adds final formatting for displaying measure name</li><li><a href="../../../../Code/smartcare/getColourForMeasure.html" class="code" title="function [smcolour, rwcolour] = getColourForMeasure(displaymeasure)">getColourForMeasure</a>	getColorForMeasure - returns the RGB value of the colour for a given</li><li><a href="../../../../Code/smartcare/getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>	getInvertedMeasures - returns an array of measure display names that need</li><li><a href="../../../../Code/smartcare/getLCSortOrder.html" class="code" title="function lcsort = getLCSortOrder(amInterventions, nlatentcurves)">getLCSortOrder</a>	getLCSortOrder - returns the latent curve sets sorted from largest</li><li><a href="../../../../Code/smartcare/getUnitsForMeasure.html" class="code" title="function [units] = getUnitsForMeasure(displaymeasure)">getUnitsForMeasure</a>	getUnitsForMeasure - returns the units for a given measure</li><li><a href="../../../../Code/smartcare/plotFillArea.html" class="code" title="function plotFillArea(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillArea</a>	plotFillArea - plots a shaded area on the graph (eg for confidence bounds</li><li><a href="../../../../Code/smartcare/plotSuperimposedAlignedCurvesForPaper.html" class="code" title="function plotSuperimposedAlignedCurvesForPaper(ax, meancurvemean, xl, yl,tmpmeasures, tmpnmeasures, min_offset, max_offset, align_wind, ex_start, study)">plotSuperimposedAlignedCurvesForPaper</a>	plotSuperimposedAlignedCurves - plots the aligned curves for each of the</li><li><a href="../../../../Code/smartcare/plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>	plotVerticalLine - plots a vertical line</li><li><a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="../../../../Code/smartcare/savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="../../../../Code/smartcare/sortMeasuresForPaper.html" class="code" title="function [measures] = sortMeasuresForPaper(study, measures)">sortMeasuresForPaper</a>	sortMeasuresForPaper - returns a sorted measures table in the order to</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function amEMMCPlotSuperimposedAlignedCurvesForPaper3Recovery(meancurvemean, meancurvecount, amIntrNormcube, amInterventions, normmean, normstd, </a><span class="keyword">...</span>
+0002     measures, offset, align_wind, nmeasures, run_type, ex_start, plotname, plotsubfolder, nlatentcurves, <span class="keyword">...</span>
+0003     countthreshold, shiftmode, study, examplemode, lcexamples)
+0004 
+0005 <span class="comment">% amEMMCPlotSuperimposedAlignedCurves3 - wrapper around the</span>
+0006 <span class="comment">% plotSuperimposedAlignedCurves to plot for each set of latent curves along</span>
+0007 <span class="comment">% with examples below</span>
+0008 
+0009 invmeasarray = <a href="../../../../Code/smartcare/getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>(study);
+0010 
+0011 <span class="keyword">if</span> examplemode ~= 0
+0012     <span class="keyword">if</span> (size(lcexamples, 2) ~= nlatentcurves)
+0013         fprintf(<span class="string">'**** Number of latent curve examples in each set does not match the number of latent curve sets ****\n'</span>);
+0014         <span class="keyword">return</span>;
+0015     <span class="keyword">end</span>
+0016 <span class="keyword">end</span>
+0017 
+0018 <span class="keyword">if</span> shiftmode == 1
+0019     shifttext = <span class="string">'MeanShift'</span>;
+0020 <span class="keyword">elseif</span> shiftmode == 2
+0021     shifttext = <span class="string">'MaxShift'</span>;
+0022 <span class="keyword">elseif</span> shiftmode == 3
+0023     shifttext = <span class="string">'ExZeroShift'</span>;
+0024 <span class="keyword">elseif</span> shiftmode == 4
+0025     meanwindow = 7;
+0026     shifttext = sprintf(<span class="string">'%ddMeanShift'</span>, meanwindow);
+0027 <span class="keyword">else</span>
+0028     fprintf(<span class="string">'**** Unknown shift mode ****\n'</span>);
+0029 <span class="keyword">end</span>
+0030 
+0031 smoothwdth = 4;
+0032 
+0033 <span class="comment">% Preprocess the latent curve :-</span>
+0034 <span class="comment">% 1) invert pulse rate</span>
+0035 <span class="comment">% 2) remove points with fewer than count threshold underlying data poins</span>
+0036 <span class="comment">% contributing</span>
+0037 <span class="comment">% 3) apply mean smoothing</span>
+0038 <span class="comment">% 4) apply a vertical shift (by the average of the points to the left of</span>
+0039 <span class="comment">% ex_start)</span>
+0040 <span class="keyword">for</span> n = 1:nlatentcurves
+0041     pridx = measures.Index(ismember(measures.DisplayName, invmeasarray));
+0042     meancurvemean(n, :, pridx) = meancurvemean(n, :, pridx) * -1;
+0043     <span class="keyword">for</span> m = 1:nmeasures
+0044         <span class="comment">%meancurvemean(n, meancurvecount(n, :, m) &lt; countthreshold, m) = NaN;</span>
+0045         <span class="comment">%meancurvemean(n, :, m) = movmean(meancurvemean(n, :, m), smoothwdth, 'omitnan');</span>
+0046         meancurvemean(n, :, m) = movmean(meancurvemean(n, :, m), smoothwdth, <span class="string">'includenan'</span>);
+0047         meancurvemean(n, meancurvecount(n, :, m) &lt; countthreshold, m) = NaN;
+0048         <span class="keyword">if</span> shiftmode == 1
+0049             vertshift = mean(meancurvemean(n, 1:(align_wind + offset.span + ex_start(n)), m));
+0050         <span class="keyword">elseif</span> shiftmode == 2
+0051             vertshift = max(meancurvemean(n, 1:(align_wind + offset.span + ex_start(n)), m));
+0052         <span class="keyword">elseif</span> shiftmode == 3
+0053             vertshift = meancurvemean(n, (align_wind + offset.span + ex_start(n)), m);
+0054         <span class="keyword">elseif</span> shiftmode == 4
+0055             <span class="keyword">if</span> (align_wind + offset.span + ex_start(n) - meanwindow) &lt; 1
+0056                 shiftfrom = 1;
+0057             <span class="keyword">else</span>
+0058                 shiftfrom = (align_wind + offset.span + ex_start(n) - meanwindow);
+0059             <span class="keyword">end</span> 
+0060             vertshift = mean(meancurvemean(n, shiftfrom:(align_wind + offset.span + ex_start(n)), m));
+0061         <span class="keyword">end</span>
+0062         meancurvemean(n, :, m) = meancurvemean(n, :, m) - vertshift;
+0063         fprintf(<span class="string">'For curve %d and measure %13s, vertical shift is %.3f\n'</span>, n, measures.DisplayName{m}, -vertshift);
+0064     <span class="keyword">end</span>
+0065 <span class="keyword">end</span>
+0066 
+0067 titlefontsize = 14;
+0068 labelfontsize = 12;
+0069 axisfontsize = 6;
+0070 unitfontsize = 10;
+0071 legendfontsize = 8;
+0072 smallfontsize = 8;
+0073 fontname = <span class="string">'Arial'</span>;
+0074 
+0075 widthinch = 12;
+0076 heightinch = 12.5;
+0077 name = <span class="string">''</span>;
+0078 singlehght = 1/12.5;
+0079 halfhght = singlehght * .5;
+0080 oneandhalfhght = singlehght * 2;
+0081 doublehght = singlehght * 2.5;
+0082 triplehght = singlehght * 3;
+0083 quadhght   = singlehght * 4;
+0084 labelwidth = 0.15;
+0085 plotwidth  = 0.85;
+0086 
+0087 
+0088 
+0089 typearray = [1, 3, 6, 9, 3, 8, 10, 2, 5, 4, 7];
+0090 
+0091 typehght = [halfhght, oneandhalfhght, triplehght, doublehght, oneandhalfhght, triplehght, doublehght, triplehght, halfhght, halfhght];
+0092 
+0093 labeltext = {<span class="string">'A.'</span>; <span class="string">'Change from'</span>; <span class="string">' '</span>; <span class="string">'B.'</span>; <span class="string">'Change from'</span>; <span class="string">' '</span>; <span class="string">'C.'</span>};
+0094 
+0095 
+0096 tmpmeasures = measures(logical(measures.Mask), :);
+0097 tmpmeasures.PaperMask(:) = 0;
+0098 tmpmeasures.PaperMask(ismember(tmpmeasures.DisplayName, {<span class="string">'LungFunction'</span>, <span class="string">'FEV1'</span>, <span class="string">'Wellness'</span>})) = 1;
+0099 tmpnmeasures = size(tmpmeasures, 1);
+0100 [tmpmeasures] = <a href="../../../../Code/smartcare/sortMeasuresForPaper.html" class="code" title="function [measures] = sortMeasuresForPaper(study, measures)">sortMeasuresForPaper</a>(study, tmpmeasures);
+0101 tmpsubsetmeasures = tmpmeasures(logical(tmpmeasures.PaperMask), :);
+0102 tmpnsubsetmeasures = size(tmpsubsetmeasures, 1);
+0103 
+0104 ntitles = 3;
+0105 nlcrow = 2;
+0106 nmeasrows = sum(logical(tmpmeasures.PaperMask));
+0107 nlabels = nlcrow + nmeasrows;
+0108 
+0109 <span class="keyword">for</span> m = 1:tmpnsubsetmeasures
+0110     labeltext = [labeltext; cellstr(tmpsubsetmeasures.DisplayName{m}); <span class="string">' '</span>];
+0111 <span class="keyword">end</span>
+0112 
+0113 extext = sprintf(<span class="string">'_%d'</span>, lcexamples);
+0114 plottitle   = sprintf(<span class="string">'%s - %s S-Imp %s FPv3 pc%d Ex%s'</span>, plotname, run_type, shifttext, countthreshold, extext);
+0115 
+0116 plotsacross = nlatentcurves;
+0117 plotsdown   = 1;
+0118 plotpanels = 5;
+0119 legendpanels = 5;
+0120 <span class="keyword">if</span> nlatentcurves == 1
+0121     paddingpanels = 0;
+0122 <span class="keyword">else</span>
+0123     paddingpanels = 1;
+0124 <span class="keyword">end</span>
+0125 panelsacross = ((plotpanels + paddingpanels) * nlatentcurves) + legendpanels - 1;
+0126 
+0127 lcsort = <a href="../../../../Code/smartcare/getLCSortOrder.html" class="code" title="function lcsort = getLCSortOrder(amInterventions, nlatentcurves)">getLCSortOrder</a>(amInterventions, nlatentcurves);
+0128 
+0129 [f, p] = <a href="../../../../Code/smartcare/createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(name, widthinch, heightinch);
+0130 
+0131 currhght = 1.0;
+0132 currmeas = 1;
+0133 <span class="keyword">for</span> i = 1:(ntitles + nlcrow + nmeasrows + nlabels)
+0134     type = typearray(i);
+0135     <span class="keyword">if</span> type == 1 || type == 9 || type == 10
+0136         <span class="comment">% title</span>
+0137         currhght = currhght - typehght(type);
+0138         sp(i) = uipanel(<span class="string">'Parent'</span>, p, <span class="keyword">...</span>
+0139                         <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0140                         <span class="string">'BackgroundColor'</span>, <span class="string">'white'</span>, <span class="keyword">...</span>
+0141                         <span class="string">'OuterPosition'</span>, [0, currhght, 1.0, typehght(type)]);
+0142         displaytext = sprintf(<span class="string">'\\bf %s\\rm'</span>, labeltext{i});            
+0143         annotation(sp(i), <span class="string">'textbox'</span>,  <span class="keyword">...</span>
+0144                         <span class="string">'String'</span>, displaytext, <span class="keyword">...</span>
+0145                         <span class="string">'Interpreter'</span>, <span class="string">'tex'</span>, <span class="keyword">...</span>
+0146                         <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="keyword">...</span>
+0147                         <span class="string">'Position'</span>, [0, 0, 0.2, 1], <span class="keyword">...</span>
+0148                         <span class="string">'HorizontalAlignment'</span>, <span class="string">'left'</span>, <span class="keyword">...</span>
+0149                         <span class="string">'VerticalAlignment'</span>, <span class="string">'middle'</span>, <span class="keyword">...</span>
+0150                         <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0151                         <span class="string">'FontName'</span>, fontname, <span class="keyword">...</span>
+0152                         <span class="string">'FontSize'</span>, titlefontsize);
+0153         <span class="keyword">if</span> type == 1 
+0154             txt = <span class="string">'Group'</span>;
+0155         <span class="keyword">elseif</span> type == 10
+0156             txt = <span class="string">'Example'</span>;
+0157         <span class="keyword">end</span>
+0158         <span class="keyword">if</span> type == 1 || type == 10
+0159             <span class="keyword">if</span> nlatentcurves == 3
+0160                 annotation(sp(i), <span class="string">'textbox'</span>,  <span class="keyword">...</span>
+0161                                 <span class="string">'String'</span>, {sprintf(<span class="string">'%s 1'</span>, txt); sprintf(<span class="string">'\\fontsize{%d} (n=%d)'</span>, unitfontsize, sum(amInterventions.LatentCurve == lcsort(1)))}, <span class="keyword">...</span>
+0162                                 <span class="string">'Interpreter'</span>, <span class="string">'tex'</span>, <span class="keyword">...</span>
+0163                                 <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="keyword">...</span>
+0164                                 <span class="string">'Position'</span>, [0.28, 0, 0.1, 1], <span class="keyword">...</span>
+0165                                 <span class="string">'HorizontalAlignment'</span>, <span class="string">'center'</span>, <span class="keyword">...</span>
+0166                                 <span class="string">'VerticalAlignment'</span>, <span class="string">'bottom'</span>, <span class="keyword">...</span>
+0167                                 <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0168                                 <span class="string">'FontName'</span>, fontname, <span class="keyword">...</span>
+0169                                 <span class="string">'FontSize'</span>, labelfontsize);
+0170                 annotation(sp(i), <span class="string">'textbox'</span>,  <span class="keyword">...</span>
+0171                                 <span class="string">'String'</span>, {sprintf(<span class="string">'%s 2'</span>, txt); sprintf(<span class="string">'\\fontsize{%d} (n=%d)'</span>, unitfontsize, sum(amInterventions.LatentCurve == lcsort(2)))}, <span class="keyword">...</span>
+0172                                 <span class="string">'Interpreter'</span>, <span class="string">'tex'</span>, <span class="keyword">...</span>
+0173                                 <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="keyword">...</span>
+0174                                 <span class="string">'Position'</span>, [0.47, 0, 0.1, 1], <span class="keyword">...</span>
+0175                                 <span class="string">'HorizontalAlignment'</span>, <span class="string">'center'</span>, <span class="keyword">...</span>
+0176                                 <span class="string">'VerticalAlignment'</span>, <span class="string">'bottom'</span>, <span class="keyword">...</span>
+0177                                 <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0178                                 <span class="string">'FontName'</span>, fontname, <span class="keyword">...</span>
+0179                                 <span class="string">'FontSize'</span>, labelfontsize);
+0180                 annotation(sp(i), <span class="string">'textbox'</span>,  <span class="keyword">...</span>
+0181                                 <span class="string">'String'</span>, {sprintf(<span class="string">'%s 3'</span>, txt); sprintf(<span class="string">'\\fontsize{%d} (n=%d)'</span>, unitfontsize, sum(amInterventions.LatentCurve == lcsort(3)))}, <span class="keyword">...</span>
+0182                                 <span class="string">'Interpreter'</span>, <span class="string">'tex'</span>, <span class="keyword">...</span>
+0183                                 <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="keyword">...</span>
+0184                                 <span class="string">'Position'</span>, [0.65, 0, 0.1, 1], <span class="keyword">...</span>
+0185                                 <span class="string">'HorizontalAlignment'</span>, <span class="string">'center'</span>, <span class="keyword">...</span>
+0186                                 <span class="string">'VerticalAlignment'</span>, <span class="string">'bottom'</span>, <span class="keyword">...</span>
+0187                                 <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0188                                 <span class="string">'FontName'</span>, fontname, <span class="keyword">...</span>
+0189                                 <span class="string">'FontSize'</span>, labelfontsize);
+0190             <span class="keyword">elseif</span> nlatentcurves == 2
+0191                 annotation(sp(i), <span class="string">'textbox'</span>,  <span class="keyword">...</span>
+0192                                 <span class="string">'String'</span>, {sprintf(<span class="string">'%s 1'</span>, txt); sprintf(<span class="string">'\\fontsize{%d} (n=%d)'</span>, unitfontsize, sum(amInterventions.LatentCurve == lcsort(1)))}, <span class="keyword">...</span>
+0193                                 <span class="string">'Interpreter'</span>, <span class="string">'tex'</span>, <span class="keyword">...</span>
+0194                                 <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="keyword">...</span>
+0195                                 <span class="string">'Position'</span>, [0.31, 0, 0.1, 1], <span class="keyword">...</span>
+0196                                 <span class="string">'HorizontalAlignment'</span>, <span class="string">'center'</span>, <span class="keyword">...</span>
+0197                                 <span class="string">'VerticalAlignment'</span>, <span class="string">'bottom'</span>, <span class="keyword">...</span>
+0198                                 <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0199                                 <span class="string">'FontName'</span>, fontname, <span class="keyword">...</span>
+0200                                 <span class="string">'FontSize'</span>, labelfontsize);
+0201                 annotation(sp(i), <span class="string">'textbox'</span>,  <span class="keyword">...</span>
+0202                                 <span class="string">'String'</span>, {sprintf(<span class="string">'%s 2'</span>, txt); sprintf(<span class="string">'\\fontsize{%d} (n=%d)'</span>, unitfontsize, sum(amInterventions.LatentCurve == lcsort(2)))}, <span class="keyword">...</span>
+0203                                 <span class="string">'Interpreter'</span>, <span class="string">'tex'</span>, <span class="keyword">...</span>
+0204                                 <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="keyword">...</span>
+0205                                 <span class="string">'Position'</span>, [0.57, 0, 0.1, 1], <span class="keyword">...</span>
+0206                                 <span class="string">'HorizontalAlignment'</span>, <span class="string">'center'</span>, <span class="keyword">...</span><span class="comment">15</span>
+0207                                 <span class="string">'VerticalAlignment'</span>, <span class="string">'bottom'</span>, <span class="keyword">...</span>
+0208                                 <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0209                                 <span class="string">'FontName'</span>, fontname, <span class="keyword">...</span>
+0210                                 <span class="string">'FontSize'</span>, labelfontsize);
+0211                 
+0212             <span class="keyword">end</span>
+0213         <span class="keyword">end</span>
+0214     <span class="keyword">elseif</span> type == 2 || type == 3 || type == 4
+0215         <span class="comment">% label</span>
+0216         currhght = currhght - typehght(type);
+0217         <span class="keyword">if</span> type == 3
+0218             displaytext1 = sprintf(<span class="string">'\\bf %s\\rm'</span>, <span class="string">'Change from'</span>);
+0219             displaytext2 = sprintf(<span class="string">'\\bf %s\\rm'</span>, <span class="string">'stable baseine'</span>);
+0220             displaytext3 = sprintf(<span class="string">'\\bf %s\\rm'</span>, <span class="string">'(s.d.)'</span>);
+0221             displaytext = {displaytext1; displaytext2; displaytext3};
+0222         <span class="keyword">else</span>
+0223             displaytext = {<a href="../../../../Code/smartcare/formatTexDisplayMeasure.html" class="code" title="function [displaynameformatted] = formatTexDisplayMeasure(displaymeasure)">formatTexDisplayMeasure</a>(labeltext{i}); sprintf(<span class="string">'\\fontsize{%d} (%s)'</span>, unitfontsize, <a href="../../../../Code/smartcare/getUnitsForMeasure.html" class="code" title="function [units] = getUnitsForMeasure(displaymeasure)">getUnitsForMeasure</a>(labeltext{i}))};
+0224         <span class="keyword">end</span>
+0225         sp(i) = uipanel(<span class="string">'Parent'</span>, p, <span class="keyword">...</span>
+0226                         <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0227                         <span class="string">'BackgroundColor'</span>, <span class="string">'white'</span>, <span class="keyword">...</span>
+0228                         <span class="string">'OuterPosition'</span>, [0, currhght, labelwidth, typehght(type)]);
+0229         annotation(sp(i), <span class="string">'textbox'</span>,  <span class="keyword">...</span>
+0230                         <span class="string">'String'</span>, displaytext, <span class="keyword">...</span>
+0231                         <span class="string">'Interpreter'</span>, <span class="string">'tex'</span>, <span class="keyword">...</span>
+0232                         <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="keyword">...</span>
+0233                         <span class="string">'Position'</span>, [0, 0, 1, 1], <span class="keyword">...</span>
+0234                         <span class="string">'HorizontalAlignment'</span>, <span class="string">'center'</span>, <span class="keyword">...</span>
+0235                         <span class="string">'VerticalAlignment'</span>, <span class="string">'middle'</span>, <span class="keyword">...</span>
+0236                         <span class="string">'LineStyle'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0237                         <span class="string">'FontName'</span>, fontname, <span class="keyword">...</span>
+0238                         <span class="string">'FontSize'</span>, labelfontsize);
+0239     <span class="keyword">elseif</span> type == 6 || type == 8
+0240         <span class="comment">% plot superimposed curves (all measures or just 2 measures)</span>
+0241         sp(i) = uipanel(<span class="string">'Parent'</span>, p, <span class="keyword">...</span>
+0242                         <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0243                         <span class="string">'BackgroundColor'</span>, <span class="string">'white'</span>, <span class="keyword">...</span>
+0244                         <span class="string">'OuterPosition'</span>, [labelwidth, currhght, plotwidth, typehght(type)]);
+0245 
+0246         <span class="comment">% set the plot range over all curves to ensure comparable visual scaling</span>
+0247         yl = [min(min(min(meancurvemean))) <span class="keyword">...</span>
+0248               max(max(max(meancurvemean)))];
+0249 
+0250         <span class="comment">% for each curve, plot all measures superimposed</span>
+0251         <span class="keyword">for</span> n = 1:nlatentcurves
+0252             lc = lcsort(n);
+0253             xto = (align_wind + offset.span - 1 + ex_start(lc));
+0254             xfrom   = (1 + ex_start(lc));
+0255             xl = [xfrom, xto];
+0256             tmp_meancurvemean  = reshape(meancurvemean(lc, :, :),  [align_wind + offset.span - 1, nmeasures]);
+0257             tmp_ninterventions   = sum(amInterventions.LatentCurve == lc);
+0258 
+0259             <span class="keyword">if</span> tmp_ninterventions ~= 0
+0260                 <span class="keyword">if</span> type == 6 &amp;&amp; n == nlatentcurves
+0261                     panels = (((n - 1) * (plotpanels + paddingpanels)) + 1): (((n - 1) * (plotpanels + paddingpanels)) + plotpanels + legendpanels);
+0262                 <span class="keyword">else</span>
+0263                     panels = (((n - 1) * (plotpanels + paddingpanels)) + 1): (((n - 1) * (plotpanels + paddingpanels)) + plotpanels);
+0264                 <span class="keyword">end</span>
+0265 
+0266                 ax = subplot(1, panelsacross, panels, <span class="string">'Parent'</span>, sp(i));
+0267                 ax.FontSize = axisfontsize;
+0268                 ax.FontName = fontname;
+0269                 ax.TickDir = <span class="string">'out'</span>;
+0270                 
+0271                 <span class="keyword">if</span> type == 6
+0272                     <span class="comment">% add legend text cell array</span>
+0273                     legendtext = tmpmeasures.DisplayName;
+0274                     <span class="keyword">for</span> m = 1:tmpnmeasures
+0275                         legendtext{m} = <a href="../../../../Code/smartcare/formatDisplayMeasure.html" class="code" title="function [displaynameformatted] = formatDisplayMeasure(displaymeasure)">formatDisplayMeasure</a>(legendtext{m});
+0276                     <span class="keyword">end</span>
+0277                     pridx = ismember(tmpmeasures.DisplayName, invmeasarray);
+0278                     <span class="keyword">if</span> sum(pridx) &gt; 0
+0279                         <span class="keyword">for</span> a = 1:size(legendtext, 1)
+0280                             <span class="keyword">if</span> pridx(a) == 1
+0281                                 legendtext{a} = sprintf(<span class="string">'%s %s'</span>, legendtext{a}, <span class="string">'(Inverted)'</span>);
+0282                             <span class="keyword">end</span>
+0283                         <span class="keyword">end</span>
+0284                     <span class="keyword">end</span>
+0285 
+0286                     <a href="../../../../Code/smartcare/plotSuperimposedAlignedCurvesForPaper.html" class="code" title="function plotSuperimposedAlignedCurvesForPaper(ax, meancurvemean, xl, yl,tmpmeasures, tmpnmeasures, min_offset, max_offset, align_wind, ex_start, study)">plotSuperimposedAlignedCurvesForPaper</a>(ax, tmp_meancurvemean, xl, yl, <span class="keyword">...</span>
+0287                             tmpmeasures, tmpnmeasures, offset, align_wind, ex_start(lc), study);
+0288                 <span class="keyword">elseif</span> type == 8
+0289                     <a href="../../../../Code/smartcare/plotSuperimposedAlignedCurvesForPaper.html" class="code" title="function plotSuperimposedAlignedCurvesForPaper(ax, meancurvemean, xl, yl,tmpmeasures, tmpnmeasures, min_offset, max_offset, align_wind, ex_start, study)">plotSuperimposedAlignedCurvesForPaper</a>(ax, tmp_meancurvemean, xl, yl, <span class="keyword">...</span>
+0290                             tmpsubsetmeasures, tmpnsubsetmeasures, offset, align_wind, ex_start(lc), study);
+0291                     <span class="keyword">if</span> n == 2 &amp;&amp; ismember(study, {<span class="string">'SC'</span>})
+0292                         <span class="comment">% hardcode plot of time delay arrow</span>
+0293                         hold on;
+0294                         <a href="../../../../Code/smartcare/arrow.html" class="code" title="function [h,yy,zz] = arrow(varargin)">arrow</a>([0, 0.5], [12, 0.5], <span class="keyword">...</span>
+0295                             <span class="string">'Length'</span>, 5, <span class="string">'Ends'</span>, <span class="string">'both'</span>, <span class="string">'FaceColor'</span>, <span class="string">'k'</span>, <span class="string">'LineWidth'</span>, 1.0, <span class="string">'EdgeColor'</span>, <span class="string">'k'</span>);
+0296                         hold off;
+0297                         annotation(sp(i), <span class="string">'textbox'</span>,  <span class="keyword">...</span>
+0298                             <span class="string">'String'</span>, <span class="string">'Delay of 12 days'</span>, <span class="keyword">...</span>
+0299                             <span class="string">'Interpreter'</span>, <span class="string">'tex'</span>, <span class="keyword">...</span>
+0300                             <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="keyword">...</span>
+0301                             <span class="string">'Position'</span>, [0.43, 0.9, 0.10, 0.07], <span class="keyword">...</span>
+0302                             <span class="string">'HorizontalAlignment'</span>, <span class="string">'left'</span>, <span class="keyword">...</span>
+0303                             <span class="string">'VerticalAlignment'</span>, <span class="string">'middle'</span>, <span class="keyword">...</span>
+0304                             <span class="string">'BackgroundColor'</span>, <span class="string">'white'</span>, <span class="keyword">...</span>
+0305                             <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0306                             <span class="string">'FontName'</span>, fontname, <span class="keyword">...</span>
+0307                             <span class="string">'FontSize'</span>, smallfontsize);
+0308                     <span class="keyword">end</span>
+0309                 <span class="keyword">end</span>
+0310 
+0311                 xlabel(ax, <span class="string">'Days from exacerbation start'</span>);
+0312                 <span class="keyword">if</span> n ~= 1
+0313                     ax.YTickLabel = <span class="string">''</span>;
+0314                     ax.YColor = <span class="string">'white'</span>;
+0315                 <span class="keyword">end</span>
+0316                 <span class="keyword">if</span> type == 6 &amp;&amp; n == nlatentcurves
+0317                     legend(ax, legendtext, <span class="string">'Location'</span>, <span class="string">'eastoutside'</span>, <span class="string">'FontSize'</span>, legendfontsize);
+0318                 <span class="keyword">end</span>
+0319             <span class="keyword">end</span>
+0320         <span class="keyword">end</span>
+0321     <span class="keyword">elseif</span> type == 5 || type == 7
+0322         <span class="keyword">if</span> (examplemode ~= 0)
+0323             <span class="comment">% now plot examples for each latent curve set</span>
+0324             sp(i) = uipanel(<span class="string">'Parent'</span>, p, <span class="keyword">...</span>
+0325                             <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0326                             <span class="string">'BackgroundColor'</span>, <span class="string">'white'</span>, <span class="keyword">...</span>
+0327                             <span class="string">'OuterPosition'</span>, [labelwidth, currhght, plotwidth, typehght(type)]);
+0328 
+0329             lcexrow = lcexamples(lcsort);
+0330 
+0331             <span class="keyword">for</span> n = 1:nlatentcurves
+0332                 a = lcexrow(n);
+0333                 amnormcubesingleintr = amIntrNormcube(a, :, tmpsubsetmeasures.Index(currmeas));
+0334                 aminterventionsrow   = amInterventions(a, :);
+0335                 lc = aminterventionsrow.LatentCurve;
+0336                 <span class="keyword">if</span> lc ~= lcsort(n)
+0337                     fprintf(<span class="string">'**** Example is from a different sub-population than the latent curve ****'</span>);
+0338                     <span class="keyword">return</span>;
+0339                 <span class="keyword">end</span>
+0340                 amnormcubesingleintrsmth = amnormcubesingleintr;
+0341                 tmp_ex_start = ex_start(lc);
+0342                 tmp_offset   = aminterventionsrow.Offset;
+0343 
+0344 
+0345                 <span class="comment">% Preprocess the measures :-</span>
+0346                 <span class="comment">% 1) invert pulse rate</span>
+0347                 <span class="comment">% 2) apply a vertical shift (using methodology selected)</span>
+0348                 pridx = find(ismember(tmpsubsetmeasures.DisplayName, invmeasarray));
+0349                 <span class="keyword">if</span> currmeas == pridx
+0350                     amnormcubesingleintr(1, :, 1) = amnormcubesingleintr(1, :, 1) * -1;
+0351                 <span class="keyword">end</span>
+0352                 actx = find(~isnan(amnormcubesingleintr(1, :, 1)));
+0353                 acty = amnormcubesingleintr(1, ~isnan(amnormcubesingleintr(1, :, 1)), 1);
+0354                 fullx = (1:size(amnormcubesingleintr(1, :, 1), 2));
+0355                 amnormcubesingleintr(1, :, 1) = interp1(actx, acty, fullx, <span class="string">'linear'</span>);
+0356                 amnormcubesingleintrsmth(1, :, 1) = movmean(amnormcubesingleintr(1, :, 1), smoothwdth, <span class="string">'omitnan'</span>);
+0357 
+0358                 <span class="keyword">if</span> all(isnan(amnormcubesingleintrsmth(1, 1:(align_wind + offset.span + tmp_ex_start + tmp_offset), 1)))
+0359                         vertshift = 0;
+0360                 <span class="keyword">else</span>
+0361                     <span class="keyword">if</span> shiftmode == 1
+0362                         vertshift = mean(amnormcubesingleintrsmth(1, 1:(align_wind + offset.span + tmp_ex_start + tmp_offset), 1), <span class="string">'omitnan'</span>);
+0363                     <span class="keyword">elseif</span> shiftmode == 2
+0364                         vertshift = max(amnormcubesingleintrsmth(1, 1:(align_wind + offset.span + tmp_ex_start + tmp_offset), 1), <span class="string">'omitnan'</span>);
+0365                     <span class="keyword">elseif</span> shiftmode == 3
+0366                         vertshift = amnormcubesingleintrsmth(1, find(~isnan(amnormcubesingleintrsmth(1, 1:(align_wind + offset.span + tmp_ex_start + tmp_offset), 1)), 1, <span class="string">'last'</span>), 1);
+0367                     <span class="keyword">elseif</span> shiftmode == 4
+0368                         <span class="keyword">if</span> (align_wind + offset.span + tmp_ex_start + tmp_offset - meanwindow) &lt; 1
+0369                             shiftfrom = 1;
+0370                         <span class="keyword">else</span>
+0371                             shiftfrom = (align_wind + offset.span + tmp_ex_start + tmp_offset - meanwindow);
+0372                         <span class="keyword">end</span> 
+0373                         vertshift = mean(amnormcubesingleintrsmth(1, shiftfrom:(align_wind + offset.span + tmp_ex_start + tmp_offset), 1), <span class="string">'omitnan'</span>);
+0374                     <span class="keyword">end</span>
+0375                 <span class="keyword">end</span>
+0376                 amnormcubesingleintr(1, :, 1) = amnormcubesingleintr(1, :, 1) - vertshift;
+0377                 amnormcubesingleintrsmth(1, :, 1) = amnormcubesingleintrsmth(1, :, 1) - vertshift;
+0378                 fprintf(<span class="string">'For intervention %3d, measure %13s, vertical shift is %.3f\n'</span>, a, tmpsubsetmeasures.DisplayName{1}, -vertshift);
+0379 
+0380                 xto = align_wind + offset.up - 1;
+0381                 xfrom = offset.down;
+0382                 xl = [xfrom, xto];
+0383 
+0384                 <span class="comment">%yl = [min(min(amnormcubesingleintrsmth(1, :, logical(measures.Mask)))) ...</span>
+0385                 <span class="comment">%      max(max(amnormcubesingleintrsmth(1, :, logical(measures.Mask))))];</span>
+0386                 yl = [-3, 2];
+0387 
+0388                 panels = (((n - 1) * (plotpanels + paddingpanels)) + 1): (((n - 1) * (plotpanels + paddingpanels)) + plotpanels);
+0389 
+0390                 <span class="comment">% plot all measures superimposed</span>
+0391                 ax = subplot(1, panelsacross, panels, <span class="string">'Parent'</span>, sp(i));
+0392                 ax.FontSize = axisfontsize;
+0393                 ax.FontName = fontname;
+0394 
+0395                 hold on;
+0396                 [smcolour, rwcolour] = <a href="../../../../Code/smartcare/getColourForMeasure.html" class="code" title="function [smcolour, rwcolour] = getColourForMeasure(displaymeasure)">getColourForMeasure</a>(tmpsubsetmeasures.DisplayName{currmeas});
+0397                 lstyle = <span class="string">'-'</span>;
+0398                 lwidth = 1.5;
+0399                 days = xl(1):xl(2);
+0400                 dto = align_wind + offset.up - 1 - tmp_offset;
+0401                 dfrom = offset.down + 1 + tmp_offset;
+0402                 mto   = max_offset + align_wind - 1;
+0403                 plot(ax, days(dfrom:dto), amnormcubesingleintr(1, mfrom:mto, 1), <span class="keyword">...</span>
+0404                     <span class="string">'Color'</span>, rwcolour, <span class="keyword">...</span>
+0405                     <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="keyword">...</span>
+0406                     <span class="string">'Marker'</span>, <span class="string">'o'</span>, <span class="keyword">...</span>
+0407                     <span class="string">'LineWidth'</span>,1, <span class="keyword">...</span>
+0408                     <span class="string">'MarkerSize'</span>,2, <span class="keyword">...</span>
+0409                     <span class="string">'MarkerEdgeColor'</span>, rwcolour, <span class="keyword">...</span>
+0410                     <span class="string">'MarkerFaceColor'</span>, rwcolour);
+0411 
+0412                 plot(ax, days(dfrom:dto), amnormcubesingleintrsmth(1, mfrom:mto, 1), <span class="keyword">...</span>
+0413                     <span class="string">'Color'</span>, smcolour, <span class="keyword">...</span>
+0414                     <span class="string">'LineStyle'</span>, lstyle, <span class="keyword">...</span>
+0415                     <span class="string">'Marker'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0416                     <span class="string">'LineWidth'</span>, lwidth);
+0417                 <span class="keyword">if</span> tmp_ex_start ~= 0
+0418                     [~, ~] = <a href="../../../../Code/smartcare/plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax, 0, xl, yl, <span class="string">'black'</span>, <span class="string">'-'</span>, 0.5); <span class="comment">% plot ex_start</span>
+0419                 <span class="keyword">end</span>
+0420 
+0421                 mmean = 0;
+0422                 mstd = 1;
+0423 
+0424                 <a href="../../../../Code/smartcare/plotFillArea.html" class="code" title="function plotFillArea(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillArea</a>(ax, xl(1), xl(2), <span class="keyword">...</span>
+0425                     mmean - (0.5 * mstd), mmean + (0.5 * mstd), [0.4, 0.4, 0.4], <span class="string">'0.2'</span>, <span class="string">'none'</span>);
+0426                 line(xl, [mmean mmean] , <span class="string">'Color'</span>, [0.6, 0.6, 0.6], <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, .5)
+0427 
+0428                 hold off;
+0429                 <span class="keyword">if</span> currmeas == tmpnsubsetmeasures
+0430                     xlabel(ax, <span class="string">'Days from exacerbation start'</span>);
+0431                 <span class="keyword">else</span>
+0432                     ax.XTickLabel = <span class="string">''</span>;
+0433                     ax.XColor = <span class="string">'white'</span>;
+0434                 <span class="keyword">end</span>
+0435                 <span class="keyword">if</span> n ~= 1
+0436                     ax.YTickLabel = <span class="string">''</span>;
+0437                     ax.YColor = <span class="string">'white'</span>;
+0438                 <span class="keyword">end</span>
+0439                 ylim(yl);
+0440             <span class="keyword">end</span>
+0441             currmeas = currmeas + 1;
+0442         <span class="keyword">end</span>
+0443     <span class="keyword">end</span>
+0444 <span class="keyword">end</span>
+0445 
+0446 <span class="comment">% save plot</span>
+0447 <a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0448 <a href="../../../../Code/smartcare/savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, plottitle, plotsubfolder);
+0449 close(f);
+0450 
+0451 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

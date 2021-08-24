@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of am4PlotAndSaveAlignedCurves</title>
+  <meta name="keywords" content="am4PlotAndSaveAlignedCurves">
+  <meta name="description" content="am4PlotAndSaveAlignedCurves - plots the curves pre and post alignment for">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; am4PlotAndSaveAlignedCurves.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>am4PlotAndSaveAlignedCurves
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>am4PlotAndSaveAlignedCurves - plots the curves pre and post alignment for</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function am4PlotAndSaveAlignedCurves(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets,measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, plotname, ex_start, sigmamethod) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> am4PlotAndSaveAlignedCurves - plots the curves pre and post alignment for
+ each measure, and the histogram of offsets</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>	plotLatentCurve - plots the latent curve actual and smoothed</li><li><a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>	plotVerticalLine - plots a vertical line</li><li><a href="savePlot.html" class="code" title="function savePlot(f, name)">savePlot</a>	savePlots - saves the figure to png and svp file types</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="runAlignmentModel4.html" class="code" title="">runAlignmentModel4</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function am4PlotAndSaveAlignedCurves(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets, </a><span class="keyword">...</span>
+0002     measures, max_points, min_offset, max_offset, align_wind, nmeasures, run_type, plotname, ex_start, sigmamethod)
+0003 
+0004 <span class="comment">% am4PlotAndSaveAlignedCurves - plots the curves pre and post alignment for</span>
+0005 <span class="comment">% each measure, and the histogram of offsets</span>
+0006 
+0007 plotsacross = 3;
+0008 plotsdown = round((nmeasures + 1) / plotsacross);
+0009 plottitle = sprintf(<span class="string">'%s - %s'</span>, plotname, run_type);
+0010 anchor = 1; <span class="comment">% latent curve is to be anchored on the plot (right side at min_offset)</span>
+0011 
+0012 [f, p] = <a href="createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0013 
+0014 <span class="keyword">for</span> m = 1:nmeasures
+0015     <span class="comment">% initialise plot areas</span>
+0016     xl = [((-1 * (max_offset + align_wind)) + 1 - 0.5), -0.5];
+0017     yl = [min((meancurvemean(:, m) * .99)) <span class="keyword">...</span>
+0018           max((meancurvemean(:, m) * 1.01))];
+0019     
+0020     ax = subplot(plotsdown,plotsacross,m,<span class="string">'Parent'</span>,p);
+0021     yyaxis left;
+0022     
+0023     [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, min_offset, (profile_pre(:, m)), xl, yl, <span class="string">'red'</span>, <span class="string">':'</span>, 0.5, anchor);
+0024     [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, min_offset, smooth(profile_pre(:, m), 5), xl, yl, <span class="string">'red'</span>, <span class="string">'-'</span>, 0.5, anchor);
+0025     [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, min_offset, (meancurvemean(:, m)), xl, yl, <span class="string">'blue'</span>, <span class="string">':'</span>, 0.5, anchor);
+0026     [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, min_offset, smooth(meancurvemean(:, m), 5), xl, yl, <span class="string">'blue'</span>, <span class="string">'-'</span>, 0.5, anchor);
+0027     
+0028     <span class="keyword">if</span> sigmamethod == 4
+0029         [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, min_offset, (meancurvemean(:, m) + meancurvestd(:,m)), xl, yl, <span class="string">'blue'</span>, <span class="string">':'</span>, 0.5, anchor);
+0030         [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, min_offset, smooth(meancurvemean(:, m) + meancurvestd(:,m), 5), xl, yl, <span class="string">'blue'</span>, <span class="string">'--'</span>, 0.5, anchor);
+0031         [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, min_offset, (meancurvemean(:, m) - meancurvestd(:,m)), xl, yl, <span class="string">'blue'</span>, <span class="string">':'</span>, 0.5, anchor);
+0032         [xl, yl] = <a href="plotLatentCurve.html" class="code" title="function [xl, yl] = plotLatentCurve(ax, max_offset, align_wind, offset, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurve</a>(ax, max_offset, align_wind, min_offset, smooth(meancurvemean(:, m) - meancurvestd(:,m), 5), xl, yl, <span class="string">'blue'</span>, <span class="string">'--'</span>, 0.5, anchor);
+0033     <span class="keyword">end</span>
+0034     
+0035     ax.XAxis.FontSize = 6;
+0036     xlabel(<span class="string">'Days prior to Intervention'</span>);
+0037     ax.YAxis(1).Color = <span class="string">'blue'</span>;
+0038     ax.YAxis(1).FontSize = 6;
+0039     ylabel(<span class="string">'Normalised Measure'</span>, <span class="string">'FontSize'</span>, 6);
+0040     
+0041     <span class="keyword">if</span> ex_start ~= 0
+0042         [xl, yl] = <a href="plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax, ex_start, xl, yl, <span class="string">'blue'</span>, <span class="string">'--'</span>, 0.5); <span class="comment">% plot ex_start</span>
+0043     <span class="keyword">end</span>
+0044     
+0045     yyaxis right
+0046     ax.YAxis(2).Color = <span class="string">'black'</span>;
+0047     ax.YAxis(2).FontSize = 6;
+0048     ylabel(<span class="string">'Count of Data points'</span>);
+0049     <span class="keyword">if</span> isequal(run_type,<span class="string">'Best Alignment'</span>)
+0050         bar([-1 * (max_offset + align_wind - 1): -1], max_points, 0.5, <span class="string">'FaceColor'</span>, <span class="string">'white'</span>, <span class="string">'FaceAlpha'</span>, 0.1);
+0051     <span class="keyword">end</span>
+0052     bar([-1 * (max_offset + align_wind - 1): -1], meancurvecount(:, m), 0.5, <span class="string">'FaceColor'</span>, <span class="string">'black'</span>, <span class="string">'FaceAlpha'</span>, 0.25, <span class="string">'LineWidth'</span>, 0.2);
+0053     <span class="keyword">if</span> isequal(run_type,<span class="string">'Best Alignment'</span>)
+0054         ylim([0 max(max_points) * 4]);
+0055     <span class="keyword">else</span>
+0056         ylim([0 max(meancurvecount(:, m) * 4)]);
+0057     <span class="keyword">end</span>
+0058     <span class="keyword">if</span> measures.Mask(m) == 1
+0059         title(measures.DisplayName(m), <span class="string">'BackgroundColor'</span>, <span class="string">'g'</span>);
+0060     <span class="keyword">else</span>
+0061         title(measures.DisplayName(m));
+0062     <span class="keyword">end</span>
+0063     
+0064 <span class="keyword">end</span>
+0065 
+0066 subplot(plotsdown, plotsacross, nmeasures + 1, <span class="string">'Parent'</span>, p)
+0067 histogram(-1 * offsets)
+0068 xlim([(-1 * max_offset) + 0.5, 0.5]);
+0069 ylim([0 50]);
+0070 title(<span class="string">'Histogram of Alignment Offsets'</span>)
+0071 
+0072 
+0073 <span class="comment">% save plot</span>
+0074 <a href="savePlot.html" class="code" title="function savePlot(f, name)">savePlot</a>(f, plottitle);
+0075 close(f);
+0076 
+0077 <span class="keyword">end</span>
+0078</pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

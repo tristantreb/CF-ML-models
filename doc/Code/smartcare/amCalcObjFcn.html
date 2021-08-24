@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of amCalcObjFcn</title>
+  <meta name="keywords" content="amCalcObjFcn">
+  <meta name="description" content="amCalcObjFcn - calculates residual sum of squares distance for points in">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="#">Code</a> &gt; <a href="index.html">smartcare</a> &gt; amCalcObjFcn.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for Code/smartcare&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>amCalcObjFcn
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>amCalcObjFcn - calculates residual sum of squares distance for points in</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [dist, hstg, hstgc] = amCalcObjFcn(meancurvesum, meancurvecount, amNormcube, amInterventions, hstg, hstgc, currinter, curroffset, max_offset, align_wind, nmeasures, updatehistogram) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> amCalcObjFcn - calculates residual sum of squares distance for points in
+ curve vs meancurve incorporating offset</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="amAlignCurves.html" class="code" title="function [offsets, profile_pre, profile_post, hstg, qual] = amAlignCurves(amNormcube, amInterventions, measures, max_offset, align_wind, nmeasures, ninterventions, run_type, detaillog)">amAlignCurves</a>	alignCurves = function to align measurement curves prior to intervention</li><li><a href="amBestFit.html" class="code" title="function [better_offset, hstg, hstgc] = amBestFit(meancurvesum, meancurvecount, amNormcube, amInterventions, hstg, hstgc, currinter, max_offset, align_wind, nmeasures)">amBestFit</a>	amBestFit - calculates the offset for an intervention by minimising the</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [dist, hstg, hstgc] = amCalcObjFcn(meancurvesum, meancurvecount, amNormcube, amInterventions, hstg, hstgc, currinter, curroffset, max_offset, align_wind, nmeasures, updatehistogram)</a>
+0002 
+0003 <span class="comment">% amCalcObjFcn - calculates residual sum of squares distance for points in</span>
+0004 <span class="comment">% curve vs meancurve incorporating offset</span>
+0005 
+0006 dist = 0;
+0007 distcount = 0;
+0008 scid   = amInterventions.SmartCareID(currinter);
+0009 start = amInterventions.IVScaledDateNum(currinter);
+0010 
+0011 <span class="keyword">if</span> (updatehistogram == 1)
+0012     <span class="keyword">for</span> m = 1:nmeasures
+0013         hstg(m, currinter, curroffset + 1) = 0;
+0014         hstgc(m, currinter, curroffset + 1) = 0;
+0015     <span class="keyword">end</span>
+0016 <span class="keyword">end</span>
+0017 
+0018 <span class="keyword">for</span> i = 1:align_wind
+0019     <span class="keyword">for</span> m = 1:nmeasures
+0020         <span class="keyword">if</span> start - i &lt;= 0
+0021             <span class="keyword">continue</span>;
+0022         <span class="keyword">end</span>
+0023         <span class="keyword">if</span> ~isnan(amNormcube(scid, start - i, m))
+0024             thisdist = (meancurvesum((max_offset + align_wind + 1) - i - curroffset, m)/meancurvecount((max_offset + align_wind + 1) - i - curroffset, m) <span class="keyword">...</span>
+0025                 - amNormcube(scid, start - i, m))^2;
+0026             dist = dist + thisdist;
+0027             distcount = distcount + 1;
+0028             <span class="keyword">if</span> (updatehistogram == 1)
+0029                 hstg(m, currinter, curroffset + 1) = hstg(m, currinter, curroffset + 1) + thisdist;
+0030                 hstgc(m, currinter, curroffset + 1) = hstgc(m, currinter, curroffset + 1) + 1;
+0031             <span class="keyword">end</span>
+0032         <span class="keyword">end</span>
+0033     <span class="keyword">end</span>
+0034 <span class="keyword">end</span>
+0035 
+0036 <span class="keyword">if</span> distcount &gt; 0
+0037     dist = dist/distcount;
+0038 <span class="comment">%    fprintf('%d intervention, distcount is %d\n', currinter, distcount);</span>
+0039 <span class="comment">%    if (updatehistogram == 1)</span>
+0040 <span class="comment">%        hstg(:, currinter, curroffset + 1) = hstg(:, currinter, curroffset + 1) ./ hstgc(:, currinter, curroffset + 1) + 1;</span>
+0041 <span class="comment">%    end</span>
+0042 <span class="keyword">end</span>
+0043 
+0044 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
