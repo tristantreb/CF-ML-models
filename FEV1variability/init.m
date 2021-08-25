@@ -7,7 +7,7 @@ addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/smartcare/;
 basedir = setBaseDir();
 subfolder = 'MatlabSavedVariables';
 study = 'BR';
-plotfolder = '/Users/tristan.trebaol/Documents/PDM/Project/PlotsRecovery/';
+plotfolder = '/Users/tristan.trebaol/Documents/PDM/Project/PlotsFEVAnalysis/';
 
 data_window = 20;
 

@@ -108,8 +108,8 @@ days_post = 39; % treatment generally durate 2 weeks, includes day 0
 
 % note amInterventions date 0 is study start date, i.e. broffset (not patient start date)
 
-for i = 1:ninterventions
-    figure('DefaultAxesFontSize',12,'Position', [1 1 1500 600])
+for i = [19,40,52]%1:ninterventions
+    figure('DefaultAxesFontSize',17,'Position', [1 1 1500 600])
     t = tiledlayout(4,2);
     
     id = amInterventions.SmartCareID(i);
@@ -187,7 +187,7 @@ for i = 1:ninterventions
         hold off
 
         xlim([-days_prior days_post+1])
-        xlabel('Days from study start')
+        xlabel('Days from treatment start')
         ylabel(measures.DisplayName{m})
 
         % reverse values where necessary

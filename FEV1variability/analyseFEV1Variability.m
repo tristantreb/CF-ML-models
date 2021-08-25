@@ -5,7 +5,6 @@
 %% load the data
 
 init;
-plotfolder = '../../PlotsFEVAnalysis';
 
 % load measures
 [datamatfile, ~, ~] = getRawDataFilenamesForStudy(study);
@@ -483,7 +482,7 @@ FEV1info = FEV1info( FEV1info.all_std <= 0.3 & FEV1info.all_n_residuals >= 30 ,:
 scatterhist(FEV1info.all_std,FEV1info.PercentagePredicted,10)
 xlabel('\sigma_{residuals} (L)')
 ylabel('FEV1 %')
-[a,b] = corr(FEV1info.all_std,FEV1info.PercentagePredicted,'Rows','complete')
+[a,b] = corr(FEV1info.all_std,FEV1info.PercentagePredicted,'Rows','complete');
 title(sprintf('Predicted FEV1 %% against patient-specific variability (r = %2.3f, p-value = %2.3f)',a,b),...
     sprintf('%i patients, %i outliers removed (\\sigma_{residuals} > 0.3 or #residuals < 30)', size(FEV1info,1), sum(not(rPatientStats.all_n_residuals==0))-size(FEV1info,1)))
 clear a; clear b;
