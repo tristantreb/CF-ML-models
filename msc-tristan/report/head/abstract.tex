@@ -1,0 +1,19 @@
+
+%\let\cleardoublepage\clearpage
+
+
+% English abstract
+\chapter*{Abstract}
+% \markboth{Abstract}{Abstract}
+\addcontentsline{toc}{chapter}{Abstract} % adds an entry to the table of contents
+
+\textit{Main project.}\\
+Chronic episodes of sudden pulmonary deterioration followed by insufficient recoveries from antibiotic treatments are the main driver of morbidity and mortality in Cystic Fibrosis (CF). Study of recovery is performed to improve CF care monitoring for those episodes. The characterisation of CF recovery with machine learning uses a data set of 119 antibiotic interventions from 55 patients. Patients, enrolled in a UK CF home monitoring study, recorded high dimensional physiological data daily, from which 8 bio-markers with a temporal resolution of 24 measurements per week are ingested. A multi-class Bayesian inference algorithm with convergence through expectation maximisation is formalised to successfully infer the characteristic profile of a typical recovery and of multiple types of recoveries. Further results based on those profiles suggest a prognosis for decline at recovery-end based on analysing the beginning of the post-treatment start behaviour. More importantly, the potential of machine learning to characterise recoveries is promising for future studies with additional longitudinal patient physiological data.\\\\
+\textit{Side project.}\\
+Forced Expiratory Volume in 1s (FEV1) is a key bio-marker to assess a CF patient lung health's status. However, its measurement is inherently subject to technical variability. Longitudinal high-frequency measurement data from the same UK CF home monitoring study can be used to redefine this variability. A bi-parameter moving average filter is built to segment signal and noise, the noise component of the model is analysed. The variability in FEV1 measurements is estimated to be 300mL with 21'000 lung function records from 220 patients. The variability is highly patient-specific (IQR [184; 428] mL), and not correlated with \%FEV1 predicted (r=0.129). Analysis of the impact of CFTR modulators shows that the start of Trikafta significantly mitigates the variability over any previous CFTR modulators history (6 homoscedasticity tests with p-value < 0.03), the same is not demonstrated for Symkevi.
+
+\vskip0.5cm
+\textbf{Key words}: cystic fibrosis, machine learning, statistics
+
+
+% 

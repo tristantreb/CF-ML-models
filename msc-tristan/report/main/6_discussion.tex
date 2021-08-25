@@ -1,0 +1,49 @@
+\chapter{Discussion}
+
+\section{Results interpretation}
+The recovery-specific questions "How does a recovery look like?, "Are there different types of recoveries?" were answered with the probabilistic inference algorithm. The characterisation of recovery's summary that can be provided to CF specialists is described in this section.
+
+\subsubsection{Typical recovery profile}
+A characteristic profile of the changes in physiology and symptoms during a recovery was generated using a Bayesian inference algorithm with expectation maximisation. The profile allows to define an accurate recovery start date, which provides a label to explore the time to response, and the quality of the recovery.
+
+The typical recovery profile revealed that health bio-markers typically respond sharply to the treatment and recover fully back to stable baseline. After a recovery paroxysm, there is a call-back with stabilisation nearby the stable baseline. More importantly, no clear decline can be observed in a typical recovery.
+
+A time to treatment response was computed with the learned offset. This can be used in the future to analyse the impact of multiple competing features, including antibiotic choice, on the time to treatment response and eventually give the patient the antibiotic that minimises this time.
+
+\subsubsection{Two types of recoveries inference}
+The probabilistic inference algorithm was also used to infer the two most typical types of recoveries. The two-fold partition of the samples was balanced: class 1 contained 53\% of the data records and 47\% for class 2. Based on the following results, this indicates that half of the recoveries were successful and half were only partial recoveries, thereby unsuccessful.
+
+The first type of recovery are partial recoveries: despite a clear measures' increase after recovery start, the signals fail to recover to the stable baseline. 77\% of those recoveries started from a full decline. They were characterised by a long time to treatment response. Patients with chronic pseudomonas infections were less likely to experience this kind of recovery than a class 2 recovery.
+
+The second type of interventions were related to full and successful recoveries: after an early recovery start, the measures increased sharply back to the stable baseline with a large overshoot. Even though a slow constant decline seem to appear after the climax, cough, wellness and FEV1 stay above the stable baseline until the end of the recovery window, indicating that the recovery was successful. Those interventions were commonly found in people with higher number of antibiotic treatment, notably IV over the study period.
+
+As a result, successful recoveries correlate well with individuals that were prescribed a higher number of treatments over the study period. Even though no causality effect can be concluded, it suggests that treating a patient more aggressively with antibiotics improves the quality of his recoveries, and therefore probably mitigates long-term degradation.
+
+\subsubsection{Recovery with decline}
+The characteristic profile for a recovery with decline was inferred based on a manually selected subset of 30\% of data records that contained a clear decline before or after treatment. Whereas most physiological measures' undergo a small increase at the beginning of recovery, the subjective measures' (cough and wellness) contrast by a high-sloped improve. This behaviour was not observed in any of the three other typical profiles, suggesting that it is specifically related to this kind of unsuccessful recovery. After the full or almost full recovery, all measures follow a ubiquitous decline, which starts ~40\% of the time while the patient is still under antibiotics. Most measures finish the recovery period on a lower end-point than at recovery start. 
+
+\section{Main limitations}
+Three main limitations of this work were identified. Firstly, the depth of the analysis was limited by the low number of antibiotic interventions available. As more than three types of recoveries were observed the probabilistic inference algorithm should be able to robustly infer up to 4 or 5 different classes of recovery. Secondly, the choice of the maximum offset was limited by the numerical instability of the latent curve's left-most points. Indeed, to draw the most general typical profile, the ideal value for the maximum offset would equal D (20 days). Two recovery extremes, a continuous decline despite treatment and a continuous improve, could both entirely fit into the typical profile without overlapping. Thirdly, in some cases there is some uncertainty around the treatment dates that were extracted from the clinical data. This was assumed when an increase in signals was observed before the treatment start. In the period immediately following treatment start, which is used by the model, those cases would start from a higher point and could be seen as partial declines.
+
+%Despite the measures taken to improve the quality of the data such as filtering interventions with enough data, handling data outliers, smoothing the inherent noise between sequential measurements, the time series that we faced still contain highly noisy, trends are subject to abrupt changes, and seldom there are perturbation in the signal that are unexpected (such as a sudden improve before the treatment start).
+
+\section{Conclusion and future work}
+In a nutshell, this work provides two main actionable items for clinicians:
+\begin{enumerate}
+    \item This work suggests that prognosis about the quality of the recovery can be inferred based on observing the in evolution of bio-markers in the first days of the recovery. A high increase in subjective parameters (cough and wellness), not followed by the other physiological signals (FEV1, O2 saturation) can be an early warning for unsuccessful recoveries.
+    \item Patients with a higher amount of treatments are more likely to experience successful recoveries. This is commonly known in the clinician community and was addressed multiple times in literature since 2003 \cite{giron_2021}, hereby validating the quality and interpretability of a machine learning approach compared to results from more systemic studies.
+\end{enumerate}
+
+This study and the related opportunities thus confirms that machine learning analysis of high frequency home monitoring data has a real potential to improve and personalise care for individuals with CF, through optimising hospital-based specialist management. In fact, mechanistic studies of recovery powered with machine learning similar to the probabilistic inference algorithm promise to:
+\begin{enumerate}
+    \item \textbf{Infer complex relations on the prognosis of recovery.} Clear and simple relations between different types of recovery and patient's characteristics were drawn from a small amount of antibiotic treatment (119). Providing a greater antibiotic treatment sample and longer longitudinal data per patient, it is likely that long-term outcomes of combine treatments, in particular for CFTR modulator therapies and their relation with antibiotics, could be inferred. Understanding this would enable clinicians to take decisions on the short-term that can mitigate long-term lung degradation. 
+    \item \textbf{Provide a flexible baseline for future studies.} Once the model is derived, it is adaptable and can be effortlessly run again with 
+    \begin{itemize}
+        \item More recent treatment interventions. It would be interesting and uncomplicated to run the model again on Project Breathe data in a year from now.
+        \item Additional bio-markers, by changing the subset of measure M. For example the lung clearance index (LCI), to our knowledge not commonly used in Europe, might provide better insight in lung function over traditional forced expiratory volume methods, in particular for asymptotic CF patients \cite{fuchs_2009}. Thanks to the commercialisation of the transformative Triple Therapy since 2019, the number of asymptotic patients is expected to rise. A change of disease severity at the CF population level might accelerate the usage of new bio-markers such as LCI.
+    \end{itemize}
+    
+% CFTR modulator restore the metabolism
+% antibiotic treatment suppresses the symptoms
+\end{enumerate}
+\newpage

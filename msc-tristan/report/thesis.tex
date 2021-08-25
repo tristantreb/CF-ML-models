@@ -1,0 +1,265 @@
+% !TEX options=--shell-escape
+\documentclass[oneside,openright,final,a4paper, oneside]{report}
+\usepackage[top=3cm,bottom=3cm,inner=3.2cm,outer=3.2cm,symmetric,oneside]{geometry}
+% \usepackage{fullpage}
+% \usepackage[
+%   margin=1.5cm,
+%   includefoot,
+%   footskip=30pt,
+% ]{geometry}
+% \usepackage{layout}
+
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\usepackage{appendix}
+% \BeforeBeginEnvironment{appendices}{\clearpage}
+
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{multirow}
+
+\newcommand\MyBox[2]{
+  \fbox{\lower0.75cm
+    \vbox to 1.7cm{\vfil
+      \hbox to 1.7cm{\hfil\parbox{1.4cm}{#1\\#2}\hfil}
+      \vfil}%
+  }%
+}
+
+\usepackage{varioref}
+\usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink, capitalise, noabbrev]{cleveref}
+
+
+\newtheorem{hypothesis}{Hypothesis}
+\newtheorem{nullhypothesis}{Null Hypothesis}
+\usepackage{listings}
+\usepackage{amsmath}
+
+\usepackage[noline,ruled]{algorithm2e}
+\setlength{\algomargin}{7.5pt}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{nicefrac}
+\usepackage{microtype}
+
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{amsmath,amsthm}
+\usepackage{xfrac}
+\usepackage{multirow}
+\usepackage{etoc}
+\usepackage[titletoc,page]{appendix}
+\usepackage{subfigure}
+\usepackage{lipsum}
+
+
+
+% \usepackage{listings}
+\usepackage{minted}
+\usemintedstyle{borland}
+% \renewcommand{\lstlistingname}{Code}
+\renewcommand\listingscaption{Code}
+% \def\lstlistingautorefname{Alg.}
+
+
+\usepackage{pgf,tikz}
+\usepackage{mathrsfs}
+\usetikzlibrary{arrows}
+
+\newcommand{\bigCI}{\mathrel{\text{\scalebox{1.07}{$\perp\mkern-10mu\perp$}}}}
+
+
+
+% theorem style
+\RequirePackage{thmtools}
+
+\RequirePackage{xcolor}
+
+
+\definecolor{shadecolor}{gray}{0.95}
+
+
+\usepackage{cleveref}
+
+\crefname{listing}{code}{codes}
+\Crefname{listing}{Code}{Codes}
+
+\renewcommand{\aa}{\mathbf{a}}
+\providecommand{\bb}{\mathbf{b}}
+\providecommand{\cc}{\mathbf{c}}
+\providecommand{\dd}{\mathbf{d}}
+\providecommand{\ee}{\mathbf{e}}
+\providecommand{\ff}{\mathbf{f}}
+\let\ggg\gg
+\renewcommand{\gg}{\mathbf{g}}
+\providecommand{\hh}{\mathbf{h}}
+\providecommand{\ii}{\mathbf{i}}
+\providecommand{\jj}{\mathbf{j}}
+\providecommand{\kk}{\mathbf{k}}
+\let\lll\ll
+\renewcommand{\ll}{\mathbf{l}}
+\providecommand{\mm}{\mathbf{m}}
+\providecommand{\nn}{\mathbf{n}}
+\providecommand{\oo}{\mathbf{o}}
+\providecommand{\pp}{\mathbf{p}}
+\providecommand{\qq}{\mathbf{q}}
+\providecommand{\rr}{\mathbf{r}}
+\renewcommand{\ss}{\mathbf{s}}
+\providecommand{\tt}{\mathbf{t}}
+\providecommand{\uu}{\mathbf{u}}
+\providecommand{\vv}{\mathbf{v}}
+\providecommand{\ww}{\mathbf{w}}
+\providecommand{\xx}{\mathbf{x}}
+\providecommand{\yy}{\mathbf{y}}
+\providecommand{\zz}{\mathbf{z}}
+\providecommand{\aalpha}{\boldsymbol{\alpha}}
+\providecommand{\ssigma}{\boldsymbol{\sigma}}
+\providecommand{\llambda}{\boldsymbol{\lambda}}
+\providecommand{\GGamma}{\boldsymbol{\Gamma}}
+
+
+\providecommand{\mA}{\mathbf{A}}
+\providecommand{\mB}{\mathbf{B}}
+\providecommand{\mC}{\mathbf{C}}
+\providecommand{\mD}{\mathbf{D}}
+\providecommand{\mE}{\mathbf{E}}
+\providecommand{\mF}{\mathbf{F}}
+\providecommand{\mG}{\mathbf{G}}
+\providecommand{\mH}{\mathbf{H}}
+\providecommand{\mI}{\mathbf{I}}
+\providecommand{\mJ}{\mathbf{J}}
+\providecommand{\mK}{\mathbf{K}}
+\providecommand{\mL}{\mathbf{L}}
+\providecommand{\mM}{\mathbf{M}}
+\providecommand{\mN}{\mathbf{N}}
+\providecommand{\mO}{\mathbf{O}}
+\providecommand{\mP}{\mathbf{P}}
+\providecommand{\mQ}{\mathbf{Q}}
+\providecommand{\mR}{\mathbf{R}}
+\providecommand{\mS}{\mathbf{S}}
+\providecommand{\mT}{\mathbf{T}}
+\providecommand{\mU}{\mathbf{U}}
+\providecommand{\mV}{\mathbf{V}}
+\providecommand{\mW}{\mathbf{W}}
+\providecommand{\mX}{\mathbf{X}}
+\providecommand{\mY}{\mathbf{Y}}
+\providecommand{\mZ}{\mathbf{Z}}
+\providecommand{\mLambda}{\mathbf{\Lambda}}
+
+
+\providecommand{\cA}{\mathcal{A}}
+\providecommand{\cB}{\mathcal{B}}
+\providecommand{\cC}{\mathcal{C}}
+\providecommand{\cD}{\mathcal{D}}
+\providecommand{\cE}{\mathcal{E}}
+\providecommand{\cF}{\mathcal{F}}
+\providecommand{\cG}{\mathcal{G}}
+\providecommand{\cH}{\mathcal{H}}
+\providecommand{\cI}{\mathcal{I}}
+\providecommand{\cJ}{\mathcal{J}}
+\providecommand{\cK}{\mathcal{K}}
+\providecommand{\cL}{\mathcal{L}}
+\providecommand{\cM}{\mathcal{M}}
+\providecommand{\cN}{\mathcal{N}}
+\providecommand{\cO}{\mathcal{O}}
+\providecommand{\cP}{\mathcal{P}}
+\providecommand{\cQ}{\mathcal{Q}}
+\providecommand{\cR}{\mathcal{R}}
+\providecommand{\cS}{\mathcal{S}}
+\providecommand{\cT}{\mathcal{T}}
+\providecommand{\cU}{\mathcal{U}}
+\providecommand{\cV}{\mathcal{V}}
+\providecommand{\cX}{\mathcal{X}}
+\providecommand{\cY}{\mathcal{Y}}
+\providecommand{\cW}{\mathcal{W}}
+\providecommand{\cZ}{\mathcal{Z}}
+
+\newcommand{\seb}[1]{}\newcommand{\sai}[1]{}\newcommand{\martin}[1]{}\newcommand{\jb}[1]{}
+
+\usepackage{amsthm}
+ 
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+ 
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark} 
+
+\newcommand{\dataset}[1]{\emph{#1}}
+\DeclareMathOperator{\topk}{top}
+\DeclareMathOperator{\randk}{rand}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\abs}[1]{\left\lvert #1\right\rvert}
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\newcommand{\lin}[1]{\ensuremath \left\langle #1 \right\rangle}
+\newcommand{\hogwild}{\textsc{Hogwild!}}
+
+\usepackage[authoryear,square]{natbib}
+\setlength{\bibsep}{5pt}
+\date{}
+
+\usepackage{pgf,tikz,pgfplots}
+\pgfplotsset{compat=1.14}
+\usepackage{mathrsfs}
+\usetikzlibrary{arrows}
+
+\definecolor{wwwwww}{rgb}{0.7,0.7,0.7}
+\definecolor{bsqqqq}{rgb}{0.6980392156862745,0,0}
+\definecolor{qqxycy}{rgb}{0,0.47058823529411764,0.7843137254901961}
+
+\usepackage{titlesec}
+
+\titleformat{\chapter}
+  {\Large\bfseries} % format
+  {}                % label
+  {0pt}             % sep
+  {\huge}           % before-code
+
+\usepackage{enumitem}
+\newcounter{impactcount}
+\newlist{enumimpact}{description}{1}
+\setlist[enumimpact,1]{%
+  before={\setcounter{impactcount}{0}%
+          \renewcommand*\theimpactcount{\arabic{impactcount}}},
+        font={\bfseries\stepcounter{impactcount}I\theimpactcount~}
+}
+\newcounter{constraintcount}
+\newlist{enumconstraint}{description}{1}
+\setlist[enumconstraint,1]{%
+  before={\setcounter{c}{0}%
+          \renewcommand*\theconstraintcount{\arabic{constraintcount}}},
+        font={\bfseries\stepcounter{constraintcount}C\theconstraintcount~}
+}
+
+
+\begin{document}
+
+\input{head/titlepage.tex}
+
+\include{head/abstract}
+
+\include{head/dedication}
+
+\tableofcontents
+
+\include{main/1_introduction}
+\include{main/2_background}
+\include{main/3_objectives}
+\include{main/4_m&m}
+\include{main/5_results}
+\include{main/6_discussion}
+\include{main/7_sideproject}
+
+\include{tail/appendix}
+\include{tail/biblio}
+
+
+\end{document}
