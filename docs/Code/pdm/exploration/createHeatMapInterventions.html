@@ -33,7 +33,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
-<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/recovery/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/smartcare/getMeasuresMask.html" class="code" title="function measures = getMeasuresMask(measuresmask, measures)">getMeasuresMask</a>	reset measures mask</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li></ul>
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/recovery/init.html" class="code" title="">init</a>	</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
 </ul>
@@ -49,8 +49,8 @@ This function is called by:
 0003 <a href="init.html" class="code" title="">init</a>;
 0004 
 0005 <span class="comment">% load data brphysdata, broffset, brPatient, study</span>
-0006 [datamatfile, ~, ~] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
-0007 [physdata, offset, ~] = <a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0006 [datamatfile, ~, ~] = getRawDataFilenamesForStudy(study);
+0007 [physdata, offset, ~] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study);
 0008 load(fullfile(basedir, subfolder, <span class="string">'breatheclinicaldata.mat'</span>),<span class="string">'brPatient'</span>);
 0009 cdPatient=brPatient; clear brPatient;
 0010 
@@ -106,7 +106,7 @@ This function is called by:
 0060 intrrangetable.Label = intrrangetable.Route + idxlabel(1:end-1) + idlabel(1:end-1);
 0061 
 0062 <span class="comment">% fitler corresponding recordings</span>
-0063 measures = <a href="../../../Code/smartcare/getMeasuresMask.html" class="code" title="function measures = getMeasuresMask(measuresmask, measures)">getMeasuresMask</a>(mm, measures);
+0063 measures = getMeasuresMask(mm, measures);
 0064 physdatafiltered = physdata(ismember(physdata.RecordingType,measures.Name(logical(measures.Mask))),:);
 0065 
 0066 <span class="comment">% create a table of counts of measures by patient/day (@max function here</span>
@@ -168,6 +168,6 @@ This function is called by:
 0122 
 0123 colors = colors .* brightness;
 0124 <span class="keyword">end</span></pre></div>
-<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

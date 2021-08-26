@@ -34,7 +34,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../../matlabicon.gif)">
-<li><a href="RamEMMCCalcObjFcn.html" class="code" title="function [dist, count, hstg, vshift, isOutlier] = RamEMMCCalcObjFcn(meancurvemean, meancurvestd, amIntrCube,amHeldBackcube, vshift, isOutlier, outprior, measuresmask, measuresrange, normstd, hstg, currinter,curroffsetidx, offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod, allowvshift, vshiftmax)">RamEMMCCalcObjFcn</a>	amEMMCCalcObjFcn - calculates residual sum of squares distance for points in</li><li><a href="../../../../Code/smartcare/amEMMCConvertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = amEMMCConvertFromLogSpaceAndNormalise(distfcn)">amEMMCConvertFromLogSpaceAndNormalise</a>	amEMMCConvertFromLogSpaceAndNormalise - takes the results from a 'distance'</li></ul>
+<li><a href="RamEMMCCalcObjFcn.html" class="code" title="function [dist, count, hstg, vshift, isOutlier] = RamEMMCCalcObjFcn(meancurvemean, meancurvestd, amIntrCube,amHeldBackcube, vshift, isOutlier, outprior, measuresmask, measuresrange, normstd, hstg, currinter,curroffsetidx, offset, align_wind, nmeasures, update_histogram, sigmamethod, smoothingmethod, allowvshift, vshiftmax)">RamEMMCCalcObjFcn</a>	amEMMCCalcObjFcn - calculates residual sum of squares distance for points in</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../../matlabicon.gif)">
 <li><a href="amEMMCAlignCurvesRecovery.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount, meancurvemean, meancurvestd, amInterventions,hstg, pdoffset, overall_hist, overall_pdoffset,animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset,vshift, isOutlier, pptsstruct, qual, iter, miniiter] =amEMMCAlignCurvesRecovery(meancurvesumsq, meancurvesum, meancurvecount, amIntrCube, amHeldBackcube,animatedmeancurvemean, animatedoffsets, animatedlc, animated_overall_pdoffset,hstg, pdoffset, overall_hist, overall_pdoffset, vshift, isOutlier,amInterventions, outprior, measures, normstd, offset, align_wind,nmeasures, ninterventions, nlatentcurves, sigmamethod, smoothingmethod,runmode, countthreshold, aniterations, maxiterations, allowvshift, vshiftmax, miniiter, fnmodelrun)">amEMMCAlignCurvesRecovery</a>	amEMMCAlignCurves - function to align measurement curves prior to</li></ul>
@@ -77,18 +77,18 @@ This function is called by:
 0032 <span class="keyword">end</span>
 0033 
 0034 <span class="keyword">for</span> m=1:nmeasures
-0035     pdoffset(:, m, currinter, 1:offset.span) = <a href="../../../../Code/smartcare/amEMMCConvertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = amEMMCConvertFromLogSpaceAndNormalise(distfcn)">amEMMCConvertFromLogSpaceAndNormalise</a>(hstg(:, m, currinter, 1:offset.span));
+0035     pdoffset(:, m, currinter, 1:offset.span) = amEMMCConvertFromLogSpaceAndNormalise(hstg(:, m, currinter, 1:offset.span));
 0036 <span class="keyword">end</span>
 0037 
 0038 <span class="keyword">if</span> runmode == 5
 0039     overall_pdoffset(:, currinter, offset.span) = 0;
 0040     overall_pdoffset(better_curve, currinter, better_offset) = 1;
 0041 <span class="keyword">else</span>
-0042     overall_pdoffset(:, currinter, 1:offset.span) = <a href="../../../../Code/smartcare/amEMMCConvertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = amEMMCConvertFromLogSpaceAndNormalise(distfcn)">amEMMCConvertFromLogSpaceAndNormalise</a>(overall_hist(:, currinter, 1:offset.span));
+0042     overall_pdoffset(:, currinter, 1:offset.span) = amEMMCConvertFromLogSpaceAndNormalise(overall_hist(:, currinter, 1:offset.span));
 0043 <span class="keyword">end</span>
 0044     
 0045 <span class="keyword">end</span>
 0046</pre></div>
-<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

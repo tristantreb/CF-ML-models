@@ -35,7 +35,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
-<li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/helperfunctions/getMeasureTable.html" class="code" title="function [out] = getMeasureTable(brphysdata,recording_type,category)">getMeasureTable</a>	returns a table with all data about the specified recording type</li><li><a href="../../../Code/pdm/helperfunctions/getStableIdx.html" class="code" title="function [idx2keep, days_t, days_m] = getStableIdx(patient, FEVdata,treatments_table, nprior_t, npost_t, modulators_table, npost_m, filter)">getStableIdx</a>	filters indexes corresponding to patient's stable days</li><li><a href="../../../Code/pdm/recovery/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li></ul>
+<li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/helperfunctions/getMeasureTable.html" class="code" title="function [out] = getMeasureTable(brphysdata,recording_type,category)">getMeasureTable</a>	returns a table with all data about the specified recording type</li><li><a href="../../../Code/pdm/helperfunctions/getStableIdx.html" class="code" title="function [idx2keep, days_t, days_m] = getStableIdx(patient, FEVdata,treatments_table, nprior_t, npost_t, modulators_table, npost_m, filter)">getStableIdx</a>	filters indexes corresponding to patient's stable days</li><li><a href="../../../Code/pdm/recovery/init.html" class="code" title="">init</a>	</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
 </ul>
@@ -53,753 +53,752 @@ This function is called by:
 0005 <span class="comment">%% load the data</span>
 0006 
 0007 <a href="init.html" class="code" title="">init</a>;
-0008 plotfolder = <span class="string">'../../PlotsFEVAnalysis'</span>;
-0009 
-0010 <span class="comment">% load measures</span>
-0011 [datamatfile, ~, ~] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
-0012 [brphysdata, broffset, ~] = <a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
-0013 <span class="comment">% load treatments</span>
-0014 load(fullfile(basedir, subfolder, <span class="string">'BRivandmeasures_recovery_gap10.mat'</span>));
-0015 <span class="comment">% load CFTR modulators therapy</span>
-0016 load(fullfile(basedir, subfolder, <span class="string">'breatheclinicaldata.mat'</span>),<span class="string">'brDrugTherapy'</span>,<span class="string">'brPatient'</span>);
-0017 
-0018 <span class="comment">%% clean modulators tables</span>
-0019 <span class="comment">%brDrugTherapy.DrugTherapyType = cleanDrugTherapyNamings(brDrugTherapy.DrugTherapyType);</span>
-0020 <span class="comment">% adds columns with serial date num</span>
-0021 brDrugTherapy.DateNum = datenum(brDrugTherapy.DrugTherapyStartDate) - broffset;
-0022 brDrugTherapy.StopDateNum = datenum(brDrugTherapy.DrugTherapyStopDate) - broffset;
-0023 <span class="comment">% remove patients with negative dates</span>
-0024 neg_dates = size(brDrugTherapy,1);
-0025 brDrugTherapy(brDrugTherapy.DateNum &lt; 0,:)=[];
-0026 neg_dates = neg_dates - size(brDrugTherapy,1);
-0027 
-0028 <span class="comment">%% extract FEV signal</span>
-0029 
-0030 <span class="comment">% mask for rows with FEV1 as recording type</span>
-0031 FEVdata = <a href="../../../Code/pdm/helperfunctions/getMeasureTable.html" class="code" title="function [out] = getMeasureTable(brphysdata,recording_type,category)">getMeasureTable</a>(brphysdata,<span class="string">'FEV1Recording'</span> ,<span class="string">'FEV'</span>);
-0032 FEVdata = removevars(FEVdata, {<span class="string">'UserName'</span>, <span class="string">'CaptureType'</span>, <span class="string">'Date_TimeRecorded'</span>, <span class="string">'ScaledDateNum'</span>});
-0033 
-0034 <span class="comment">% remove patient 601, 621 578 (erroneous behavior)</span>
-0035 <span class="comment">%patients_erroneous = [621,601,578]; old ID</span>
-0036 patients_erroneous = [221,201,178]; 
-0037 patients_outliers = [115;141;178;196;201;235;275;279]; <span class="comment">%6 more than for erroneous patients</span>
-0038 FEVdata = FEVdata(~ismember(FEVdata.ID, patients_erroneous),:);
-0039 FEVdata = FEVdata(~ismember(FEVdata.ID, patients_outliers),:);
-0040 
-0041 <span class="comment">% this code was done with FEVdata as an array, transforming</span>
-0042 FEVdata = table2array(FEVdata);
-0043 
-0044 <span class="comment">%% fit the FEV curve and compute absolute values of deviation from fit</span>
-0045 
-0046 <span class="comment">% parameters</span>
-0047 p_plot = 0;
-0048 n_records_min = 1;
-0049 p.window = 21; p.threshold = 7;
-0050 <span class="comment">% filter stable period</span>
-0051 p_filter = 1; <span class="comment">% 1 to remove days during stable period, 2/3 to base it on treatments/modulators only</span>
-0052 
-0053 <span class="comment">% stable period filter parameters</span>
-0054 n_prior_t = 30; <span class="comment">% days prior to treatment start</span>
-0055 n_post_t = 15; <span class="comment">% days post treatment end</span>
-0056 n_post_m = 15; <span class="comment">% days after modulator therapy start</span>
-0057 
-0058 <span class="comment">% %% perfect patients (from std segmentation)</span>
-0059 <span class="comment">% perfect_patients = [501;533;538;603;639;641;603];</span>
-0060 <span class="comment">% patients_high_dsignal_dnoise = [582, 572, 559, 558, 549, 517];</span>
-0061 <span class="comment">% patients_high_dnoise = [802, 585, 584,523,520,503];</span>
-0062 <span class="comment">% patients_missing_trikafta = [835, 812, 803, 598, 525, 523, 517, 516, 501];</span>
-0063 <span class="comment">% patients_removed = [621 601 578];</span>
-0064 <span class="comment">% %zeros = [526,553,557,566,574,605,614,628,839,860]; % patients with 0 records after filtering</span>
-0065 
-0066 p_processed_patients = unique(FEVdata(:,1));
-0067 
-0068 rPatientStats=<a href="#_sub2" class="code" title="subfunction out = initPatientStatTable(n_rows);">initPatientStatTable</a>(length(p_processed_patients));
-0069 rPatientStats.p_processed_patients = p_processed_patients;
-0070 
-0071 <span class="comment">% fit for all patients</span>
-0072 i=1;
-0073 r_statistics=[];
-0074 
-0075 <span class="keyword">for</span> w = p.window
-0076     <span class="keyword">for</span> t = p.threshold
-0077         
-0078         n_used=0;
-0079         f_t_m = [];
-0080         mask_stable_all = zeros(length(FEVdata(:,1)),1); <span class="comment">% mask with all stable measures</span>
-0081         r_all_residuals = [];
-0082         
-0083         <span class="comment">% patients that had triple therapy</span>
-0084         n_1_trpl = 0;
-0085         r_all_1_prior_trpl = []; 
-0086         r_all_1_post_trpl = [];
-0087         
-0088         <span class="comment">% patients that had symkevi and then triple therapy</span>
-0089         <span class="comment">% symkevi</span>
-0090         n_2_smkv_and_trpl = 0;
-0091         r_all_2_none = []; <span class="comment">% no symkevi, no triple therapy</span>
-0092         r_all_2_smkv = []; <span class="comment">% symkevi, no triple therapy</span>
-0093         r_all_2_trpl = []; <span class="comment">% triple therapy</span>
-0094         
-0095         <span class="comment">% patients that had symkevi and no triple therapy</span>
-0096         n_3_smkv = 0;
-0097         r_all_3_prior_smkv = [];
-0098         r_all_3_post_smkv = [];
-0099         
-0100         n_residual_no_trpl = 0;
-0101         
-0102         <span class="keyword">for</span> patient = rPatientStats.p_processed_patients'
-0103 
-0104             patient_idx = p_processed_patients == patient;
-0105             <span class="comment">% mask revealing patient data</span>
-0106             mask = FEVdata(:,1) == patient; mask_patient=mask;
-0107             fprintf(<span class="string">'Patient %3i - %4i entries'</span>, patient, sum(mask_patient));
-0108             
-0109             <span class="comment">% mask revealing patient data during stable period</span>
-0110             <span class="keyword">if</span> p_filter ~= 0
-0111                 [mask, ~] = <a href="../../../Code/pdm/helperfunctions/getStableIdx.html" class="code" title="function [idx2keep, days_t, days_m] = getStableIdx(patient, FEVdata,treatments_table, nprior_t, npost_t, modulators_table, npost_m, filter)">getStableIdx</a>(patient, FEVdata, <span class="keyword">...</span>
-0112                     ivandmeasurestable, n_prior_t, n_post_t, <span class="keyword">...</span>
-0113                     brDrugTherapy, n_post_m, <span class="keyword">...</span>
-0114                     p_filter);
-0115                 f_t_m = [f_t_m sum(mask)];
-0116                 fprintf(<span class="string">', %4i stable entries'</span>,sum(mask));
-0117                 
-0118                 <span class="comment">% create mask with all stable data over all patients</span>
-0119                 mask_stable_all = mask_stable_all | mask;
-0120             <span class="keyword">end</span>
-0121 
-0122             <span class="comment">% check to use the patient or not</span>
-0123             <span class="keyword">if</span> sum(mask) == 0 <span class="comment">% check non null post filtering data count</span>
-0124 
-0125                 rPatientStats.all_std(patient_idx) = nan;
-0126                 rPatientStats.patientMaxVal(patient_idx) = nan;
-0127                 rPatientStats.all_n_residuals(patient_idx) = 0;
-0128                 <span class="comment">% used for the patient level analysis of the effect of</span>
-0129                 <span class="comment">% triple therapy</span>
-0130                 rPatientStats.n_residuals_prior_tripleT(patient_idx) = nan; 
-0131                 rPatientStats.n_residuals_post_tripleT(patient_idx) = nan;
-0132                 rPatientStats.std_residuals_prior_tripleT(patient_idx) = nan; 
-0133                 rPatientStats.std_residuals_post_tripleT(patient_idx) = nan;
-0134                 fprintf(<span class="string">',    0 residuals.\n'</span>)
-0135                 
-0136             <span class="keyword">else</span> <span class="comment">% patient is used</span>
-0137                 n_used=n_used+1;
-0138                 <span class="comment">% apply fit</span>
-0139                 x = FEVdata(mask, 2); <span class="comment">% date</span>
-0140                 y = FEVdata(mask, 3); <span class="comment">% measure</span>
-0141 
-0142                 [residuals, curve] = <a href="#_sub1" class="code" title="subfunction [residuals, curve] = applyMovingMean(x, y, w, t)">applyMovingMean</a>(x,y,w,t);
-0143                 fprintf(<span class="string">', %4i residuals'</span>, length(residuals(~isnan(residuals))));
-0144 
-0145                 <span class="comment">% log residuals</span>
-0146                 r_all_residuals = cat(1,r_all_residuals, residuals);
-0147 
-0148                 <span class="comment">% log patient level data</span>
-0149                 rPatientStats.all_n_residuals(patient_idx) = sum(~isnan(residuals));
-0150                 rPatientStats.all_std(patient_idx) = std(residuals,<span class="string">'omitnan'</span>);
-0151                 rPatientStats.patientMaxVal(patient_idx) = max(abs(FEVdata(mask, 3))) - <span class="keyword">...</span>
-0152                     mean(FEVdata(mask, 3)); <span class="comment">% most extreme value across patients used</span>
+0008 
+0009 <span class="comment">% load measures</span>
+0010 [datamatfile, ~, ~] = getRawDataFilenamesForStudy(study);
+0011 [brphysdata, broffset, ~] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study);
+0012 <span class="comment">% load treatments</span>
+0013 load(fullfile(basedir, subfolder, <span class="string">'BRivandmeasures_recovery_gap10.mat'</span>));
+0014 <span class="comment">% load CFTR modulators therapy</span>
+0015 load(fullfile(basedir, subfolder, <span class="string">'breatheclinicaldata.mat'</span>),<span class="string">'brDrugTherapy'</span>,<span class="string">'brPatient'</span>);
+0016 
+0017 <span class="comment">%% clean modulators tables</span>
+0018 <span class="comment">%brDrugTherapy.DrugTherapyType = cleanDrugTherapyNamings(brDrugTherapy.DrugTherapyType);</span>
+0019 <span class="comment">% adds columns with serial date num</span>
+0020 brDrugTherapy.DateNum = datenum(brDrugTherapy.DrugTherapyStartDate) - broffset;
+0021 brDrugTherapy.StopDateNum = datenum(brDrugTherapy.DrugTherapyStopDate) - broffset;
+0022 <span class="comment">% remove patients with negative dates</span>
+0023 neg_dates = size(brDrugTherapy,1);
+0024 brDrugTherapy(brDrugTherapy.DateNum &lt; 0,:)=[];
+0025 neg_dates = neg_dates - size(brDrugTherapy,1);
+0026 
+0027 <span class="comment">%% extract FEV signal</span>
+0028 
+0029 <span class="comment">% mask for rows with FEV1 as recording type</span>
+0030 FEVdata = <a href="../../../Code/pdm/helperfunctions/getMeasureTable.html" class="code" title="function [out] = getMeasureTable(brphysdata,recording_type,category)">getMeasureTable</a>(brphysdata,<span class="string">'FEV1Recording'</span> ,<span class="string">'FEV'</span>);
+0031 FEVdata = removevars(FEVdata, {<span class="string">'UserName'</span>, <span class="string">'CaptureType'</span>, <span class="string">'Date_TimeRecorded'</span>, <span class="string">'ScaledDateNum'</span>});
+0032 
+0033 <span class="comment">% remove patient 601, 621 578 (erroneous behavior)</span>
+0034 <span class="comment">%patients_erroneous = [621,601,578]; old ID</span>
+0035 patients_erroneous = [221,201,178]; 
+0036 patients_outliers = [115;141;178;196;201;235;275;279]; <span class="comment">%6 more than for erroneous patients</span>
+0037 FEVdata = FEVdata(~ismember(FEVdata.ID, patients_erroneous),:);
+0038 FEVdata = FEVdata(~ismember(FEVdata.ID, patients_outliers),:);
+0039 
+0040 <span class="comment">% this code was done with FEVdata as an array, transforming</span>
+0041 FEVdata = table2array(FEVdata);
+0042 
+0043 <span class="comment">%% fit the FEV curve and compute absolute values of deviation from fit</span>
+0044 
+0045 <span class="comment">% parameters</span>
+0046 p_plot = 0;
+0047 n_records_min = 1;
+0048 p.window = 21; p.threshold = 7;
+0049 <span class="comment">% filter stable period</span>
+0050 p_filter = 1; <span class="comment">% 1 to remove days during stable period, 2/3 to base it on treatments/modulators only</span>
+0051 
+0052 <span class="comment">% stable period filter parameters</span>
+0053 n_prior_t = 30; <span class="comment">% days prior to treatment start</span>
+0054 n_post_t = 15; <span class="comment">% days post treatment end</span>
+0055 n_post_m = 15; <span class="comment">% days after modulator therapy start</span>
+0056 
+0057 <span class="comment">% %% perfect patients (from std segmentation)</span>
+0058 <span class="comment">% perfect_patients = [501;533;538;603;639;641;603];</span>
+0059 <span class="comment">% patients_high_dsignal_dnoise = [582, 572, 559, 558, 549, 517];</span>
+0060 <span class="comment">% patients_high_dnoise = [802, 585, 584,523,520,503];</span>
+0061 <span class="comment">% patients_missing_trikafta = [835, 812, 803, 598, 525, 523, 517, 516, 501];</span>
+0062 <span class="comment">% patients_removed = [621 601 578];</span>
+0063 <span class="comment">% %zeros = [526,553,557,566,574,605,614,628,839,860]; % patients with 0 records after filtering</span>
+0064 
+0065 p_processed_patients = unique(FEVdata(:,1));
+0066 
+0067 rPatientStats=<a href="#_sub2" class="code" title="subfunction out = initPatientStatTable(n_rows);">initPatientStatTable</a>(length(p_processed_patients));
+0068 rPatientStats.p_processed_patients = p_processed_patients;
+0069 
+0070 <span class="comment">% fit for all patients</span>
+0071 i=1;
+0072 r_statistics=[];
+0073 
+0074 <span class="keyword">for</span> w = p.window
+0075     <span class="keyword">for</span> t = p.threshold
+0076         
+0077         n_used=0;
+0078         f_t_m = [];
+0079         mask_stable_all = zeros(length(FEVdata(:,1)),1); <span class="comment">% mask with all stable measures</span>
+0080         r_all_residuals = [];
+0081         
+0082         <span class="comment">% patients that had triple therapy</span>
+0083         n_1_trpl = 0;
+0084         r_all_1_prior_trpl = []; 
+0085         r_all_1_post_trpl = [];
+0086         
+0087         <span class="comment">% patients that had symkevi and then triple therapy</span>
+0088         <span class="comment">% symkevi</span>
+0089         n_2_smkv_and_trpl = 0;
+0090         r_all_2_none = []; <span class="comment">% no symkevi, no triple therapy</span>
+0091         r_all_2_smkv = []; <span class="comment">% symkevi, no triple therapy</span>
+0092         r_all_2_trpl = []; <span class="comment">% triple therapy</span>
+0093         
+0094         <span class="comment">% patients that had symkevi and no triple therapy</span>
+0095         n_3_smkv = 0;
+0096         r_all_3_prior_smkv = [];
+0097         r_all_3_post_smkv = [];
+0098         
+0099         n_residual_no_trpl = 0;
+0100         
+0101         <span class="keyword">for</span> patient = rPatientStats.p_processed_patients'
+0102 
+0103             patient_idx = p_processed_patients == patient;
+0104             <span class="comment">% mask revealing patient data</span>
+0105             mask = FEVdata(:,1) == patient; mask_patient=mask;
+0106             fprintf(<span class="string">'Patient %3i - %4i entries'</span>, patient, sum(mask_patient));
+0107             
+0108             <span class="comment">% mask revealing patient data during stable period</span>
+0109             <span class="keyword">if</span> p_filter ~= 0
+0110                 [mask, ~] = <a href="../../../Code/pdm/helperfunctions/getStableIdx.html" class="code" title="function [idx2keep, days_t, days_m] = getStableIdx(patient, FEVdata,treatments_table, nprior_t, npost_t, modulators_table, npost_m, filter)">getStableIdx</a>(patient, FEVdata, <span class="keyword">...</span>
+0111                     ivandmeasurestable, n_prior_t, n_post_t, <span class="keyword">...</span>
+0112                     brDrugTherapy, n_post_m, <span class="keyword">...</span>
+0113                     p_filter);
+0114                 f_t_m = [f_t_m sum(mask)];
+0115                 fprintf(<span class="string">', %4i stable entries'</span>,sum(mask));
+0116                 
+0117                 <span class="comment">% create mask with all stable data over all patients</span>
+0118                 mask_stable_all = mask_stable_all | mask;
+0119             <span class="keyword">end</span>
+0120 
+0121             <span class="comment">% check to use the patient or not</span>
+0122             <span class="keyword">if</span> sum(mask) == 0 <span class="comment">% check non null post filtering data count</span>
+0123 
+0124                 rPatientStats.all_std(patient_idx) = nan;
+0125                 rPatientStats.patientMaxVal(patient_idx) = nan;
+0126                 rPatientStats.all_n_residuals(patient_idx) = 0;
+0127                 <span class="comment">% used for the patient level analysis of the effect of</span>
+0128                 <span class="comment">% triple therapy</span>
+0129                 rPatientStats.n_residuals_prior_tripleT(patient_idx) = nan; 
+0130                 rPatientStats.n_residuals_post_tripleT(patient_idx) = nan;
+0131                 rPatientStats.std_residuals_prior_tripleT(patient_idx) = nan; 
+0132                 rPatientStats.std_residuals_post_tripleT(patient_idx) = nan;
+0133                 fprintf(<span class="string">',    0 residuals.\n'</span>)
+0134                 
+0135             <span class="keyword">else</span> <span class="comment">% patient is used</span>
+0136                 n_used=n_used+1;
+0137                 <span class="comment">% apply fit</span>
+0138                 x = FEVdata(mask, 2); <span class="comment">% date</span>
+0139                 y = FEVdata(mask, 3); <span class="comment">% measure</span>
+0140 
+0141                 [residuals, curve] = <a href="#_sub1" class="code" title="subfunction [residuals, curve] = applyMovingMean(x, y, w, t)">applyMovingMean</a>(x,y,w,t);
+0142                 fprintf(<span class="string">', %4i residuals'</span>, length(residuals(~isnan(residuals))));
+0143 
+0144                 <span class="comment">% log residuals</span>
+0145                 r_all_residuals = cat(1,r_all_residuals, residuals);
+0146 
+0147                 <span class="comment">% log patient level data</span>
+0148                 rPatientStats.all_n_residuals(patient_idx) = sum(~isnan(residuals));
+0149                 rPatientStats.all_std(patient_idx) = std(residuals,<span class="string">'omitnan'</span>);
+0150                 rPatientStats.patientMaxVal(patient_idx) = max(abs(FEVdata(mask, 3))) - <span class="keyword">...</span>
+0151                     mean(FEVdata(mask, 3)); <span class="comment">% most extreme value across patients used</span>
+0152                 
 0153                 
-0154                 
-0155                 <span class="keyword">if</span> isempty(rPatientStats.all_n_residuals(rPatientStats.p_processed_patients == patient))<span class="comment">% if no residuals</span>
-0156                     rPatientStats.n_residuals_prior_tripleT(patient_idx) = nan; 
-0157                     rPatientStats.n_residuals_post_tripleT(patient_idx) = nan; 
-0158                     rPatientStats.std_residuals_prior_tripleT(patient_idx) = nan;
-0159                     rPatientStats.std_residuals_post_tripleT(patient_idx) = nan;
-0160                 <span class="keyword">else</span>
-0161                     
-0162                     <span class="comment">%%% 1 %%% split residuals prior/post triple therapy start</span>
-0163                     <span class="comment">% avoid residuals after triple therapy stop if</span>
-0164                     <span class="comment">% applicable</span>
-0165 
-0166                     <span class="comment">% get triple therapy start and stop dates where applicable</span>
-0167                     triple_therapy_start = brDrugTherapy.DateNum(brDrugTherapy.ID == patient &amp; ismember(brDrugTherapy.DrugTherapyType, <span class="string">'Kaftrio/Trikafta/TripleTherapy'</span>));
-0168                     triple_therapy_stop = brDrugTherapy.StopDateNum(brDrugTherapy.ID == patient &amp; ismember(brDrugTherapy.DrugTherapyType, <span class="string">'Kaftrio/Trikafta/TripleTherapy'</span>));
-0169                     <span class="keyword">if</span> ~isempty(triple_therapy_start)
-0170                         fprintf(<span class="string">', with triple therapy'</span>);
-0171                         n_1_trpl = n_1_trpl+1;
-0172                         <span class="keyword">if</span> length(triple_therapy_start) &gt; 1
-0173                             triple_therapy_start = triple_therapy_start(1);
-0174                         <span class="keyword">end</span>
-0175                         
-0176                         <span class="comment">% segment residuals prior/post triple therapy start</span>
-0177                         <span class="comment">% prior</span>
-0178                         temp = residuals(x &lt; triple_therapy_start);
-0179                         temp = temp(~isnan(temp));
-0180                         rPatientStats.n_residuals_prior_tripleT(patient_idx) = length(temp);
-0181                         rPatientStats.std_residuals_prior_tripleT(patient_idx) = std(temp);
-0182                         r_all_1_prior_trpl = cat(1,r_all_1_prior_trpl, temp);
-0183                         
-0184                         <span class="comment">% post</span>
-0185                         <span class="keyword">if</span> ~isempty(triple_therapy_stop)
-0186                             temp = residuals(x &gt;= triple_therapy_start);
-0187                         <span class="keyword">else</span> <span class="comment">% avoiding measurementss after triple therapy stop</span>
-0188                             temp = residuals(x &gt;= triple_therapy_start &amp; x &lt; triple_therapy_stop);
-0189                         <span class="keyword">end</span>
-0190                         temp = temp(~isnan(temp));
-0191                         rPatientStats.n_residuals_post_tripleT(patient_idx) = length(temp);
-0192                         rPatientStats.std_residuals_post_tripleT(patient_idx) = std(temp); 
-0193                         r_all_1_post_trpl = cat(1,r_all_1_post_trpl, temp); 
-0194                         clear temp;
-0195                         
-0196 <span class="comment">%                         % hypothesis test that the two std are the same</span>
-0197 <span class="comment">%                         [h_rejected, p_value] = vartest2(r_all_prior_trpl(~isnan(r_all_prior_trpl)),r_all_post_trpl(~isnan(r_all_post_trpl)),'Tail','right');</span>
-0198 <span class="comment">%</span>
-0199 <span class="comment">%                         rPatientStats.h_rejected(patient_idx) = h_rejected;</span>
-0200 <span class="comment">%                         rPatientStats.h_p(patient_idx) = p_value;</span>
-0201                         
-0202 
-0203                         <span class="comment">%%% 2 %%% segment residuals 1) before symkevi 2)</span>
-0204                         <span class="comment">%%% during symkevi, 3) during triple therapy</span>
-0205                             <span class="comment">% avoiding residuals for patients that came back on</span>
-0206                             <span class="comment">% symkevi - only 3 patients at the moment</span>
-0207                             <span class="comment">% (18.08.2021), will not impact results</span>
-0208                             
-0209                         symkevi_start = brDrugTherapy.DateNum(brDrugTherapy.ID == patient &amp; ismember(brDrugTherapy.DrugTherapyType, <span class="string">'Symkevi'</span>));
-0210                         <span class="keyword">if</span> ~isempty(symkevi_start)
-0211                             <span class="keyword">if</span> symkevi_start(1) &lt; triple_therapy_start
-0212                                 fprintf(<span class="string">' and symkevi'</span>);
-0213                                 
-0214                                 symkevi_start = symkevi_start(1);
-0215                                 n_2_smkv_and_trpl = n_2_smkv_and_trpl+1;
-0216 
-0217                                 <span class="comment">% prior symkevi</span>
-0218                                 temp = residuals(x &lt; triple_therapy_start &amp; x &lt; symkevi_start);
-0219                                 r_all_2_none = cat(1,r_all_2_none, temp(~isnan(temp)));
-0220 
-0221                                 <span class="comment">% during symkevi</span>
-0222                                 <span class="comment">% note: if patients started triple therapy before</span>
-0223                                 <span class="comment">% symkevi, we consider the symkevi data as</span>
-0224                                 <span class="comment">% triple therapy</span>
-0225                                 temp = residuals(x &lt; triple_therapy_start &amp; x &gt;= symkevi_start);
-0226                                 r_all_2_smkv = cat(1,r_all_2_smkv, temp(~isnan(temp)));
-0227 
-0228                                 <span class="comment">% during triple therapy</span>
-0229                                 <span class="keyword">if</span> ~isempty(triple_therapy_stop)
-0230                                     temp = residuals(x &gt;= triple_therapy_start);
-0231                                 <span class="keyword">else</span> <span class="comment">% avoiding measurementss after triple therapy stop</span>
-0232                                     temp = residuals(x &gt;= triple_therapy_start &amp; x &lt; triple_therapy_stop);
-0233                                 <span class="keyword">end</span>
-0234                                 r_all_2_trpl = cat(1,r_all_2_trpl, temp(~isnan(temp)));
-0235                                 clear temp;
-0236                             <span class="keyword">end</span>
-0237                         <span class="keyword">end</span>
-0238                     <span class="keyword">else</span> 
-0239                         n_residual_no_trpl = n_residual_no_trpl + 1;
-0240                         <span class="comment">% update values only prior to trikafta</span>
-0241 <span class="comment">%                         rPatientStats.n_residuals_prior_tripleT(patient_idx) = length(~isnan(residuals));</span>
-0242 <span class="comment">%                         rPatientStats.std_residuals_prior_tripleT(patient_idx) = std(residuals,'omitnan');</span>
-0243 <span class="comment">%</span>
-0244 <span class="comment">%                         rPatientStats.n_residuals_post_tripleT(patient_idx) = 0;</span>
-0245 <span class="comment">%                         rPatientStats.std_residuals_post_tripleT(patient_idx) = nan;</span>
-0246 <span class="comment">%</span>
-0247                         <span class="comment">%%% 3 %%% semgent residuals prior/post symkevi start</span>
-0248                         <span class="comment">% get symkevi start date where applicable</span>
-0249                         <span class="comment">% those patients did not have triple therapy</span>
-0250                             <span class="comment">% avoiding residuals for patients that came back on</span>
-0251                             <span class="comment">% symkevi - only 3 patients at the moment</span>
-0252                             <span class="comment">% (18.08.2021), will not impact results</span>
-0253                         
-0254                         symkevi_start = brDrugTherapy.DateNum(brDrugTherapy.ID == patient &amp; ismember(brDrugTherapy.DrugTherapyType, <span class="string">'Symkevi'</span>));
-0255                         <span class="keyword">if</span> ~isempty(symkevi_start)
-0256                             fprintf(<span class="string">', with symkevi'</span>);
-0257                             n_3_smkv = n_3_smkv+1;
-0258 
-0259                             <span class="comment">% find residuals prior/post triple therapy start</span>
-0260                             <span class="comment">% prior</span>
-0261                             temp = residuals(x &lt; symkevi_start);
-0262                             r_all_3_prior_smkv = cat(1,r_all_3_prior_smkv, temp(~isnan(temp)));
-0263 
-0264                             <span class="comment">% post</span>
-0265                             temp = residuals(x &gt;= symkevi_start);
-0266                             r_all_3_post_smkv = cat(1,r_all_3_post_smkv, temp(~isnan(temp))); 
-0267                             clear temp;
-0268                         <span class="keyword">else</span>
-0269 <span class="comment">%                             fprintf(', no drug therapy');</span>
-0270 <span class="comment">%                             temp = residuals;</span>
-0271 <span class="comment">%                             r_all_3_prior_smkv = cat(1,r_all_3_prior_smkv, temp(~isnan(temp)));</span>
-0272                         <span class="keyword">end</span>
-0273                     <span class="keyword">end</span>
-0274                 <span class="keyword">end</span>
-0275                 fprintf(<span class="string">'.\n'</span>);
-0276                 
-0277                 <span class="comment">% plot patient</span>
-0278                 <span class="keyword">if</span> p_plot == 1 &amp;&amp; sum(~isnan(residuals)) &gt;  0 <span class="comment">% if at least 1 residual</span>
-0279 
-0280                     figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 2000 300])
-0281                     hold on
-0282 
-0283                     <span class="comment">% referenced on patient mean</span>
-0284                     avg = mean(FEVdata(mask_patient, 3)); 
-0285                     ylim([-0.8 0.8]);
-0286                     <span class="comment">% plot moving average in red</span>
-0287                     plot(x,curve-avg,<span class="string">'.'</span>,<span class="string">'MarkerEdgeColor'</span>,<span class="string">'r'</span>,<span class="string">'MarkerSize'</span>,20)
-0288                     <span class="comment">%plot(x,curve-avg,'r')</span>
-0289 
-0290                     <span class="comment">% plot raw measures</span>
-0291                     plot(x,y-avg,<span class="string">'.'</span>,<span class="string">'MarkerEdgeColor'</span>,<span class="string">'b'</span>,<span class="string">'MarkerSize'</span>,10)
-0292 
-0293                     <span class="comment">% plot data</span>
-0294                     <span class="keyword">if</span> p_filter == 1 &amp;&amp; sum(not(mask)) &gt; 0
-0295                         x_na = FEVdata(mask_patient &amp; not(mask), 2);
-0296                         y_na = FEVdata(mask_patient &amp; not(mask), 3);
-0297                         plot(x_na,y_na-avg,<span class="string">'.'</span>,<span class="string">'MarkerEdgeColor'</span>,[0.8 0.8 0.9],<span class="string">'MarkerSize'</span>,10 )
-0298                     <span class="keyword">end</span>
-0299                     hold off
-0300 
-0301                     xlabel(<span class="string">'Day'</span>)
-0302                     ylabel(<span class="string">'Normalised FEV1'</span>)
-0303                     title([<span class="string">'Patient '</span> num2str(patient) <span class="string">' |  std: '</span> <span class="keyword">...</span>
-0304                         num2str(std(residuals,<span class="string">'omitnan'</span>),3) <span class="string">' L | residuals count: '</span><span class="keyword">...</span>
-0305                         num2str(sum(~isnan(residuals))) <span class="string">' | window: '</span> num2str(w) <span class="keyword">...</span>
-0306                         <span class="string">' | threshold: '</span> num2str(t) ])
-0307                     grid(<span class="string">'on'</span>)
-0308                     legend(<span class="string">'residuals'</span>,<span class="string">'data in stable period'</span>, <span class="string">'data in unstable period'</span>,<span class="string">'location'</span>,<span class="string">'best'</span>)
-0309 
-0310                     saveas(gcf,fullfile(plotfolder,[<span class="string">'fevMovingAvg'</span> <span class="string">'_patient'</span> num2str(patient) <span class="string">'_w'</span> num2str(w) <span class="string">'_t'</span> num2str(t) <span class="string">'.png'</span>]))
-0311                     close all
-0312                 <span class="keyword">end</span>
-0313             <span class="keyword">end</span>
-0314         <span class="keyword">end</span>
-0315 
-0316     <span class="comment">% compute results</span>
-0317     r_statistics(i,2) = std(r_all_residuals,<span class="string">'omitnan'</span>); n = sum(rPatientStats.all_n_residuals); alpha = 0.05;
-0318     r_statistics(i,3) = sqrt((n-1)./chi2inv(1-alpha/2,n-1))*r_statistics(i,2); <span class="comment">% lower bound of the CI for the std</span>
-0319     r_statistics(i,4) = sqrt((n-1)./chi2inv(alpha/2,n-1))*r_statistics(i,2); <span class="comment">% upper bound of the CI</span>
-0320     r_statistics(i,5) = prctile(r_all_residuals,99.5); <span class="comment">% prctile treats NaNs as missing values and removes them.</span>
-0321     r_statistics(i,6) = prctile(r_all_residuals,0.5);
-0322     r_statistics(i,7) = prctile(r_all_residuals,97.5);
-0323     r_statistics(i,8) = prctile(r_all_residuals,2.5);
-0324     r_statistics(i,9) = prctile(r_all_residuals,95);
-0325     r_statistics(i,10) = prctile(r_all_residuals,5);
-0326     r_statistics(i,11) = prctile(r_all_residuals,90);
-0327     r_statistics(i,12) = prctile(r_all_residuals,10);
-0328     r_statistics(i,13) = sum(power(r_all_residuals,2),<span class="string">'omitnan'</span>); <span class="comment">% sse</span>
-0329     r_statistics(i,14) = w;
-0330     r_statistics(i,15) = t;
-0331     r_statistics(i,16) = sum(rPatientStats.all_n_residuals); <span class="comment">% alsolength(r_all_residuals(~isnan(r_all_residuals))); % n residuals computed (nan values are residuals for points that did not pass the threshold)</span>
-0332     r_statistics(i,17) = sum(f_t_m);  <span class="comment">% n residuals during stable period</span>
-0333     r_statistics(i,18) = length(FEVdata); <span class="comment">% n points initially</span>
-0334     r_statistics(i,19) = sum(rPatientStats.all_n_residuals &gt; 0); <span class="comment">% n patients with over 1 residuals, i.e. over 1 window with n_measures &gt; threshold</span>
-0335     r_statistics(i,20) = n_records_min;
-0336     r_statistics(i,21) = n_used;<span class="comment">%length(r_all_n_residuals(~isnan(r_all_n_residuals))); % n patients over minimal data count check (stable)</span>
-0337     r_statistics(i,22) = length(rPatientStats.p_processed_patients); <span class="comment">% n patients initially</span>
-0338     i=i+1;
-0339     <span class="keyword">end</span>
-0340 <span class="keyword">end</span>
-0341 
-0342 rPatientStats.s1s2 = rPatientStats.std_residuals_prior_tripleT.^2 ./ rPatientStats.std_residuals_post_tripleT.^2;
-0343 
-0344 <span class="comment">%% plot std and percntiles</span>
-0345 x = r_statistics(:,11); <span class="comment">%w</span>
-0346 <span class="comment">%x = a(:,12); %t</span>
-0347 
-0348 figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 500 1000])
-0349 subplot(6,1,1)
-0350 plot(x,-r_statistics(:,13),<span class="string">'o--k'</span>)
-0351 title(<span class="string">'-#residuals'</span>)
-0352 subplot(6,1,2)
-0353 plot(x,r_statistics(:,2),<span class="string">'o--r'</span>)
-0354 title(<span class="string">'Std dev'</span>)
-0355 subplot(6,1,3)
-0356 plot(x(1:end-1),change(r_statistics(:,2)),<span class="string">'o--r'</span>)
-0357 title(<span class="string">'Std dev diff'</span>)
-0358 <span class="comment">%plot(x,a(:,13),'o--r') % amount of data</span>
-0359 subplot(6,1,4)
-0360 plot(x,r_statistics(:,4),<span class="string">'o--r'</span>,x,-r_statistics(:,5),<span class="string">'o--b'</span>)
-0361 legend(<span class="string">'99.5'</span>,<span class="string">'0.5'</span>,<span class="string">'location'</span>,<span class="string">'best'</span>)
-0362 title(<span class="string">'Percentiles'</span>)
-0363 subplot(6,1,5)
-0364 plot(x,r_statistics(:,6),<span class="string">'o--r'</span>,x,-r_statistics(:,7),<span class="string">'o--b'</span>)
-0365 legend(<span class="string">'97.5'</span>,<span class="string">'2.5'</span>,<span class="string">'location'</span>,<span class="string">'best'</span>)
-0366 subplot(6,1,6)
-0367 plot(x,r_statistics(:,8),<span class="string">'o--r'</span>,x,-r_statistics(:,9),<span class="string">'o--b'</span>)
-0368 legend(<span class="string">'95'</span>,<span class="string">'5'</span>,<span class="string">'location'</span>,<span class="string">'best'</span>)
-0369 saveas(gcf,fullfile(plotfolder,<span class="string">'fevAnalysis_allpatients_w_halfw-05_filter1.png'</span>))
-0370 
-0371 <span class="comment">%% segment patient types depending on patient's variability</span>
-0372 <span class="comment">% limit: 550 556 584</span>
-0373 patients_perfect = p_processed_patients(rPatientStats.all_std &lt; 0.038 &amp; rPatientStats.all_std ~= 0 &amp; rPatientStats.all_n_residuals &gt; 100);
-0374 patients_25_50 = p_processed_patients(rPatientStats.all_std &gt;= 0.045 &amp; rPatientStats.all_std &lt; 0.0666);
-0375 patients_50_75 = p_processed_patients(rPatientStats.all_std &gt;= 0.0666 &amp; rPatientStats.all_std &lt; 0.099);
-0376 patients_outliers = p_processed_patients(rPatientStats.all_std &gt; 0.19);
-0377 
-0378 <span class="comment">%% results</span>
-0379 
-0380 figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 2000 500])
-0381 
-0382 subplot(3,2,5)
-0383 boxplot(rPatientStats.all_std,<span class="string">'Orientation'</span>,<span class="string">'horizontal'</span>);
-0384 title(&quot;Boxplot of the standard deviation of patient's residuals <span class="keyword">for</span> (21,7)&quot;, <span class="keyword">...</span>
-0385     sprintf(&quot;<span class="comment">%i out of %i patients have 1 residual, hence a standard deviation of 0&quot;, sum(rPatientStats.all_std==0), size(rPatientStats,1) ));</span>
-0386 xlabel(<span class="string">'Standard deviation (L)'</span>)
-0387 xticks(0:0.02:0.36)
-0388 grid(<span class="string">'on'</span>)
-0389 
-0390 <span class="comment">% subplot(3,2,4)</span>
-0391 <span class="comment">% plotFEVModel(501, FEVdata, p_smoothing);</span>
-0392 <span class="comment">% grid('on')</span>
-0393 
-0394 subplot(3,2,2)
-0395 plot(rPatientStats.all_n_residuals,<span class="string">'.'</span>)
-0396 title(<span class="string">'#residuals per patient'</span>,[ num2str(sum(rPatientStats.all_n_residuals==0)) <span class="string">' patients with 0 residuals'</span>])
-0397 xlabel(<span class="string">'Patient'</span>)
-0398 ylabel(<span class="string">'#residuals'</span>)
-0399 
-0400 subplot(3,2,4)
-0401 temp = 1:31;
-0402 semilogy(temp,1./temp.*100, <span class="string">'o--k'</span>)
-0403 xlabel(<span class="string">'w'</span>)
-0404 ylabel(<span class="string">'1/w in %'</span>)
-0405 yticks([4, 6, 8, 10, 20, 50, 100])
-0406 title(&quot;Moving mean terms' weight <span class="keyword">for</span> window size w&quot;)
-0407 grid(<span class="string">'on'</span>)
-0408 <span class="comment">% put more y points</span>
-0409 
-0410 subplot(3,2,[1,3])
-0411 histogram(r_all_residuals);
-0412 ylabel([<span class="string">'Frequency (total: '</span> num2str(r_statistics(1,16)) <span class="keyword">...</span>
-0413     <span class="string">' out of '</span> num2str(r_statistics(1,17)) <span class="string">' stable)'</span>])
-0414 xlabel(<span class="string">'Residuals (L)'</span>)
-0415 title([<span class="string">'Distribution of the FEV1 measures deviation from fitted curve across '</span> <span class="keyword">...</span>
-0416     num2str(r_statistics(1,19)) <span class="string">' patients (out of '</span> <span class="keyword">...</span>
-0417     num2str(r_statistics(1,22)) <span class="string">')'</span>], <span class="keyword">...</span>
-0418     [<span class="string">'Std: '</span> num2str(std(r_all_residuals,<span class="string">'omitnan'</span>),2) <span class="string">' L | '</span> <span class="keyword">...</span>
-0419     <span class="string">'99% data within ['</span> num2str(prctile(r_all_residuals,0.5),2) <span class="string">', '</span> num2str(prctile(r_all_residuals,99.5),2) <span class="string">'], '</span><span class="keyword">...</span>
-0420     <span class="string">'95% data within ['</span> num2str(prctile(r_all_residuals,2.5),2) <span class="string">', '</span> num2str(prctile(r_all_residuals,97.5),2) <span class="string">'], '</span><span class="keyword">...</span>
-0421     <span class="string">'90% data within ['</span> num2str(prctile(r_all_residuals,5),2) <span class="string">', '</span> num2str(prctile(r_all_residuals,95),2) <span class="string">']'</span>]);
-0422 grid(<span class="string">'on'</span>)
-0423 
-0424 saveas(gcf,fullfile(plotfolder,sprintf(<span class="string">'fevModelBasedAnalysis_movmean_w%i_t%i_filter_%i.png'</span>, <span class="keyword">...</span>
-0425     w, t, p_filter)))
-0426 
-0427 <span class="comment">%% FURTHER ANALYSES</span>
-0428 
-0429 <span class="comment">%% Distribution of the residuals</span>
-0430 <span class="comment">% check if the assumption of normal distribution is acceptable</span>
-0431 
-0432 figure
-0433 probplot(<span class="string">'normal'</span>,r_all_residuals)
-0434 grid(<span class="string">'on'</span>)
-0435 figure
-0436 probplot(<span class="string">'extreme value'</span>,r_all_residuals)
-0437 grid(<span class="string">'on'</span>)
-0438 
-0439 <span class="comment">% better fit for a normal distribution than an extreme value distribution</span>
-0440 
-0441 <span class="comment">% the distribution has heavy tails on both sides: probably close to a</span>
-0442 <span class="comment">% Cauchy distribution</span>
-0443 
-0444 <span class="comment">% quite close to the normal distribution in the boundaries [0.05,0.95]</span>
-0445 <span class="comment">% which is sufficient to assume normal distribution for hypothesis testing</span>
-0446 <span class="comment">% with a significance threshold of 0.05</span>
-0447 
-0448 <span class="comment">%% plot correlation between lung health and variability</span>
-0449 
-0450 <span class="comment">% adds a columm to FEVdata_table with FEV1 in % of predicted value</span>
-0451     
-0452 <span class="comment">% Input:</span>
-0453 <span class="comment">% ------</span>
-0454 <span class="comment">% FEVdata_table        contains ID, DateNum, FEV1</span>
-0455 <span class="comment">% brPatient            contains ID, CalcPredictedFEV1 (this is the estimated</span>
-0456 <span class="comment">%   FEV1 using a function from Andres - we don't trust the PredictedFEV1</span>
-0457 <span class="comment">%   that was manually entered, with errors, by the hospitals nurses)</span>
-0458         
-0459 <span class="comment">% take all values again</span>
-0460 i = ismember(brphysdata(:,5).(1), {<span class="string">'FEV1Recording'</span>        });
-0461 FEV1info = brphysdata(i,[1 8]); FEV1info.Properties.VariableNames = cell({<span class="string">'ID'</span>,<span class="string">'FEV1'</span>}); clear i;
-0462 
-0463 <span class="comment">% take stable values only</span>
-0464 <span class="comment">% FEV1info = table(FEVdata(mask_stable_data,1),FEVdata(mask_stable_data,3)); FEV1info.Properties.VariableNames={'ID','FEV1'};</span>
-0465 
-0466 <span class="comment">% calculate true value based on mean</span>
-0467 func = @(x) mean(x);
-0468 FEV1info = varfun(func,FEV1info,<span class="string">'GroupingVariables'</span>,<span class="string">'ID'</span>);
-0469 
-0470 <span class="comment">% adds predicted FEV1</span>
-0471 FEV1info = outerjoin(FEV1info, brPatient, <span class="string">'Type'</span>, <span class="string">'Left'</span>, <span class="string">'Keys'</span>, <span class="string">'ID'</span>, <span class="string">'RightVariables'</span>, {<span class="string">'CalcPredictedFEV1'</span>,<span class="string">'Age'</span>,<span class="string">'Height'</span>});
-0472 
-0473 <span class="comment">% computes % predicted</span>
-0474 FEV1info.PercentagePredicted = FEV1info.Fun_FEV1 ./ FEV1info.CalcPredictedFEV1 * 100;
-0475 
-0476 <span class="comment">% outerjoin to add patients' std and #residuals</span>
-0477 FEV1info = outerjoin(rPatientStats, FEV1info, <span class="string">'Type'</span>, <span class="string">'Left'</span>, <span class="string">'LeftKeys'</span>,<span class="string">'p_processed_patients'</span>,<span class="string">'RightKeys'</span>, <span class="string">'ID'</span>, <span class="string">'LeftVariables'</span>, {<span class="string">'all_std'</span>,<span class="string">'all_n_residuals'</span>});
-0478 
-0479 <span class="comment">% filter</span>
-0480 FEV1info = FEV1info( FEV1info.all_std &lt;= 0.3 &amp; FEV1info.all_n_residuals &gt;= 30 ,:);
-0481 
-0482 <span class="comment">% variability</span>
-0483 scatterhist(FEV1info.all_std,FEV1info.PercentagePredicted,10)
-0484 xlabel(<span class="string">'\sigma_{residuals} (L)'</span>)
-0485 ylabel(<span class="string">'FEV1 %'</span>)
-0486 [a,b] = corr(FEV1info.all_std,FEV1info.PercentagePredicted,<span class="string">'Rows'</span>,<span class="string">'complete'</span>)
-0487 title(sprintf(<span class="string">'Predicted FEV1 %% against patient-specific variability (r = %2.3f, p-value = %2.3f)'</span>,a,b),<span class="keyword">...</span>
-0488     sprintf(<span class="string">'%i patients, %i outliers removed (\\sigma_{residuals} &gt; 0.3 or #residuals &lt; 30)'</span>, size(FEV1info,1), sum(not(rPatientStats.all_n_residuals==0))-size(FEV1info,1)))
-0489 clear a; clear b;
-0490 
-0491 saveas(gcf,fullfile(plotfolder,<span class="string">'fevModelBasedAnalysis_variabilityvsFEV1.png'</span>))
-0492 <span class="comment">%close all</span>
-0493 
-0494 <span class="comment">%% Effect of triple therapy at a patient level</span>
-0495 
-0496 <span class="comment">% There is 95% probability that the CI contains the true standard deviation,</span>
-0497 <span class="comment">% and if it does contain it, with 200 points, the true std value lies</span>
-0498 <span class="comment">% within 90-110% of the estimated std</span>
-0499 
-0500 <span class="comment">% Hence, true variability will lie within 0.9^4-1.1^4 = 65.6-1.46% of the estimated std</span>
-0501 <span class="comment">% We define the variability as 4 sigma deviations, thus keeping 93% percent of the datapoints,</span>
-0502 <span class="comment">% according to the Chebyshev's inequality. Noise over 4 sigma is considered as outliers.</span>
-0503 
-0504 <span class="comment">% Other option: test the difference between sigma_prior and sigma_post.</span>
-0505 <span class="comment">% However, those sigmas are estimators. Hence, I would have to take the</span>
-0506 <span class="comment">% extreme case: the boundary of the CI to be maximise the significance</span>
-0507 
-0508 <span class="comment">% Other option: add patient-specific samples together.</span>
-0509 <span class="comment">% compare residuals before and after. I should have enough samples to have</span>
-0510 <span class="comment">% narrow CI.</span>
-0511 
-0512 varChange = rPatientStats(rPatientStats.n_residuals_prior_tripleT &gt; 200 &amp; rPatientStats.n_residuals_post_tripleT &gt; 200,:);
-0513 a=varChange.std_residuals_prior_tripleT;
-0514 b=varChange.std_residuals_post_tripleT;
-0515 change=varChange.std_residuals_prior_tripleT - varChange.std_residuals_post_tripleT;
-0516 varChange.relative_change_percentage = 100*(varChange.std_residuals_prior_tripleT - varChange.std_residuals_post_tripleT) ./ varChange.std_residuals_prior_tripleT;
-0517 
-0518 <span class="comment">% histogram(varChange.relative_change_percentage,30);</span>
-0519 <span class="comment">% % conditions: should have start triple therapy</span>
-0520 <span class="comment">% % should have residuals</span>
-0521 <span class="comment">% % should have residuals before and after</span>
-0522 <span class="comment">% title(sprintf('Variability change after triple therapy start'),...</span>
-0523 <span class="comment">%     sprintf('%i patients have at least 2 residuals before/after (min. for a nonzero standard deviation)', sum(idx_diff)));</span>
-0524 <span class="comment">% xlabel('(\sigma_{residuals}^{before} - \sigma_{residuals}^{after}) / \sigma_{residuals}^{before} (L)');</span>
-0525 <span class="comment">% %xticks(-0.16:0.02:0.14)</span>
-0526 <span class="comment">% ylabel('#patients');</span>
-0527 <span class="comment">% grid('on')</span>
-0528 
-0529 temp_conditions = outerjoin(rPatientStats,brDrugTherapy,<span class="string">'Type'</span>,<span class="string">'Left'</span>,<span class="string">'LeftKeys'</span>,<span class="string">'p_processed_patients'</span>,<span class="string">'RightKeys'</span>,<span class="string">'ID'</span>,<span class="string">'LeftVariables'</span>,<span class="string">'all_n_residuals'</span>,<span class="string">'RightVariables'</span>,<span class="string">'DrugTherapyType'</span>);
-0530 temp_conditions = temp_conditions(temp_conditions.DrugTherapyType == &quot;Triple Therapy&quot; &amp; temp_conditions.all_n_residuals &gt; 0,:);
-0531 fprintf(<span class="string">'Variability change after triple therapy start - %i patients started triple therapy &amp; have at least one residual, only %i patients have more than 200 residuals.\n'</span>,<span class="keyword">...</span>
-0532     size(temp_conditions,1),size(varChange,1)); clear temp_conditions;
-0533 
-0534 saveas(gcf,fullfile(plotfolder,<span class="string">'fevModelBasedAnalysis_variabilityChangeAfterTripleTherapyStart.png'</span>))
-0535 <span class="comment">%close all</span>
-0536 
-0537 <span class="comment">%% 1) Effect of triple therapy at a study level</span>
-0538 <span class="comment">% remove patients with standard deviation outliers</span>
-0539 
-0540 distname = <span class="string">'tLocationScale'</span>;
-0541 
-0542 <span class="comment">% most conservative scenario</span>
-0543 <span class="comment">% 1. equilibrium of data prior/after (residuals of patient that did not get</span>
-0544 <span class="comment">% triple therapy is not taken into account, otherwise balance largely in</span>
-0545 <span class="comment">% favor of prior triple therapy)</span>
-0546 <span class="comment">% 2. some patients got triple therapy but it was not referenced in our data,</span>
-0547 <span class="comment">% we simply don't use those patient by strictly looking at the ones that</span>
-0548 <span class="comment">% got triple therapy</span>
-0549 <span class="comment">% 3. symkevi data is included into the &quot;prior&quot; data. Since symkevi has</span>
-0550 <span class="comment">% potentially also had an effect,</span>
-0551 
-0552 <span class="comment">% 1. null hypothesis: the two std dev are the same. std_prior^2 - std_post^2 = 0</span>
-0553 s1_prior_trpl = std(r_all_1_prior_trpl);
-0554 s1_post_trpl = std(r_all_1_post_trpl);
-0555 <span class="comment">% relative change in s</span>
-0556 <span class="comment">% s1s2 = (s1-s2)/s1;</span>
-0557 
-0558 <span class="comment">% 2. alternative hypothesis std_prior^2 - std_post^2 &gt; 0</span>
-0559 <span class="comment">% assumptions:</span>
-0560 <span class="comment">% . sample comes from a normally distributed population</span>
-0561 <span class="comment">% . measurements are independently and identically distributed, hence so</span>
-0562 <span class="comment">% are residuals</span>
-0563 
-0564 <span class="comment">% test chi square distribution</span>
-0565 <span class="comment">% chirnd = chi2rnd(4, size(r_all_1_prior_trpl));</span>
-0566 
-0567 <span class="comment">% data normality</span>
-0568 figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 800 300])
-0569 subplot(1,2,1)
-0570 <span class="comment">% probplot('normal',r_all_1_prior_trpl)</span>
-0571 pd = fitdist(r_all_1_prior_trpl,distname)
-0572 qqplot(r_all_1_prior_trpl, pd)
-0573 ylabel(sprintf(<span class="string">'Quantiles of residuals prior Trikafta (%d)'</span>,length(r_all_1_prior_trpl) ))
-0574 title(<span class="string">''</span>)
-0575 grid(<span class="string">'on'</span>)
-0576 subplot(1,2,2)
-0577 <span class="comment">% probplot('normal',r_all_1_post_trpl)</span>
-0578 pd = fitdist(r_all_1_post_trpl,distname)
-0579 qqplot(r_all_1_post_trpl, pd)
-0580 title(<span class="string">''</span>)
-0581 ylabel(sprintf(<span class="string">'Quantiles of residuals during Trikafta (%d)'</span>,length(r_all_1_post_trpl) ))
-0582 grid(<span class="string">'on'</span>)
-0583 saveas(gcf,fullfile(plotfolder,<span class="string">'fevModelBasedAnalysis_qqplot_prior_during_tripletherapy.png'</span>))
-0584 
-0585 <span class="comment">% symmetric, heavy-tailed distribution -&gt; Student, Cauchy</span>
-0586 
-0587 <span class="comment">% 3. test statistic</span>
-0588 <span class="comment">% F-test: extremely sensitive to departures from normality for small alpha</span>
-0589 <span class="comment">% levels (lower than 0.05)</span>
-0590 <span class="comment">% Bartlett: Chi-Square, sensitive to departues from normality.</span>
-0591 <span class="comment">% Levene (mean) - Brown-Forsythe (median): mean is best when underlying</span>
-0592 <span class="comment">% data follow Cauchy distribution, median is best for Chi-Square distribution</span>
-0593 
-0594 alpha = 0.05;
-0595 
-0596 <span class="comment">% F-Test</span>
-0597 <span class="comment">% F = s1^2/s2^2;</span>
-0598 [F_h_rejected_1, F_p_1, F_ci_1, F_stats_1] = vartest2(r_all_1_prior_trpl,r_all_1_post_trpl,<span class="string">'Tail'</span>,<span class="string">'right'</span>,<span class="string">'Alpha'</span>,alpha);
-0599 
-0600 <span class="comment">% Levene test</span>
-0601 [L_h_rejected_1, L_p_1, L_stat_1, L_critical_1] = <a href="#_sub3" class="code" title="subfunction [h, p, W, F] = levenetest(x1,x2,alpha)">levenetest</a>(r_all_1_prior_trpl,r_all_1_post_trpl,alpha);
-0602 
-0603 <span class="comment">%% 2) Effect of symkevi and triple therapy at a study level</span>
-0604 
-0605 s2_smkv = std(r_all_2_smkv);
-0606 s2_trpl = std(r_all_2_trpl);
-0607 s2_none = std(r_all_2_none);
-0608 
-0609 <span class="comment">% data normality</span>
-0610 figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 1000 300])
-0611 subplot(1,3,1)
-0612 pd = fitdist(r_all_2_none,distname)
-0613 qqplot(r_all_2_none, pd)
-0614 title(<span class="string">''</span>)
-0615 ylabel(sprintf(<span class="string">'Quantiles of residuals prior Symkevi (%d)'</span>,length(r_all_2_none) ))
-0616 xlabel(<span class="string">'Quantiles of tlocationscale Distribution (\nu = 3)'</span>)
-0617 grid(<span class="string">'on'</span>)
-0618 subplot(1,3,2)
-0619 pd = fitdist(r_all_2_smkv,distname)
-0620 qqplot(r_all_2_smkv, pd)
-0621 title(<span class="string">''</span>)
-0622 ylabel(sprintf(<span class="string">'Quantiles of residuals during Symkevi (%d)'</span>,length(r_all_2_smkv) ))
-0623 xlabel(<span class="string">'Quantiles of tlocationscale Distribution (\nu = 4)'</span>)
-0624 grid(<span class="string">'on'</span>)
-0625 subplot(1,3,3)
-0626 pd = fitdist(r_all_2_trpl,distname)
-0627 qqplot(r_all_2_trpl, pd)
-0628 title(<span class="string">''</span>)
-0629 ylabel(sprintf(<span class="string">'Quantiles of residuals during Trikafta (%d)'</span>,length(r_all_2_trpl) ))
-0630 xlabel(<span class="string">'Quantiles of tlocationscale Distribution (\nu = 4)'</span>)
-0631 grid(<span class="string">'on'</span>)
-0632 saveas(gcf,fullfile(plotfolder,<span class="string">'fevModelBasedAnalysis_qqplot_none_smkv_trpl.png'</span>))
-0633 
-0634 <span class="comment">% symmetric, heavy-tailed distribution -&gt; Student, Cauchy</span>
-0635 <span class="comment">% note: prior to Symkevi and post Symkevi (during Triple Therapy), higher</span>
-0636 <span class="comment">% deviation from normality around the 5th and 95th percentiles</span>
-0637 
-0638 <span class="comment">% F-tests</span>
-0639 [F_h_rejected_smkv_none, F_p_smkv_none, F_ci_smkv_none, F_stats_smkv_none] = vartest2(r_all_2_none,r_all_2_smkv,<span class="string">'Tail'</span>,<span class="string">'right'</span>,<span class="string">'Alpha'</span>,alpha);
-0640 [F_h_rejected_trpl_smkv, F_p_trpl_smkv, F_ci_trpl_smkv, F_stats_trpl_smkv] = vartest2(r_all_2_smkv,r_all_2_trpl,<span class="string">'Tail'</span>,<span class="string">'right'</span>,<span class="string">'Alpha'</span>,alpha);
-0641 [F_h_rejected_trpl_none, F_p_trpl_none, F_ci_trpl_none, F_stats_trpl_none] = vartest2(r_all_2_none,r_all_2_trpl,<span class="string">'Tail'</span>,<span class="string">'right'</span>,<span class="string">'Alpha'</span>,alpha,<span class="string">'Alpha'</span>,alpha);
-0642 
-0643 <span class="comment">% Levene's tests</span>
-0644 [L_h_rejected_smkv_none, L_p_smkv_none, L_stat_smkv_none, L_critical_smkv_none] = <a href="#_sub3" class="code" title="subfunction [h, p, W, F] = levenetest(x1,x2,alpha)">levenetest</a>(r_all_2_none,r_all_2_smkv,alpha);
-0645 [L_h_rejected_trpl_smkv, L_p_trpl_smkv, L_stat_trpl_smkv, L_critical_trpl_smkv] = <a href="#_sub3" class="code" title="subfunction [h, p, W, F] = levenetest(x1,x2,alpha)">levenetest</a>(r_all_2_smkv,r_all_2_trpl,alpha);
-0646 [L_h_rejected_trpl_none, L_p_trpl_none, L_stat_trpl_none, L_critical_trpl_none] = <a href="#_sub3" class="code" title="subfunction [h, p, W, F] = levenetest(x1,x2,alpha)">levenetest</a>(r_all_2_none,r_all_2_trpl,alpha);
-0647 
-0648 <span class="comment">%% 3) Effect of symkevi at a study level</span>
-0649 
-0650 <span class="comment">% as we cannot reject the homoscedasticity hypotheses on the effects of the</span>
-0651 <span class="comment">% 1. transition from nothing (or Ivacaftor, or Okrambi) to Symkevi</span>
-0652 <span class="comment">% 2. transition from Symkevi to Triple Therapy</span>
-0653 <span class="comment">% it may be because of a lack of data (only 61 patients got Symkevi and</span>
-0654 <span class="comment">% Triple Therapy)</span>
-0655 <span class="comment">% hence we have a look at Symkevi only and Symkevi &amp; Triple Therapy</span>
-0656 <span class="comment">% patients</span>
-0657 
-0658 <span class="comment">% merge patient that had symkevi and not trikafta with patient that had</span>
-0659 <span class="comment">% symkevi and trikafta - smae for no therapy</span>
-0660 r_all_3_prior_smkv_full = [r_all_3_prior_smkv;r_all_2_none];
-0661 r_all_3_post_smkv_full = [r_all_3_post_smkv;r_all_2_smkv];
-0662 
-0663 s3_prior_smkv = std(r_all_3_prior_smkv_full);
-0664 s3_prior_smkv2 = std(r_all_3_prior_smkv);
-0665 s3_post_smkv = std(r_all_3_post_smkv_full);
-0666 s3_post_smkv2 = std(r_all_3_post_smkv);
+0154                 <span class="keyword">if</span> isempty(rPatientStats.all_n_residuals(rPatientStats.p_processed_patients == patient))<span class="comment">% if no residuals</span>
+0155                     rPatientStats.n_residuals_prior_tripleT(patient_idx) = nan; 
+0156                     rPatientStats.n_residuals_post_tripleT(patient_idx) = nan; 
+0157                     rPatientStats.std_residuals_prior_tripleT(patient_idx) = nan;
+0158                     rPatientStats.std_residuals_post_tripleT(patient_idx) = nan;
+0159                 <span class="keyword">else</span>
+0160                     
+0161                     <span class="comment">%%% 1 %%% split residuals prior/post triple therapy start</span>
+0162                     <span class="comment">% avoid residuals after triple therapy stop if</span>
+0163                     <span class="comment">% applicable</span>
+0164 
+0165                     <span class="comment">% get triple therapy start and stop dates where applicable</span>
+0166                     triple_therapy_start = brDrugTherapy.DateNum(brDrugTherapy.ID == patient &amp; ismember(brDrugTherapy.DrugTherapyType, <span class="string">'Kaftrio/Trikafta/TripleTherapy'</span>));
+0167                     triple_therapy_stop = brDrugTherapy.StopDateNum(brDrugTherapy.ID == patient &amp; ismember(brDrugTherapy.DrugTherapyType, <span class="string">'Kaftrio/Trikafta/TripleTherapy'</span>));
+0168                     <span class="keyword">if</span> ~isempty(triple_therapy_start)
+0169                         fprintf(<span class="string">', with triple therapy'</span>);
+0170                         n_1_trpl = n_1_trpl+1;
+0171                         <span class="keyword">if</span> length(triple_therapy_start) &gt; 1
+0172                             triple_therapy_start = triple_therapy_start(1);
+0173                         <span class="keyword">end</span>
+0174                         
+0175                         <span class="comment">% segment residuals prior/post triple therapy start</span>
+0176                         <span class="comment">% prior</span>
+0177                         temp = residuals(x &lt; triple_therapy_start);
+0178                         temp = temp(~isnan(temp));
+0179                         rPatientStats.n_residuals_prior_tripleT(patient_idx) = length(temp);
+0180                         rPatientStats.std_residuals_prior_tripleT(patient_idx) = std(temp);
+0181                         r_all_1_prior_trpl = cat(1,r_all_1_prior_trpl, temp);
+0182                         
+0183                         <span class="comment">% post</span>
+0184                         <span class="keyword">if</span> ~isempty(triple_therapy_stop)
+0185                             temp = residuals(x &gt;= triple_therapy_start);
+0186                         <span class="keyword">else</span> <span class="comment">% avoiding measurementss after triple therapy stop</span>
+0187                             temp = residuals(x &gt;= triple_therapy_start &amp; x &lt; triple_therapy_stop);
+0188                         <span class="keyword">end</span>
+0189                         temp = temp(~isnan(temp));
+0190                         rPatientStats.n_residuals_post_tripleT(patient_idx) = length(temp);
+0191                         rPatientStats.std_residuals_post_tripleT(patient_idx) = std(temp); 
+0192                         r_all_1_post_trpl = cat(1,r_all_1_post_trpl, temp); 
+0193                         clear temp;
+0194                         
+0195 <span class="comment">%                         % hypothesis test that the two std are the same</span>
+0196 <span class="comment">%                         [h_rejected, p_value] = vartest2(r_all_prior_trpl(~isnan(r_all_prior_trpl)),r_all_post_trpl(~isnan(r_all_post_trpl)),'Tail','right');</span>
+0197 <span class="comment">%</span>
+0198 <span class="comment">%                         rPatientStats.h_rejected(patient_idx) = h_rejected;</span>
+0199 <span class="comment">%                         rPatientStats.h_p(patient_idx) = p_value;</span>
+0200                         
+0201 
+0202                         <span class="comment">%%% 2 %%% segment residuals 1) before symkevi 2)</span>
+0203                         <span class="comment">%%% during symkevi, 3) during triple therapy</span>
+0204                             <span class="comment">% avoiding residuals for patients that came back on</span>
+0205                             <span class="comment">% symkevi - only 3 patients at the moment</span>
+0206                             <span class="comment">% (18.08.2021), will not impact results</span>
+0207                             
+0208                         symkevi_start = brDrugTherapy.DateNum(brDrugTherapy.ID == patient &amp; ismember(brDrugTherapy.DrugTherapyType, <span class="string">'Symkevi'</span>));
+0209                         <span class="keyword">if</span> ~isempty(symkevi_start)
+0210                             <span class="keyword">if</span> symkevi_start(1) &lt; triple_therapy_start
+0211                                 fprintf(<span class="string">' and symkevi'</span>);
+0212                                 
+0213                                 symkevi_start = symkevi_start(1);
+0214                                 n_2_smkv_and_trpl = n_2_smkv_and_trpl+1;
+0215 
+0216                                 <span class="comment">% prior symkevi</span>
+0217                                 temp = residuals(x &lt; triple_therapy_start &amp; x &lt; symkevi_start);
+0218                                 r_all_2_none = cat(1,r_all_2_none, temp(~isnan(temp)));
+0219 
+0220                                 <span class="comment">% during symkevi</span>
+0221                                 <span class="comment">% note: if patients started triple therapy before</span>
+0222                                 <span class="comment">% symkevi, we consider the symkevi data as</span>
+0223                                 <span class="comment">% triple therapy</span>
+0224                                 temp = residuals(x &lt; triple_therapy_start &amp; x &gt;= symkevi_start);
+0225                                 r_all_2_smkv = cat(1,r_all_2_smkv, temp(~isnan(temp)));
+0226 
+0227                                 <span class="comment">% during triple therapy</span>
+0228                                 <span class="keyword">if</span> ~isempty(triple_therapy_stop)
+0229                                     temp = residuals(x &gt;= triple_therapy_start);
+0230                                 <span class="keyword">else</span> <span class="comment">% avoiding measurementss after triple therapy stop</span>
+0231                                     temp = residuals(x &gt;= triple_therapy_start &amp; x &lt; triple_therapy_stop);
+0232                                 <span class="keyword">end</span>
+0233                                 r_all_2_trpl = cat(1,r_all_2_trpl, temp(~isnan(temp)));
+0234                                 clear temp;
+0235                             <span class="keyword">end</span>
+0236                         <span class="keyword">end</span>
+0237                     <span class="keyword">else</span> 
+0238                         n_residual_no_trpl = n_residual_no_trpl + 1;
+0239                         <span class="comment">% update values only prior to trikafta</span>
+0240 <span class="comment">%                         rPatientStats.n_residuals_prior_tripleT(patient_idx) = length(~isnan(residuals));</span>
+0241 <span class="comment">%                         rPatientStats.std_residuals_prior_tripleT(patient_idx) = std(residuals,'omitnan');</span>
+0242 <span class="comment">%</span>
+0243 <span class="comment">%                         rPatientStats.n_residuals_post_tripleT(patient_idx) = 0;</span>
+0244 <span class="comment">%                         rPatientStats.std_residuals_post_tripleT(patient_idx) = nan;</span>
+0245 <span class="comment">%</span>
+0246                         <span class="comment">%%% 3 %%% semgent residuals prior/post symkevi start</span>
+0247                         <span class="comment">% get symkevi start date where applicable</span>
+0248                         <span class="comment">% those patients did not have triple therapy</span>
+0249                             <span class="comment">% avoiding residuals for patients that came back on</span>
+0250                             <span class="comment">% symkevi - only 3 patients at the moment</span>
+0251                             <span class="comment">% (18.08.2021), will not impact results</span>
+0252                         
+0253                         symkevi_start = brDrugTherapy.DateNum(brDrugTherapy.ID == patient &amp; ismember(brDrugTherapy.DrugTherapyType, <span class="string">'Symkevi'</span>));
+0254                         <span class="keyword">if</span> ~isempty(symkevi_start)
+0255                             fprintf(<span class="string">', with symkevi'</span>);
+0256                             n_3_smkv = n_3_smkv+1;
+0257 
+0258                             <span class="comment">% find residuals prior/post triple therapy start</span>
+0259                             <span class="comment">% prior</span>
+0260                             temp = residuals(x &lt; symkevi_start);
+0261                             r_all_3_prior_smkv = cat(1,r_all_3_prior_smkv, temp(~isnan(temp)));
+0262 
+0263                             <span class="comment">% post</span>
+0264                             temp = residuals(x &gt;= symkevi_start);
+0265                             r_all_3_post_smkv = cat(1,r_all_3_post_smkv, temp(~isnan(temp))); 
+0266                             clear temp;
+0267                         <span class="keyword">else</span>
+0268 <span class="comment">%                             fprintf(', no drug therapy');</span>
+0269 <span class="comment">%                             temp = residuals;</span>
+0270 <span class="comment">%                             r_all_3_prior_smkv = cat(1,r_all_3_prior_smkv, temp(~isnan(temp)));</span>
+0271                         <span class="keyword">end</span>
+0272                     <span class="keyword">end</span>
+0273                 <span class="keyword">end</span>
+0274                 fprintf(<span class="string">'.\n'</span>);
+0275                 
+0276                 <span class="comment">% plot patient</span>
+0277                 <span class="keyword">if</span> p_plot == 1 &amp;&amp; sum(~isnan(residuals)) &gt;  0 <span class="comment">% if at least 1 residual</span>
+0278 
+0279                     figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 2000 300])
+0280                     hold on
+0281 
+0282                     <span class="comment">% referenced on patient mean</span>
+0283                     avg = mean(FEVdata(mask_patient, 3)); 
+0284                     ylim([-0.8 0.8]);
+0285                     <span class="comment">% plot moving average in red</span>
+0286                     plot(x,curve-avg,<span class="string">'.'</span>,<span class="string">'MarkerEdgeColor'</span>,<span class="string">'r'</span>,<span class="string">'MarkerSize'</span>,20)
+0287                     <span class="comment">%plot(x,curve-avg,'r')</span>
+0288 
+0289                     <span class="comment">% plot raw measures</span>
+0290                     plot(x,y-avg,<span class="string">'.'</span>,<span class="string">'MarkerEdgeColor'</span>,<span class="string">'b'</span>,<span class="string">'MarkerSize'</span>,10)
+0291 
+0292                     <span class="comment">% plot data</span>
+0293                     <span class="keyword">if</span> p_filter == 1 &amp;&amp; sum(not(mask)) &gt; 0
+0294                         x_na = FEVdata(mask_patient &amp; not(mask), 2);
+0295                         y_na = FEVdata(mask_patient &amp; not(mask), 3);
+0296                         plot(x_na,y_na-avg,<span class="string">'.'</span>,<span class="string">'MarkerEdgeColor'</span>,[0.8 0.8 0.9],<span class="string">'MarkerSize'</span>,10 )
+0297                     <span class="keyword">end</span>
+0298                     hold off
+0299 
+0300                     xlabel(<span class="string">'Day'</span>)
+0301                     ylabel(<span class="string">'Normalised FEV1'</span>)
+0302                     title([<span class="string">'Patient '</span> num2str(patient) <span class="string">' |  std: '</span> <span class="keyword">...</span>
+0303                         num2str(std(residuals,<span class="string">'omitnan'</span>),3) <span class="string">' L | residuals count: '</span><span class="keyword">...</span>
+0304                         num2str(sum(~isnan(residuals))) <span class="string">' | window: '</span> num2str(w) <span class="keyword">...</span>
+0305                         <span class="string">' | threshold: '</span> num2str(t) ])
+0306                     grid(<span class="string">'on'</span>)
+0307                     legend(<span class="string">'residuals'</span>,<span class="string">'data in stable period'</span>, <span class="string">'data in unstable period'</span>,<span class="string">'location'</span>,<span class="string">'best'</span>)
+0308 
+0309                     saveas(gcf,fullfile(plotfolder,[<span class="string">'fevMovingAvg'</span> <span class="string">'_patient'</span> num2str(patient) <span class="string">'_w'</span> num2str(w) <span class="string">'_t'</span> num2str(t) <span class="string">'.png'</span>]))
+0310                     close all
+0311                 <span class="keyword">end</span>
+0312             <span class="keyword">end</span>
+0313         <span class="keyword">end</span>
+0314 
+0315     <span class="comment">% compute results</span>
+0316     r_statistics(i,2) = std(r_all_residuals,<span class="string">'omitnan'</span>); n = sum(rPatientStats.all_n_residuals); alpha = 0.05;
+0317     r_statistics(i,3) = sqrt((n-1)./chi2inv(1-alpha/2,n-1))*r_statistics(i,2); <span class="comment">% lower bound of the CI for the std</span>
+0318     r_statistics(i,4) = sqrt((n-1)./chi2inv(alpha/2,n-1))*r_statistics(i,2); <span class="comment">% upper bound of the CI</span>
+0319     r_statistics(i,5) = prctile(r_all_residuals,99.5); <span class="comment">% prctile treats NaNs as missing values and removes them.</span>
+0320     r_statistics(i,6) = prctile(r_all_residuals,0.5);
+0321     r_statistics(i,7) = prctile(r_all_residuals,97.5);
+0322     r_statistics(i,8) = prctile(r_all_residuals,2.5);
+0323     r_statistics(i,9) = prctile(r_all_residuals,95);
+0324     r_statistics(i,10) = prctile(r_all_residuals,5);
+0325     r_statistics(i,11) = prctile(r_all_residuals,90);
+0326     r_statistics(i,12) = prctile(r_all_residuals,10);
+0327     r_statistics(i,13) = sum(power(r_all_residuals,2),<span class="string">'omitnan'</span>); <span class="comment">% sse</span>
+0328     r_statistics(i,14) = w;
+0329     r_statistics(i,15) = t;
+0330     r_statistics(i,16) = sum(rPatientStats.all_n_residuals); <span class="comment">% alsolength(r_all_residuals(~isnan(r_all_residuals))); % n residuals computed (nan values are residuals for points that did not pass the threshold)</span>
+0331     r_statistics(i,17) = sum(f_t_m);  <span class="comment">% n residuals during stable period</span>
+0332     r_statistics(i,18) = length(FEVdata); <span class="comment">% n points initially</span>
+0333     r_statistics(i,19) = sum(rPatientStats.all_n_residuals &gt; 0); <span class="comment">% n patients with over 1 residuals, i.e. over 1 window with n_measures &gt; threshold</span>
+0334     r_statistics(i,20) = n_records_min;
+0335     r_statistics(i,21) = n_used;<span class="comment">%length(r_all_n_residuals(~isnan(r_all_n_residuals))); % n patients over minimal data count check (stable)</span>
+0336     r_statistics(i,22) = length(rPatientStats.p_processed_patients); <span class="comment">% n patients initially</span>
+0337     i=i+1;
+0338     <span class="keyword">end</span>
+0339 <span class="keyword">end</span>
+0340 
+0341 rPatientStats.s1s2 = rPatientStats.std_residuals_prior_tripleT.^2 ./ rPatientStats.std_residuals_post_tripleT.^2;
+0342 
+0343 <span class="comment">%% plot std and percntiles</span>
+0344 x = r_statistics(:,11); <span class="comment">%w</span>
+0345 <span class="comment">%x = a(:,12); %t</span>
+0346 
+0347 figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 500 1000])
+0348 subplot(6,1,1)
+0349 plot(x,-r_statistics(:,13),<span class="string">'o--k'</span>)
+0350 title(<span class="string">'-#residuals'</span>)
+0351 subplot(6,1,2)
+0352 plot(x,r_statistics(:,2),<span class="string">'o--r'</span>)
+0353 title(<span class="string">'Std dev'</span>)
+0354 subplot(6,1,3)
+0355 plot(x(1:end-1),change(r_statistics(:,2)),<span class="string">'o--r'</span>)
+0356 title(<span class="string">'Std dev diff'</span>)
+0357 <span class="comment">%plot(x,a(:,13),'o--r') % amount of data</span>
+0358 subplot(6,1,4)
+0359 plot(x,r_statistics(:,4),<span class="string">'o--r'</span>,x,-r_statistics(:,5),<span class="string">'o--b'</span>)
+0360 legend(<span class="string">'99.5'</span>,<span class="string">'0.5'</span>,<span class="string">'location'</span>,<span class="string">'best'</span>)
+0361 title(<span class="string">'Percentiles'</span>)
+0362 subplot(6,1,5)
+0363 plot(x,r_statistics(:,6),<span class="string">'o--r'</span>,x,-r_statistics(:,7),<span class="string">'o--b'</span>)
+0364 legend(<span class="string">'97.5'</span>,<span class="string">'2.5'</span>,<span class="string">'location'</span>,<span class="string">'best'</span>)
+0365 subplot(6,1,6)
+0366 plot(x,r_statistics(:,8),<span class="string">'o--r'</span>,x,-r_statistics(:,9),<span class="string">'o--b'</span>)
+0367 legend(<span class="string">'95'</span>,<span class="string">'5'</span>,<span class="string">'location'</span>,<span class="string">'best'</span>)
+0368 saveas(gcf,fullfile(plotfolder,<span class="string">'fevAnalysis_allpatients_w_halfw-05_filter1.png'</span>))
+0369 
+0370 <span class="comment">%% segment patient types depending on patient's variability</span>
+0371 <span class="comment">% limit: 550 556 584</span>
+0372 patients_perfect = p_processed_patients(rPatientStats.all_std &lt; 0.038 &amp; rPatientStats.all_std ~= 0 &amp; rPatientStats.all_n_residuals &gt; 100);
+0373 patients_25_50 = p_processed_patients(rPatientStats.all_std &gt;= 0.045 &amp; rPatientStats.all_std &lt; 0.0666);
+0374 patients_50_75 = p_processed_patients(rPatientStats.all_std &gt;= 0.0666 &amp; rPatientStats.all_std &lt; 0.099);
+0375 patients_outliers = p_processed_patients(rPatientStats.all_std &gt; 0.19);
+0376 
+0377 <span class="comment">%% results</span>
+0378 
+0379 figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 2000 500])
+0380 
+0381 subplot(3,2,5)
+0382 boxplot(rPatientStats.all_std,<span class="string">'Orientation'</span>,<span class="string">'horizontal'</span>);
+0383 title(&quot;Boxplot of the standard deviation of patient's residuals <span class="keyword">for</span> (21,7)&quot;, <span class="keyword">...</span>
+0384     sprintf(&quot;<span class="comment">%i out of %i patients have 1 residual, hence a standard deviation of 0&quot;, sum(rPatientStats.all_std==0), size(rPatientStats,1) ));</span>
+0385 xlabel(<span class="string">'Standard deviation (L)'</span>)
+0386 xticks(0:0.02:0.36)
+0387 grid(<span class="string">'on'</span>)
+0388 
+0389 <span class="comment">% subplot(3,2,4)</span>
+0390 <span class="comment">% plotFEVModel(501, FEVdata, p_smoothing);</span>
+0391 <span class="comment">% grid('on')</span>
+0392 
+0393 subplot(3,2,2)
+0394 plot(rPatientStats.all_n_residuals,<span class="string">'.'</span>)
+0395 title(<span class="string">'#residuals per patient'</span>,[ num2str(sum(rPatientStats.all_n_residuals==0)) <span class="string">' patients with 0 residuals'</span>])
+0396 xlabel(<span class="string">'Patient'</span>)
+0397 ylabel(<span class="string">'#residuals'</span>)
+0398 
+0399 subplot(3,2,4)
+0400 temp = 1:31;
+0401 semilogy(temp,1./temp.*100, <span class="string">'o--k'</span>)
+0402 xlabel(<span class="string">'w'</span>)
+0403 ylabel(<span class="string">'1/w in %'</span>)
+0404 yticks([4, 6, 8, 10, 20, 50, 100])
+0405 title(&quot;Moving mean terms' weight <span class="keyword">for</span> window size w&quot;)
+0406 grid(<span class="string">'on'</span>)
+0407 <span class="comment">% put more y points</span>
+0408 
+0409 subplot(3,2,[1,3])
+0410 histogram(r_all_residuals);
+0411 ylabel([<span class="string">'Frequency (total: '</span> num2str(r_statistics(1,16)) <span class="keyword">...</span>
+0412     <span class="string">' out of '</span> num2str(r_statistics(1,17)) <span class="string">' stable)'</span>])
+0413 xlabel(<span class="string">'Residuals (L)'</span>)
+0414 title([<span class="string">'Distribution of the FEV1 measures deviation from fitted curve across '</span> <span class="keyword">...</span>
+0415     num2str(r_statistics(1,19)) <span class="string">' patients (out of '</span> <span class="keyword">...</span>
+0416     num2str(r_statistics(1,22)) <span class="string">')'</span>], <span class="keyword">...</span>
+0417     [<span class="string">'Std: '</span> num2str(std(r_all_residuals,<span class="string">'omitnan'</span>),2) <span class="string">' L | '</span> <span class="keyword">...</span>
+0418     <span class="string">'99% data within ['</span> num2str(prctile(r_all_residuals,0.5),2) <span class="string">', '</span> num2str(prctile(r_all_residuals,99.5),2) <span class="string">'], '</span><span class="keyword">...</span>
+0419     <span class="string">'95% data within ['</span> num2str(prctile(r_all_residuals,2.5),2) <span class="string">', '</span> num2str(prctile(r_all_residuals,97.5),2) <span class="string">'], '</span><span class="keyword">...</span>
+0420     <span class="string">'90% data within ['</span> num2str(prctile(r_all_residuals,5),2) <span class="string">', '</span> num2str(prctile(r_all_residuals,95),2) <span class="string">']'</span>]);
+0421 grid(<span class="string">'on'</span>)
+0422 
+0423 saveas(gcf,fullfile(plotfolder,sprintf(<span class="string">'fevModelBasedAnalysis_movmean_w%i_t%i_filter_%i.png'</span>, <span class="keyword">...</span>
+0424     w, t, p_filter)))
+0425 
+0426 <span class="comment">%% FURTHER ANALYSES</span>
+0427 
+0428 <span class="comment">%% Distribution of the residuals</span>
+0429 <span class="comment">% check if the assumption of normal distribution is acceptable</span>
+0430 
+0431 figure
+0432 probplot(<span class="string">'normal'</span>,r_all_residuals)
+0433 grid(<span class="string">'on'</span>)
+0434 figure
+0435 probplot(<span class="string">'extreme value'</span>,r_all_residuals)
+0436 grid(<span class="string">'on'</span>)
+0437 
+0438 <span class="comment">% better fit for a normal distribution than an extreme value distribution</span>
+0439 
+0440 <span class="comment">% the distribution has heavy tails on both sides: probably close to a</span>
+0441 <span class="comment">% Cauchy distribution</span>
+0442 
+0443 <span class="comment">% quite close to the normal distribution in the boundaries [0.05,0.95]</span>
+0444 <span class="comment">% which is sufficient to assume normal distribution for hypothesis testing</span>
+0445 <span class="comment">% with a significance threshold of 0.05</span>
+0446 
+0447 <span class="comment">%% plot correlation between lung health and variability</span>
+0448 
+0449 <span class="comment">% adds a columm to FEVdata_table with FEV1 in % of predicted value</span>
+0450     
+0451 <span class="comment">% Input:</span>
+0452 <span class="comment">% ------</span>
+0453 <span class="comment">% FEVdata_table        contains ID, DateNum, FEV1</span>
+0454 <span class="comment">% brPatient            contains ID, CalcPredictedFEV1 (this is the estimated</span>
+0455 <span class="comment">%   FEV1 using a function from Andres - we don't trust the PredictedFEV1</span>
+0456 <span class="comment">%   that was manually entered, with errors, by the hospitals nurses)</span>
+0457         
+0458 <span class="comment">% take all values again</span>
+0459 i = ismember(brphysdata(:,5).(1), {<span class="string">'FEV1Recording'</span>        });
+0460 FEV1info = brphysdata(i,[1 8]); FEV1info.Properties.VariableNames = cell({<span class="string">'ID'</span>,<span class="string">'FEV1'</span>}); clear i;
+0461 
+0462 <span class="comment">% take stable values only</span>
+0463 <span class="comment">% FEV1info = table(FEVdata(mask_stable_data,1),FEVdata(mask_stable_data,3)); FEV1info.Properties.VariableNames={'ID','FEV1'};</span>
+0464 
+0465 <span class="comment">% calculate true value based on mean</span>
+0466 func = @(x) mean(x);
+0467 FEV1info = varfun(func,FEV1info,<span class="string">'GroupingVariables'</span>,<span class="string">'ID'</span>);
+0468 
+0469 <span class="comment">% adds predicted FEV1</span>
+0470 FEV1info = outerjoin(FEV1info, brPatient, <span class="string">'Type'</span>, <span class="string">'Left'</span>, <span class="string">'Keys'</span>, <span class="string">'ID'</span>, <span class="string">'RightVariables'</span>, {<span class="string">'CalcPredictedFEV1'</span>,<span class="string">'Age'</span>,<span class="string">'Height'</span>});
+0471 
+0472 <span class="comment">% computes % predicted</span>
+0473 FEV1info.PercentagePredicted = FEV1info.Fun_FEV1 ./ FEV1info.CalcPredictedFEV1 * 100;
+0474 
+0475 <span class="comment">% outerjoin to add patients' std and #residuals</span>
+0476 FEV1info = outerjoin(rPatientStats, FEV1info, <span class="string">'Type'</span>, <span class="string">'Left'</span>, <span class="string">'LeftKeys'</span>,<span class="string">'p_processed_patients'</span>,<span class="string">'RightKeys'</span>, <span class="string">'ID'</span>, <span class="string">'LeftVariables'</span>, {<span class="string">'all_std'</span>,<span class="string">'all_n_residuals'</span>});
+0477 
+0478 <span class="comment">% filter</span>
+0479 FEV1info = FEV1info( FEV1info.all_std &lt;= 0.3 &amp; FEV1info.all_n_residuals &gt;= 30 ,:);
+0480 
+0481 <span class="comment">% variability</span>
+0482 scatterhist(FEV1info.all_std,FEV1info.PercentagePredicted,10)
+0483 xlabel(<span class="string">'\sigma_{residuals} (L)'</span>)
+0484 ylabel(<span class="string">'FEV1 %'</span>)
+0485 [a,b] = corr(FEV1info.all_std,FEV1info.PercentagePredicted,<span class="string">'Rows'</span>,<span class="string">'complete'</span>);
+0486 title(sprintf(<span class="string">'Predicted FEV1 %% against patient-specific variability (r = %2.3f, p-value = %2.3f)'</span>,a,b),<span class="keyword">...</span>
+0487     sprintf(<span class="string">'%i patients, %i outliers removed (\\sigma_{residuals} &gt; 0.3 or #residuals &lt; 30)'</span>, size(FEV1info,1), sum(not(rPatientStats.all_n_residuals==0))-size(FEV1info,1)))
+0488 clear a; clear b;
+0489 
+0490 saveas(gcf,fullfile(plotfolder,<span class="string">'fevModelBasedAnalysis_variabilityvsFEV1.png'</span>))
+0491 <span class="comment">%close all</span>
+0492 
+0493 <span class="comment">%% Effect of triple therapy at a patient level</span>
+0494 
+0495 <span class="comment">% There is 95% probability that the CI contains the true standard deviation,</span>
+0496 <span class="comment">% and if it does contain it, with 200 points, the true std value lies</span>
+0497 <span class="comment">% within 90-110% of the estimated std</span>
+0498 
+0499 <span class="comment">% Hence, true variability will lie within 0.9^4-1.1^4 = 65.6-1.46% of the estimated std</span>
+0500 <span class="comment">% We define the variability as 4 sigma deviations, thus keeping 93% percent of the datapoints,</span>
+0501 <span class="comment">% according to the Chebyshev's inequality. Noise over 4 sigma is considered as outliers.</span>
+0502 
+0503 <span class="comment">% Other option: test the difference between sigma_prior and sigma_post.</span>
+0504 <span class="comment">% However, those sigmas are estimators. Hence, I would have to take the</span>
+0505 <span class="comment">% extreme case: the boundary of the CI to be maximise the significance</span>
+0506 
+0507 <span class="comment">% Other option: add patient-specific samples together.</span>
+0508 <span class="comment">% compare residuals before and after. I should have enough samples to have</span>
+0509 <span class="comment">% narrow CI.</span>
+0510 
+0511 varChange = rPatientStats(rPatientStats.n_residuals_prior_tripleT &gt; 200 &amp; rPatientStats.n_residuals_post_tripleT &gt; 200,:);
+0512 a=varChange.std_residuals_prior_tripleT;
+0513 b=varChange.std_residuals_post_tripleT;
+0514 change=varChange.std_residuals_prior_tripleT - varChange.std_residuals_post_tripleT;
+0515 varChange.relative_change_percentage = 100*(varChange.std_residuals_prior_tripleT - varChange.std_residuals_post_tripleT) ./ varChange.std_residuals_prior_tripleT;
+0516 
+0517 <span class="comment">% histogram(varChange.relative_change_percentage,30);</span>
+0518 <span class="comment">% % conditions: should have start triple therapy</span>
+0519 <span class="comment">% % should have residuals</span>
+0520 <span class="comment">% % should have residuals before and after</span>
+0521 <span class="comment">% title(sprintf('Variability change after triple therapy start'),...</span>
+0522 <span class="comment">%     sprintf('%i patients have at least 2 residuals before/after (min. for a nonzero standard deviation)', sum(idx_diff)));</span>
+0523 <span class="comment">% xlabel('(\sigma_{residuals}^{before} - \sigma_{residuals}^{after}) / \sigma_{residuals}^{before} (L)');</span>
+0524 <span class="comment">% %xticks(-0.16:0.02:0.14)</span>
+0525 <span class="comment">% ylabel('#patients');</span>
+0526 <span class="comment">% grid('on')</span>
+0527 
+0528 temp_conditions = outerjoin(rPatientStats,brDrugTherapy,<span class="string">'Type'</span>,<span class="string">'Left'</span>,<span class="string">'LeftKeys'</span>,<span class="string">'p_processed_patients'</span>,<span class="string">'RightKeys'</span>,<span class="string">'ID'</span>,<span class="string">'LeftVariables'</span>,<span class="string">'all_n_residuals'</span>,<span class="string">'RightVariables'</span>,<span class="string">'DrugTherapyType'</span>);
+0529 temp_conditions = temp_conditions(temp_conditions.DrugTherapyType == &quot;Triple Therapy&quot; &amp; temp_conditions.all_n_residuals &gt; 0,:);
+0530 fprintf(<span class="string">'Variability change after triple therapy start - %i patients started triple therapy &amp; have at least one residual, only %i patients have more than 200 residuals.\n'</span>,<span class="keyword">...</span>
+0531     size(temp_conditions,1),size(varChange,1)); clear temp_conditions;
+0532 
+0533 saveas(gcf,fullfile(plotfolder,<span class="string">'fevModelBasedAnalysis_variabilityChangeAfterTripleTherapyStart.png'</span>))
+0534 <span class="comment">%close all</span>
+0535 
+0536 <span class="comment">%% 1) Effect of triple therapy at a study level</span>
+0537 <span class="comment">% remove patients with standard deviation outliers</span>
+0538 
+0539 distname = <span class="string">'tLocationScale'</span>;
+0540 
+0541 <span class="comment">% most conservative scenario</span>
+0542 <span class="comment">% 1. equilibrium of data prior/after (residuals of patient that did not get</span>
+0543 <span class="comment">% triple therapy is not taken into account, otherwise balance largely in</span>
+0544 <span class="comment">% favor of prior triple therapy)</span>
+0545 <span class="comment">% 2. some patients got triple therapy but it was not referenced in our data,</span>
+0546 <span class="comment">% we simply don't use those patient by strictly looking at the ones that</span>
+0547 <span class="comment">% got triple therapy</span>
+0548 <span class="comment">% 3. symkevi data is included into the &quot;prior&quot; data. Since symkevi has</span>
+0549 <span class="comment">% potentially also had an effect,</span>
+0550 
+0551 <span class="comment">% 1. null hypothesis: the two std dev are the same. std_prior^2 - std_post^2 = 0</span>
+0552 s1_prior_trpl = std(r_all_1_prior_trpl);
+0553 s1_post_trpl = std(r_all_1_post_trpl);
+0554 <span class="comment">% relative change in s</span>
+0555 <span class="comment">% s1s2 = (s1-s2)/s1;</span>
+0556 
+0557 <span class="comment">% 2. alternative hypothesis std_prior^2 - std_post^2 &gt; 0</span>
+0558 <span class="comment">% assumptions:</span>
+0559 <span class="comment">% . sample comes from a normally distributed population</span>
+0560 <span class="comment">% . measurements are independently and identically distributed, hence so</span>
+0561 <span class="comment">% are residuals</span>
+0562 
+0563 <span class="comment">% test chi square distribution</span>
+0564 <span class="comment">% chirnd = chi2rnd(4, size(r_all_1_prior_trpl));</span>
+0565 
+0566 <span class="comment">% data normality</span>
+0567 figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 800 300])
+0568 subplot(1,2,1)
+0569 <span class="comment">% probplot('normal',r_all_1_prior_trpl)</span>
+0570 pd = fitdist(r_all_1_prior_trpl,distname)
+0571 qqplot(r_all_1_prior_trpl, pd)
+0572 ylabel(sprintf(<span class="string">'Quantiles of residuals prior Trikafta (%d)'</span>,length(r_all_1_prior_trpl) ))
+0573 title(<span class="string">''</span>)
+0574 grid(<span class="string">'on'</span>)
+0575 subplot(1,2,2)
+0576 <span class="comment">% probplot('normal',r_all_1_post_trpl)</span>
+0577 pd = fitdist(r_all_1_post_trpl,distname)
+0578 qqplot(r_all_1_post_trpl, pd)
+0579 title(<span class="string">''</span>)
+0580 ylabel(sprintf(<span class="string">'Quantiles of residuals during Trikafta (%d)'</span>,length(r_all_1_post_trpl) ))
+0581 grid(<span class="string">'on'</span>)
+0582 saveas(gcf,fullfile(plotfolder,<span class="string">'fevModelBasedAnalysis_qqplot_prior_during_tripletherapy.png'</span>))
+0583 
+0584 <span class="comment">% symmetric, heavy-tailed distribution -&gt; Student, Cauchy</span>
+0585 
+0586 <span class="comment">% 3. test statistic</span>
+0587 <span class="comment">% F-test: extremely sensitive to departures from normality for small alpha</span>
+0588 <span class="comment">% levels (lower than 0.05)</span>
+0589 <span class="comment">% Bartlett: Chi-Square, sensitive to departues from normality.</span>
+0590 <span class="comment">% Levene (mean) - Brown-Forsythe (median): mean is best when underlying</span>
+0591 <span class="comment">% data follow Cauchy distribution, median is best for Chi-Square distribution</span>
+0592 
+0593 alpha = 0.05;
+0594 
+0595 <span class="comment">% F-Test</span>
+0596 <span class="comment">% F = s1^2/s2^2;</span>
+0597 [F_h_rejected_1, F_p_1, F_ci_1, F_stats_1] = vartest2(r_all_1_prior_trpl,r_all_1_post_trpl,<span class="string">'Tail'</span>,<span class="string">'right'</span>,<span class="string">'Alpha'</span>,alpha);
+0598 
+0599 <span class="comment">% Levene test</span>
+0600 [L_h_rejected_1, L_p_1, L_stat_1, L_critical_1] = <a href="#_sub3" class="code" title="subfunction [h, p, W, F] = levenetest(x1,x2,alpha)">levenetest</a>(r_all_1_prior_trpl,r_all_1_post_trpl,alpha);
+0601 
+0602 <span class="comment">%% 2) Effect of symkevi and triple therapy at a study level</span>
+0603 
+0604 s2_smkv = std(r_all_2_smkv);
+0605 s2_trpl = std(r_all_2_trpl);
+0606 s2_none = std(r_all_2_none);
+0607 
+0608 <span class="comment">% data normality</span>
+0609 figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 1000 300])
+0610 subplot(1,3,1)
+0611 pd = fitdist(r_all_2_none,distname)
+0612 qqplot(r_all_2_none, pd)
+0613 title(<span class="string">''</span>)
+0614 ylabel(sprintf(<span class="string">'Quantiles of residuals prior Symkevi (%d)'</span>,length(r_all_2_none) ))
+0615 xlabel(<span class="string">'Quantiles of tlocationscale Distribution (\nu = 3)'</span>)
+0616 grid(<span class="string">'on'</span>)
+0617 subplot(1,3,2)
+0618 pd = fitdist(r_all_2_smkv,distname)
+0619 qqplot(r_all_2_smkv, pd)
+0620 title(<span class="string">''</span>)
+0621 ylabel(sprintf(<span class="string">'Quantiles of residuals during Symkevi (%d)'</span>,length(r_all_2_smkv) ))
+0622 xlabel(<span class="string">'Quantiles of tlocationscale Distribution (\nu = 4)'</span>)
+0623 grid(<span class="string">'on'</span>)
+0624 subplot(1,3,3)
+0625 pd = fitdist(r_all_2_trpl,distname)
+0626 qqplot(r_all_2_trpl, pd)
+0627 title(<span class="string">''</span>)
+0628 ylabel(sprintf(<span class="string">'Quantiles of residuals during Trikafta (%d)'</span>,length(r_all_2_trpl) ))
+0629 xlabel(<span class="string">'Quantiles of tlocationscale Distribution (\nu = 4)'</span>)
+0630 grid(<span class="string">'on'</span>)
+0631 saveas(gcf,fullfile(plotfolder,<span class="string">'fevModelBasedAnalysis_qqplot_none_smkv_trpl.png'</span>))
+0632 
+0633 <span class="comment">% symmetric, heavy-tailed distribution -&gt; Student, Cauchy</span>
+0634 <span class="comment">% note: prior to Symkevi and post Symkevi (during Triple Therapy), higher</span>
+0635 <span class="comment">% deviation from normality around the 5th and 95th percentiles</span>
+0636 
+0637 <span class="comment">% F-tests</span>
+0638 [F_h_rejected_smkv_none, F_p_smkv_none, F_ci_smkv_none, F_stats_smkv_none] = vartest2(r_all_2_none,r_all_2_smkv,<span class="string">'Tail'</span>,<span class="string">'right'</span>,<span class="string">'Alpha'</span>,alpha);
+0639 [F_h_rejected_trpl_smkv, F_p_trpl_smkv, F_ci_trpl_smkv, F_stats_trpl_smkv] = vartest2(r_all_2_smkv,r_all_2_trpl,<span class="string">'Tail'</span>,<span class="string">'right'</span>,<span class="string">'Alpha'</span>,alpha);
+0640 [F_h_rejected_trpl_none, F_p_trpl_none, F_ci_trpl_none, F_stats_trpl_none] = vartest2(r_all_2_none,r_all_2_trpl,<span class="string">'Tail'</span>,<span class="string">'right'</span>,<span class="string">'Alpha'</span>,alpha,<span class="string">'Alpha'</span>,alpha);
+0641 
+0642 <span class="comment">% Levene's tests</span>
+0643 [L_h_rejected_smkv_none, L_p_smkv_none, L_stat_smkv_none, L_critical_smkv_none] = <a href="#_sub3" class="code" title="subfunction [h, p, W, F] = levenetest(x1,x2,alpha)">levenetest</a>(r_all_2_none,r_all_2_smkv,alpha);
+0644 [L_h_rejected_trpl_smkv, L_p_trpl_smkv, L_stat_trpl_smkv, L_critical_trpl_smkv] = <a href="#_sub3" class="code" title="subfunction [h, p, W, F] = levenetest(x1,x2,alpha)">levenetest</a>(r_all_2_smkv,r_all_2_trpl,alpha);
+0645 [L_h_rejected_trpl_none, L_p_trpl_none, L_stat_trpl_none, L_critical_trpl_none] = <a href="#_sub3" class="code" title="subfunction [h, p, W, F] = levenetest(x1,x2,alpha)">levenetest</a>(r_all_2_none,r_all_2_trpl,alpha);
+0646 
+0647 <span class="comment">%% 3) Effect of symkevi at a study level</span>
+0648 
+0649 <span class="comment">% as we cannot reject the homoscedasticity hypotheses on the effects of the</span>
+0650 <span class="comment">% 1. transition from nothing (or Ivacaftor, or Okrambi) to Symkevi</span>
+0651 <span class="comment">% 2. transition from Symkevi to Triple Therapy</span>
+0652 <span class="comment">% it may be because of a lack of data (only 61 patients got Symkevi and</span>
+0653 <span class="comment">% Triple Therapy)</span>
+0654 <span class="comment">% hence we have a look at Symkevi only and Symkevi &amp; Triple Therapy</span>
+0655 <span class="comment">% patients</span>
+0656 
+0657 <span class="comment">% merge patient that had symkevi and not trikafta with patient that had</span>
+0658 <span class="comment">% symkevi and trikafta - smae for no therapy</span>
+0659 r_all_3_prior_smkv_full = [r_all_3_prior_smkv;r_all_2_none];
+0660 r_all_3_post_smkv_full = [r_all_3_post_smkv;r_all_2_smkv];
+0661 
+0662 s3_prior_smkv = std(r_all_3_prior_smkv_full);
+0663 s3_prior_smkv2 = std(r_all_3_prior_smkv);
+0664 s3_post_smkv = std(r_all_3_post_smkv_full);
+0665 s3_post_smkv2 = std(r_all_3_post_smkv);
+0666 
 0667 
-0668 
-0669 <span class="comment">% data normality</span>
-0670 figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 800 300])
-0671 subplot(1,2,1)
-0672 pd = fitdist(r_all_3_prior_smkv_full,distname); qqplot(r_all_3_prior_smkv_full, pd)
-0673 title(<span class="string">''</span>)
-0674 ylabel(sprintf(<span class="string">'Quantiles of residuals prior Symkevi (%d)'</span>,length(r_all_3_prior_smkv_full) ))
-0675 grid(<span class="string">'on'</span>)
-0676 subplot(1,2,2)
-0677 pd = fitdist(r_all_3_post_smkv_full,distname); qqplot(r_all_3_post_smkv_full, pd)
-0678 title(<span class="string">''</span>)
-0679 ylabel(sprintf(<span class="string">'Quantiles of residuals during Symkevi (%d)'</span>,length(r_all_3_post_smkv_full) ))
-0680 grid(<span class="string">'on'</span>)
-0681 saveas(gcf,fullfile(plotfolder,<span class="string">'fevModelBasedAnalysis_qqplot_none_smkv.png'</span>))
-0682 
-0683 [F_h_rejected_3, F_p_3, F_ci_3, F_stats_3] = vartest2(r_all_3_prior_smkv_full,r_all_3_post_smkv_full,<span class="string">'Tail'</span>,<span class="string">'right'</span>,<span class="string">'Alpha'</span>,alpha);
-0684 
-0685 <span class="comment">% Levene test</span>
-0686 [L_h_rejected_3, L_p_3, L_stat_3, L_critical_3] = <a href="#_sub3" class="code" title="subfunction [h, p, W, F] = levenetest(x1,x2,alpha)">levenetest</a>(r_all_3_prior_smkv_full,r_all_3_post_smkv_full,alpha);
-0687 
-0688 <span class="comment">%% function</span>
-0689 
-0690 <a name="_sub0" href="#_subfunctions" class="code">function [residuals, curve] = applyMovingMean(x, y, w, t)</a>
-0691 <span class="comment">% t is inclusive</span>
-0692    curve = NaN(length(x),1);
-0693    <span class="keyword">for</span> i = 1:length(x)
-0694        <span class="comment">% even window: w/2 points to left, w/2-1 points to right</span>
-0695        <span class="comment">% 8: [4 3]</span>
-0696        <span class="comment">% odd window: w/2-0.5 points to left and right</span>
-0697        <span class="comment">% 9: [4 4]</span>
-0698        valid_dates = x(i)-floor(w/2) : x(i)+ceil(w/2)-1;
-0699        valid_idx = ismember(x,valid_dates);
-0700        <span class="keyword">if</span> sum(valid_idx) &gt;= t
-0701            <span class="comment">% average values in window</span>
-0702            curve(i) = mean( y(valid_idx) );
-0703        <span class="keyword">end</span> <span class="comment">% else value is nan by default</span>
-0704    <span class="keyword">end</span>
-0705    residuals = y - curve;
-0706 <span class="keyword">end</span>
-0707 
-0708 <a name="_sub1" href="#_subfunctions" class="code">function out = initPatientStatTable(n_rows);</a>
-0709     out = table(<span class="string">'Size'</span>,[n_rows, 8],<span class="keyword">...</span>
-0710             <span class="string">'VariableTypes'</span>,[&quot;uint8&quot;,&quot;doublenan&quot;,&quot;doublenan&quot;,&quot;doublenan&quot;,&quot;doublenan&quot;,&quot;doublenan&quot;,&quot;doublenan&quot;,&quot;doublenan&quot;],<span class="keyword">...</span>
-0711             <span class="string">'VariableNames'</span>,[&quot;p_processed_patients&quot;, &quot;all_std&quot;, &quot;all_n_residuals&quot;, &quot;patientMaxVal&quot;, &quot;std_residuals_prior_tripleT&quot;, &quot;n_residuals_prior_tripleT&quot;, &quot;std_residuals_post_tripleT&quot;,&quot;n_residuals_post_tripleT&quot;]);
-0712 <span class="keyword">end</span>
-0713 
-0714 <a name="_sub2" href="#_subfunctions" class="code">function [h, p, W, F] = levenetest(x1,x2,alpha)</a>
-0715     <span class="comment">% upper-tail Levene test for homoscedasticity</span>
-0716     
-0717     trimfactor = 20; <span class="comment">% trimming factor, in matlab this corresponds to removing top 10% and bottom 10%</span>
-0718     k = 2;
-0719     N1 = length(x1);
-0720     N2 = length(x2);
-0721     Z1 = abs(x1 - trimmean(x1,trimfactor)); <span class="comment">% use median for Brown-Forsythe test</span>
-0722     Z2 = abs(x2 - trimmean(x2,trimfactor)); <span class="comment">% use median for Brown-Forsythe test</span>
-0723     N = N1 + N2;
-0724     Z = cat(1,Z1,Z2);
-0725     
-0726     <span class="comment">% (mean of the group residuals' absolute value - mean of all the</span>
-0727     <span class="comment">% residuals' absolute value)^2, for each group</span>
-0728     num =  N1*(mean(Z1) - mean(Z))^2 + N2*(mean(Z2) - mean(Z))^2;
-0729     
-0730     <span class="comment">% sum( (group residuals' absolute value - mean of the group residuals'</span>
-0731     <span class="comment">% absolute value)^2 ), for each group</span>
-0732     denom = sum( (Z1 - mean(Z1)).^2 ) + sum( (Z2 - mean(Z2)).^2 );
-0733     
-0734     <span class="comment">% Levene ANOVA statistic</span>
-0735     W = (N-k)/(k-1) * num/denom;
-0736 
-0737     <span class="comment">% critical threshold</span>
-0738     F = finv(1-alpha,k-1,N-k);
-0739     
-0740     <span class="comment">% rejection</span>
-0741     h = W &gt;= F;
-0742     
-0743     <span class="keyword">if</span> h == 1 <span class="comment">% find and approximation of the p-value</span>
-0744         <span class="keyword">while</span> W &gt;= finv(1-alpha,k-1,N-k)
-0745             alpha = alpha/1.001;
-0746         <span class="keyword">end</span>
-0747         p = alpha*1.001;
-0748     <span class="keyword">else</span>
-0749          <span class="keyword">while</span> W &lt; finv(1-alpha,k-1,N-k)
-0750             alpha = alpha*1.001;
-0751          <span class="keyword">end</span>
-0752         p = alpha/1.001;
-0753     <span class="keyword">end</span>
-0754 <span class="keyword">end</span></pre></div>
-<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+0668 <span class="comment">% data normality</span>
+0669 figure(<span class="string">'DefaultAxesFontSize'</span>,12,<span class="string">'Position'</span>, [1 1 800 300])
+0670 subplot(1,2,1)
+0671 pd = fitdist(r_all_3_prior_smkv_full,distname); qqplot(r_all_3_prior_smkv_full, pd)
+0672 title(<span class="string">''</span>)
+0673 ylabel(sprintf(<span class="string">'Quantiles of residuals prior Symkevi (%d)'</span>,length(r_all_3_prior_smkv_full) ))
+0674 grid(<span class="string">'on'</span>)
+0675 subplot(1,2,2)
+0676 pd = fitdist(r_all_3_post_smkv_full,distname); qqplot(r_all_3_post_smkv_full, pd)
+0677 title(<span class="string">''</span>)
+0678 ylabel(sprintf(<span class="string">'Quantiles of residuals during Symkevi (%d)'</span>,length(r_all_3_post_smkv_full) ))
+0679 grid(<span class="string">'on'</span>)
+0680 saveas(gcf,fullfile(plotfolder,<span class="string">'fevModelBasedAnalysis_qqplot_none_smkv.png'</span>))
+0681 
+0682 [F_h_rejected_3, F_p_3, F_ci_3, F_stats_3] = vartest2(r_all_3_prior_smkv_full,r_all_3_post_smkv_full,<span class="string">'Tail'</span>,<span class="string">'right'</span>,<span class="string">'Alpha'</span>,alpha);
+0683 
+0684 <span class="comment">% Levene test</span>
+0685 [L_h_rejected_3, L_p_3, L_stat_3, L_critical_3] = <a href="#_sub3" class="code" title="subfunction [h, p, W, F] = levenetest(x1,x2,alpha)">levenetest</a>(r_all_3_prior_smkv_full,r_all_3_post_smkv_full,alpha);
+0686 
+0687 <span class="comment">%% function</span>
+0688 
+0689 <a name="_sub0" href="#_subfunctions" class="code">function [residuals, curve] = applyMovingMean(x, y, w, t)</a>
+0690 <span class="comment">% t is inclusive</span>
+0691    curve = NaN(length(x),1);
+0692    <span class="keyword">for</span> i = 1:length(x)
+0693        <span class="comment">% even window: w/2 points to left, w/2-1 points to right</span>
+0694        <span class="comment">% 8: [4 3]</span>
+0695        <span class="comment">% odd window: w/2-0.5 points to left and right</span>
+0696        <span class="comment">% 9: [4 4]</span>
+0697        valid_dates = x(i)-floor(w/2) : x(i)+ceil(w/2)-1;
+0698        valid_idx = ismember(x,valid_dates);
+0699        <span class="keyword">if</span> sum(valid_idx) &gt;= t
+0700            <span class="comment">% average values in window</span>
+0701            curve(i) = mean( y(valid_idx) );
+0702        <span class="keyword">end</span> <span class="comment">% else value is nan by default</span>
+0703    <span class="keyword">end</span>
+0704    residuals = y - curve;
+0705 <span class="keyword">end</span>
+0706 
+0707 <a name="_sub1" href="#_subfunctions" class="code">function out = initPatientStatTable(n_rows);</a>
+0708     out = table(<span class="string">'Size'</span>,[n_rows, 8],<span class="keyword">...</span>
+0709             <span class="string">'VariableTypes'</span>,[&quot;uint8&quot;,&quot;doublenan&quot;,&quot;doublenan&quot;,&quot;doublenan&quot;,&quot;doublenan&quot;,&quot;doublenan&quot;,&quot;doublenan&quot;,&quot;doublenan&quot;],<span class="keyword">...</span>
+0710             <span class="string">'VariableNames'</span>,[&quot;p_processed_patients&quot;, &quot;all_std&quot;, &quot;all_n_residuals&quot;, &quot;patientMaxVal&quot;, &quot;std_residuals_prior_tripleT&quot;, &quot;n_residuals_prior_tripleT&quot;, &quot;std_residuals_post_tripleT&quot;,&quot;n_residuals_post_tripleT&quot;]);
+0711 <span class="keyword">end</span>
+0712 
+0713 <a name="_sub2" href="#_subfunctions" class="code">function [h, p, W, F] = levenetest(x1,x2,alpha)</a>
+0714     <span class="comment">% upper-tail Levene test for homoscedasticity</span>
+0715     
+0716     trimfactor = 20; <span class="comment">% trimming factor, in matlab this corresponds to removing top 10% and bottom 10%</span>
+0717     k = 2;
+0718     N1 = length(x1);
+0719     N2 = length(x2);
+0720     Z1 = abs(x1 - trimmean(x1,trimfactor)); <span class="comment">% use median for Brown-Forsythe test</span>
+0721     Z2 = abs(x2 - trimmean(x2,trimfactor)); <span class="comment">% use median for Brown-Forsythe test</span>
+0722     N = N1 + N2;
+0723     Z = cat(1,Z1,Z2);
+0724     
+0725     <span class="comment">% (mean of the group residuals' absolute value - mean of all the</span>
+0726     <span class="comment">% residuals' absolute value)^2, for each group</span>
+0727     num =  N1*(mean(Z1) - mean(Z))^2 + N2*(mean(Z2) - mean(Z))^2;
+0728     
+0729     <span class="comment">% sum( (group residuals' absolute value - mean of the group residuals'</span>
+0730     <span class="comment">% absolute value)^2 ), for each group</span>
+0731     denom = sum( (Z1 - mean(Z1)).^2 ) + sum( (Z2 - mean(Z2)).^2 );
+0732     
+0733     <span class="comment">% Levene ANOVA statistic</span>
+0734     W = (N-k)/(k-1) * num/denom;
+0735 
+0736     <span class="comment">% critical threshold</span>
+0737     F = finv(1-alpha,k-1,N-k);
+0738     
+0739     <span class="comment">% rejection</span>
+0740     h = W &gt;= F;
+0741     
+0742     <span class="keyword">if</span> h == 1 <span class="comment">% find and approximation of the p-value</span>
+0743         <span class="keyword">while</span> W &gt;= finv(1-alpha,k-1,N-k)
+0744             alpha = alpha/1.001;
+0745         <span class="keyword">end</span>
+0746         p = alpha*1.001;
+0747     <span class="keyword">else</span>
+0748          <span class="keyword">while</span> W &lt; finv(1-alpha,k-1,N-k)
+0749             alpha = alpha*1.001;
+0750          <span class="keyword">end</span>
+0751         p = alpha/1.001;
+0752     <span class="keyword">end</span>
+0753 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

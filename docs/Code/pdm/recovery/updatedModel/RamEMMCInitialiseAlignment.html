@@ -34,7 +34,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../../matlabicon.gif)">
-<li><a href="RamEMMCAddToMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = RamEMMCAddToMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, vshift, currinter, offset, align_wind, nmeasures, nlatentcurves)">RamEMMCAddToMean</a>	amEMMCAddToMean - add an underlying curve to each set of mean curves (sumsq, sum and count)</li><li><a href="../../../../Code/smartcare/amEMMCConvertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = amEMMCConvertFromLogSpaceAndNormalise(distfcn)">amEMMCConvertFromLogSpaceAndNormalise</a>	amEMMCConvertFromLogSpaceAndNormalise - takes the results from a 'distance'</li><li><a href="../../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+<li><a href="RamEMMCAddToMean.html" class="code" title="function [meancurvesumsq, meancurvesum, meancurvecount] = RamEMMCAddToMean(meancurvesumsq, meancurvesum, meancurvecount,overall_pdoffset, amIntrCube, amHeldBackcube, vshift, currinter, offset, align_wind, nmeasures, nlatentcurves)">RamEMMCAddToMean</a>	amEMMCAddToMean - add an underlying curve to each set of mean curves (sumsq, sum and count)</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../../matlabicon.gif)">
 <li><a href="../../../../Code/pdm/recovery/runAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist)">runAlignmentModelEMMCRecoveryFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="../../../../Code/pdm/recovery/runFastAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runFastAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist, nameaddendum)">runFastAlignmentModelEMMCRecoveryFcn</a>	fast version with 1 plot (typical profile) + alignment result matfile</li></ul>
@@ -103,7 +103,7 @@ This function is called by:
 0058     <span class="keyword">end</span>
 0059     fprintf(<span class="string">'Creating Upper and Lower 50%% splits for FEV1\n'</span>);
 0060     fprintf(<span class="string">'Loading Predictive Model Patient Measures Stats\n'</span>);
-0061     basedir = <a href="../../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0061     basedir = setBaseDir();
 0062     subfolder = <span class="string">'MatlabSavedVariables'</span>;
 0063     load(fullfile(basedir, subfolder, <span class="string">'SCpredictivemodelinputs.mat'</span>), <span class="string">'pmPatientMeasStats'</span>);
 0064     npmpatients = size(unique(pmPatientMeasStats.PatientNbr),1);
@@ -139,7 +139,7 @@ This function is called by:
 0094 
 0095 <span class="keyword">for</span> i = 1:ninterventions
 0096     <span class="keyword">if</span> runmode == 9 || runmode == 10 || runmode == 11
-0097         upd = <a href="../../../../Code/smartcare/amEMMCConvertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = amEMMCConvertFromLogSpaceAndNormalise(distfcn)">amEMMCConvertFromLogSpaceAndNormalise</a>(zeros(1, offset.span)) / (nlatentcurves + 2);
+0097         upd = amEMMCConvertFromLogSpaceAndNormalise(zeros(1, offset.span)) / (nlatentcurves + 2);
 0098         <span class="keyword">for</span> m = 1:nmeasures
 0099             <span class="keyword">for</span> lc = 1:nlatentcurves
 0100                 pdoffset(lc, m, i, :) = upd;
@@ -152,13 +152,13 @@ This function is called by:
 0107         overall_pdoffset(amInterventions.LatentCurve(i), i, :) = upd * 3;
 0108     <span class="keyword">else</span>
 0109         <span class="keyword">for</span> m = 1:nmeasures
-0110             pdoffset(amInterventions.LatentCurve(i), m, i, :) = <a href="../../../../Code/smartcare/amEMMCConvertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = amEMMCConvertFromLogSpaceAndNormalise(distfcn)">amEMMCConvertFromLogSpaceAndNormalise</a>(zeros(1, offset.span));
+0110             pdoffset(amInterventions.LatentCurve(i), m, i, :) = amEMMCConvertFromLogSpaceAndNormalise(zeros(1, offset.span));
 0111         <span class="keyword">end</span>
 0112         <span class="keyword">if</span> runmode == 5
 0113             overall_pdoffset(:, i, :) = 0;
 0114             overall_pdoffset(amInterventions.LatentCurve(i), i, 1) = 1;
 0115         <span class="keyword">else</span>
-0116             overall_pdoffset(amInterventions.LatentCurve(i), i, :) = <a href="../../../../Code/smartcare/amEMMCConvertFromLogSpaceAndNormalise.html" class="code" title="function [probdist] = amEMMCConvertFromLogSpaceAndNormalise(distfcn)">amEMMCConvertFromLogSpaceAndNormalise</a>(zeros(1, offset.span));
+0116             overall_pdoffset(amInterventions.LatentCurve(i), i, :) = amEMMCConvertFromLogSpaceAndNormalise(zeros(1, offset.span));
 0117         <span class="keyword">end</span>
 0118     <span class="keyword">end</span>
 0119 <span class="keyword">end</span>
@@ -178,6 +178,6 @@ This function is called by:
 0133 <span class="keyword">end</span>
 0134 
 0135</pre></div>
-<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

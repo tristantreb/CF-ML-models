@@ -45,7 +45,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
-<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/smartcare/getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>	getColumnForMeasure - returns the column name from physdata for the</li><li><a href="../../../Code/smartcare/selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="../../../Code/smartcare/selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>	selectTreatmentGap - enter the gap between the end of a treatment and the</li><li><a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
 </ul>
@@ -70,15 +70,15 @@ This function is called by:
 0014 
 0015 <a href="init.html" class="code" title="">init</a>;
 0016 
-0017 [studynbr, study, studyfullname] = <a href="../../../Code/smartcare/selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
-0018 chosentreatgap = <a href="../../../Code/smartcare/selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>();
+0017 [studynbr, study, studyfullname] = selectStudy();
+0018 chosentreatgap = selectTreatmentGap();
 0019 
 0020 modelinputsmatfile = sprintf(<span class="string">'%salignmentmodelinputs_recovery_gap%d_datawind%i.mat'</span>, study, chosentreatgap, data_window);
 0021 datademographicsfile = sprintf(<span class="string">'%sdatademographicsbypatient.mat'</span>, study);
 0022 fprintf(<span class="string">'\n'</span>);
 0023 
 0024 tic
-0025 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0025 basedir = setBaseDir();
 0026 subfolder = <span class="string">'MatlabSavedVariables'</span>;
 0027 fprintf(<span class="string">'Loading alignment model Inputs data\n'</span>);
 0028 load(fullfile(basedir, subfolder, modelinputsmatfile));
@@ -128,7 +128,7 @@ This function is called by:
 0072                fprintf(<span class="string">'Skipping measure %s for study %s\n'</span>, measures.DisplayName{m}, study)
 0073             <span class="keyword">else</span>
 0074                 <span class="comment">% get overall mean and std for the patient and measure</span>
-0075                 column = <a href="../../../Code/smartcare/getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>(measures.Name{m});
+0075                 column = getColumnForMeasure(measures.Name{m});
 0076                 ddcolumn = sprintf(<span class="string">'Fun_%s'</span>,column);
 0077                 <span class="keyword">if</span> size(find(demographicstable.SmartCareID == a &amp; ismember(demographicstable.RecordingType, measures.Name{m})),1) == 0
 0078                     fprintf(<span class="string">'Could not find mean &amp; std for patient %d and measure %d so using overall mean &amp; std instead\n'</span>, a, m);
@@ -163,7 +163,7 @@ This function is called by:
 0107 <span class="keyword">end</span>
 0108 
 0109 tic
-0110 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0110 basedir = setBaseDir();
 0111 subfolder = <span class="string">'MatlabSavedVariables'</span>;
 0112 outputfilename = sprintf(<span class="string">'%sdataoutliers_recovery.mat'</span>, study);
 0113 fprintf(<span class="string">'Saving data outliers to file %s\n'</span>, outputfilename);
@@ -172,6 +172,6 @@ This function is called by:
 0116 toc
 0117 fprintf(<span class="string">'\n'</span>);
 0118</pre></div>
-<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

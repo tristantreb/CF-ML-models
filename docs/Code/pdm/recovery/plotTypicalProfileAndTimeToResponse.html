@@ -33,7 +33,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
-<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/smartcare/getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>	getInvertedMeasures - returns an array of measure display names that need</li><li><a href="../../../Code/smartcare/getMeasuresMask.html" class="code" title="function measures = getMeasuresMask(measuresmask, measures)">getMeasuresMask</a>	reset measures mask</li></ul>
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
 </ul>
@@ -135,7 +135,7 @@ This function is called by:
 0089 
 0090 <span class="comment">% define parameters</span>
 0091 mm = 22; <span class="comment">% 34 don't plot FEF2575 because very similar to FEV1 (helped convergence)</span>
-0092 measures = <a href="../../../Code/smartcare/getMeasuresMask.html" class="code" title="function measures = getMeasuresMask(measuresmask, measures)">getMeasuresMask</a>(mm, measures);  measures.Mask(16) = false; <span class="comment">% temperature not meaningful</span>
+0092 measures = getMeasuresMask(mm, measures);  measures.Mask(16) = false; <span class="comment">% temperature not meaningful</span>
 0093 <span class="comment">% set method to align measures</span>
 0094 align = &quot;min&quot;;
 0095 align = &quot;consensus_end&quot;;
@@ -188,7 +188,7 @@ This function is called by:
 0142 annotation(<span class="string">'textbox'</span>,[max(x_annotation,0.13) .85 .1 .1],<span class="string">'String'</span>,<span class="string">'recovery start'</span>,<span class="string">'FontSize'</span>,12,<span class="string">'FontWeight'</span>,<span class="string">'bold'</span>,<span class="string">'EdgeColor'</span>,<span class="string">'none'</span>);
 0143 <span class="comment">%legend</span>
 0144 
-0145 mask = ismember(measures.DisplayName,<a href="../../../Code/smartcare/getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>(study));
+0145 mask = ismember(measures.DisplayName,getInvertedMeasures(study));
 0146 measures.DisplayNameLegend(not(mask)) = measures.DisplayName(not(mask));
 0147 <span class="keyword">for</span> i = 1:size(measures,1)
 0148     <span class="keyword">if</span> mask(i) == 1
@@ -254,7 +254,7 @@ This function is called by:
 0208 
 0209 x = -day_recovery_start : (size(meancurvemean,2) - day_recovery_start -1 );
 0210 mm = 22; <span class="comment">% 34 don't plot FEF2575 because very similar to FEV1 (helped convergence)</span>
-0211 measures = <a href="../../../Code/smartcare/getMeasuresMask.html" class="code" title="function measures = getMeasuresMask(measuresmask, measures)">getMeasuresMask</a>(mm, measures);  measures.Mask(16) = false; <span class="comment">% temperature not meaningful</span>
+0211 measures = getMeasuresMask(mm, measures);  measures.Mask(16) = false; <span class="comment">% temperature not meaningful</span>
 0212 <span class="comment">% set method to align measures</span>
 0213 align = &quot;no&quot;;
 0214 
@@ -326,6 +326,6 @@ This function is called by:
 0280 curveout(idx) = smooth(curvein(idx),smoothparam);
 0281 curveout(not(idx)) = curvein(not(idx));
 0282 <span class="keyword">end</span></pre></div>
-<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

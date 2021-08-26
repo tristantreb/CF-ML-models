@@ -35,7 +35,7 @@ interventions. Also indicates missing data in each of the horizontal bars</pre><
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../../matlabicon.gif)">
-<li><a href="plotLatentCurveRecovery.html" class="code" title="function [xl, yl] = plotLatentCurveRecovery(ax, offset, align_wind, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurveRecovery</a>	plotLatentCurve - plots the latent curve actual and smoothed</li><li><a href="../../../../Code/smartcare/createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="../../../../Code/smartcare/plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>	plotVerticalLine - plots a vertical line</li><li><a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li></ul>
+<li><a href="plotLatentCurveRecovery.html" class="code" title="function [xl, yl] = plotLatentCurveRecovery(ax, offset, align_wind, meancurve, xl, yl, colour, linestyle, linewidth, anchor)">plotLatentCurveRecovery</a>	plotLatentCurve - plots the latent curve actual and smoothed</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../../matlabicon.gif)">
 <li><a href="amEMMCVisualiseAlignmentDetailRecovery.html" class="code" title="function [sorted_interventions, max_points] = amEMMCVisualiseAlignmentDetailRecovery(amIntrNormcube, amHeldBackcube, amInterventions, meancurvemean,meancurvecount, meancurvestd, overall_pdoffset, measures, offset, align_wind, nmeasures, ninterventions,run_type, ex_start, curveaveragingmethod, plotname, plotsubfolder, nlatentcurves)">amEMMCVisualiseAlignmentDetailRecovery</a>	amEMMCVisualiseAlignmentDetail - wrapper around the</li></ul>
@@ -129,7 +129,7 @@ This function is called by:
 0083     plottitle = sprintf(<span class="string">'%s_%s'</span>, plotname, measures.DisplayName{m});
 0084     anchor = 1; <span class="comment">% latent curve is to be anchored on the plot (right side at min_offset)</span>
 0085     
-0086     [f, p] = <a href="../../../../Code/smartcare/createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0086     [f, p] = createFigureAndPanel(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
 0087     
 0088     xl = [offset.down - 0.5, align_wind + offset.up - 1 + 0.5];
 0089     yl = [min(meancurvemean(:, m)) max(meancurvemean(:, m))];
@@ -155,7 +155,7 @@ This function is called by:
 0109     ylabel(<span class="string">'Normalised Measure'</span>, <span class="string">'FontSize'</span>, 8);
 0110     
 0111     <span class="keyword">if</span> ex_start ~= 0
-0112         [xl, yl] = <a href="../../../../Code/smartcare/plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax, ex_start, xl, yl, <span class="string">'blue'</span>, <span class="string">'--'</span>, 0.5); <span class="comment">% plot ex_start</span>
+0112         [xl, yl] = plotVerticalLine(ax, ex_start, xl, yl, <span class="string">'blue'</span>, <span class="string">'--'</span>, 0.5); <span class="comment">% plot ex_start</span>
 0113     <span class="keyword">end</span>
 0114     
 0115     yyaxis right
@@ -190,7 +190,7 @@ This function is called by:
 0144     h.CellLabelColor = <span class="string">'none'</span>;
 0145     h.GridVisible = <span class="string">'on'</span>;
 0146     
-0147     <a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0147     savePlotInDir(f, plottitle, plotsubfolder);
 0148     close(f);
 0149     
 0150 <span class="comment">%     if measures.Mask(m) == 1</span>
@@ -293,6 +293,6 @@ This function is called by:
 0247 <span class="keyword">end</span>
 0248 
 0249</pre></div>
-<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

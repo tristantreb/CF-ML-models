@@ -42,7 +42,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
-<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/helperfunctions/cleanDrugTherapyNamings.html" class="code" title="function out = cleanDrugTherapyNamings(str_array)">cleanDrugTherapyNamings</a>	useful only for pre-REDCAP update datasets</li><li><a href="../../../Code/pdm/recovery/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/smartcare/cleanDrugTherapyNamings.html" class="code" title="function out = cleanDrugTherapyNamings(str_array)">cleanDrugTherapyNamings</a>	inputs: array, output: array with cleaned drugtherapy names</li><li><a href="../../../Code/smartcare/getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>	getColumnForMeasure - returns the column name from physdata for the</li><li><a href="../../../Code/smartcare/getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>	gets the patient offset table</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="../../../Code/smartcare/selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="../../../Code/smartcare/setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>	setMinYDisplayRangeForMeasure - sets the minimum range for Y axis for</li><li><a href="../../../Code/smartcare/setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>	setYDisplayRange - function to scale y axis of plots appropriately</li></ul>
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/helperfunctions/cleanDrugTherapyNamings.html" class="code" title="function out = cleanDrugTherapyNamings(str_array)">cleanDrugTherapyNamings</a>	useful only for pre-REDCAP update datasets</li><li><a href="../../../Code/pdm/recovery/init.html" class="code" title="">init</a>	</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
 </ul>
@@ -64,11 +64,11 @@ This function is called by:
 0011 
 0012 <a href="init.html" class="code" title="">init</a>;
 0013 
-0014 [studynbr, study, ~] = <a href="../../../Code/smartcare/selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
-0015 [datamatfile, clinicalmatfile, demographicsmatfile] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
-0016 [physdata, offset, physdata_predateoutlierhandling] = <a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0014 [studynbr, study, ~] = selectStudy();
+0015 [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study);
+0016 [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study);
 0017 [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP, <span class="keyword">...</span>
-0018     cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght] = <a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0018     cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght] = loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study);
 0019 
 0020 <span class="comment">% Tristan's function to harmonise drug therapy namings - temporary until</span>
 0021 <span class="comment">% REDcap is active</span>
@@ -98,7 +98,7 @@ This function is called by:
 0045     physdata = physdata_predateoutlierhandling;
 0046 <span class="keyword">end</span>
 0047 
-0048 patientoffsets = <a href="../../../Code/smartcare/getPatientOffsets.html" class="code" title="function [patientoffsettable] = getPatientOffsets(physdata)">getPatientOffsets</a>(physdata);
+0048 patientoffsets = getPatientOffsets(physdata);
 0049 cvcol   = [0.94  0.52  0.15];
 0050 admcol  = [0.694 0.627 0.78]; 
 0051 ivcol   = [1     0     0   ];
@@ -208,7 +208,7 @@ This function is called by:
 0155     <span class="comment">% across all patients</span>
 0156     <span class="keyword">for</span> m = 1:size(measures,1)
 0157         measure = measures{m};
-0158         column = <a href="../../../Code/smartcare/getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>(measure);
+0158         column = getColumnForMeasure(measure);
 0159         scdata = physdata(physdata.SmartCareID == scid &amp; ismember(physdata.RecordingType, measure), :);
 0160         scdata = scdata(:, {<span class="string">'SmartCareID'</span>,<span class="string">'ScaledDateNum'</span> <span class="string">'Date_TimeRecorded'</span>, column});
 0161         scdata.Properties.VariableNames{column} = <span class="string">'Measurement'</span>;
@@ -217,8 +217,8 @@ This function is called by:
 0164             ax = subplot(mplotsdown, mplotsacross, m - (page-2) * mplotsperpage,<span class="string">'Parent'</span>,f);
 0165             hold on;
 0166             xlim(xl);
-0167             rangelimit = <a href="../../../Code/smartcare/setMinYDisplayRangeForMeasure.html" class="code" title="function [range] = setMinYDisplayRangeForMeasure(measure)">setMinYDisplayRangeForMeasure</a>(measure);
-0168             yl = <a href="../../../Code/smartcare/setYDisplayRange.html" class="code" title="function [roundedrange] = setYDisplayRange(miny, maxy, lowrangelimit)">setYDisplayRange</a>(min(scdata.Measurement), max(scdata.Measurement), rangelimit);
+0167             rangelimit = setMinYDisplayRangeForMeasure(measure);
+0168             yl = setYDisplayRange(min(scdata.Measurement), max(scdata.Measurement), rangelimit);
 0169             ylim(yl);
 0170             ylabel(ax, replace(measure, <span class="string">'Recording'</span>, <span class="string">''</span>));
 0171             
@@ -253,7 +253,7 @@ This function is called by:
 0200     <span class="keyword">end</span>
 0201     
 0202     <span class="keyword">if</span> exist(<span class="string">'f'</span>, <span class="string">'var'</span>)
-0203         <a href="../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, imagefilename, subfolder);
+0203         savePlotInDir(f, imagefilename, subfolder);
 0204         close(f);
 0205     <span class="keyword">end</span>
 0206 
@@ -263,6 +263,6 @@ This function is called by:
 0210 
 0211     
 0212</pre></div>
-<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

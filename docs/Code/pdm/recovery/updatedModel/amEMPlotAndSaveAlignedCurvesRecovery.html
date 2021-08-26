@@ -34,7 +34,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../../matlabicon.gif)">
-<li><a href="amEMPlotAlignedCurveRecovery.html" class="code" title="function amEMPlotAlignedCurveRecovery(ax, mprofile_pre, mmeancurvemean, mmeancurvecount, mmeancurvestd,measure, max_points, offset, align_wind, run_type, ex_start, sigmamethod, anchor, subplottitle)">amEMPlotAlignedCurveRecovery</a>	amEMPlotAlignedCurve - plots a latent curve for a given measure (pre and post alignment)</li><li><a href="amEMPlotOffsetHistogramRecovery.html" class="code" title="function amEMPlotOffsetHistogramRecovery(ax, offsets)">amEMPlotOffsetHistogramRecovery</a>	amEMPlotOffsetHistogram - plots the histogram of offsets for a given</li><li><a href="../../../../Code/smartcare/createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li></ul>
+<li><a href="amEMPlotAlignedCurveRecovery.html" class="code" title="function amEMPlotAlignedCurveRecovery(ax, mprofile_pre, mmeancurvemean, mmeancurvecount, mmeancurvestd,measure, max_points, offset, align_wind, run_type, ex_start, sigmamethod, anchor, subplottitle)">amEMPlotAlignedCurveRecovery</a>	amEMPlotAlignedCurve - plots a latent curve for a given measure (pre and post alignment)</li><li><a href="amEMPlotOffsetHistogramRecovery.html" class="code" title="function amEMPlotOffsetHistogramRecovery(ax, offsets)">amEMPlotOffsetHistogramRecovery</a>	amEMPlotOffsetHistogram - plots the histogram of offsets for a given</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../../matlabicon.gif)">
 <li><a href="amEMMCPlotAndSaveAlignedCurvesRecovery.html" class="code" title="function amEMMCPlotAndSaveAlignedCurvesRecovery(profile_pre, meancurvemean, meancurvecount, meancurvestd, offsets, latentcurves,measures, max_points, offset, align_wind, nmeasures, run_type, ex_start, sigmamethod, plotname, plotsubfolder, nlatentcurves)">amEMMCPlotAndSaveAlignedCurvesRecovery</a>	amEMMCPlotAndSaveAlignedCurves - wrapper around the</li></ul>
@@ -59,7 +59,7 @@ This function is called by:
 0014 plottitle = sprintf(<span class="string">'%s - %s'</span>, plotname, run_type);
 0015 anchor = 1; <span class="comment">% latent curve is to be anchored on the plot (right side at offset.min)</span>
 0016 
-0017 [f, p] = <a href="../../../../Code/smartcare/createFigureAndPanel.html" class="code" title="function [f, p] = createFigureAndPanel(name, orientation, pagesize)">createFigureAndPanel</a>(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
+0017 [f, p] = createFigureAndPanel(plottitle, <span class="string">'portrait'</span>, <span class="string">'a4'</span>);
 0018 
 0019 <span class="keyword">for</span> m = 1:nmeasures    
 0020     subplottitle = measures.DisplayName{m};
@@ -72,10 +72,10 @@ This function is called by:
 0027 <a href="amEMPlotOffsetHistogramRecovery.html" class="code" title="function amEMPlotOffsetHistogramRecovery(ax, offsets)">amEMPlotOffsetHistogramRecovery</a>(ax, offsets);
 0028 
 0029 <span class="comment">% save plot</span>
-0030 <a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0030 savePlotInDir(f, plottitle, plotsubfolder);
 0031 close(f);
 0032 
 0033 <span class="keyword">end</span></pre></div>
-<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

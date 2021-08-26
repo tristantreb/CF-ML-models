@@ -1,4 +1,4 @@
-% Insights about the amount of FEV1 recordings per patient across the study
+% insights about the amount of FEV1 recordings per patient across the study
 
 init;
 

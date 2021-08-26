@@ -44,7 +44,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
-<li><a href="../../../Code/pdm/helperfunctions/extractConsecutiveSequences.html" class="code" title="function [out cat_out] = extractConsecutiveSequences(in, gap)">extractConsecutiveSequences</a>	keep consecutive values with tolerance = gap</li><li><a href="../../../Code/pdm/helperfunctions/getStableIdx.html" class="code" title="function [idx2keep, days_t, days_m] = getStableIdx(patient, FEVdata,treatments_table, nprior_t, npost_t, modulators_table, npost_m, filter)">getStableIdx</a>	filters indexes corresponding to patient's stable days</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+<li><a href="../../../Code/pdm/helperfunctions/extractConsecutiveSequences.html" class="code" title="function [out cat_out] = extractConsecutiveSequences(in, gap)">extractConsecutiveSequences</a>	keep consecutive values with tolerance = gap</li><li><a href="../../../Code/pdm/helperfunctions/getStableIdx.html" class="code" title="function [idx2keep, days_t, days_m] = getStableIdx(patient, FEVdata,treatments_table, nprior_t, npost_t, modulators_table, npost_m, filter)">getStableIdx</a>	filters indexes corresponding to patient's stable days</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
 </ul>
@@ -72,13 +72,13 @@ This function is called by:
 0015 
 0016 clear;
 0017 addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/smartcare/source_code;
-0018 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0018 basedir = setBaseDir();
 0019 subfolder = <span class="string">'MatlabSavedVariables'</span>;
 0020 study = <span class="string">'BR'</span>;
 0021 
 0022 <span class="comment">% load measures</span>
-0023 [datamatfile, ~, ~] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
-0024 [brphysdata, broffset, ~] = <a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0023 [datamatfile, ~, ~] = getRawDataFilenamesForStudy(study);
+0024 [brphysdata, broffset, ~] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study);
 0025 <span class="comment">% load treatments</span>
 0026 load(fullfile(basedir, subfolder, <span class="string">'BRivandmeasures_gap10.mat'</span>));
 0027 <span class="comment">% load CFTR modulators therapy</span>
@@ -366,6 +366,6 @@ This function is called by:
 0309 <span class="comment">% create serial date referenced on broffset</span>
 0310     out = ceil(datenum(date) - broffset);
 0311 <span class="keyword">end</span></pre></div>
-<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

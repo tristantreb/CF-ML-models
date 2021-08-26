@@ -48,7 +48,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
-<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="getDrugTherapyInfo.html" class="code" title="function [Drugsbypatients, historytable] = getDrugTherapyInfo(brDrugTherapy, brPatient)">getDrugTherapyInfo</a>	all information about CFTR modulator therapies is centralised here</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/helperfunctions/calcBRFEV1PrctPredicted.html" class="code" title="function FEV1prctpredicted = calcBRFEV1PrctPredicted(brphysdata,cdPatient)">calcBRFEV1PrctPredicted</a>	calculates FEV1 % predicted for each patient with values in Breathe data</li><li><a href="../../../Code/pdm/recovery/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="getDrugTherapyInfo.html" class="code" title="function [Drugsbypatients, historytable] = getDrugTherapyInfo(brDrugTherapy, brPatient)">getDrugTherapyInfo</a>	all information about CFTR modulator therapies is centralised here</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/helperfunctions/calcBRFEV1PrctPredicted.html" class="code" title="function FEV1prctpredicted = calcBRFEV1PrctPredicted(brphysdata,cdPatient)">calcBRFEV1PrctPredicted</a>	calculates FEV1 % predicted for each patient with values in Breathe data</li><li><a href="../../../Code/pdm/recovery/init.html" class="code" title="">init</a>	</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
 </ul>
@@ -79,13 +79,13 @@ This function is called by:
 0018 
 0019 <a href="init.html" class="code" title="">init</a>;
 0020 
-0021 [datamatfile, clinicalmatfile, ~] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0021 [datamatfile, clinicalmatfile, ~] = getRawDataFilenamesForStudy(study);
 0022 [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP, <span class="keyword">...</span>
-0023 cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght] = <a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
+0023 cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght] = loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study);
 0024 
 0025 <span class="comment">%% limitation : patients in the clinical data that did not provide any measurement in Breathe</span>
 0026 
-0027 [brphysdata, broffset, ~] = <a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0027 [brphysdata, broffset, ~] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study);
 0028 
 0029 <span class="comment">% list and number of patients with no measurement</span>
 0030 N_no_measures= abs(size(cdPatient.ID,1) - size(unique(brphysdata.SmartCareID),1));
@@ -237,7 +237,7 @@ This function is called by:
 0176 
 0177 <span class="comment">%% save table as excel</span>
 0178 filename = sprintf(<span class="string">'%sPatientDemographics.xlsx'</span>,study);
-0179 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
+0179 basedir = setBaseDir();
 0180 subfolder = <span class="string">'ExcelFiles'</span>;
 0181 writetable(r,fullfile(basedir,subfolder,filename),<span class="string">'Sheet'</span>,1,<span class="string">'Range'</span>,<span class="string">'A1'</span>);
 0182 fprintf(sprintf(<span class="string">'Saved %s as Excel file\n'</span>, filename));
@@ -278,6 +278,6 @@ This function is called by:
 0217     r.Characteristic(i) = characteristic;
 0218     r.Value(i) = value;
 0219 <span class="keyword">end</span></pre></div>
-<hr><address>Generated on Tue 24-Aug-2021 16:59:35 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>
