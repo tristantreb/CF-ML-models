@@ -39,7 +39,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../../matlabicon.gif)">
-</ul>
+<li><a href="../../../../Code/smartcare/getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>	getColumnForMeasure - returns the column name from physdata for the</li><li><a href="../../../../Code/smartcare/getExNormMeasures.html" class="code" title="function [exnormmeasarray] = getExNormMeasures(study)">getExNormMeasures</a>	getExNormMeasures - returns an array of measure display names that need</li><li><a href="../../../../Code/smartcare/getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>	getInvertedMeasures - returns an array of measure display names that need</li><li><a href="../../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../../matlabicon.gif)">
 <li><a href="../../../../Code/pdm/recovery/createIntrNormDataCube.html" class="code" title="function createIntrNormDataCube(amRunParameters)">createIntrNormDataCube</a>	create the array with the normalised data for each intervention</li><li><a href="../../../../Code/pdm/recovery/runAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist)">runAlignmentModelEMMCRecoveryFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="../../../../Code/pdm/recovery/runFastAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runFastAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist, nameaddendum)">runFastAlignmentModelEMMCRecoveryFcn</a>	fast version with 1 plot (typical profile) + alignment result matfile</li></ul>
@@ -59,8 +59,8 @@ This function is called by:
 0009 <span class="comment">% normmean            vector with choosen reference mean for each intervention</span>
 0010 <span class="comment">% *muNorm.mat         normmean exported</span>
 0011 
-0012 invmeasarray = getInvertedMeasures(study);
-0013 exnormmeas   = getExNormMeasures(study);
+0012 invmeasarray = <a href="../../../../Code/smartcare/getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>(study);
+0013 exnormmeas   = <a href="../../../../Code/smartcare/getExNormMeasures.html" class="code" title="function [exnormmeasarray] = getExNormMeasures(study)">getExNormMeasures</a>(study);
 0014 
 0015 normmean = zeros(ninterventions, nmeasures);
 0016 <span class="keyword">for</span> i = 1:ninterventions
@@ -173,7 +173,7 @@ This function is called by:
 0123                     <span class="comment">% data</span>
 0124                     <span class="keyword">else</span>
 0125                         fprintf(<span class="string">'Using inter-quartile mean for intervention %d, measure %d\n'</span>, i, m);
-0126                         column = getColumnForMeasure(measures.Name{m});
+0126                         column = <a href="../../../../Code/smartcare/getColumnForMeasure.html" class="code" title="function [column] = getColumnForMeasure(measure)">getColumnForMeasure</a>(measures.Name{m});
 0127                         ddcolumn = sprintf(<span class="string">'Fun_%s'</span>,column);
 0128                         normmean(i, m) = demographicstable{demographicstable.SmartCareID == scid &amp; ismember(demographicstable.RecordingType, measures.Name{m}),{ddcolumn}}(5);
 0129                     <span class="keyword">end</span>
@@ -188,7 +188,7 @@ This function is called by:
 0138         <span class="keyword">end</span>
 0139     <span class="keyword">end</span>
 0140 <span class="keyword">end</span>
-0141 basedir = setBaseDir();
+0141 basedir = <a href="../../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
 0142 subfolder = <span class="string">'MatlabSavedVariables'</span>;
 0143 outputfilename = sprintf(<span class="string">'%smuNorm.mat'</span>, study);
 0144 <span class="comment">% fprintf('Saving Mean for Mu Normalisation to file %s\n', outputfilename);</span>
@@ -197,6 +197,6 @@ This function is called by:
 0147 
 0148 <span class="keyword">end</span>
 0149</pre></div>
-<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 19:28:55 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

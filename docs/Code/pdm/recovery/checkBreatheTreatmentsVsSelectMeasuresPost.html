@@ -50,7 +50,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
-<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li></ul>
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="../../../Code/smartcare/selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>	selectStudy - choose which study to run for</li><li><a href="../../../Code/smartcare/selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>	selectTreatmentGap - enter the gap between the end of a treatment and the</li><li><a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
 </ul>
@@ -80,10 +80,10 @@ This function is called by:
 0019 
 0020 <a href="init.html" class="code" title="">init</a>;
 0021 
-0022 [studynbr, study, studyfullname] = selectStudy();
-0023 [datamatfile, clinicalmatfile, ~] = getRawDataFilenamesForStudy(study);
-0024 [physdata, offset] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study);
-0025 [cdPatient, ~, ~, cdAntibiotics, ~, ~, ~, ~, ~, ~, ~] = loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study);
+0022 [studynbr, study, studyfullname] = <a href="../../../Code/smartcare/selectStudy.html" class="code" title="function [studynbr, study, studyfullname] = selectStudy()">selectStudy</a>();
+0023 [datamatfile, clinicalmatfile, ~] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0024 [physdata, offset] = <a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0025 [cdPatient, ~, ~, cdAntibiotics, ~, ~, ~, ~, ~, ~, ~] = <a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
 0026 
 0027 selectmeas = {<span class="string">'CoughRecording'</span>, <span class="string">'FEV1Recording'</span>, <span class="string">'FEF2575Recording'</span>, <span class="string">'MinsAsleepRecording'</span>, <span class="string">'O2SaturationRecording'</span>, <span class="string">'PulseRateRecording'</span>, <span class="keyword">...</span>
 0028            <span class="string">'TemperatureRecording'</span>, <span class="string">'WellnessRecording'</span>};
@@ -106,7 +106,7 @@ This function is called by:
 0045 ivTreatments.IVStopDateNum = datenum(ivTreatments.StopDate)  - offset + 1;
 0046 ivTreatments.Type          = zeros(height(ivTreatments),1);
 0047 
-0048 treatgap = selectTreatmentGap();
+0048 treatgap = <a href="../../../Code/smartcare/selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>();
 0049 <span class="comment">%%</span>
 0050 <span class="comment">% counting and labelling - IVO = 1 , OO = 2, IVPBO = 3</span>
 0051 oldid = 0;
@@ -310,7 +310,7 @@ This function is called by:
 0249 fprintf(<span class="string">'\n'</span>);
 0250 
 0251 tic
-0252 basedir = setBaseDir();
+0252 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
 0253 subfolder = <span class="string">'MatlabSavedVariables'</span>;
 0254 outputfilename = sprintf(<span class="string">'%sivandmeasures_recovery_gap%d.mat'</span>, study, treatgap);
 0255 
@@ -322,7 +322,7 @@ This function is called by:
 0261 
 0262 fprintf(<span class="string">'Saving results to excel\n'</span>);
 0263 
-0264 basedir = setBaseDir();
+0264 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
 0265 subfolder = <span class="string">'ExcelFiles'</span>;
 0266 outputfilename = sprintf(<span class="string">'%sMeasuresPostTreatments_gap%d.xlsx'</span>, study, treatgap);
 0267 summarysheet = <span class="string">'SummaryByTreatment'</span>;
@@ -336,6 +336,6 @@ This function is called by:
 0275     
 0276     
 0277</pre></div>
-<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 19:28:55 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

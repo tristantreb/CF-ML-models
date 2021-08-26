@@ -33,7 +33,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
-</ul>
+<li><a href="../../../Code/smartcare/getLatestBreatheDatesForHosp.html" class="code" title="function [clinprocdate, patientmasterdate, isValid] = getLatestBreatheDatesForHosp(hosp)">getLatestBreatheDatesForHosp</a>	getLatestBreatheDatesForHosp - convenience function to centralise getting the</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
 </ul>
@@ -48,12 +48,12 @@ This function is called by:
 0002 
 0003 clc; clear; close all;
 0004 addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/smartcare/source_code/
-0005 basedir = setBaseDir();
+0005 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
 0006 subfolder = <span class="string">'MatlabSavedVariables'</span>;
 0007 study = <span class="string">'BR'</span>;
 0008 
-0009 [datamatfile, ~, ~] = getRawDataFilenamesForStudy(study);
-0010 [physdata, offset] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study);
+0009 [datamatfile, ~, ~] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0010 [physdata, offset] = <a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
 0011 
 0012 
 0013 <span class="comment">%% plot measurement values per month over years</span>
@@ -76,7 +76,7 @@ This function is called by:
 0030     labels = <a href="#_sub3" class="code" title="subfunction str = dateLabels(a,b);">dateLabels</a>(year, month);
 0031     
 0032     <span class="comment">% don't plot over 1 months after latest date recorded</span>
-0033     [~, patientmasterdate, ~] = getLatestBreatheDatesForHosp(<span class="string">'PAP'</span>);
+0033     [~, patientmasterdate, ~] = <a href="../../../Code/smartcare/getLatestBreatheDatesForHosp.html" class="code" title="function [clinprocdate, patientmasterdate, isValid] = getLatestBreatheDatesForHosp(hosp)">getLatestBreatheDatesForHosp</a>(<span class="string">'PAP'</span>);
 0034     <span class="keyword">if</span> str2num(patientmasterdate(1:4)) == year(end)
 0035         last_month = size(year,2)*size(month,2) - 11 + str2num(patientmasterdate(5:6));
 0036     <span class="keyword">end</span>
@@ -154,6 +154,6 @@ This function is called by:
 0108     <span class="comment">% extracts FEV values for matched indices</span>
 0109     out = data(matched_idx,8).(1);
 0110 <span class="keyword">end</span></pre></div>
-<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 19:28:55 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

@@ -35,7 +35,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
-<li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/helperfunctions/getMeasureTable.html" class="code" title="function [out] = getMeasureTable(brphysdata,recording_type,category)">getMeasureTable</a>	returns a table with all data about the specified recording type</li><li><a href="../../../Code/pdm/helperfunctions/getStableIdx.html" class="code" title="function [idx2keep, days_t, days_m] = getStableIdx(patient, FEVdata,treatments_table, nprior_t, npost_t, modulators_table, npost_m, filter)">getStableIdx</a>	filters indexes corresponding to patient's stable days</li><li><a href="../../../Code/pdm/recovery/init.html" class="code" title="">init</a>	</li></ul>
+<li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/helperfunctions/getMeasureTable.html" class="code" title="function [out] = getMeasureTable(brphysdata,recording_type,category)">getMeasureTable</a>	returns a table with all data about the specified recording type</li><li><a href="../../../Code/pdm/helperfunctions/getStableIdx.html" class="code" title="function [idx2keep, days_t, days_m] = getStableIdx(patient, FEVdata,treatments_table, nprior_t, npost_t, modulators_table, npost_m, filter)">getStableIdx</a>	filters indexes corresponding to patient's stable days</li><li><a href="../../../Code/pdm/recovery/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
 </ul>
@@ -55,8 +55,8 @@ This function is called by:
 0007 <a href="init.html" class="code" title="">init</a>;
 0008 
 0009 <span class="comment">% load measures</span>
-0010 [datamatfile, ~, ~] = getRawDataFilenamesForStudy(study);
-0011 [brphysdata, broffset, ~] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study);
+0010 [datamatfile, ~, ~] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0011 [brphysdata, broffset, ~] = <a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
 0012 <span class="comment">% load treatments</span>
 0013 load(fullfile(basedir, subfolder, <span class="string">'BRivandmeasures_recovery_gap10.mat'</span>));
 0014 <span class="comment">% load CFTR modulators therapy</span>
@@ -799,6 +799,6 @@ This function is called by:
 0751         p = alpha/1.001;
 0752     <span class="keyword">end</span>
 0753 <span class="keyword">end</span></pre></div>
-<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 19:28:55 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

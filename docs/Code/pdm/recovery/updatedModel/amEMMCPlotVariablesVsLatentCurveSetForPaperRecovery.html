@@ -34,7 +34,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../../matlabicon.gif)">
-</ul>
+<li><a href="../../../../Code/smartcare/createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="../../../../Code/smartcare/getLCSortOrder.html" class="code" title="function lcsort = getLCSortOrder(amInterventions, nlatentcurves)">getLCSortOrder</a>	getLCSortOrder - returns the latent curve sets sorted from largest</li><li><a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="../../../../Code/smartcare/savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="../../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../../matlabicon.gif)">
 <li><a href="../../../../Code/pdm/recovery/relateInferredClassesToPatientFeatures.html" class="code" title="">relateInferredClassesToPatientFeatures</a>	analyse the relation between patient characteristics and subset of interventions</li></ul>
@@ -116,7 +116,7 @@ This function is called by:
 0071     chisqvaltable.Properties.VariableNames{nkeycols + nlccombs + i} = sprintf(<span class="string">'Group%d_pvalDiffSeries'</span>, i);
 0072 <span class="keyword">end</span>
 0073 
-0074 lcsort = getLCSortOrder(amInterventions, nlatentcurves);
+0074 lcsort = <a href="../../../../Code/smartcare/getLCSortOrder.html" class="code" title="function lcsort = getLCSortOrder(amInterventions, nlatentcurves)">getLCSortOrder</a>(amInterventions, nlatentcurves);
 0075 amInterventions.OrigLatentCurve = amInterventions.LatentCurve;
 0076 <span class="keyword">for</span> n = 1:nlatentcurves
 0077     amInterventions.LatentCurve(amInterventions.OrigLatentCurve == lcsort(n)) = n;
@@ -200,7 +200,7 @@ This function is called by:
 0155 heightinch = 11;
 0156 fontname = <span class="string">'Arial'</span>;
 0157 
-0158 [f, p] = createFigureAndPanelForPaper(<span class="string">''</span>, widthinch, heightinch);
+0158 [f, p] = <a href="../../../../Code/smartcare/createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(<span class="string">''</span>, widthinch, heightinch);
 0159 
 0160 colormap(f, cmap);
 0161 thisplot = 1;
@@ -259,13 +259,13 @@ This function is called by:
 0214 <span class="keyword">end</span>
 0215 
 0216 <span class="comment">% save plot</span>
-0217 savePlotInDir(f, plottitle, plotsubfolder);
-0218 savePlotInDirAsSVG(f, plottitle, plotsubfolder);
+0217 <a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0218 <a href="../../../../Code/smartcare/savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, plottitle, plotsubfolder);
 0219 close(f);
 0220 page = page + 1;
 0221 thisplot = 1;
 0222 plottitle = sprintf(<span class="string">'%s - Vars vs LC Set FP Pg %d of %d'</span>, plotname, page, npages);
-0223 [f, p] = createFigureAndPanelForPaper(<span class="string">''</span>, widthinch, heightinch);
+0223 [f, p] = <a href="../../../../Code/smartcare/createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(<span class="string">''</span>, widthinch, heightinch);
 0224 
 0225 <span class="keyword">for</span> v = 1:nbarvars
 0226     <span class="keyword">if</span> ismember(barvartext(v), {<span class="string">'Gender'</span>, <span class="string">'Pct Gender'</span>})
@@ -520,14 +520,14 @@ This function is called by:
 0475 <span class="keyword">end</span>
 0476 
 0477 <span class="comment">% save plot</span>
-0478 savePlotInDir(f, plottitle, plotsubfolder);
-0479 savePlotInDirAsSVG(f, plottitle, plotsubfolder);
+0478 <a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0479 <a href="../../../../Code/smartcare/savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, plottitle, plotsubfolder);
 0480 close(f);
 0481 
 0482 page = page + 1;
 0483 thisplot = 1;
 0484 plottitle = sprintf(<span class="string">'%s - Vars vs LC Set FP Pg %d of %d'</span>, plotname, page, npages);
-0485 [f, p] = createFigureAndPanelForPaper(<span class="string">''</span>, widthinch, heightinch);
+0485 [f, p] = <a href="../../../../Code/smartcare/createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(<span class="string">''</span>, widthinch, heightinch);
 0486 colormap(f, cmap);
 0487 
 0488 <span class="keyword">for</span> v = 1:npolarvars
@@ -563,13 +563,13 @@ This function is called by:
 0518 <span class="keyword">end</span>
 0519 
 0520 <span class="comment">% save plot</span>
-0521 savePlotInDir(f, plottitle, plotsubfolder);
-0522 savePlotInDirAsSVG(f, plottitle, plotsubfolder);
+0521 <a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0522 <a href="../../../../Code/smartcare/savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, plottitle, plotsubfolder);
 0523 close(f);
 0524 
 0525 page = page + 1;
 0526 plottitle = sprintf(<span class="string">'%s - Vars vs LC Set FP Pg %d of %d'</span>, plotname, page, npages);
-0527 [f, p] = createFigureAndPanelForPaper(<span class="string">''</span>, widthinch, heightinch);
+0527 [f, p] = <a href="../../../../Code/smartcare/createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(<span class="string">''</span>, widthinch, heightinch);
 0528 colormap(f, cmap);
 0529 plotsdown   = 3; 
 0530 plotsacross = 3;
@@ -584,17 +584,17 @@ This function is called by:
 0539 <span class="keyword">end</span>
 0540 
 0541 <span class="comment">% save plot</span>
-0542 savePlotInDir(f, plottitle, plotsubfolder);
+0542 <a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
 0543 close(f);
 0544 
 0545 <span class="comment">% save p-value table</span>
-0546 basedir = setBaseDir();
+0546 basedir = <a href="../../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
 0547 xlfilename = sprintf(<span class="string">'P-Values nl%d_scen%s_rs%d.xlsx'</span>, nlatentcurves, scenario, randomseed);
 0548 writetable(wcxpvaltable, fullfile(basedir, plotsubfolder, xlfilename), <span class="string">'Sheet'</span>, <span class="string">'Numeric'</span>);
 0549 writetable(chisqvaltable, fullfile(basedir, plotsubfolder, xlfilename), <span class="string">'Sheet'</span>, <span class="string">'Non-Numeric'</span>);
 0550 
 0551 <span class="keyword">end</span>
 0552</pre></div>
-<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 19:28:55 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

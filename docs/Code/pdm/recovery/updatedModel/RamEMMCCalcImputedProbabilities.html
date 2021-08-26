@@ -35,7 +35,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../../matlabicon.gif)">
-</ul>
+<li><a href="../../../../Code/smartcare/calcRegDist.html" class="code" title="function [dist] = calcRegDist(lcpointmean, lcpointstd, pmstd, datapoint, sigmamethod)">calcRegDist</a>	calcRegDist - convenience function to calculate the sum of squares</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../../matlabicon.gif)">
 <li><a href="../../../../Code/pdm/recovery/runAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist)">runAlignmentModelEMMCRecoveryFcn</a>	runs the alignment model (EM version) given a set of run parameters.</li><li><a href="../../../../Code/pdm/recovery/runFastAlignmentModelEMMCRecoveryFcn.html" class="code" title="function runFastAlignmentModelEMMCRecoveryFcn(amRunParameters, interventionslist, nameaddendum)">runFastAlignmentModelEMMCRecoveryFcn</a>	fast version with 1 plot (typical profile) + alignment result matfile</li></ul>
@@ -79,7 +79,7 @@ This function is called by:
 0033             <span class="keyword">for</span> m = 1:nmeasures
 0034                 <span class="keyword">for</span> offset = 0:max_offset - 1
 0035                     <span class="keyword">if</span> (~isnan(amIntrCube(n, max_offset + align_wind - i, m)) &amp;&amp; amHeldBackcube(n, max_offset + align_wind - i, m) == 1)
-0036                         thisdist = calcRegDist(tempmean(lc, max_offset + align_wind - i - offset, m), <span class="keyword">...</span>
+0036                         thisdist = <a href="../../../../Code/smartcare/calcRegDist.html" class="code" title="function [dist] = calcRegDist(lcpointmean, lcpointstd, pmstd, datapoint, sigmamethod)">calcRegDist</a>(tempmean(lc, max_offset + align_wind - i - offset, m), <span class="keyword">...</span>
 0037                                                tempstd(lc, max_offset + align_wind - i - offset, m), <span class="keyword">...</span>
 0038                                                normstd(n, m), <span class="keyword">...</span>
 0039                                                amIntrCube(n, max_offset + align_wind - i, m), <span class="keyword">...</span>
@@ -106,6 +106,6 @@ This function is called by:
 0060 
 0061 <span class="keyword">end</span>
 0062</pre></div>
-<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 19:28:55 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

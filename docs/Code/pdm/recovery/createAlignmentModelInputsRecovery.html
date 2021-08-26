@@ -48,7 +48,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
-<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/recovery/updatedModel/createListOfInterventionsRecovery.html" class="code" title="function [interventions] = createListOfInterventionsRecovery(ivandmeasurestable, physdata, offset, data_window)">createListOfInterventionsRecovery</a>	creates the list of distinct Antiobiotic treatments in a structure to be used by the alignment model</li></ul>
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/recovery/updatedModel/createListOfInterventionsRecovery.html" class="code" title="function [interventions] = createListOfInterventionsRecovery(ivandmeasurestable, physdata, offset, data_window)">createListOfInterventionsRecovery</a>	creates the list of distinct Antiobiotic treatments in a structure to be used by the alignment model</li><li><a href="../../../Code/smartcare/addDrugTherapyInfo.html" class="code" title="function amInterventions = addDrugTherapyInfo(amInterventions, cdDrugTherapy)">addDrugTherapyInfo</a>	addDrugTherapyInfo - adds a column to the interventions table to store</li><li><a href="../../../Code/smartcare/createDataCube.html" class="code" title="function [datacube] = createDataCube(physdata, measures, npatients, ndays, nmeasures)">createDataCube</a>	createDataCube - populates a 3D array from the measurement data of</li><li><a href="../../../Code/smartcare/createMeasuresTable.html" class="code" title="function [measures, nmeasures] = createMeasuresTable(physdata)">createMeasuresTable</a>	creates the measures table</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li><li><a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>	loadAndHarmoniseMeasVars - loads raw measurement variables and standardises</li><li><a href="../../../Code/smartcare/selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>	selectTreatmentGap - enter the gap between the end of a treatment and the</li><li><a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>	setBaseDir - sets the root directory for the code, plots, data files etc</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
 </ul>
@@ -75,11 +75,11 @@ This function is called by:
 0016 <span class="comment">% alignmentmodelinputs_recovery_gap*.mat</span>
 0017 
 0018 <a href="init.html" class="code" title="">init</a>;
-0019 chosentreatgap = selectTreatmentGap();
+0019 chosentreatgap = <a href="../../../Code/smartcare/selectTreatmentGap.html" class="code" title="function treatgap = selectTreatmentGap()">selectTreatmentGap</a>();
 0020 
-0021 [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study);
-0022 [physdata, offset] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study);
-0023 [~, cdDrugTherapy, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study);
+0021 [datamatfile, clinicalmatfile, demographicsmatfile] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
+0022 [physdata, offset] = <a href="../../../Code/smartcare/loadAndHarmoniseMeasVars.html" class="code" title="function [physdata, offset, physdata_predateoutlierhandling] = loadAndHarmoniseMeasVars(datamatfile, subfolder, study)">loadAndHarmoniseMeasVars</a>(datamatfile, subfolder, study);
+0023 [~, cdDrugTherapy, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = <a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
 0024 
 0025 tic
 0026 fprintf(<span class="string">'Loading datademographics by patient\n'</span>);
@@ -96,7 +96,7 @@ This function is called by:
 0037 npatients = max(physdata.SmartCareID);
 0038 ndays = max(physdata.ScaledDateNum);
 0039 
-0040 [measures, nmeasures] = createMeasuresTable(physdata);
+0040 [measures, nmeasures] = <a href="../../../Code/smartcare/createMeasuresTable.html" class="code" title="function [measures, nmeasures] = createMeasuresTable(physdata)">createMeasuresTable</a>(physdata);
 0041 
 0042 tic
 0043 <span class="comment">% create list of interventions with enough data to run model on</span>
@@ -105,23 +105,23 @@ This function is called by:
 0046 ninterventions = size(amInterventions,1);
 0047 toc
 0048 
-0049 amInterventions = addDrugTherapyInfo(amInterventions, cdDrugTherapy);
+0049 amInterventions = <a href="../../../Code/smartcare/addDrugTherapyInfo.html" class="code" title="function amInterventions = addDrugTherapyInfo(amInterventions, cdDrugTherapy)">addDrugTherapyInfo</a>(amInterventions, cdDrugTherapy);
 0050 
 0051 tic
 0052 <span class="comment">% create datacube - 3D array of patients/days/measures for model</span>
 0053 <span class="comment">% note data cube is 96% empty because the first column contains the ID</span>
 0054 <span class="comment">% number in range 1:max(ID number) -&gt; no ID = 1 -&gt; very scarce</span>
 0055 fprintf(<span class="string">'Creating 3D data array\n'</span>);
-0056 [amDatacube] = createDataCube(physdata, measures, npatients, ndays, nmeasures);
+0056 [amDatacube] = <a href="../../../Code/smartcare/createDataCube.html" class="code" title="function [datacube] = createDataCube(physdata, measures, npatients, ndays, nmeasures)">createDataCube</a>(physdata, measures, npatients, ndays, nmeasures);
 0057 toc
 0058 
 0059 tic
-0060 basedir = setBaseDir();
+0060 basedir = <a href="../../../Code/smartcare/setBaseDir.html" class="code" title="function [basedir] = setBaseDir()">setBaseDir</a>();
 0061 subfolder = <span class="string">'MatlabSavedVariables'</span>;
 0062 outputfilename = sprintf(<span class="string">'%salignmentmodelinputs_recovery_gap%d_datawind%d.mat'</span>, study, chosentreatgap, data_window );
 0063 fprintf(<span class="string">'Saving output variables to file %s\n'</span>, outputfilename);
 0064 save(fullfile(basedir, subfolder,outputfilename), <span class="string">'amInterventions'</span>,<span class="string">'amDatacube'</span>, <span class="string">'measures'</span>, <span class="string">'npatients'</span>,<span class="string">'ndays'</span>, <span class="string">'nmeasures'</span>, <span class="string">'ninterventions'</span>);
 0065 toc</pre></div>
-<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 19:28:55 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

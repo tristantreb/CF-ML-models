@@ -35,7 +35,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../../matlabicon.gif)">
-</ul>
+<li><a href="../../../../Code/smartcare/arrow.html" class="code" title="function [h,yy,zz] = arrow(varargin)">arrow</a>	ARROW  Draw a line with an arrowhead.</li><li><a href="../../../../Code/smartcare/createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>	createFigureAndPanel - creates a figure with a ui panel and returns</li><li><a href="../../../../Code/smartcare/formatDisplayMeasure.html" class="code" title="function [displaynameformatted] = formatDisplayMeasure(displaymeasure)">formatDisplayMeasure</a>	formatDisplayMeasure - adds final formatting for displaying measure name</li><li><a href="../../../../Code/smartcare/formatTexDisplayMeasure.html" class="code" title="function [displaynameformatted] = formatTexDisplayMeasure(displaymeasure)">formatTexDisplayMeasure</a>	formatTexDisplayMeasure - adds final formatting for displaying measure name</li><li><a href="../../../../Code/smartcare/getColourForMeasure.html" class="code" title="function [smcolour, rwcolour] = getColourForMeasure(displaymeasure)">getColourForMeasure</a>	getColorForMeasure - returns the RGB value of the colour for a given</li><li><a href="../../../../Code/smartcare/getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>	getInvertedMeasures - returns an array of measure display names that need</li><li><a href="../../../../Code/smartcare/getLCSortOrder.html" class="code" title="function lcsort = getLCSortOrder(amInterventions, nlatentcurves)">getLCSortOrder</a>	getLCSortOrder - returns the latent curve sets sorted from largest</li><li><a href="../../../../Code/smartcare/getUnitsForMeasure.html" class="code" title="function [units] = getUnitsForMeasure(displaymeasure)">getUnitsForMeasure</a>	getUnitsForMeasure - returns the units for a given measure</li><li><a href="../../../../Code/smartcare/plotFillArea.html" class="code" title="function plotFillArea(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillArea</a>	plotFillArea - plots a shaded area on the graph (eg for confidence bounds</li><li><a href="../../../../Code/smartcare/plotSuperimposedAlignedCurvesForPaper.html" class="code" title="function plotSuperimposedAlignedCurvesForPaper(ax, meancurvemean, xl, yl,tmpmeasures, tmpnmeasures, min_offset, max_offset, align_wind, ex_start, study)">plotSuperimposedAlignedCurvesForPaper</a>	plotSuperimposedAlignedCurves - plots the aligned curves for each of the</li><li><a href="../../../../Code/smartcare/plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>	plotVerticalLine - plots a vertical line</li><li><a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="../../../../Code/smartcare/savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>	savePlots - saves the figure to png and svp file types in the specified</li><li><a href="../../../../Code/smartcare/sortMeasuresForPaper.html" class="code" title="function [measures] = sortMeasuresForPaper(study, measures)">sortMeasuresForPaper</a>	sortMeasuresForPaper - returns a sorted measures table in the order to</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../../matlabicon.gif)">
 </ul>
@@ -52,7 +52,7 @@ This function is called by:
 0006 <span class="comment">% plotSuperimposedAlignedCurves to plot for each set of latent curves along</span>
 0007 <span class="comment">% with examples below</span>
 0008 
-0009 invmeasarray = getInvertedMeasures(study);
+0009 invmeasarray = <a href="../../../../Code/smartcare/getInvertedMeasures.html" class="code" title="function [invmeasarray] = getInvertedMeasures(study)">getInvertedMeasures</a>(study);
 0010 
 0011 <span class="keyword">if</span> examplemode ~= 0
 0012     <span class="keyword">if</span> (size(lcexamples, 2) ~= nlatentcurves)
@@ -143,7 +143,7 @@ This function is called by:
 0097 tmpmeasures.PaperMask(:) = 0;
 0098 tmpmeasures.PaperMask(ismember(tmpmeasures.DisplayName, {<span class="string">'LungFunction'</span>, <span class="string">'FEV1'</span>, <span class="string">'Wellness'</span>})) = 1;
 0099 tmpnmeasures = size(tmpmeasures, 1);
-0100 [tmpmeasures] = sortMeasuresForPaper(study, tmpmeasures);
+0100 [tmpmeasures] = <a href="../../../../Code/smartcare/sortMeasuresForPaper.html" class="code" title="function [measures] = sortMeasuresForPaper(study, measures)">sortMeasuresForPaper</a>(study, tmpmeasures);
 0101 tmpsubsetmeasures = tmpmeasures(logical(tmpmeasures.PaperMask), :);
 0102 tmpnsubsetmeasures = size(tmpsubsetmeasures, 1);
 0103 
@@ -170,9 +170,9 @@ This function is called by:
 0124 <span class="keyword">end</span>
 0125 panelsacross = ((plotpanels + paddingpanels) * nlatentcurves) + legendpanels - 1;
 0126 
-0127 lcsort = getLCSortOrder(amInterventions, nlatentcurves);
+0127 lcsort = <a href="../../../../Code/smartcare/getLCSortOrder.html" class="code" title="function lcsort = getLCSortOrder(amInterventions, nlatentcurves)">getLCSortOrder</a>(amInterventions, nlatentcurves);
 0128 
-0129 [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch);
+0129 [f, p] = <a href="../../../../Code/smartcare/createFigureAndPanelForPaper.html" class="code" title="function [f, p] = createFigureAndPanelForPaper(name, widthinch, heightinch)">createFigureAndPanelForPaper</a>(name, widthinch, heightinch);
 0130 
 0131 currhght = 1.0;
 0132 currmeas = 1;
@@ -266,7 +266,7 @@ This function is called by:
 0220             displaytext3 = sprintf(<span class="string">'\\bf %s\\rm'</span>, <span class="string">'(s.d.)'</span>);
 0221             displaytext = {displaytext1; displaytext2; displaytext3};
 0222         <span class="keyword">else</span>
-0223             displaytext = {formatTexDisplayMeasure(labeltext{i}); sprintf(<span class="string">'\\fontsize{%d} (%s)'</span>, unitfontsize, getUnitsForMeasure(labeltext{i}))};
+0223             displaytext = {<a href="../../../../Code/smartcare/formatTexDisplayMeasure.html" class="code" title="function [displaynameformatted] = formatTexDisplayMeasure(displaymeasure)">formatTexDisplayMeasure</a>(labeltext{i}); sprintf(<span class="string">'\\fontsize{%d} (%s)'</span>, unitfontsize, <a href="../../../../Code/smartcare/getUnitsForMeasure.html" class="code" title="function [units] = getUnitsForMeasure(displaymeasure)">getUnitsForMeasure</a>(labeltext{i}))};
 0224         <span class="keyword">end</span>
 0225         sp(i) = uipanel(<span class="string">'Parent'</span>, p, <span class="keyword">...</span>
 0226                         <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
@@ -318,7 +318,7 @@ This function is called by:
 0272                     <span class="comment">% add legend text cell array</span>
 0273                     legendtext = tmpmeasures.DisplayName;
 0274                     <span class="keyword">for</span> m = 1:tmpnmeasures
-0275                         legendtext{m} = formatDisplayMeasure(legendtext{m});
+0275                         legendtext{m} = <a href="../../../../Code/smartcare/formatDisplayMeasure.html" class="code" title="function [displaynameformatted] = formatDisplayMeasure(displaymeasure)">formatDisplayMeasure</a>(legendtext{m});
 0276                     <span class="keyword">end</span>
 0277                     pridx = ismember(tmpmeasures.DisplayName, invmeasarray);
 0278                     <span class="keyword">if</span> sum(pridx) &gt; 0
@@ -329,15 +329,15 @@ This function is called by:
 0283                         <span class="keyword">end</span>
 0284                     <span class="keyword">end</span>
 0285 
-0286                     plotSuperimposedAlignedCurvesForPaper(ax, tmp_meancurvemean, xl, yl, <span class="keyword">...</span>
+0286                     <a href="../../../../Code/smartcare/plotSuperimposedAlignedCurvesForPaper.html" class="code" title="function plotSuperimposedAlignedCurvesForPaper(ax, meancurvemean, xl, yl,tmpmeasures, tmpnmeasures, min_offset, max_offset, align_wind, ex_start, study)">plotSuperimposedAlignedCurvesForPaper</a>(ax, tmp_meancurvemean, xl, yl, <span class="keyword">...</span>
 0287                             tmpmeasures, tmpnmeasures, offset, align_wind, ex_start(lc), study);
 0288                 <span class="keyword">elseif</span> type == 8
-0289                     plotSuperimposedAlignedCurvesForPaper(ax, tmp_meancurvemean, xl, yl, <span class="keyword">...</span>
+0289                     <a href="../../../../Code/smartcare/plotSuperimposedAlignedCurvesForPaper.html" class="code" title="function plotSuperimposedAlignedCurvesForPaper(ax, meancurvemean, xl, yl,tmpmeasures, tmpnmeasures, min_offset, max_offset, align_wind, ex_start, study)">plotSuperimposedAlignedCurvesForPaper</a>(ax, tmp_meancurvemean, xl, yl, <span class="keyword">...</span>
 0290                             tmpsubsetmeasures, tmpnsubsetmeasures, offset, align_wind, ex_start(lc), study);
 0291                     <span class="keyword">if</span> n == 2 &amp;&amp; ismember(study, {<span class="string">'SC'</span>})
 0292                         <span class="comment">% hardcode plot of time delay arrow</span>
 0293                         hold on;
-0294                         arrow([0, 0.5], [12, 0.5], <span class="keyword">...</span>
+0294                         <a href="../../../../Code/smartcare/arrow.html" class="code" title="function [h,yy,zz] = arrow(varargin)">arrow</a>([0, 0.5], [12, 0.5], <span class="keyword">...</span>
 0295                             <span class="string">'Length'</span>, 5, <span class="string">'Ends'</span>, <span class="string">'both'</span>, <span class="string">'FaceColor'</span>, <span class="string">'k'</span>, <span class="string">'LineWidth'</span>, 1.0, <span class="string">'EdgeColor'</span>, <span class="string">'k'</span>);
 0296                         hold off;
 0297                         annotation(sp(i), <span class="string">'textbox'</span>,  <span class="keyword">...</span>
@@ -439,7 +439,7 @@ This function is called by:
 0393                 ax.FontName = fontname;
 0394 
 0395                 hold on;
-0396                 [smcolour, rwcolour] = getColourForMeasure(tmpsubsetmeasures.DisplayName{currmeas});
+0396                 [smcolour, rwcolour] = <a href="../../../../Code/smartcare/getColourForMeasure.html" class="code" title="function [smcolour, rwcolour] = getColourForMeasure(displaymeasure)">getColourForMeasure</a>(tmpsubsetmeasures.DisplayName{currmeas});
 0397                 lstyle = <span class="string">'-'</span>;
 0398                 lwidth = 1.5;
 0399                 days = xl(1):xl(2);
@@ -461,13 +461,13 @@ This function is called by:
 0415                     <span class="string">'Marker'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
 0416                     <span class="string">'LineWidth'</span>, lwidth);
 0417                 <span class="keyword">if</span> tmp_ex_start ~= 0
-0418                     [~, ~] = plotVerticalLine(ax, 0, xl, yl, <span class="string">'black'</span>, <span class="string">'-'</span>, 0.5); <span class="comment">% plot ex_start</span>
+0418                     [~, ~] = <a href="../../../../Code/smartcare/plotVerticalLine.html" class="code" title="function [xl, yl] = plotVerticalLine(ax, xval, xl, yl, colour, linestyle, linewidth)">plotVerticalLine</a>(ax, 0, xl, yl, <span class="string">'black'</span>, <span class="string">'-'</span>, 0.5); <span class="comment">% plot ex_start</span>
 0419                 <span class="keyword">end</span>
 0420 
 0421                 mmean = 0;
 0422                 mstd = 1;
 0423 
-0424                 plotFillArea(ax, xl(1), xl(2), <span class="keyword">...</span>
+0424                 <a href="../../../../Code/smartcare/plotFillArea.html" class="code" title="function plotFillArea(ax, xlower, xupper, ylower, yupper, color, facealpha, edgecolor)">plotFillArea</a>(ax, xl(1), xl(2), <span class="keyword">...</span>
 0425                     mmean - (0.5 * mstd), mmean + (0.5 * mstd), [0.4, 0.4, 0.4], <span class="string">'0.2'</span>, <span class="string">'none'</span>);
 0426                 line(xl, [mmean mmean] , <span class="string">'Color'</span>, [0.6, 0.6, 0.6], <span class="string">'LineStyle'</span>, <span class="string">'-'</span>, <span class="string">'LineWidth'</span>, .5)
 0427 
@@ -490,11 +490,11 @@ This function is called by:
 0444 <span class="keyword">end</span>
 0445 
 0446 <span class="comment">% save plot</span>
-0447 savePlotInDir(f, plottitle, plotsubfolder);
-0448 savePlotInDirAsSVG(f, plottitle, plotsubfolder);
+0447 <a href="../../../../Code/smartcare/savePlotInDir.html" class="code" title="function savePlotInDir(f, name, subfolder)">savePlotInDir</a>(f, plottitle, plotsubfolder);
+0448 <a href="../../../../Code/smartcare/savePlotInDirAsSVG.html" class="code" title="function savePlotInDirAsSVG(f, name, subfolder)">savePlotInDirAsSVG</a>(f, plottitle, plotsubfolder);
 0449 close(f);
 0450 
 0451 <span class="keyword">end</span></pre></div>
-<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 19:28:55 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

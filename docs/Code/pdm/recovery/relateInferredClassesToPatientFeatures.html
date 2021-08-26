@@ -42,7 +42,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
-<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/recovery/updatedModel/amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery.html" class="code" title="function [wcxpvaltable] = amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery(amInterventions, pmPatients, pmPatientMeasStats, ivandmeasurestable,cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder, ninterventions, nlatentcurves, scenario, randomseed, study)">amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery</a>	amEMMCPlotVariablesVsLatentCurveSet - compact plots of various variables</li></ul>
+<li><a href="../../../Code/pdm/FEV1variability/init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/exploration/init.html" class="code" title="">init</a>	</li><li><a href="init.html" class="code" title="">init</a>	</li><li><a href="../../../Code/pdm/recovery/updatedModel/amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery.html" class="code" title="function [wcxpvaltable] = amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery(amInterventions, pmPatients, pmPatientMeasStats, ivandmeasurestable,cdMicrobiology, cdAntibiotics, cdAdmissions, cdCRP, measures, plotname, plotsubfolder, ninterventions, nlatentcurves, scenario, randomseed, study)">amEMMCPlotVariablesVsLatentCurveSetForPaperRecovery</a>	amEMMCPlotVariablesVsLatentCurveSet - compact plots of various variables</li><li><a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>	getRawDataFilenamesForStudy - return filenames for raw data files for</li><li><a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>	loadAndHarmoniseClinVars - loads clinical variables and standardises</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../../../matlabicon.gif)">
 </ul>
@@ -67,11 +67,11 @@ This function is called by:
 0012 <a href="init.html" class="code" title="">init</a>;
 0013 
 0014 <span class="comment">% load files</span>
-0015 [~, clinicalmatfile, ~] = getRawDataFilenamesForStudy(study);
+0015 [~, clinicalmatfile, ~] = <a href="../../../Code/smartcare/getRawDataFilenamesForStudy.html" class="code" title="function [datamatfile, clinicalmatfile, demographicsmatfile] = getRawDataFilenamesForStudy(study)">getRawDataFilenamesForStudy</a>(study);
 0016 
 0017 [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, ~, cdCRP, <span class="keyword">...</span>
 0018     cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact] <span class="keyword">...</span>
-0019             = loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study);
+0019             = <a href="../../../Code/smartcare/loadAndHarmoniseClinVars.html" class="code" title="function [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP,cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght, cdMedications, cdNewMeds, cdUnplannedContact]= loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study)">loadAndHarmoniseClinVars</a>(clinicalmatfile, subfolder, study);
 0020 
 0021 load(fullfile(basedir,subfolder,<span class="string">'BRivandmeasures_recovery_gap10.mat'</span>));
 0022 load(fullfile(basedir,subfolder,<span class="string">'BRpredictivemodelinputs.mat'</span>), <span class="string">'pmPatientMeasStats'</span>);
@@ -169,6 +169,6 @@ This function is called by:
 0114 tau(idxtoreplace) = recovery_start - amInterventions.Offset(idxtoreplace);
 0115 
 0116 <span class="keyword">end</span></pre></div>
-<hr><address>Generated on Thu 26-Aug-2021 17:58:57 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Thu 26-Aug-2021 19:28:55 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>
