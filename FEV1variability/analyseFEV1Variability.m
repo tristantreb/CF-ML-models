@@ -31,16 +31,17 @@ FEVdata = getMeasureTable(brphysdata,'FEV1Recording' ,'FEV');
 FEVdata = removevars(FEVdata, {'UserName', 'CaptureType', 'Date_TimeRecorded', 'ScaledDateNum'});
 
 % remove patient 601, 621 578 (erroneous behavior) 
-%patients_erroneous = [621,601,578]; old ID
+% patients_erroneous = [621,601,578]; old ID
 patients_erroneous = [221,201,178]; 
 patients_outliers = [115;141;178;196;201;235;275;279]; %6 more than for erroneous patients
+patients_outliers = [115;155;196;198;275;279;298] % with sigma normalisation
 FEVdata = FEVdata(~ismember(FEVdata.ID, patients_erroneous),:);
 FEVdata = FEVdata(~ismember(FEVdata.ID, patients_outliers),:);
 
 % this code was done with FEVdata as an array, transforming
 FEVdata = table2array(FEVdata);
 
-%% fit the FEV curve and compute absolute values of deviation from fit
+%% extract the FEV1 signal and compute residuals (absolute values of deviation from the signal)
 
 % parameters
 p_plot = 0;
@@ -48,6 +49,8 @@ n_records_min = 1;
 p.window = 21; p.threshold = 7;
 % filter stable period
 p_filter = 1; % 1 to remove days during stable period, 2/3 to base it on treatments/modulators only
+% cancel multiplicative noise while applying avg mean window
+multiplicative_noise = 1;
 
 % stable period filter parameters
 n_prior_t = 30; % days prior to treatment start
@@ -138,7 +141,7 @@ for w = p.window
                 x = FEVdata(mask, 2); % date
                 y = FEVdata(mask, 3); % measure
 
-                [residuals, curve] = applyMovingMean(x,y,w,t);
+                [residuals, signal] = applyMovingMean(x,y,w,t,multiplicative_noise);
                 fprintf(', %4i residuals', length(residuals(~isnan(residuals))));
 
                 % log residuals
@@ -283,8 +286,7 @@ for w = p.window
                     avg = mean(FEVdata(mask_patient, 3)); 
                     ylim([-0.8 0.8]);
                     % plot moving average in red
-                    plot(x,curve-avg,'.','MarkerEdgeColor','r','MarkerSize',20)
-                    %plot(x,curve-avg,'r')
+                    plot(x,signal-avg,'.','MarkerEdgeColor','r','MarkerSize',20)
 
                     % plot raw measures
                     plot(x,y-avg,'.','MarkerEdgeColor','b','MarkerSize',10)
@@ -304,10 +306,10 @@ for w = p.window
                         num2str(sum(~isnan(residuals))) ' | window: ' num2str(w) ...
                         ' | threshold: ' num2str(t) ])
                     grid('on')
-                    legend('residuals','data in stable period', 'data in unstable period','location','best')
+                    legend('signal','data in stable period', 'data in unstable period','location','best')
 
-                    saveas(gcf,fullfile(plotfolder,['fevMovingAvg' '_patient' num2str(patient) '_w' num2str(w) '_t' num2str(t) '.png']))
-                    close all
+                    %saveas(gcf,fullfile(plotfolder,['fevMovingAvg' '_patient' num2str(patient) '_w' num2str(w) '_t' num2str(t) '.png']))
+                    %close all
                 end
             end
         end
@@ -372,29 +374,12 @@ saveas(gcf,fullfile(plotfolder,'fevAnalysis_allpatients_w_halfw-05_filter1.png')
 patients_perfect = p_processed_patients(rPatientStats.all_std < 0.038 & rPatientStats.all_std ~= 0 & rPatientStats.all_n_residuals > 100);
 patients_25_50 = p_processed_patients(rPatientStats.all_std >= 0.045 & rPatientStats.all_std < 0.0666);
 patients_50_75 = p_processed_patients(rPatientStats.all_std >= 0.0666 & rPatientStats.all_std < 0.099);
-patients_outliers = p_processed_patients(rPatientStats.all_std > 0.19);
+patients_outliers = p_processed_patients(rPatientStats.all_std > 8);
 
 %% results
 
 figure('DefaultAxesFontSize',12,'Position', [1 1 2000 500])
 
-subplot(3,2,5)
-boxplot(rPatientStats.all_std,'Orientation','horizontal');
-title("Boxplot of the standard deviation of patient's residuals for (21,7)", ...
-    sprintf("%i out of %i patients have 1 residual, hence a standard deviation of 0", sum(rPatientStats.all_std==0), size(rPatientStats,1) ));
-xlabel('Standard deviation (L)')
-xticks(0:0.02:0.36)
-grid('on')
-
-% subplot(3,2,4)
-% plotFEVModel(501, FEVdata, p_smoothing);
-% grid('on')
-
-subplot(3,2,2)
-plot(rPatientStats.all_n_residuals,'.')
-title('#residuals per patient',[ num2str(sum(rPatientStats.all_n_residuals==0)) ' patients with 0 residuals'])
-xlabel('Patient')
-ylabel('#residuals')
 
 subplot(3,2,4)
 temp = 1:31;
@@ -406,22 +391,63 @@ title("Moving mean terms' weight for window size w")
 grid('on')
 % put more y points
 
-subplot(3,2,[1,3])
-histogram(r_all_residuals);
-ylabel(['Frequency (total: ' num2str(r_statistics(1,16)) ...
-    ' out of ' num2str(r_statistics(1,17)) ' stable)'])
-xlabel('Residuals (L)')
-title(['Distribution of the FEV1 measures deviation from fitted curve across ' ...
-    num2str(r_statistics(1,19)) ' patients (out of ' ...
-    num2str(r_statistics(1,22)) ')'], ...
-    ['Std: ' num2str(std(r_all_residuals,'omitnan'),2) ' L | ' ...
-    '99% data within [' num2str(prctile(r_all_residuals,0.5),2) ', ' num2str(prctile(r_all_residuals,99.5),2) '], '...
-    '95% data within [' num2str(prctile(r_all_residuals,2.5),2) ', ' num2str(prctile(r_all_residuals,97.5),2) '], '...
-    '90% data within [' num2str(prctile(r_all_residuals,5),2) ', ' num2str(prctile(r_all_residuals,95),2) ']']);
-grid('on')
+subplot(3,2,2)
+plot(rPatientStats.all_n_residuals,'.')
+title('#residuals per patient',[ num2str(sum(rPatientStats.all_n_residuals==0)) ' patients with 0 residuals'])
+xlabel('Patient')
+ylabel('#residuals')
 
-saveas(gcf,fullfile(plotfolder,sprintf('fevModelBasedAnalysis_movmean_w%i_t%i_filter_%i.png', ...
+    
+if multiplicative_noise == 0
+    subplot(3,2,5)
+    boxplot(rPatientStats.all_std,'Orientation','horizontal');
+    title("Boxplot of the standard deviation of patient's residuals for (21,7)", ...
+        sprintf("%i out of %i patients have 1 residual, hence a standard deviation of 0", sum(rPatientStats.all_std==0), size(rPatientStats,1) ));
+    xlabel('Standard deviation (L)')
+    xticks(0:0.02:0.36)
+    grid('on')
+
+    subplot(3,2,[1,3])
+    histogram(r_all_residuals);
+    ylabel(['Frequency (total: ' num2str(r_statistics(1,16)) ...
+        ' out of ' num2str(r_statistics(1,17)) ' stable)'])
+    xlabel('Residuals (L)')
+    title(['Distribution of the FEV1 measures deviation from fitted curve across ' ...
+        num2str(r_statistics(1,19)) ' patients (out of ' ...
+        num2str(r_statistics(1,22)) ')'], ...
+        ['Std: ' num2str(std(r_all_residuals,'omitnan'),2) ' L | ' ...
+        '99% data within [' num2str(prctile(r_all_residuals,0.5),2) ', ' num2str(prctile(r_all_residuals,99.5),2) '], '...
+        '95% data within [' num2str(prctile(r_all_residuals,2.5),2) ', ' num2str(prctile(r_all_residuals,97.5),2) '], '...
+        '90% data within [' num2str(prctile(r_all_residuals,5),2) ', ' num2str(prctile(r_all_residuals,95),2) ']']);
+    grid('on')
+
+    saveas(gcf,fullfile(plotfolder,sprintf('fevModelBasedAnalysis_movmean_w%i_t%i_filter_%i.png', ...
     w, t, p_filter)))
+else
+    subplot(3,2,5)
+    boxplot(rPatientStats.all_std,'Orientation','horizontal');
+    title("Boxplot of the standard deviation of patient's residuals for (21,7)", ...
+        sprintf("%i out of %i patients have 1 residual, hence a standard deviation of 0", sum(rPatientStats.all_std==0), size(rPatientStats,1) ));
+    xlabel('Standard deviation (% of mean FEV1 in stable period)')
+    grid('on')
+
+    subplot(3,2,[1,3])
+    histogram(r_all_residuals);
+    ylabel(['Frequency (total: ' num2str(r_statistics(1,16)) ...
+        ' out of ' num2str(r_statistics(1,17)) ' stable)'])
+    xlabel('Residuals (% of mean FEV1 in stable period)')
+    title(['Distribution of the FEV1 measures deviation from fitted curve across ' ...
+        num2str(r_statistics(1,19)) ' patients (out of ' ...
+        num2str(r_statistics(1,22)) ')'], ...
+        ['Std: ' num2str(std(r_all_residuals,'omitnan'),2) ' L | ' ...
+        '99% data within [' num2str(prctile(r_all_residuals,0.5),2) ', ' num2str(prctile(r_all_residuals,99.5),2) '], '...
+        '95% data within [' num2str(prctile(r_all_residuals,2.5),2) ', ' num2str(prctile(r_all_residuals,97.5),2) '], '...
+        '90% data within [' num2str(prctile(r_all_residuals,5),2) ', ' num2str(prctile(r_all_residuals,95),2) ']']);
+    grid('on')
+    
+    %saveas(gcf,fullfile(plotfolder,sprintf('fevModelBasedAnalysis_movmean_sigmanorm_w%i_t%i_filter_%i.png', ...
+    %w, t, p_filter)))
+end
 
 %% FURTHER ANALYSES
 
@@ -476,19 +502,31 @@ FEV1info.PercentagePredicted = FEV1info.Fun_FEV1 ./ FEV1info.CalcPredictedFEV1 *
 FEV1info = outerjoin(rPatientStats, FEV1info, 'Type', 'Left', 'LeftKeys','p_processed_patients','RightKeys', 'ID', 'LeftVariables', {'all_std','all_n_residuals'});
 
 % filter 
-FEV1info = FEV1info( FEV1info.all_std <= 0.3 & FEV1info.all_n_residuals >= 30 ,:);
+if multiplicative_noise == 1
+    sigma_threshold = 8; % 8 percent
+else
+    sigma_threshold = 0.3;% 300 mL
+end 
+FEV1info = FEV1info( FEV1info.all_std <= sigma_threshold & FEV1info.all_n_residuals >= 30 ,:);
 
 % variability
 scatterhist(FEV1info.all_std,FEV1info.PercentagePredicted,10)
-xlabel('\sigma_{residuals} (L)')
+
 ylabel('FEV1 %')
 [a,b] = corr(FEV1info.all_std,FEV1info.PercentagePredicted,'Rows','complete');
 title(sprintf('Predicted FEV1 %% against patient-specific variability (r = %2.3f, p-value = %2.3f)',a,b),...
-    sprintf('%i patients, %i outliers removed (\\sigma_{residuals} > 0.3 or #residuals < 30)', size(FEV1info,1), sum(not(rPatientStats.all_n_residuals==0))-size(FEV1info,1)))
+    sprintf('%i patients, %i outliers removed (\\sigma_{residuals} > %.1f or #residuals < 30)', size(FEV1info,1), sum(not(rPatientStats.all_n_residuals==0))-size(FEV1info,1), sigma_threshold))
 clear a; clear b;
 
-saveas(gcf,fullfile(plotfolder,'fevModelBasedAnalysis_variabilityvsFEV1.png'))
-%close all
+if multiplicative_noise == 1
+    xlabel('\sigma_{residuals} (% of mean FEV1 in stable period)')
+    saveas(gcf,fullfile(plotfolder,'fevModelBasedAnalysis_variabilityvsFEV1_sigmanorm.png'))
+else
+    xlabel('\sigma_{residuals} (L)')
+    saveas(gcf,fullfile(plotfolder,'fevModelBasedAnalysis_variabilityvsFEV1.png'))
+end 
+
+close all
 
 %% Effect of triple therapy at a patient level
 
@@ -686,9 +724,10 @@ saveas(gcf,fullfile(plotfolder,'fevModelBasedAnalysis_qqplot_none_smkv.png'))
 
 %% function
 
-function [residuals, curve] = applyMovingMean(x, y, w, t)
+function [residuals, signal] = applyMovingMean(x, y, w, t, multiplicative_noise)
 % t is inclusive
-   curve = NaN(length(x),1);
+
+   signal = NaN(length(x),1);
    for i = 1:length(x)
        % even window: w/2 points to left, w/2-1 points to right
        % 8: [4 3]
@@ -698,13 +737,21 @@ function [residuals, curve] = applyMovingMean(x, y, w, t)
        valid_idx = ismember(x,valid_dates);
        if sum(valid_idx) >= t
            % average values in window
-           curve(i) = mean( y(valid_idx) );
+           signal(i) = mean( y(valid_idx) );
        end % else value is nan by default
    end
-   residuals = y - curve;
+
+   residuals = y - signal;
+   
+  % if multiplicative_noise is active, the residuals are given in percentage 
+  % of the patient's mean stable FEV1
+   if multiplicative_noise == 1
+       residuals = residuals/mean(y)*100;
+       signal = signal/mean(y)*100;
+   end
 end
 
-function out = initPatientStatTable(n_rows);
+function out = initPatientStatTable(n_rows)
     out = table('Size',[n_rows, 8],...
             'VariableTypes',["uint8","doublenan","doublenan","doublenan","doublenan","doublenan","doublenan","doublenan"],...
             'VariableNames',["p_processed_patients", "all_std", "all_n_residuals", "patientMaxVal", "std_residuals_prior_tripleT", "n_residuals_prior_tripleT", "std_residuals_post_tripleT","n_residuals_post_tripleT"]);

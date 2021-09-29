@@ -1,13 +1,13 @@
 clear; clc;
 
 % helpers
-addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/pdm/helperfunctions/;
-addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/smartcare/;
+addpath /Users/tristan.trebaol/Documents/EPFL/PDM/Project/Code/pdm/helperfunctions/;
+addpath /Users/tristan.trebaol/Documents/EPFL/PDM/Project/Code/smartcare/;
 
 basedir = setBaseDir();
 subfolder = 'MatlabSavedVariables';
 study = 'BR';
-plotfolder = '/Users/tristan.trebaol/Documents/PDM/Project/PlotsFEVAnalysis/';
+plotfolder = '/Users/tristan.trebaol/Documents/EPFL/PDM/Project/PlotsFEVAnalysis/';
 
 data_window = 20;
 
