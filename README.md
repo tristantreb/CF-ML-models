@@ -1,4 +1,7 @@
-# MSc Thesis
+# Machine learning models for CF - PhD and MSc thesis
+The project continues as part of a PhD.
+
+# MSc Thesis readme - as submitted on September 2022
 
 Thesis title: Bayesian inference with Expectation Maximisation for the characterisation of antibiotic treatment recovery in Cystic Fibrosis
 
