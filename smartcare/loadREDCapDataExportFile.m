@@ -16,7 +16,7 @@ if filefound
 
     opts = detectImportOptions(fullfile(basedir, datasubfolder, latestfname), 'FileType', 'Text', 'Delimiter', ',');
     for d = 1:ndatefields
-        opts.VariableTypes(:, ismember(opts.VariableNames, datefields(d)))   = {'datetime'};
+        opts.VariableTypes(:, ismember(opts.VariableNames, datefields(d)))   = {'datetime'}; % doesn't change
         opts = setvaropts(opts, datefields(d), 'InputFormat', 'yyyy-MM-dd');
     end
     redcapdata = readtable(fullfile(basedir, datasubfolder, latestfname), opts);

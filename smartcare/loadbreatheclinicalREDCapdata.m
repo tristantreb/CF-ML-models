@@ -414,26 +414,29 @@ plotsdown   = size(brhosp, 1);
 pghght = 3 * plotsdown;
 pgwdth = 7;
 
-plottitle = sprintf('Histogram of patient clinical data by month of last update');
+plottitle = sprintf('Histogram of time between %s and last update of patient clinical data', date);
 [f, p] = createFigureAndPanelForPaper(plottitle, pgwdth, pghght);
 
 for i = 1:size(brhosp, 1)
 
     ax = subplot(plotsdown, plotsacross, (2 * i - 1), 'Parent', p);
-
-    histogram(ax, month(brPatient.PatClinDate(ismember(brPatient.Hospital, brhosp.Acronym(i)) & ismember(brPatient.ConsentStatus, 'Yes'))));
-    xlabel(ax, 'Month');
+   
+    edges = [0:1:12];
+    histogram(ax, getMonthDiff(brPatient.PatClinDate(ismember(brPatient.Hospital, brhosp.Acronym(i)) & ismember(brPatient.ConsentStatus, 'Yes'))),edges);
+    xlabel(ax, '# Months');
     ylabel(ax, 'Count');
     title(ax, sprintf('%s Active', brhosp.Name{i}));
-    xlim(ax, [0.5 12.5]);
+    xlim(ax, [0 12]);
+    ax.XTickLabel(end) = {'12+'}; % modify last tick label
     
     ax = subplot(plotsdown, plotsacross, (2 * i), 'Parent', p);
     
-    histogram(ax, month(brPatient.PatClinDate(ismember(brPatient.Hospital, brhosp.Acronym(i)) & ~ismember(brPatient.ConsentStatus, 'Yes'))));
-    xlabel(ax, 'Month');
+    histogram(ax, getMonthDiff(brPatient.PatClinDate(ismember(brPatient.Hospital, brhosp.Acronym(i)) & ~ismember(brPatient.ConsentStatus, 'Yes'))),edges);
+    xlabel(ax, '# Months');
     ylabel(ax, 'Count');
     title(ax, sprintf('%s Inactive', brhosp.Name{i}));
-    xlim(ax, [0.5 12.5]);
+    xlim(ax, [0 12]);
+    ax.XTickLabel(end) = {'12+'}; % modify last tick label
     
 end
 
@@ -447,7 +450,13 @@ fprintf('\n');
 disp(brPatient((datenum(date) - datenum(brPatient.PatClinDate)) > 62 & ismember(brPatient.ConsentStatus, 'Yes'), ...
     {'ID', 'REDCapID', 'Hospital', 'StudyNumber', 'StudyDate', 'PatClinDate', 'ConsentStatus'}))
 
+%% functions
 
+function monthdiff = getMonthDiff(lastdate)
+% compute month difference between current date and last date
 
+daydiff = datenum(date) - datenum(lastdate);
+monthdiff = daydiff/(365/12);
+monthdiff(monthdiff > 12) = 12; % we don't care if it's one year old or over
 
-
+end

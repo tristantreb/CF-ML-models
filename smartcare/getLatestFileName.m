@@ -6,15 +6,20 @@ function [latestfname, filefound] = getLatestFileName(basedir, subfolder, fnamem
 filelisting = dir(fullfile(basedir, subfolder, sprintf('%s', fnamematchstring)));
 
 if size(filelisting, 1) > 0
+    % sort based on date in filename instead of date of last modification
     filetable = cell2table(struct2cell(filelisting)');
-    filetable.fname = filetable.Var1;
-    filetable.moddate = filetable.Var3;
-    filetable.moddate = datetime(filetable.moddate);
-    filetable = filetable(:, {'fname', 'moddate'});
-    % TODO % sort based on filename instead of date of last modification
-    filetable = sortrows(filetable, {'moddate'}, 'descend');
+    filetable = sortrows(filetable, 'Var1', 'descend');
+    latestfname = filetable.Var1{1};
 
-    latestfname = filetable.fname{1};
+%     %old
+%     filetable = cell2table(struct2cell(filelisting)');
+%     filetable.fname = filetable.Var1;
+%     filetable.moddate = filetable.Var3;
+%     filetable.moddate = datetime(filetable.moddate);
+%     filetable = filetable(:, {'fname', 'moddate'});
+%     filetable = sortrows(filetable, {'moddate'}, 'descend');
+%     latestfname = filetable.fname{1};
+
     filefound = true;
     
 else

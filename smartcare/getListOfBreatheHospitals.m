@@ -19,5 +19,11 @@ hosplist.FullName{2} = 'Cardiff and Vale UHB';
 hosplist.Location{2} = 'UK';
 hosplist.IDOffset(2)  = 800;
 
+hosplist.Acronym{3} = 'EDB';
+hosplist.Name{3} = 'Edinburgh';
+hosplist.FullName{3} = 'Edinburgh CF Center';
+hosplist.Location{3} = 'UK';
+hosplist.IDOffset(3)  = 800;
+
 end
 
