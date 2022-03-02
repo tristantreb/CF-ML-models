@@ -1,8 +1,8 @@
 clear; clc;
 
 % helpers
-addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/pdm/helperfunctions/;
-addpath /Users/tristan.trebaol/Documents/PDM/Project/Code/smartcare/;
+addpath /Users/tristan.trebaol/Documents/PhD/Code/master_thesis_CF_ML/helperfunctions/;
+addpath /Users/tristan.trebaol/Documents/PhD/Code/smartcare/;
 
 basedir = setBaseDir();
 subfolder = 'MatlabSavedVariables';

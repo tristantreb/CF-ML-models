@@ -61,6 +61,15 @@ histogram(sort(bmi_val))
 xlabel('BMI');
 ylabel('Frequency');
 
+highbmi = 33;
+fprintf('Patients ID with unlikely high BMI (>%i)=\n',highbmi)
+idxhighbmi = find(bmi_val > highbmi);
+disp(cdPatient.REDCapID(idxhighbmi));
+fprintf('Weight')
+disp(cdPatient.Weight(idxhighbmi));
+fprintf('Height')
+disp(cdPatient.Height(idxhighbmi));
+
 % FEV1 (% of predicted)
 FEV1PrctPredicted = getMergedFEV1PercentagePredicted(brphysdata, cdPatient, cdPFT);
 FEV1_mean = mean(FEV1PrctPredicted.Value,'omitnan');
