@@ -235,7 +235,7 @@ brphysdata_predateoutlierhandling = brphysdata;
 % analyse measurement date outliers and handle as appropriate
 %brphysdata = analyseAndHandleDateOutliers(brphysdata, study, doupdates);
 
-createMeasuresHeatmapWithStudyPeriod(brphysdata, broffset, brPatient, study);
+createMeasuresHeatmap(brphysdata, broffset, brPatient, study);
 
 % calc and print overall data demographics after data anomaly fixes
 %printDataDemographics(brphysdata, 0);

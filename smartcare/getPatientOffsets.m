@@ -1,6 +1,6 @@
 function [patientoffsettable] = getPatientOffsets(physdata)
 
-% gets the patient offset table
+% gets the patient offset table for active patients
 % Convenience function to return offsets for each 
 % patient 0 i.e the difference between the actual date and the scaled date
       
