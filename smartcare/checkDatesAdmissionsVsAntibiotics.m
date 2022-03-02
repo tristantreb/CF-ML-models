@@ -11,7 +11,7 @@ subfolder = 'MatlabSavedVariables';
 
 basedir = setBaseDir();
 subfolder = 'ExcelFiles';
-outputfilename = sprintf('%s-AdmissionsVsAntibiotics-%s.xlsx', study, datestr(today, 'yyyymmdd'));
+outputfilename = sprintf('%s-AdmissionsVsAntibiotics-%s.xlsx', study, datestr(date, 'yyyymmdd'));
 exceptionsheet = '1)AdmissionWithNoTreatment';
 matchsheet = '3)AdmissionsWithTreatments';
 ipsheet = '2)HospitalIVWithNoAdmission';
