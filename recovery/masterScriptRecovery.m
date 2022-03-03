@@ -17,7 +17,7 @@
 
 % CREATE DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%
-% Add m2html to path
+%Add m2html to path
 % addpath /Users/tristan.trebaol/Documents/PDM/Project/m2html/
 % run the following line, 'mfiles' should note be set to "./", else it
 % raises a display issue
@@ -32,34 +32,34 @@ init;
 % CLINICAL, ID and StudyNumber (gmail)
 % now automaticaly loads most recent file
 % check folder MatlabSavedVariables exists
-%loadbreatheclinicalREDCapdata;
+loadbreatheclinicalREDCapdata;
 
 % MAGIC BULLET, guid (Globally Unique Identifier)
 % loads raw data 
-%breatheAzureAccess;
+breatheAzureAccess;
 
 %check date input -> getLatestBreatheMeasDate
-%loadbreathemeasurementdata; %datademographics
+loadbreathemeasurementdata; %datademographics
 
 % creates treatment lists - merge concurrent treatments
-%checkBreatheTreatmentsVsSelectMeasuresPost;
+checkBreatheTreatmentsVsSelectMeasuresPost;
 %gap in treatments
 
 % confront clinical vs home measures
 % weight
-%checkBreatheClinicalVsHomeWeightMeasures;
+checkBreatheClinicalVsHomeWeightMeasures;
 % fev1
-%checkBreatheClinicalVsHomeFEV1Measures;
+checkBreatheClinicalVsHomeFEV1Measures;
 
-%createAlignmentModelInputsRecovery;
+createAlignmentModelInputsRecovery;
 % study number
 % gap in treatments
 
-%findDataAnomaliesRecovery;
+findDataAnomaliesRecovery;
 % study number
 % gap in treatments
 
 % missing files
 % BR_LabelledInterventions_gap10consensus.mat - given
 % BRelectivetreatments_gap10.xlsx - given
-%runAlignmentModelEMMCScriptRecovery;
+runAlignmentModelEMMCScriptRecovery;

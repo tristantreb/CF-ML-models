@@ -93,7 +93,7 @@ normmean = calculateMuNormalisationRecovery(amDatacube, amInterventions, measure
     dataoutliers, ninterventions, nmeasures, mumethod, study);
 
 % populate normalised data cube by intervention
-[amIntrNormcube] = RcreateNormalisedIntrDatacube(amIntrDatacube, normmean, normstd, ninterventions, nmeasures, sigmamethod);
+[amIntrNormcube] = RcreateNormalisedIntrDatacube(amIntrDatacube, normmean, normstd, ninterventions, nmeasures, measures, sigmamethod);
 
 tic
 basedir = setBaseDir();

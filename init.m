@@ -5,6 +5,7 @@ addpath exploration/;
 addpath FEV1variability/;
 addpath helperfunctions/;
 addpath recovery/;
+addpath recovery/updatedModel/;
 addpath smartcare/;
 
 basedir = setBaseDir();
@@ -13,7 +14,7 @@ study = 'BR';
 plotfolder = '/Plots/';
 
 % needed for createAlignmentModelInputsRecovery, findDataAnomaliesRecovery
-% data_window = 20;
+data_window = 20;
 
 % colors
 % cvcol   = [0.94  0.52  0.15];
