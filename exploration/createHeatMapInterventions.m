@@ -26,7 +26,7 @@ for measuresmask = 34
     if ~exist(strcat(basedir, plotfolder), 'dir')
         mkdir(strcat(basedir, plotfolder));
     end
-    saveas(gcf,fullfile(plotfolder,[filename '.png']))
+    saveas(gcf,fullfile(basedir,plotfolder,[filename '.png']))
     close all;
 end
 

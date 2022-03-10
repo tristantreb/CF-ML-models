@@ -37,7 +37,7 @@ load(fullfile(basedir, subfolder, munormfile));
 % load CFTR modulators therapy
 load(fullfile(basedir, subfolder, 'breatheclinicaldata.mat'),'brDrugTherapy', 'brPatient');
 
-load('/Users/tristan.trebaol/Documents/PDM/Project/MatlabSavedVariables/BRivandmeasures_recovery_gap10.mat')
+load(fullfile(basedir, subfolder, 'BRivandmeasures_recovery_gap10.mat'));
 
 %% explore drug therapies
 getDrugTherapyInfo(brDrugTherapy, brPatient);
@@ -52,10 +52,11 @@ brPatient.TimeEnrolled(not(idx)) = newest_date - datenum(brPatient.StudyDate(~id
 brPatient.TimeEnrolled=brPatient.TimeEnrolled/365.25*12; % in months
 figure('DefaultAxesFontSize',16,'Position', [1 1 600 300])
 histogram(brPatient.TimeEnrolled,'BinWidth',3,'FaceColor','k','FaceAlpha',0.4,'EdgeColor','k','LineWidth',1)
-xticks(0:3:30)
+upperbound = ceil(max(brPatient.TimeEnrolled)) + 3 - mod(max(brPatient.TimeEnrolled),3);
+xticks(0:3:upperbound)
 xlabel('Enrolment time (months)')
 ylabel('Number of participants')
-saveas(gcf,fullfile(plotfolder,sprintf('Patient_enrolment_time_from%s_to%s.png',min(brPatient.PatClinDate),max(brPatient.PatClinDate))));
+saveas(gcf,fullfile(basedir,plotfolder,sprintf('Patient_enrolment_time_from%s_to%s.png',min(brPatient.PatClinDate),max(brPatient.PatClinDate))));
 close all;
 
 
@@ -76,7 +77,7 @@ b = bar(nintr.GroupCount,nintr.GroupCount_1,'FaceColor','k','FaceAlpha',0.4,'Edg
 xlabel('Number of antibiotic treatments');
 ylabel('Number of participants');
 b.FaceColor = 'flat'; b.CData(1,:) = [1 1 1];
-saveas(gcf,fullfile(plotfolder,sprintf('bar_intrperpatient_before_filter.png')));
+saveas(gcf,fullfile(basedir,plotfolder,sprintf('bar_intrperpatient_before_filter.png')));
 close all;
 
 %% display bar plots of interventions durations
@@ -95,7 +96,7 @@ barHistogram(ivandmeasurestable.IVStopDateNum-ivandmeasurestable.IVDateNum,...
     sprintf('The %i interventions grouped by duration (all interventions included)',size(ivandmeasurestable,1)),...
     'Intervention duration (days)')
 
-saveas(gcf,fullfile(plotfolder,sprintf('Bar graph of the interventions duration (%i and %i).png', size(amInterventions,1), size(ivandmeasurestable,1))));
+saveas(gcf,fullfile(basedir,plotfolder,sprintf('Bar graph of the interventions duration (%i and %i).png', size(amInterventions,1), size(ivandmeasurestable,1))));
 close all;
 
 %% plot the measures profile for each intervention used in the model
@@ -108,7 +109,7 @@ days_post = 39; % treatment generally durate 2 weeks, includes day 0
 
 % note amInterventions date 0 is study start date, i.e. broffset (not patient start date)
 
-for i = [19,40,52]%1:ninterventions
+for i = 1:ninterventions
     figure('DefaultAxesFontSize',17,'Position', [1 1 1500 600])
     t = tiledlayout(4,2);
     
@@ -165,7 +166,7 @@ for i = [19,40,52]%1:ninterventions
             'MarkerFaceColor','g');
         hold on
         smoothing_factor=5;
-        plot(data.DateNum-start, smooth(y,smoothing_factor),...
+        plot(data.DateNum-start, smoothdata(y,'movmean',smoothing_factor),...
             'Color', [0, 0.65, 1], ...
             'LineStyle', '-',...
             'LineWidth',1);
@@ -195,6 +196,8 @@ for i = [19,40,52]%1:ninterventions
             set(gca, 'YDir','reverse')
         end
     end
+
+    % legend
     if length(route_in_range) == 1
         legend('Values','Smoothed curve', [amInterventions.Route{i} ' treatment'],'Meanwindow','Normmean','Location','eastoutside')
     elseif length(route_in_range) == 2
@@ -203,12 +206,18 @@ for i = [19,40,52]%1:ninterventions
         else
             legend('Values','Smoothed curve', [amInterventions.Route{i-1} ' treatment'], [amInterventions.Route{i} ' treatment'],'Meanwindow','Normmean','Location','eastoutside')
         end
+    elseif length(route_in_range) == 3
+        if start_in_range(1) == start
+            legend('Values','Smoothed curve', [amInterventions.Route{i} ' treatment'], [amInterventions.Route{i+1} ' treatment'], [amInterventions.Route{i+2} ' treatment'],'Meanwindow','Normmean','Location','eastoutside')
+        else
+            legend('Values','Smoothed curve', [amInterventions.Route{i-1} ' treatment'], [amInterventions.Route{i} ' treatment'], [amInterventions.Route{i+1} ' treatment'], 'Meanwindow','Normmean','Location','eastoutside')
+        end
     else
         continue;
     end
     % write title
     sgtitle(sprintf('Intervention %i (from %s to %s), patient %i, smooth %i', i, datestr(broffset-1+start), datestr(broffset-1+stop), id, smoothing_factor))
-    saveas(gcf,fullfile(plotfolder,sprintf('Intervention%i_ID%i.png', i, id)))
+    saveas(gcf,fullfile(basedir,plotfolder,sprintf('Intervention%i_ID%i.png', i, id)))
     close all;
 end
 

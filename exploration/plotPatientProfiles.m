@@ -17,9 +17,7 @@ init;
 [cdPatient, cdDrugTherapy, cdMicrobiology, cdAntibiotics, cdAdmissions, cdPFT, cdCRP, ...
     cdClinicVisits, cdOtherVisits, cdEndStudy, cdHghtWght] = loadAndHarmoniseClinVars(clinicalmatfile, subfolder, study);
 
-% Tristan's function to harmonise drug therapy namings - temporary until 
-% REDcap is active
-cdDrugTherapy.DrugTherapyType = cleanDrugTherapyNamings(cdDrugTherapy.DrugTherapyType);
+%%
 
 tic
 fprintf('Loading demographic data by patient\n');
@@ -107,7 +105,7 @@ for i = 1:size(patientlist,1)
 %     allcminfev1_    = min(cdPFT.CalcFEV1_(cdPFT.ID == scid));
 %     allcmaxfev1_    = max(cdPFT.CalcFEV1_(cdPFT.ID == scid));
 %     
-%     allcavgcrp      = mean(cdCRP.NumericLevel(cdCRP.ID == scid));
+%     allcavgcrp      = mean(vcdCRP.NumericLevel(cdCRP.ID == scid));
 %     allcstdcrp      = std(cdCRP.NumericLevel(cdCRP.ID == scid));
 %     allcmincrp      = min(cdCRP.NumericLevel(cdCRP.ID == scid));
 %     allcmaxcrp      = max(cdCRP.NumericLevel(cdCRP.ID == scid));
@@ -122,7 +120,7 @@ for i = 1:size(patientlist,1)
     mplotsdown = 9;
     mplotsperpage = mplotsacross * mplotsdown;
     
-    measures = [{'HasColdOrFluRecording'};{'CoughRecording'};{'WellnessRecording'};{'FEV1Recording'};{'O2SaturationRecording'};{'RestingHRRecording'};{'WeightRecording'};{'TemperatureRecording'};{'CalorieRecording'}];
+    measures = [{'HasColdOrFluRecording'};{'CoughRecording'};{'WellnessRecording'};{'FEV1Recording'};{'O2SaturationRecording'};{'PulseRateRecording'};{'RestingHRRecording'};{'WeightRecording'};{'TemperatureRecording'}];
     npages = ceil(size(measures, 1) / mplotsperpage);
     page = 2;
     filenameprefix = sprintf('%s-Patient Summary - ID %d (%s) Hosp %s', study, scid, studyid, hospital);

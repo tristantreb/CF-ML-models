@@ -57,13 +57,13 @@ for i = 1:size(druglisttable,1)
     druglisttable.Amount_prescribed(i) = sum(contains(Drugsbypatients.History,string(druglisttable.CFTR_modulator(i))));
 end
 druglisttable = sortrows(druglisttable,2,'descend');
-fprintf('Found %i CFTR modulators among %i patients:\n', sum(druglisttable.Amount_prescribed), length(patients));
+fprintf('%i patients were prescribed at least one CFTR modulator:\n', length(patients));
 disp(druglisttable)
 
 % view patients with current drug therapy
 currenttable =  groupcounts(Drugsbypatients,'Current');
 currenttable = sortrows(currenttable,2,'descend');
-fprintf('Current repartition of the CFTR modulators among the %i patients\n', size(Drugsbypatients,1));
+fprintf('CFTR modulator status among the %i patients\n', size(Drugsbypatients,1));
 disp(currenttable);
 
 %%% find (patient CFTR modulator history, count, IDs) and display it
