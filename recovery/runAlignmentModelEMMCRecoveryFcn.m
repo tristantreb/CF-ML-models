@@ -40,10 +40,10 @@ fprintf('Loading datademographics by patient %s\n', datademographicsfile);
 load(fullfile(basedir, subfolder, datademographicsfile));
 fprintf('Loading data outliers %s\n', dataoutliersfile);
 load(fullfile(basedir, subfolder, dataoutliersfile));
-if ismember(study, {'SC', 'CL', 'BR'})
-    fprintf('Loading latest labelled test data file %s\n', labelledinterventionsfile);
-    load(fullfile(basedir, subfolder, labelledinterventionsfile), 'amLabelledInterventions');
-end
+% if ismember(study, {'SC', 'CL', 'BR'})
+%     fprintf('Loading latest labelled test data file %s\n', labelledinterventionsfile);
+%     load(fullfile(basedir, subfolder, labelledinterventionsfile), 'amLabelledInterventions');
+% end
 
 if ismember(study, {'BR', 'CL'})
     subfolder = sprintf('DataFiles/%s', study);

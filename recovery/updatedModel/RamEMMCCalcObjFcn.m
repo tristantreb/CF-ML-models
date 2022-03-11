@@ -21,8 +21,8 @@ end
 % check right size
 for m = 1:nmeasures
     if smoothingmethod == 2
-        tempmean(:,m) = smooth(meancurvemean(1, :, m),5);
-        tempstd(:,m) = smooth(meancurvestd(1, :, m),5);
+        tempmean(:,m) = smoothdata(meancurvemean(1, :, m),5);
+        tempstd(:,m) = smoothdata(meancurvestd(1, :, m),5);
     else
         tempmean(:,m) = meancurvemean(1, :, m);
         tempstd(:,m) = meancurvestd(1, :, m);
