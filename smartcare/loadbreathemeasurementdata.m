@@ -1,4 +1,4 @@
-% 1st Breathe data processing step and analysis from raw measurements
+o% 1st Breathe data processing step and analysis from raw measurements
 % takes the raw home measurement files, along with the GUID to 
 % study email mapping file and processes them. The main steps performed are: 
 % i) Filtering
