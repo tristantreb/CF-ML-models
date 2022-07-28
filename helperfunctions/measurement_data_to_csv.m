@@ -1,0 +1,5 @@
+writetable(brphysdata, fullfile(basedir, 'breathemeasurementdata.csv'))
+writetable(brphysdata_original, fullfile(basedir, 'breathemeasurementdata_original.csv'))
+writetable(brphysdata_predupehandling, fullfile(basedir, 'breathemeasurementdata_predupehandling.csv'))
+writetable(brphysdata_predateoutlierhandling, fullfile(basedir, 'breathemeasurementdata_predateoutlierhandling.csv'))
+writetable(brphysdata_deleted, fullfile(basedir, 'breathemeasurementdata_deleted.csv'))
