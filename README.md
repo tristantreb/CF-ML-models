@@ -1,16 +1,13 @@
-# Machine learning models for CF - PhD and MSc thesis
-The project continues as part of a PhD.
+# Machine learning models for CF
 
-# MSc Thesis readme - as submitted on September 2022
+Project 1: Bayesian inference with Expectation Maximisation for the characterisation of antibiotic treatment recovery in Cystic Fibrosis
 
-Thesis title: Bayesian inference with Expectation Maximisation for the characterisation of antibiotic treatment recovery in Cystic Fibrosis
-
-Side project title: Estimation of the variability in Cystic Fibrosis patient’s FEV1 lung function measurements
+Project 2: Estimation of the variability in Cystic Fibrosis patient’s FEV1 lung function measurements
 
 Hosted at the University of Cambridge
 
 ## Documentation
-The code documentation is available [here](https://tristantreb.github.io/master_thesis_CF_ML/).
+The code documentation is available [here](https://tristantreb.github.io/CF_ML_models/).
 
 ## Repository structure
 ```
