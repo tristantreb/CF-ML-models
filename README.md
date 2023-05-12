@@ -7,7 +7,7 @@ Project 2: Estimation of the variability in Cystic Fibrosis patient’s FEV1 lun
 Hosted at the University of Cambridge
 
 ## Documentation
-The code documentation is available [here](https://tristantreb.github.io/CF_ML_models/).
+The code documentation is available [here](https://tristantreb.github.io/CF-ML-models/).
 
 ## Repository structure
 ```
